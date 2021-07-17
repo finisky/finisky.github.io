@@ -30,7 +30,7 @@
 <meta property="og:description" content="有这样的一个interface: public interface Filter &amp;#123;     IList&lt;string&gt; Filter(IList&lt;string&gt; responses) &amp;#125; 在实现它时，如果过滤后没有结果，返回null还是new List()?">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-11-24T04:52:57.000Z">
-<meta property="article:modified_time" content="2021-07-17T05:59:16.955Z">
+<meta property="article:modified_time" content="2021-07-17T06:44:01.613Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="Software Engineering">
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
+        <time title="Modified: 2021-07-17 14:44:01" itemprop="dateModified" datetime="2021-07-17T14:44:01+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -310,8 +310,9 @@
     <span class="token range operator">..</span><span class="token punctuation">.</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>在系统中引入null是一颗老鼠屎坏了一锅粥，只要一处返回了null，那么在整个调用栈中都需要到处检查中间结果是否为null，否则就可能引起nullreferenceexception，系统处理异常甚至崩溃。</p>
-<p>先找出两段支持返回空List的说法： <blockquote><p>Don't Return Null</p>
-<footer><strong>Clean Code: A Handbook of Agile Software Craftsmanship Chapter 7 Error Handling</strong></footer></blockquote></p>
+<p>先找出两段支持返回空List的说法：</p>
+<blockquote><p>Don't Return Null</p>
+<footer><strong>Clean Code: A Handbook of Agile Software Craftsmanship Chapter 7 Error Handling</strong></footer></blockquote>
 <hr />
 <blockquote><p>DO NOT return null values from collection properties or from methods returning collections. Return an empty collection or an empty array instead. Users of collection properties often assume that the following code will always work: IEnumerable<string> list = GetList(); foreach (string name in list) { ... }</p>
 <footer><strong>Framework Design Guidelines 2nd Edition</strong><cite>Page. 256</cite></footer></blockquote>
