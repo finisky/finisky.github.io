@@ -22,15 +22,15 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content=".bashrc不起作用按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
+<meta name="description" content=".bashrc不起作用 按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
 <meta property="og:type" content="article">
 <meta property="og:title" content=".bashrc不起作用与bash初始化文件执行顺序">
 <meta property="og:url" content="https://finisky.github.io/2020/03/29/bashstartupfiles/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content=".bashrc不起作用按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
+<meta property="og:description" content=".bashrc不起作用 按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-29T03:55:50.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:19:49.349Z">
+<meta property="article:modified_time" content="2021-07-17T05:59:16.967Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
@@ -130,7 +130,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bashrc%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">.bashrc不起作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bash-profile-bashrc-bash-login-profile%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">.bash_profile .bashrc .bash_login .profile执行顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash-startup%E6%96%87%E4%BB%B6%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.1.</span> <span class="nav-text">bash startup文件执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interactive-shell%E5%92%8Clogin-shell"><span class="nav-number">2.2.</span> <span class="nav-text">interactive shell和login shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bashrc%E5%8F%88%E5%9C%A8%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%A2%AB%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">.bashrc又在什么时候被调用？</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bashrc%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">.bashrc不起作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bash_profile-.bashrc-.bash_login-.profile%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">.bash_profile .bashrc .bash_login .profile执行顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash-startup%E6%96%87%E4%BB%B6%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.1.</span> <span class="nav-text">bash startup文件执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interactive-shell%E5%92%8Clogin-shell"><span class="nav-number">2.2.</span> <span class="nav-text">interactive shell和login shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bashrc%E5%8F%88%E5%9C%A8%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%A2%AB%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">.bashrc又在什么时候被调用？</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -160,7 +160,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,7 +273,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="bashrc不起作用"><a href="#bashrc不起作用" class="headerlink" title=".bashrc不起作用"></a>.bashrc不起作用</h1><p>按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动<code>source .bashrc</code>，在<code>~/</code>目录增加.bash_profile或.profile解决：</p>
+        <h1 id="bashrc不起作用">.bashrc不起作用</h1>
+<p>按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动<code>source .bashrc</code>，在<code>~/</code>目录增加.bash_profile或.profile解决：</p>
 <span id="more"></span>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"> ~&#x2F;.profile: executed by the command interpreter for login shells.
 # This file is not read by bash(1), if ~&#x2F;.bash_profile or ~&#x2F;.bash_login
@@ -298,8 +299,10 @@ if [ -d &quot;$HOME&#x2F;bin&quot; ] ; then
     PATH&#x3D;&quot;$HOME&#x2F;bin:$PATH&quot;
 fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>但问题的根源在于.bash_profile .bashrc .bash_login .profile几个文件的执行顺序。</p>
-<h1 id="bash-profile-bashrc-bash-login-profile执行顺序"><a href="#bash-profile-bashrc-bash-login-profile执行顺序" class="headerlink" title=".bash_profile .bashrc .bash_login .profile执行顺序"></a>.bash_profile .bashrc .bash_login .profile执行顺序</h1><h2 id="bash-startup文件执行顺序"><a href="#bash-startup文件执行顺序" class="headerlink" title="bash startup文件执行顺序"></a>bash startup文件执行顺序</h2><p>man是个好东西，<code>man bash</code>:</p>
-<blockquote><p>When bash is invoked as an interactive login shell, or as a non-interactive shell with the —login option, it first reads and executes commands from the file /etc/profile, if that file exists. After reading that file, it looks for ~/.bash_profile, ~/.bash_login, and ~/.profile, in that order, and reads and executes commands from the first one that exists and is readable. The —noprofile option may be used when the shell is started to inhibit this behavior.</p>
+<h1 id="bash_profile-.bashrc-.bash_login-.profile执行顺序">.bash_profile .bashrc .bash_login .profile执行顺序</h1>
+<h2 id="bash-startup文件执行顺序">bash startup文件执行顺序</h2>
+<p>man是个好东西，<code>man bash</code>:</p>
+<blockquote><p>When bash is invoked as an interactive login shell, or as a non-interactive shell with the --login option, it first reads and executes commands from the file /etc/profile, if that file exists. After reading that file, it looks for ~/.bash_profile, ~/.bash_login, and ~/.profile, in that order, and reads and executes commands from the first one that exists and is readable. The --noprofile option may be used when the shell is started to inhibit this behavior.</p>
 </blockquote>
 <p>可见这些文件的执行顺序如下：</p>
 <ul>
@@ -309,21 +312,23 @@ fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><
 <li><code>~/.profile</code></li>
 </ul>
 <p>但同时需要注意前提条件是bash是<code>interactive login shell</code>，那什么是interactive shell，什么是login shell?</p>
-<h2 id="interactive-shell和login-shell"><a href="#interactive-shell和login-shell" class="headerlink" title="interactive shell和login shell"></a>interactive shell和login shell</h2><blockquote><p>A login shell is one whose first character of argument zero is a -, or one started with the —login option.</p>
-<p>An interactive shell is one started without non-option arguments (unless -s is specified) and without the -c option whose standard input and error are both connected to terminals (as determined by isatty(3)), or one started with the -i option. PS1 is set and $- includes i if bash is interactive, allowing a shell script or a startup file to test this state. </p>
+<h2 id="interactive-shell和login-shell">interactive shell和login shell</h2>
+<blockquote><p>A login shell is one whose first character of argument zero is a -, or one started with the --login option.</p>
+<p>An interactive shell is one started without non-option arguments (unless -s is specified) and without the -c option whose standard input and error are both connected to terminals (as determined by isatty(3)), or one started with the -i option. PS1 is set and $- includes i if bash is interactive, allowing a shell script or a startup file to test this state.</p>
 </blockquote>
 <p>上面的定义虽然字字都能看懂，但按字面理解起来比较困难。通俗地来说，interactive shell就是需要人机交互的，比如执行一个脚本就不需要人机交互。login shell就是是否需要登录，比如本地再开一个terminal就不需要再次登录。</p>
-<p>参考如下实例对二者排列组合：<br><a target="_blank" rel="noopener" href="https://askubuntu.com/questions/879364/differentiate-interactive-login-and-non-interactive-non-login-shell"># Differentiate Interactive login and non-interactive non-login shell</a></p>
+<p>参考如下实例对二者排列组合： <a target="_blank" rel="noopener" href="https://askubuntu.com/questions/879364/differentiate-interactive-login-and-non-interactive-non-login-shell"># Differentiate Interactive login and non-interactive non-login shell</a></p>
 <ul>
 <li>interactive login shell: 远程登录，如ssh</li>
 <li>interactive non-login shell: 本地起一个bash</li>
 <li>non-interactive non-login shell: 运行脚本</li>
 <li>non-interactive login shell: 少见</li>
 </ul>
-<p>可以用如下命令测试当前环境是什么样的bash:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: echo $-; shopt login_shell
+<p>可以用如下命令测试当前环境是什么样的bash: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: echo $-; shopt login_shell
 himBHs
-login_shell     on<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><br>第一行中如果含有字母i则是iteractive shell；第二行显而易见。上述执行结果是ssh，可见ssh是iteractive login shell。</p>
-<h2 id="bashrc又在什么时候被调用？"><a href="#bashrc又在什么时候被调用？" class="headerlink" title=".bashrc又在什么时候被调用？"></a>.bashrc又在什么时候被调用？</h2><blockquote><p>When an interactive shell that is not a login shell is started, bash reads and executes commands from /etc/bash.bashrc and ~/.bashrc, if these files exist.</p>
+login_shell     on<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre> 第一行中如果含有字母i则是iteractive shell；第二行显而易见。上述执行结果是ssh，可见ssh是iteractive login shell。</p>
+<h2 id="bashrc又在什么时候被调用">.bashrc又在什么时候被调用？</h2>
+<blockquote><p>When an interactive shell that is not a login shell is started, bash reads and executes commands from /etc/bash.bashrc and ~/.bashrc, if these files exist.</p>
 </blockquote>
 <p>好了，因为putty通过ssh登录，因此它是iteractive login shell，所以不会调用.bashrc，因此开头增加.bash_profile或.profile文件的目的就是调用.bashrc。</p>
 <p><strong>Tips: Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之间有一定的继承和渊源，有兴趣可以了解一下。只不过bash在当前的发行版中最为常见。</strong></p>

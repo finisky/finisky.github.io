@@ -30,7 +30,7 @@
 <meta property="og:description" content="Recently, I found there were huge amount of files named .com.google.Chrome.* be created in my &#x2F;tmp folder. Obviously the culprit is Chrome. However, after some research no solution is found to prevent">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-31T09:52:51.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:19:49.365Z">
+<meta property="article:modified_time" content="2021-07-17T05:59:16.975Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
@@ -158,7 +158,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -228,7 +228,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,6 +273,7 @@
     <div class="post-body" itemprop="articleBody">
         <p>Recently, I found there were huge amount of files named <code>.com.google.Chrome.*</code> be created in my /tmp folder. Obviously the culprit is Chrome. However, after some research no solution is found to prevent Chrome creating these garbage.</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;tmp$ du -csh .com.google.Chrome.*
+
 8.0K    .com.google.Chrome.00OKwD
 104K    .com.google.Chrome.013jYf
 172K    .com.google.Chrome.015x5t
@@ -282,8 +283,8 @@
 36K     .com.google.Chrome.ZzrsZY
 163M    total
 &#x2F;tmp$  find &#x2F;tmp -name &quot;.com.google.Chrome*&quot; -ls| wc -l
-3468<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>Update 2020/12/12</strong><br>I found there are lots of <code>.com.google.Chrome.*</code> files in <code>/tmp/snap.chromium/tmp</code> :-( . Look at the <code>ncdu</code>results:<br><pre class="line-numbers language-none"><code class="language-none">--- &#x2F;tmp&#x2F;snap.chromium&#x2F;tmp -------------------------------------------------------------------------
+3468<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>Update 2020/12/12</strong> I found there are lots of <code>.com.google.Chrome.*</code> files in <code>/tmp/snap.chromium/tmp</code> :-( . Look at the <code>ncdu</code>results: <pre class="line-numbers language-none"><code class="language-none">--- &#x2F;tmp&#x2F;snap.chromium&#x2F;tmp -------------------------------------------------------------------------
                          &#x2F;..
     4.1 MiB [##########] &#x2F;.com.google.Chrome.xTBobr
     4.1 MiB [######### ] &#x2F;.com.google.Chrome.0hcsFR
@@ -291,9 +292,9 @@
     4.0 MiB [######### ] &#x2F;.com.google.Chrome.nJ5W3A
     4.0 MiB [######### ] &#x2F;.com.google.Chrome.unS6es
 ...
- Total disk usage:   6.8 GiB  Apparent size:  12.1 GiB  Items: 482530<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><br>Now the cleanup script has been updated.</p>
+ Total disk usage:   6.8 GiB  Apparent size:  12.1 GiB  Items: 482530<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Now the cleanup script has been updated.</p>
 <span id="more"></span>
-<p>The listed files were created within two days! Looks that it’s harmless, huh? Definitely NOT! By default, Linux will cleanup the /tmp at boot. If your system is rarely reboot:</p>
+<p>The listed files were created within two days! Looks that it's harmless, huh? Definitely NOT! By default, Linux will cleanup the /tmp at boot. If your system is rarely reboot:</p>
 <ul>
 <li>These files might make your disk full</li>
 <li>Huge amount of files in /tmp will block your system boot</li>
@@ -304,10 +305,10 @@
 find &#x2F;tmp -name &quot;.com.google.Chrome*&quot; -mtime +0.5 -exec rm -r &#123;&#125; \;
 find &#x2F;tmp&#x2F;snap.chromium&#x2F;tmp -name &quot;.com.google.Chrome*&quot; -mtime +0.5 -exec rm -r &#123;&#125; \;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>The script will delete all .com.google.Chrome* directories with last modify time 12 hours before.</p>
-<p>Since the <code>/tmp/snap.chromium/tmp</code> folder has <code>restricted deletion flag</code> <code>t</code>:<br><pre class="line-numbers language-none"><code class="language-none">$ sudo ls -al &#x2F;tmp&#x2F;snap.chromium&#x2F;
+<p>Since the <code>/tmp/snap.chromium/tmp</code> folder has <code>restricted deletion flag</code> <code>t</code>: <pre class="line-numbers language-none"><code class="language-none">$ sudo ls -al &#x2F;tmp&#x2F;snap.chromium&#x2F;
 ...
 drwxrwxrwt 887 root root 1114112 Dec 12 11:40 tmp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
-<p>We need to add a cron job entry to <code>root</code> user by <code>sudo crontab -e</code>:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">15 10,22 * * * &#x2F;home&#x2F;xxx&#x2F;cleanuptmp.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>We need to add a cron job entry to <code>root</code> user by <code>sudo crontab -e</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">15 10,22 * * * &#x2F;home&#x2F;xxx&#x2F;cleanuptmp.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>It will cleanup the <code>/tmp</code> at 10:15 and 22:15 everyday.</p>
 
     </div>

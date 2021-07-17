@@ -22,17 +22,17 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="When I use kubectl to deploy a service:$ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxxa SchemeError was raised:EXEC(0,0): Error : SchemaError(io.k8s.api">
+<meta name="description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="invalid object doesn&#39;t have additional properties error">
 <meta property="og:url" content="https://finisky.github.io/2019/12/31/k8sinvalidobject/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="When I use kubectl to deploy a service:$ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxxa SchemeError was raised:EXEC(0,0): Error : SchemaError(io.k8s.api">
+<meta property="og:description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-12-31T11:30:23.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:19:49.417Z">
+<meta property="article:modified_time" content="2021-07-17T06:07:00.373Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
 
 
@@ -128,7 +128,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Check-deploy-yaml"><span class="nav-number">1.</span> <span class="nav-text">Check deploy.yaml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Check-kubeconfig"><span class="nav-number">2.</span> <span class="nav-text">Check kubeconfig</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Connect-Right-Server"><span class="nav-number">2.1.</span> <span class="nav-text">Connect Right Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Check-kubectl-Version-amp-Path"><span class="nav-number">2.2.</span> <span class="nav-text">Check kubectl Version &amp; Path</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#check-deploy.yaml"><span class="nav-number">1.</span> <span class="nav-text">Check deploy.yaml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#check-kubeconfig"><span class="nav-number">2.</span> <span class="nav-text">Check kubeconfig</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#connect-right-server"><span class="nav-number">2.1.</span> <span class="nav-text">Connect Right Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#check-kubectl-version-path"><span class="nav-number">2.2.</span> <span class="nav-text">Check kubectl Version &amp; Path</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -158,7 +158,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -228,7 +228,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 14:07:00" itemprop="dateModified" datetime="2021-07-17T14:07:00+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -271,21 +271,26 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When I use kubectl to deploy a service:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><br>a SchemeError was raised:<br><pre class="line-numbers language-none"><code class="language-none">EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v1beta1.RollingUpdateStatefulSetStrategy): invalid object doesn&#39;t have additional properties<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+        <p>When I use kubectl to deploy a service: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> a SchemeError was raised: <pre class="line-numbers language-none"><code class="language-none">EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v1beta1.RollingUpdateStatefulSetStrategy): invalid object doesn&#39;t have additional properties<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <span id="more"></span>
-<p>Seems that the issue is caused by kubectl version mismatch: <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#before-you-begin">Install and Set Up kubectl</a><br><pre class="line-numbers language-none"><code class="language-none">You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.2 client should work with v1.1, v1.2, and v1.3 master. Using the latest version of kubectl helps avoid unforeseen issues.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Seems that the issue is caused by kubectl version mismatch: <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#before-you-begin">Install and Set Up kubectl</a> <pre class="line-numbers language-none"><code class="language-none">You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.2 client should work with v1.1, v1.2, and v1.3 master. Using the latest version of kubectl helps avoid unforeseen issues.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>Follow these steps to resolve the issue:</p>
-<h1 id="Check-deploy-yaml"><a href="#Check-deploy-yaml" class="headerlink" title="Check deploy.yaml"></a>Check deploy.yaml</h1><p>Make sure deploy.yaml is correct and the docker image can be run locally.</p>
-<h1 id="Check-kubeconfig"><a href="#Check-kubeconfig" class="headerlink" title="Check kubeconfig"></a>Check kubeconfig</h1><p>Double check the right kubeconfig is specified and connect to the right cluster:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; kubectl.exe version
+<h1 id="check-deploy.yaml">Check deploy.yaml</h1>
+<p>Make sure deploy.yaml is correct and the docker image can be run locally.</p>
+<h1 id="check-kubeconfig">Check kubeconfig</h1>
+<p>Double check the right kubeconfig is specified and connect to the right cluster: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; kubectl.exe version
 Client Version: version.Info&#123;Major:&quot;1&quot;, Minor:&quot;17&quot;, GitVersion:&quot;v1.17.0&quot;, GitCommit:&quot;70132b0f130acc0bed193d9ba59dd186f0e634cf&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2019-12-07T21:20:10Z&quot;, GoVersion:&quot;go1.13.4&quot;, Compiler:&quot;gc&quot;, Platform:&quot;windows&#x2F;amd64&quot;&#125;
 Unable to connect to the server: dial tcp: lookup k8s-cluster.io: no such host<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
-<h2 id="Connect-Right-Server"><a href="#Connect-Right-Server" class="headerlink" title="Connect Right Server"></a>Connect Right Server</h2><p>The server is displayed after “dial tcp:”: “k8s-cluster.io”. If “Unable to connect to the server” is displayed, you might use a wrong kubeconfig file. Correct the config by <code>--kubeconfig</code> option.</p>
-<h2 id="Check-kubectl-Version-amp-Path"><a href="#Check-kubectl-Version-amp-Path" class="headerlink" title="Check kubectl Version &amp; Path"></a>Check kubectl Version &amp; Path</h2><p>One may install multiple kubectl on the same machine. If you found client version is not matched, consider specifying the right one. You can also view the current kubectl by (For Linux, command <code>which</code>):<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; Get-Command kubectl.exe
+<h2 id="connect-right-server">Connect Right Server</h2>
+<p>The server is displayed after "dial tcp:": "k8s-cluster.io". If "Unable to connect to the server" is displayed, you might use a wrong kubeconfig file. Correct the config by <code>--kubeconfig</code> option.</p>
+<h2 id="check-kubectl-version-path">Check kubectl Version &amp; Path</h2>
+<p>One may install multiple kubectl on the same machine. If you found client version is not matched, consider specifying the right one. You can also view the current kubectl by (For Linux, command <code>which</code>): <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; Get-Command kubectl.exe
 CommandType     Name                                               Version    Source
 -----------     ----                                               -------    ------
 Application     kubectl.exe                                        0.0.0.0    C:\Program Files\Docker\Docker\Resources\bin\kubectl.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>I install the Docker Desktop on Windows and the default kubectl location is <code>C:\Program Files\Docker\Docker\Resources\bin\</code>. So, download the matched kubectl from <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">Install and Set Up kubectl</a> and put it in this folder solved the problem.</p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55528603/kubectl-create-invalid-object">Kubectl create “invalid object”</a></p>
+<h1 id="reference">Reference</h1>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55528603/kubectl-create-invalid-object">Kubectl create “invalid object”</a></p>
 
     </div>
 
@@ -296,17 +301,26 @@ Application     kubectl.exe                                        0.0.0.0    C:
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/01/06/k8sdashboardlanguage/" rel="bookmark">Kubernetes Dashboard语言设置为英文</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/05/21/kubernetesrecoversecret/" rel="bookmark">MountVolume.SetUp failed for volume secret not found Issue</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/03/21/migrateopsmanager.en/" rel="bookmark">Migrate Ops Manager to a new Kubernetes Cluster</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
           </div>
 
         

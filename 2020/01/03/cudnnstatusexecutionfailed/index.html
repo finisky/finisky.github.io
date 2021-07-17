@@ -30,7 +30,7 @@
 <meta property="og:description" content="RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work. Ac">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-03T09:05:21.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:19:49.377Z">
+<meta property="article:modified_time" content="2021-07-17T06:02:02.862Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="cuda">
@@ -130,7 +130,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solution"><span class="nav-number">1.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Detailed-Error-Message"><span class="nav-number">1.1.</span> <span class="nav-text">Detailed Error Message</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DO-NOT-Upgrade-Ubuntu"><span class="nav-number">1.2.</span> <span class="nav-text">DO NOT Upgrade Ubuntu</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#solution"><span class="nav-number">1.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#detailed-error-message"><span class="nav-number">1.1.</span> <span class="nav-text">Detailed Error Message</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#do-not-upgrade-ubuntu"><span class="nav-number">1.2.</span> <span class="nav-text">DO NOT Upgrade Ubuntu</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -160,7 +160,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 14:02:02" itemprop="dateModified" datetime="2021-07-17T14:02:02+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,17 +275,22 @@
     <div class="post-body" itemprop="articleBody">
         <pre class="line-numbers language-none"><code class="language-none">RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work.</p>
-<p>Actually, the root cause is <strong>pytorch/cuda/python compatibility issue</strong>. </p>
+<p>Actually, the root cause is <strong>pytorch/cuda/python compatibility issue</strong>.</p>
 <span id="more"></span>
-<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine. </p>
-<p>My environment:<br><pre class="line-numbers language-none"><code class="language-none">1. Ubuntu 18.04 LTS
-2. Python 3.6.9
-3. PyTorch 1.3.0
-4. cuda 10.1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h1 id="solution">Solution</h1>
+<p>The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine.</p>
+<p>My environment:</p>
+<ol type="1">
+<li>Ubuntu 18.04 LTS</li>
+<li>Python 3.6.9</li>
+<li>PyTorch 1.3.0</li>
+<li>cuda 10.1</li>
+</ol>
 <p>This command resolved my issue (PyTorch version really matters! from 1.3.0 to 1.2.0):</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda install pytorch&#x3D;&#x3D;1.2.0 torchvision&#x3D;&#x3D;0.4.0 cudatoolkit&#x3D;10.0 -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>If you use conda, you can refer to this page to find a working combination (downgrade might be better than upgrade…):<br><a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING PREVIOUS VERSIONS OF PYTORCH</a></p>
-<h2 id="Detailed-Error-Message"><a href="#Detailed-Error-Message" class="headerlink" title="Detailed Error Message"></a>Detailed Error Message</h2><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ python seq2seq.py
+<p>If you use conda, you can refer to this page to find a working combination (downgrade might be better than upgrade...): <a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING PREVIOUS VERSIONS OF PYTORCH</a></p>
+<h2 id="detailed-error-message">Detailed Error Message</h2>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ python seq2seq.py
 Traceback (most recent call last):
   File &quot;seq2seq.py&quot;, line 311, in &lt;module&gt;
     trainIters(encoder, attndecoder, 75000, print_every&#x3D;5000)
@@ -308,7 +313,8 @@ Traceback (most recent call last):
   File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 680, in run_impl
     self.dropout, self.training, self.bidirectional, self.batch_first)
 RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="DO-NOT-Upgrade-Ubuntu"><a href="#DO-NOT-Upgrade-Ubuntu" class="headerlink" title="DO NOT Upgrade Ubuntu"></a>DO NOT Upgrade Ubuntu</h2><p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded Ubuntu from 14.04 to 16.04 and then to 18.04, nothing happened.</p>
+<h2 id="do-not-upgrade-ubuntu">DO NOT Upgrade Ubuntu</h2>
+<p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded Ubuntu from 14.04 to 16.04 and then to 18.04, nothing happened.</p>
 
     </div>
 

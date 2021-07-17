@@ -154,7 +154,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -223,7 +223,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -331,7 +331,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -441,7 +441,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -484,7 +484,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>We developed a REST API long time ago and recently found that the released client has a flaw: the HttpRequestMessage is missing content-type <code>application/json</code>. In earlier version we manually deserialize the request json by reading the request body but now we leverage AspNetCore framework to automatically get the request structure from the API parameter. However, the legacy client will not work: HTTP 415 “Unsupported Media Type” error happens.</p>
+          <p>We developed a REST API long time ago and recently found that the released client has a flaw: the HttpRequestMessage is missing content-type <code>application/json</code>. In earlier version we manually deserialize the request json by reading the request body but now we leverage AspNetCore framework to automatically get the request structure from the API parameter. However, the legacy client will not work: HTTP 415 "Unsupported Media Type" error happens.</p>
 <p>Therefore, for backward compatibility, we need to make the server treat all coming requests as <code>application/json</code> even it is a plain text (by default).</p>
           <!--noindex-->
             <div class="post-button">
@@ -550,7 +550,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -658,7 +658,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -701,22 +701,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>When we use entity framework to manipulate SQL database, we use <code>where</code> to query and <code>include</code> to load related entities (join operation). </p>
-<p>Sample database table schema:<br>Employee: Id, Name, Age<br>Salary: Id, BasePay</p>
+          <p>When we use entity framework to manipulate SQL database, we use <code>where</code> to query and <code>include</code> to load related entities (join operation).</p>
+<p>Sample database table schema: Employee: Id, Name, Age Salary: Id, BasePay</p>
 <p>Typical query scenarios:</p>
 <ul>
-<li>Query employee 3’s name =&gt; Employee.Where(x =&gt; x.Id == 3)</li>
-<li>Query employee Jack’s age =&gt; Employee.Where(x =&gt; x.Name == “Jack”)</li>
-<li>Query employee Jack’s basepay =&gt; Employee.Where(x =&gt; x.Name == “Jack”).Include(x =&gt; x.Salary)<br>…</li>
+<li>Query employee 3's name =&gt; Employee.Where(x =&gt; x.Id == 3)</li>
+<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name == "Jack")</li>
+<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name == "Jack").Include(x =&gt; x.Salary) ...</li>
 </ul>
 <p>To make the code clean and focus, the following examples will not include dbContext creation logic, we assume <code>db = DbContext()</code> which contains the Employee table.</p>
-<p>For code reuse purpose, we may extract a common method like this:<br><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+<p>For code reuse purpose, we may extract a common method like this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> navigationFunc <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token punctuation">?</span> <span class="token function">navigationFunc</span><span class="token punctuation">(</span>db<span class="token punctuation">.</span>Employee<span class="token punctuation">)</span> <span class="token punctuation">:</span> db<span class="token punctuation">.</span>Employee<span class="token punctuation">;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> <span class="token function">whereFunc</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The implmentation looks simple and straightfoward: just extract the where and navigation <code>Func&lt;&gt;</code> to a function. </p>
+<p>The implmentation looks simple and straightfoward: just extract the where and navigation <code>Func&lt;&gt;</code> to a function.</p>
 <p>However, the above function has severe perfomance issue: when we execute the function, it retrieves all data from the table and locally applies <code>where</code> filter. Actually, the underlying mechanism is not that simple as entity framework will compile the expression and translated to SQL statements, though it looks like just a syntactic sugar.</p>
           <!--noindex-->
             <div class="post-button">
@@ -782,7 +782,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -825,14 +825,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Install an old library <a target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu 20.04. When visit the cgi, internal server error pops up. </p>
+          <p>Install an old library <a target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu 20.04. When visit the cgi, internal server error pops up.</p>
 <p>Debug the cgi by directly run it in <code>/var/www/lightsquid</code>:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
 Can&#39;t locate CGI.pm in @INC (you may need to install the CGI module) (@INC contains: &#x2F;etc&#x2F;perl &#x2F;usr&#x2F;local&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;local&#x2F;share&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl5&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl5 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;local&#x2F;lib&#x2F;site_perl &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl-base) at index.cgi line 19.
 BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>Seems that some modules are missing, after several search:<br><a target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
-<p>Combined with the error message:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ apt install libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Then it works:<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
+<p>Seems that some modules are missing, after several search: <a target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
+<p>Combined with the error message: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ apt install libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Then it works: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
 &#96;&#96;&#96;html
 &lt;!DOCTYPE html PUBLIC &quot;-&#x2F;&#x2F;W3C&#x2F;&#x2F;DTD HTML 4.01 Transitional&#x2F;&#x2F;EN&quot;&gt;
 
@@ -900,7 +900,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:17" itemprop="dateModified" datetime="2021-07-17T13:59:17+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1008,7 +1008,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1052,7 +1052,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
     
     <div class="post-body" itemprop="articleBody">
           <p>View the generated SQL query by entity framework is important. The translated SQL query may not what you expected. Sometimes it leads to significant performance issue.</p>
-<p>Print the generated query for an <code>IQueryable&lt;T&gt;</code> in EF Core is different with EF. Finally I found a worked solution which is listed below. </p>
+<p>Print the generated query for an <code>IQueryable&lt;T&gt;</code> in EF Core is different with EF. Finally I found a worked solution which is listed below.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/08/26/efcoregetsqlquery.en/#more" rel="contents">
@@ -1117,7 +1117,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1162,7 +1162,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
     <div class="post-body" itemprop="articleBody">
           <p><strong>2020-11-28更新：</strong> 经过四个多月的肌肉练习（引体向上，核心肌群训练，跑步，羽毛球），肩颈疼痛症状显著缓解，坚持锻炼两个月后，落枕、脖子活动受限的情况基本就没再发生过，现在的情况就更好了。全身性的肌肉训练效果还是很好的，亲测推荐！</p>
 <p>值得一提的是病来如山倒，病去如抽丝。在急性疼痛期时不建议进行肌肉训练，在慢性期时进行训练也须坚持，就我个人而言，开始练习的一个多月基本感觉不到症状缓解的现象，但再坚持一段时间后（一口气正手引体向上5次以上），效果开始显现，还得让子弹飞一会儿。肌肉力量的增长需要时间，肌肉强健之后，筋膜炎的症状才能缓解。</p>
-<hr>
+<hr />
 <p>现代人不论什么工作，都是每天长时间对着电脑工作，不良姿势的久坐导致的问题颇多，以颈椎病和腰椎病最为常见。笔者最近受疫情长时间在家办公影响，肩颈部位酸痛，且几个月都没有缓解。关于肩颈疼痛的缓解方案网上有很多，经过问医、研究和亲身试验，总结下有效和无效的方案。</p>
           <!--noindex-->
             <div class="post-button">
@@ -1228,7 +1228,7 @@ BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" 
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:17" itemprop="dateModified" datetime="2021-07-17T13:59:17+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">

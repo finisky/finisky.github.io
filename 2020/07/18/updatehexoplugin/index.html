@@ -30,7 +30,7 @@
 <meta property="og:description" content="为了精简hexo安装的npm modules，用rm -rf node_modules&#x2F;删除了已安装的包，再npm install把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，hexo g时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-18T11:32:15.000Z">
-<meta property="article:modified_time" content="2021-07-11T12:19:49.533Z">
+<meta property="article:modified_time" content="2021-07-17T05:59:16.919Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Hexo">
 <meta property="article:tag" content="NexT">
@@ -129,7 +129,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo-g%E5%A4%B1%E8%B4%A5%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">hexo g失败错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpackage%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">查看package最新版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9package-json"><span class="nav-number">3.</span> <span class="nav-text">修改package.json</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo-g%E5%A4%B1%E8%B4%A5%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">hexo g失败错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpackage%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">查看package最新版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9package.json"><span class="nav-number">3.</span> <span class="nav-text">修改package.json</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -159,7 +159,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-11 20:19:49" itemprop="dateModified" datetime="2021-07-11T20:19:49+08:00">2021-07-11</time>
+        <time title="Modified: 2021-07-17 13:59:16" itemprop="dateModified" datetime="2021-07-17T13:59:16+08:00">2021-07-17</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,7 +274,8 @@
     <div class="post-body" itemprop="articleBody">
         <p>为了精简hexo安装的npm modules，用<code>rm -rf node_modules/</code>删除了已安装的包，再<code>npm install</code>把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，<code>hexo g</code>时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。</p>
 <span id="more"></span>
-<h1 id="hexo-g失败错误"><a href="#hexo-g失败错误" class="headerlink" title="hexo g失败错误"></a>hexo g失败错误</h1><p>错误信息如下：<br><pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo d -g
+<h1 id="hexo-g失败错误">hexo g失败错误</h1>
+<p>错误信息如下： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo d -g
 INFO  Start processing
 FATAL Something&#39;s wrong. Maybe you can find the solution here: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;troubleshooting.html
 TypeError: Cannot read property &#39;length&#39; of undefined
@@ -298,7 +299,8 @@ TypeError: Cannot read property &#39;length&#39; of undefined
     at tryOnImmediate (timers.js:752:5)
     at processImmediate [as _immediateCallback] (timers.js:729:5)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>看起来像是hexo-related-popular-posts插件中的一个变量未定义，搜了一下，还是因为hexo升级后有些变量修改了位置导致变量不存在。当然可以通过修改源码的方式来解决问题，不过更好的做法是升级这些包到最新版本。</p>
-<h1 id="查看package最新版本"><a href="#查看package最新版本" class="headerlink" title="查看package最新版本"></a>查看package最新版本</h1><p>想升级版本，首先得知道这些包的最新版本是什么。</p>
+<h1 id="查看package最新版本">查看package最新版本</h1>
+<p>想升级版本，首先得知道这些包的最新版本是什么。</p>
 <p><code>npm outdated</code>可以用来查看已安装包的最新可用版本，可作为升级版本的参考，文档如下： <a target="_blank" rel="noopener" href="https://docs.npmjs.com/cli-commands/outdated.html">https://docs.npmjs.com/cli-commands/outdated.html</a></p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ npm outdated
 Package                     Current  Wanted  Latest  Location
@@ -316,7 +318,8 @@ hexo-server                   0.3.3   0.3.3   1.0.0  hexo-site<span aria-hidden=
 <li>Yellow indicates that there’s a newer version above your semver requirements (usually new major, or new 0.x minor) so proceed with caution.</li>
 </ul>
 </blockquote>
-<h1 id="修改package-json"><a href="#修改package-json" class="headerlink" title="修改package.json"></a>修改package.json</h1><p>知道了最新版本是什么，看看当前package.json的配置：<br><pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+<h1 id="修改package.json">修改package.json</h1>
+<p>知道了最新版本是什么，看看当前package.json的配置： <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
   <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"hexo-site"</span><span class="token punctuation">,</span>
   <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.0.0"</span><span class="token punctuation">,</span>
   <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
@@ -341,12 +344,12 @@ hexo-server                   0.3.3   0.3.3   1.0.0  hexo-site<span aria-hidden=
   <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>版本号前的“^”又是什么意思？参考：<a target="_blank" rel="noopener" href="https://github.com/npm/node-semver#ranges">https://github.com/npm/node-semver#ranges</a></p>
-<blockquote><p>Caret Ranges  <code>^1.2.3</code>  <code>^0.2.5</code>  <code>^0.0.4</code></p>
-<p>Allows changes that do not modify the left-most non-zero element in the  <code>[major, minor, patch]</code>  tuple. In other words, this allows patch and minor updates for versions  <code>1.0.0</code>  and above, patch updates for versions  <code>0.X &gt;=0.1.0</code>, and no updates for versions  <code>0.0.X</code>.</p>
-<p>Many authors treat a  <code>0.x</code>  version as if the  <code>x</code>  were the major “breaking-change” indicator.</p>
+<blockquote><p>Caret Ranges <code>^1.2.3</code> <code>^0.2.5</code> <code>^0.0.4</code></p>
+<p>Allows changes that do not modify the left-most non-zero element in the <code>[major, minor, patch]</code> tuple. In other words, this allows patch and minor updates for versions <code>1.0.0</code> and above, patch updates for versions <code>0.X &gt;=0.1.0</code>, and no updates for versions <code>0.0.X</code>.</p>
+<p>Many authors treat a <code>0.x</code> version as if the <code>x</code> were the major "breaking-change" indicator.</p>
 </blockquote>
 <p>“^”代表最左的非0版本号不会自动升级，因为它可能代表一个breaking change。</p>
-<p>好了，升级hexo到4.2.1，升级hexo-related-popular-posts到4.0.0即解决了报错问题，顺手把其他插件也都升级了：<br><pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+<p>好了，升级hexo到4.2.1，升级hexo-related-popular-posts到4.0.0即解决了报错问题，顺手把其他插件也都升级了： <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
   <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"hexo-site"</span><span class="token punctuation">,</span>
   <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.0.0"</span><span class="token punctuation">,</span>
   <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
