@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="This is part5, we will use the generated certficates to enable user database TLS and AUTH. MongoDB Ops Manager Series:  Install MongoDB Ops Manager Create a UserDB ReplicaSet Expose UserDB to Public O">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth">
+<meta property="og:url" content="https://finisky.github.io/2020/12/19/mongodbomtlsauth.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="This is part5, we will use the generated certficates to enable user database TLS and AUTH. MongoDB Ops Manager Series:  Install MongoDB Ops Manager Create a UserDB ReplicaSet Expose UserDB to Public O">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="article:published_time" content="2020-12-19T15:45:32.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.674Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="MongoDB Ops Manager">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="TLS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/12/19/mongodbomtlsauth.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/12/19/mongodbomtlsauth.en/","path":"2020/12/19/mongodbomtlsauth.en/","title":"MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#understanding-different-secure-connections"><span class="nav-number">1.</span> <span class="nav-text">Understanding Different Secure Connections</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#upload-certificates-to-kubernetes-cluster"><span class="nav-number">2.</span> <span class="nav-text">Upload Certificates to Kubernetes Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#create-server-secret"><span class="nav-number">2.1.</span> <span class="nav-text">Create Server Secret</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#create-ca-configmap"><span class="nav-number">2.2.</span> <span class="nav-text">Create CA ConfigMap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#update-user-database-replicasethorizons"><span class="nav-number">3.</span> <span class="nav-text">Update User Database replicaSetHorizons</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up-error"><span class="nav-number">3.1.</span> <span class="nav-text">Error calling ComputeState, Error dialing to connParams, Error checking if rs member is up Error</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#conect-to-userdb"><span class="nav-number">4.</span> <span class="nav-text">Conect to UserDB</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#enable-auth"><span class="nav-number">5.</span> <span class="nav-text">Enable AUTH</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#summary"><span class="nav-number">6.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/12/19/mongodbomtlsauth.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-19 23:45:32" itemprop="dateCreated datePublished" datetime="2020-12-19T23:45:32+08:00">2020-12-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/12/19/mongodbomtlsauth.en/" class="post-meta-item leancloud_visitors" data-flag-title="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/12/19/mongodbomtlsauth.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/12/19/mongodbomtlsauth.en/" data-xid="/2020/12/19/mongodbomtlsauth.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>This is part5, we will use the generated certficates to enable user database TLS and AUTH.</p>
+<p>MongoDB Ops Manager Series:</p>
+<ol type="1">
+<li><a href="/2020/12/19/mongodbopsmanager.en/">Install MongoDB Ops Manager</a></li>
+<li><a href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB ReplicaSet</a></li>
+<li><a href="/2020/12/19/mongodbomexposeservices.en/">Expose UserDB to Public</a></li>
+<li><a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a></li>
+<li><a href="/2020/12/19/mongodbomtlsauth.en/">Enable UserDB TLS and Auth</a></li>
+</ol>
+<span id="more"></span>
+<h1 id="understanding-different-secure-connections">Understanding Different Secure Connections</h1>
+<p>Before we start, look at the following three TLS:</p>
+<ul>
+<li>Secure Connections to Ops Manager</li>
+<li>Secure Connections to Application Database</li>
+<li>Secure Connections to MongoDB Deployments</li>
+</ul>
+<p>A picture is worth a thousand words: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/securedifferentconnections.png" alt="Different Level of Security" /></p>
+<p>What we want is the last one: <code>Enable TLS to MongoDB Deployments</code>. Unfortunately, this configuration cannot be performed through Ops Manger web UI as well. Because we need to "upload" certificate to each server but the UI does not has such capability.</p>
+<p>If you read the Ops Manager document <a target="_blank" rel="noopener" href="https://docs.opsmanager.mongodb.com/current/tutorial/enable-ssl-for-a-deployment/#get-and-install-the-tls-certificate-on-each-mongodb-host"># Enable TLS for a Deployment</a>:</p>
+<blockquote><p>Get and Install the TLS Certificate on Each MongoDB Host</p>
+<p>Acquire a TLS certificate for each host serving a MongoDB process. This certificate must include the FQDN for the hostname of this MongoDB host. The FQDN can be the Common Name or the Subject Alternative Name of this host. You must install this TLS certificate on the MongoDB host.</p>
+</blockquote>
+<p>It's likely that you still don't know how to install the certificate. Actually, what we want is <code>MongoDB Kubernetes Operator</code>'s documentation: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/"># Secure Deployments using TLS</a>.</p>
+<p>By the way, when I first come to this step, I tried to copy the certificate to the statefulset pod by <code>kubectl cp</code>. However, when I <code>kubectl exec</code> to the pod I know it's not feasible: <pre class="line-numbers language-none"><code class="language-none">groups: cannot find name for group ID 2000
+I have no name!@mongo-1:&#x2F;$ cat &gt; ca.crt
+bash: ca.crt: Permission denied
+I have no name!@mongo-1:&#x2F;$ whoami
+whoami: cannot find name for user ID 2000
+I have no name!@mongo-1:&#x2F;$<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> The pod is really weird, login with a username/group <code>2000</code>. I also consider using <code>mount volume</code> to mount the certificate but not have a try because I found the right way.</p>
+<p>Another article for your reference: <a target="_blank" rel="noopener" href="https://developer.ibm.com/technologies/databases/tutorials/secure-mongo-db-enterprise-on-red-hat-openshift/"># Secure MongoDB Enterprise on Red Hat OpenShift</a></p>
+<h1 id="upload-certificates-to-kubernetes-cluster">Upload Certificates to Kubernetes Cluster</h1>
+<h2 id="create-server-secret">Create Server Secret</h2>
+<p>First, rename the four certficates like this:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Save As</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rootca.crt</td>
+<td>ca-pem</td>
+</tr>
+<tr class="even">
+<td>userdbX.pem</td>
+<td>userdb-X-pem</td>
+</tr>
+</tbody>
+</table>
+<p>Tips: End the PEM files with <code>-pem</code> and not <code>.pem</code>. These files shouldn’t have a file extension.</p>
+<p>Three server certificate format: <pre class="line-numbers language-none"><code class="language-none">-----BEGIN CERTIFICATE-----
+...
+... your TLS certificate
+...
+-----END CERTIFICATE-----
+-----BEGIN RSA PRIVATE KEY-----
+...
+... your private key
+...
+-----END RSA PRIVATE KEY----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Comparatively, the <code>rootca.crt</code> only have certficate without private key: <pre class="line-numbers language-none"><code class="language-none">-----BEGIN CERTIFICATE-----
+...
+... your TLS certificate
+...
+-----END CERTIFICATE-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Create a secret to store three server certficates: <pre class="line-numbers language-none"><code class="language-none">$ kubectl create secret generic userdb-cert --from-file&#x3D;userdb-0-pem --from-file&#x3D;userdb-1-pem  --from-file&#x3D;userdb-2-pem -n mongodb
+secret&#x2F;userdb-cert created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<h2 id="create-ca-configmap">Create CA ConfigMap</h2>
+<pre class="line-numbers language-none"><code class="language-none">$ kubectl create configmap custom-ca --from-file&#x3D;ca-pem -n mongodb
+configmap&#x2F;custom-ca created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h1 id="update-user-database-replicasethorizons">Update User Database <code>replicaSetHorizons</code></h1>
+<p>Remember at <a href="/2020/12/19/mongodbomexposeservices.en/">Part 3</a>:</p>
+<table style="width:6%;">
+<colgroup>
+<col style="width: 5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>To solve the problem, we need to use <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a> to specify the public address. However, to use this setting, <code>spec.security.tls</code> must be enabled first: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+      <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">connectivity</span><span class="token punctuation">:</span>
+    <span class="token key atrule">replicaSetHorizons</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb0.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb1.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb2.com:27017"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></td>
+</tr>
+<tr class="even">
+<td>The bad news is that enable TLS is more complicated than I thought before. Here we use self-signed certificates to encrypt the transport layer communication. Four certificates are required: 1 CA certificate and 3 server certificates.</td>
+</tr>
+</tbody>
+</table>
+<p>Now comes to the <code>userdb.yaml</code> and add the <code>security</code> section: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> userdb
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> mongodb
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">members</span><span class="token punctuation">:</span> <span class="token number">3</span>
+  <span class="token key atrule">version</span><span class="token punctuation">:</span> 4.2.2<span class="token punctuation">-</span>ent
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> ReplicaSet
+
+  <span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
+    <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
+  <span class="token key atrule">credentials</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key
+  <span class="token key atrule">security</span><span class="token punctuation">:</span>
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+      <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca
+  <span class="token key atrule">connectivity</span><span class="token punctuation">:</span>
+    <span class="token key atrule">replicaSetHorizons</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb0.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb1.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb2.com:27017"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> <strong>Tips</strong>: the key of <code>replicaSetHorizons</code> ("userdb") is not that important, just keep all the entries have the same key string.</p>
+<p>Apply <code>userdb.yaml</code>: <pre class="line-numbers language-none"><code class="language-none">$ kubectl apply -f userdb.yaml -n mongodb
+mongodb.mongodb.com&#x2F;userdb configured<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updatingdeploymenttls.png" alt="Updating UserDB Deployment" /></p>
+<p>Updating details: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updatingdeploymenttlsdetails.png" alt="Updating Deployment Details" /></p>
+<p>The update needs to be excuted via this path: <code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>.</p>
+<p>The update process takes a long time (~15mins) and pods restart many times. When update success, <code>TLS</code> option in the <code>userdb</code> deployment process UI will become <code>Enabled</code>.</p>
+<p>If you <code>kubectl exec</code> to the pod, the certificate is stored at <code>/mongodb-automation/</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">I have no name!@userdb-0:&#x2F;$ ls -l &#x2F;mongodb-automation&#x2F;
+total 8
+lrwxrwxrwx 1 2000 root   45 Dec 11 06:25 ca.pem -&gt; &#x2F;var&#x2F;lib&#x2F;mongodb-automation&#x2F;secrets&#x2F;ca&#x2F;ca-pem
+drwxr-xr-x 2 2000 root 4096 Dec 11 06:25 files
+-rw-r--r-- 1 2000 root    3 Dec 11 06:25 mongodb-mms-automation-agent.pid
+lrwxrwxrwx 1 2000 root   54 Dec 11 06:25 server.pem -&gt; &#x2F;var&#x2F;lib&#x2F;mongodb-automation&#x2F;secrets&#x2F;certs&#x2F;userdb-0-pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up-error"><code>Error calling ComputeState</code>, <code>Error dialing to connParams</code>, <code>Error checking if rs member is up</code> Error</h2>
+<p>If update failed and the Agent Log shows error: <pre class="line-numbers language-none"><code class="language-none">&lt;userdb-1&gt; [03:29:59.660] Failed to compute states : &lt;userdb-1&gt; [03:29:59.660] Error calling ComputeState : &lt;userdb-1&gt; [03:29:59.660] Error getting fickle state for current state : &lt;userdb-1&gt; [03:29:59.660] Error checking if rs member &#x3D; userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 is up : &lt;userdb-1&gt; [03:29:59.660] Error executing WithClientFor() for cp&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false) connec tMode&#x3D;SingleConnect : &lt;userdb-1&gt; [03:29:59.660] Error checking out client (0x0) for connParam&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false) connectMode&#x3D;SingleConnect : [03:29:59.659] Error dialing to connParams&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR&#x2F;SCRAM-SHA-1]][24], )
+
+Error checking out client (0x0) for connParam&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false) connectMode&#x3D;SingleConnect : [03:32:57.470] Error dialing to connParams&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR&#x2F;SCRAM-SHA-1]][24], )
+
+Error getting client ready for conn params &#x3D; userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false). Informing all requests and disposing of client (0x0). requests&#x3D;[ 0xc001e58780 ] : [03:32:57.470] Error dialing to connParams&#x3D;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local&#x3D;false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR&#x2F;SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR&#x2F;SCRAM-SHA-1]][24], )<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>It's high likely that the certficate is not correct, though the error message has none of certficate's business. Double check that the certificate contains <code>internal endpoints</code>: userdb-0.userdb-svc.mongodb.svc.cluster.local. Get back to the previous step <a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a>, modify <code>[ alt_names ]</code> in <code>userdb&lt;X&gt;.cnf</code> and recreate the server certificates.</p>
+<h1 id="conect-to-userdb">Conect to UserDB</h1>
+<p>Now connect to user database via mongo shell, here is a trick that <code>tlsCAFile</code> is not supported in the connection string, you must specify it by the <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/connection-string/">command-line option</a>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F; --tls --tlsCAFile rootca.crt
+MongoDB shell version v4.4.2
+connecting to: mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
+Implicit session: session &#123; &quot;id&quot; : UUID(&quot;fcbaa78a-21dd-472f-a84f-bf3435bf9088&quot;) &#125;
+MongoDB server version: 4.2.2
+WARNING: shell and server versions do not match
+---
+The server generated these startup warnings when booting:
+2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten]
+2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten] **          See http:&#x2F;&#x2F;dochub.mongodb.org&#x2F;core&#x2F;prodnotes-filesystem
+2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten]
+2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten]
+---
+MongoDB Enterprise userdb:PRIMARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> The prompt's <code>PRIMARY</code> indicates that the cluster works fine! Run <code>rs.conf()</code> and check the <code>horizons</code>: <pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:PRIMARY&gt; rs.conf()
+&#123;
+        &quot;_id&quot; : &quot;userdb&quot;,
+        &quot;version&quot; : 2,
+        &quot;protocolVersion&quot; : NumberLong(1),
+        &quot;writeConcernMajorityJournalDefault&quot; : true,
+        &quot;members&quot; : [
+                &#123;
+                        &quot;_id&quot; : 0,
+                        &quot;host&quot; : &quot;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                        &quot;horizons&quot; : &#123;
+                                &quot;userdb&quot; : &quot;userdb0.com:27017&quot;
+                        &#125;,
+                        &quot;slaveDelay&quot; : NumberLong(0),
+                        &quot;votes&quot; : 1
+                &#125;,
+                &#123;
+                        &quot;_id&quot; : 1,
+                        &quot;host&quot; : &quot;userdb-1.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                        &quot;horizons&quot; : &#123;
+                                &quot;userdb&quot; : &quot;userdb1.com:27017&quot;
+                        &#125;,
+                        &quot;slaveDelay&quot; : NumberLong(0),
+                        &quot;votes&quot; : 1
+                &#125;,
+                &#123;
+                        &quot;_id&quot; : 2,
+                        &quot;host&quot; : &quot;userdb-2.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                        &quot;horizons&quot; : &#123;
+                                &quot;userdb&quot; : &quot;userdb2.com:27017&quot;
+                        &#125;,
+                        &quot;slaveDelay&quot; : NumberLong(0),
+                        &quot;votes&quot; : 1
+                &#125;
+        ],
+...
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h1 id="enable-auth">Enable AUTH</h1>
+<p>Enable AUTH after TLS is pretty easy. Just click the <code>Disabled</code> in the Processes UI and follow the guide. Finally, click the top <code>review &amp; deploy</code> button.</p>
+<p>The final Processes UI: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbreplicasetdone.png" alt="UserDB Deployment Completed" /></p>
+<p>The startup warnings disappear: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F; --tls --tlsCAFile rootca.crt
+MongoDB shell version v4.4.2
+connecting to: mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
+Implicit session: session &#123; &quot;id&quot; : UUID(&quot;5063023a-b76d-4d03-923f-18332e2e7cc9&quot;) &#125;
+MongoDB server version: 4.2.2
+WARNING: shell and server versions do not match
+MongoDB Enterprise userdb:PRIMARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h1 id="summary">Summary</h1>
+<p>This series describe how to deploy MongoDB Ops Manager, and use MongoDB Kubernetes Operator to build a MongoDB ReplicaSet. If you found errors please feel free to leave comments below.</p>
+<p>Thanks for your time!</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="bookmark">Deploy MongoDB Sharded Cluster by Ops Manager</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="bookmark">部署Kubernetes MongoDB Sharded Cluster</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="bookmark">MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/12/mongodbomcreateuserdb/" rel="bookmark">Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/19/mongodbomexposeservices.en/" rel="bookmark">MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/MongoDB-Ops-Manager/" rel="tag"># MongoDB Ops Manager</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/TLS/" rel="tag"># TLS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/19/mongodbomselfsignedcertificates.en/" rel="prev" title="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates">
+                  <i class="fa fa-chevron-left"></i> MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="next" title="部署Kubernetes MongoDB Sharded Cluster">
+                  部署Kubernetes MongoDB Sharded Cluster <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/12/19/mongodbomtlsauth.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

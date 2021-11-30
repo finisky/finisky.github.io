@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="为了精简hexo安装的npm modules，用rm -rf node_modules&#x2F;删除了已安装的包，再npm install把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，hexo g时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo升级插件版本解决兼容性问题">
+<meta property="og:url" content="https://finisky.github.io/2020/07/18/updatehexoplugin/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="为了精简hexo安装的npm modules，用rm -rf node_modules&#x2F;删除了已安装的包，再npm install把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，hexo g时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-18T11:32:15.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.694Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="NexT">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/07/18/updatehexoplugin/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/07/18/updatehexoplugin/","path":"2020/07/18/updatehexoplugin/","title":"Hexo升级插件版本解决兼容性问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hexo升级插件版本解决兼容性问题 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo-g%E5%A4%B1%E8%B4%A5%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">hexo g失败错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpackage%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">查看package最新版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9package.json"><span class="nav-number">3.</span> <span class="nav-text">修改package.json</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/07/18/updatehexoplugin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo升级插件版本解决兼容性问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-18 19:32:15" itemprop="dateCreated datePublished" datetime="2020-07-18T19:32:15+08:00">2020-07-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/07/18/updatehexoplugin/" class="post-meta-item leancloud_visitors" data-flag-title="Hexo升级插件版本解决兼容性问题" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/07/18/updatehexoplugin/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/07/18/updatehexoplugin/" data-xid="/2020/07/18/updatehexoplugin/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>为了精简hexo安装的npm modules，用<code>rm -rf node_modules/</code>删除了已安装的包，再<code>npm install</code>把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，<code>hexo g</code>时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。</p>
+<span id="more"></span>
+<h1 id="hexo-g失败错误">hexo g失败错误</h1>
+<p>错误信息如下： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo d -g
+INFO  Start processing
+FATAL Something&#39;s wrong. Maybe you can find the solution here: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;troubleshooting.html
+TypeError: Cannot read property &#39;length&#39; of undefined
+    at module.exports (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo-related-popular-posts&#x2F;lib&#x2F;cache.js:26:77)
+    at Hexo.hexo.extend.filter.register (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo-related-popular-posts&#x2F;index.js:171:34)
+    at Hexo.tryCatcher (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;util.js:16:23)
+    at Hexo.&lt;anonymous&gt; (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;method.js:15:34)
+    at Promise.each.filter (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo&#x2F;lib&#x2F;extend&#x2F;filter.js:62:52)
+    at tryCatcher (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;util.js:16:23)
+    at Object.gotValue (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;reduce.js:166:18)
+    at Object.gotAccum (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;reduce.js:155:25)
+    at Object.tryCatcher (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;util.js:16:23)
+    at Promise._settlePromiseFromHandler (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;promise.js:547:31)
+    at Promise._settlePromise (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;promise.js:604:18)
+    at Promise._settlePromiseCtx (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;promise.js:641:10)
+    at _drainQueueStep (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;async.js:97:12)
+    at _drainQueue (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;async.js:86:9)
+    at Async._drainQueues (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;async.js:102:5)
+    at Immediate.Async.drainQueues (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;async.js:15:14)
+    at runCallback (timers.js:794:20)
+    at tryOnImmediate (timers.js:752:5)
+    at processImmediate [as _immediateCallback] (timers.js:729:5)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>看起来像是hexo-related-popular-posts插件中的一个变量未定义，搜了一下，还是因为hexo升级后有些变量修改了位置导致变量不存在。当然可以通过修改源码的方式来解决问题，不过更好的做法是升级这些包到最新版本。</p>
+<h1 id="查看package最新版本">查看package最新版本</h1>
+<p>想升级版本，首先得知道这些包的最新版本是什么。</p>
+<p><code>npm outdated</code>可以用来查看已安装包的最新可用版本，可作为升级版本的参考，文档如下： <a target="_blank" rel="noopener" href="https://docs.npmjs.com/cli-commands/outdated.html">https://docs.npmjs.com/cli-commands/outdated.html</a></p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ npm outdated
+Package                     Current  Wanted  Latest  Location
+hexo-related-popular-posts    4.0.0   3.0.6   4.0.0  hexo-site
+hexo-deployer-git             1.0.0   1.0.0   2.1.0  hexo-site
+hexo-generator-archive        0.1.5   0.1.5   1.0.0  hexo-site
+hexo-generator-category       0.1.3   0.1.3   1.0.0  hexo-site
+hexo-generator-index          0.2.1   0.2.1   1.0.0  hexo-site
+hexo-generator-sitemap        1.2.0   1.2.0   2.0.0  hexo-site
+hexo-generator-tag            0.2.0   0.2.0   1.0.0  hexo-site
+hexo-server                   0.3.3   0.3.3   1.0.0  hexo-site<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>一看hexo-related-popular-posts已经被标红了，Current版本已经高于了Wanted，出现兼容性问题并不意外。标红的含义：</p>
+<blockquote><ul>
+<li>Red means there’s a newer version matching your semver requirements, so you should update now.</li>
+<li>Yellow indicates that there’s a newer version above your semver requirements (usually new major, or new 0.x minor) so proceed with caution.</li>
+</ul>
+</blockquote>
+<h1 id="修改package.json">修改package.json</h1>
+<p>知道了最新版本是什么，看看当前package.json的配置： <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"hexo-site"</span><span class="token punctuation">,</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"hexo"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"4.0.0"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"constantinople"</span><span class="token operator">:</span> <span class="token string">"^4.0.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo"</span><span class="token operator">:</span> <span class="token string">"^4.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-deployer-git"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-archive"</span><span class="token operator">:</span> <span class="token string">"^0.1.5"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-baidu-sitemap"</span><span class="token operator">:</span> <span class="token string">"^0.1.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-category"</span><span class="token operator">:</span> <span class="token string">"^0.1.3"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-index"</span><span class="token operator">:</span> <span class="token string">"^0.2.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-sitemap"</span><span class="token operator">:</span> <span class="token string">"^1.2.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-tag"</span><span class="token operator">:</span> <span class="token string">"^0.2.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-lazyload-image"</span><span class="token operator">:</span> <span class="token string">"^1.0.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-related-popular-posts"</span><span class="token operator">:</span> <span class="token string">"^3.0.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-renderer-kramed"</span><span class="token operator">:</span> <span class="token string">"^0.1.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-renderer-stylus"</span><span class="token operator">:</span> <span class="token string">"^1.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-server"</span><span class="token operator">:</span> <span class="token string">"^0.3.1"</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>版本号前的“^”又是什么意思？参考：<a target="_blank" rel="noopener" href="https://github.com/npm/node-semver#ranges">https://github.com/npm/node-semver#ranges</a></p>
+<blockquote><p>Caret Ranges <code>^1.2.3</code> <code>^0.2.5</code> <code>^0.0.4</code></p>
+<p>Allows changes that do not modify the left-most non-zero element in the <code>[major, minor, patch]</code> tuple. In other words, this allows patch and minor updates for versions <code>1.0.0</code> and above, patch updates for versions <code>0.X &gt;=0.1.0</code>, and no updates for versions <code>0.0.X</code>.</p>
+<p>Many authors treat a <code>0.x</code> version as if the <code>x</code> were the major "breaking-change" indicator.</p>
+</blockquote>
+<p>“^”代表最左的非0版本号不会自动升级，因为它可能代表一个breaking change。</p>
+<p>好了，升级hexo到4.2.1，升级hexo-related-popular-posts到4.0.0即解决了报错问题，顺手把其他插件也都升级了： <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"hexo-site"</span><span class="token punctuation">,</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.0.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"hexo"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"4.2.1"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"constantinople"</span><span class="token operator">:</span> <span class="token string">"^4.0.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo"</span><span class="token operator">:</span> <span class="token string">"^4.2.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-deployer-git"</span><span class="token operator">:</span> <span class="token string">"^2.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-archive"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-baidu-sitemap"</span><span class="token operator">:</span> <span class="token string">"^0.1.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-category"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-index"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-sitemap"</span><span class="token operator">:</span> <span class="token string">"^2.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-generator-tag"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-lazyload-image"</span><span class="token operator">:</span> <span class="token string">"^1.0.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-related-popular-posts"</span><span class="token operator">:</span> <span class="token string">"^4.0.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-renderer-kramed"</span><span class="token operator">:</span> <span class="token string">"^0.1.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-renderer-stylus"</span><span class="token operator">:</span> <span class="token string">"^1.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"hexo-server"</span><span class="token operator">:</span> <span class="token string">"^1.0.0"</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/commonmarktostandardmarkdown/" rel="bookmark">段落和列表中间添加空行的脚本</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/customizecategorybyextension/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局(简洁版)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/24/customizedcategory/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/delayautoadsloading.en/" rel="bookmark">Delay Loading Google Auto Ads</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/delayautoadsloading/" rel="bookmark">延迟加载Google Auto Ads加速Hexo</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/NexT/" rel="tag"># NexT</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/13/nineninesix/" rel="prev" title="996是自己选择的福报">
+                  <i class="fa fa-chevron-left"></i> 996是自己选择的福报
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/22/cleanuplinuxdisk/" rel="next" title="清理Linux的磁盘使用空间">
+                  清理Linux的磁盘使用空间 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/07/18/updatehexoplugin/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

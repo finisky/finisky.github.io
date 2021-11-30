@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如Interface or abstract class? 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="interface还是abstract class?">
+<meta property="og:url" content="https://finisky.github.io/2019/12/15/interfaceorabstractclass/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如Interface or abstract class? 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-15T03:36:10.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.666Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Software Engineering">
+<meta property="article:tag" content="OOP">
+<meta property="article:tag" content="Design Pattern">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2019/12/15/interfaceorabstractclass/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2019/12/15/interfaceorabstractclass/","path":"2019/12/15/interfaceorabstractclass/","title":"interface还是abstract class?"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>interface还是abstract class? | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#interface%E4%B8%8Eabstract-class%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">interface与abstract class区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BB%A5%E7%94%A8interface"><span class="nav-number">2.</span> <span class="nav-text">滥用interface</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2019/12/15/interfaceorabstractclass/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          interface还是abstract class?
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-12-15 11:36:10" itemprop="dateCreated datePublished" datetime="2019-12-15T11:36:10+08:00">2019-12-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Software-Engineering/" itemprop="url" rel="index"><span itemprop="name">Software Engineering</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2019/12/15/interfaceorabstractclass/" class="post-meta-item leancloud_visitors" data-flag-title="interface还是abstract class?" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2019/12/15/interfaceorabstractclass/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2019/12/15/interfaceorabstractclass/" data-xid="/2019/12/15/interfaceorabstractclass/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1165332/interface-or-abstract-class">Interface or abstract class?</a> 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。</p>
+<span id="more"></span>
+<h1 id="interface与abstract-class区别">interface与abstract class区别</h1>
+<p>在语法上的几点区别：</p>
+<ol type="1">
+<li>abstract class可以包含成员变量，保存类的状态。</li>
+<li>abstract class可以有方法实现，interface不能有实现。 abstract class中的实现可以用于派生类的代码复用，起到util/helper类(anti-pattern)的作用。</li>
+<li>C#用interface完成“多继承”的功能，一个类可以实现多个interface，但只能继承一个abstract class。</li>
+</ol>
+<p>而选用interface或abstract class不应从语法实现的层面思考，更应关注设计中的抽象。因此二者最重要的区别在于：</p>
+<p><strong>abstract class代表“是一种”(a kind of)关系，而interface只定义它能做什么的外围功能。二者的区别有点类似继承和聚合的关系。</strong></p>
+<p>举个例子。Cat和Bird都是一种Animal，都有weight(体重)属性，此时，使用abstract class更合适些，同时将weight也置于abstract class中以复用。但会不会飞，Fly()实现成IFly interface更合理，因为Cat不会飞，只有Bird实现IFly即可。</p>
+<h1 id="滥用interface">滥用interface</h1>
+<p>顺嘴提下滥用interface的现象。曾见过一个项目中的所有类都配上了一个特有的interface，"I+ClassName"式的interface遍布整个项目。乍一看似乎挺规整，仔细一看全是无效操作。所谓“一顿操作猛如虎，仔细一看原地杵”，甚至还不如原地杵：如此之多本不该存在的interface，增加了额外的抽象和开销，极影响可读性。举例说明，如何看待这样的一个"interface"？</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> IGetSpecificServiceRankScore
+<span class="token punctuation">&#123;</span>
+    <span class="token return-type class-name"><span class="token keyword">double</span></span> <span class="token function">GetSpecificServiceRankScore</span><span class="token punctuation">(</span><span class="token keyword">enum</span> <span class="token class-name">serviceType</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> maxReturnNum<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">double</span></span> threshold1<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">double</span></span> threshold2<span class="token punctuation">,</span> <span class="token class-name">List<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> blackList<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上述interface的作者犯了教条主义错误，没有理解“面向interface编程”和依赖倒置的意义。有如下问题：</p>
+<ol type="1">
+<li>interface的定义需要通用，具有普适性，从而可以有多个不同的实现。如此“一个萝卜一个坑”式的定义，显然不太可能会有多个不同实现，那么也就失去了interface的意义。</li>
+<li>即使有多个不同的实现，实际开发中笔者不只一次看到interface随着实现一并修改的情况。实现可以增加或修改，interface不能天天改。假设interface已有n个实现，此时为了增加第n+1个实现修改了接口定义，那么就要改动所有n个实现和增加第n+1个实现，显然带来了额外的开发成本。</li>
+</ol>
+<p>就此例而言，可做如下改进： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> IGetServiceRankScore
+<span class="token punctuation">&#123;</span>
+    <span class="token return-type class-name"><span class="token keyword">double</span></span> <span class="token function">GetServiceRankScore</span><span class="token punctuation">(</span><span class="token keyword">enum</span> <span class="token class-name">serviceType</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>可以看下C# System命名空间中IDisposable和IComparable的定义，简明、通用。虽然实际业务逻辑相对复杂，但从逻辑抽象层次方面抽象interface，还是应该遵从通用、普适的原则，取到可用和通用的折衷。 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IDisposable</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Dispose</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IComparable</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token return-type class-name"><span class="token keyword">int</span></span> <span class="token function">CompareTo</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">object</span></span> obj<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>依赖倒置原则无可争议，但在复杂业务逻辑实践中我更推崇“先实现后抽象”的做法。即程序中先有多个不同的实现(至少两个)，然后根据这些实现通用的内容抽象出一个通用的interface。原因在于在开始设计和实现之时，大部分人其实想不明白这个接口的输入输出是什么，与其如此，不如先摸着石头过河，让现实告诉你正确的路径。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/10/15/factorydiff/" rel="bookmark">工厂模式和抽象工厂模式的区别</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/12/09/interfacederivedparameter/" rel="bookmark">参数或返回值为派生类的接口或抽象方法</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/04/solid/" rel="bookmark">软件设计中的SOLID原则</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/11/30/staticandutil/" rel="bookmark">谈谈static和util/helper类</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/04/14/computerquotes/" rel="bookmark">计算机界有趣的名言金句</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Software-Engineering/" rel="tag"># Software Engineering</a>
+              <a href="/tags/OOP/" rel="tag"># OOP</a>
+              <a href="/tags/Design-Pattern/" rel="tag"># Design Pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/12/11/migrategithubpages/" rel="prev" title="迁移Hexo博客到GitHub Pages">
+                  <i class="fa fa-chevron-left"></i> 迁移Hexo博客到GitHub Pages
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/12/18/seleniumpageloadstrategy/" rel="next" title="selenium禁止页面加载javascript">
+                  selenium禁止页面加载javascript <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2019/12/15/interfaceorabstractclass/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

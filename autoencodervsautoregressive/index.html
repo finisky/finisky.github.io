@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个autoencoder，另一个是autoregressive自回归模型。它们是什么意思，又有什么区别？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Autoencoding和Autoregressive的区别">
+<meta property="og:url" content="https://finisky.github.io/autoencodervsautoregressive/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个autoencoder，另一个是autoregressive自回归模型。它们是什么意思，又有什么区别？">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-18T04:07:32.000Z">
+<meta property="article:modified_time" content="2021-11-25T10:38:19.089Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="NLU">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/autoencodervsautoregressive/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/autoencodervsautoregressive/","path":"autoencodervsautoregressive/","title":"Autoencoding和Autoregressive的区别"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Autoencoding和Autoregressive的区别 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#language-model"><span class="nav-number">1.</span> <span class="nav-text">Language Model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#autoregressive-model"><span class="nav-number">2.</span> <span class="nav-text">Autoregressive Model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#autoencoding-model"><span class="nav-number">3.</span> <span class="nav-text">Autoencoding Model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%8C%BA%E5%88%AB%E4%B8%8E%E6%94%B9%E8%BF%9B"><span class="nav-number">4.</span> <span class="nav-text">模型区别与改进</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/autoencodervsautoregressive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Autoencoding和Autoregressive的区别
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-07-18 12:07:32" itemprop="dateCreated datePublished" datetime="2021-07-18T12:07:32+08:00">2021-07-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-25 18:38:19" itemprop="dateModified" datetime="2021-11-25T18:38:19+08:00">2021-11-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/autoencodervsautoregressive/" class="post-meta-item leancloud_visitors" data-flag-title="Autoencoding和Autoregressive的区别" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/autoencodervsautoregressive/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/autoencodervsautoregressive/" data-xid="/autoencodervsautoregressive/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个<code>autoencoder</code>，另一个是<code>autoregressive</code>自回归模型。它们是什么意思，又有什么区别？</p>
+<span id="more"></span>
+<p>Huggingface有个 <a target="_blank" rel="noopener" href="https://huggingface.co/transformers/summary.html"># 模型总结</a> 写得不错。</p>
+<h1 id="language-model">Language Model</h1>
+<p>在解释模型类型前，先来看下语言模型的定义。</p>
+<blockquote>
+<p>A statistical language model is a probability distribution over sequences of words. Given such a sequence, say of length m, it assigns a probability <span class="math inline">\(P(w_{1},\ldots ,w_{m})\)</span> to the whole sequence.</p>
+</blockquote>
+<p>统计语言模型就是根据给定语料，来估计概率分布<span class="math inline">\(P(w_{1},\ldots ,w_{m})\)</span>的一个模型。计算这个概率分布可以用贝叶斯公式和链式法则完成，通用表达式如下：</p>
+<p><span class="math display">\[P(w_{1},\ldots ,w_{m})=\prod_{i=1}^{m}P(w_i|w_1,w_2, \dots, w_{i-1})\]</span></p>
+<p>可以看出这个语言模型的计算是单向的，假设后面某token出现的概率仅与在此token之前出现的token概率相关。由此引出自回归模型Autoregressive Model。</p>
+<p>上式的计算会存在语料稀疏和模型计算复杂度高的问题，如果我们考虑马尔可夫假设：当前token出现的概率仅与之前出现的n个token相关，那就是n-gram模型。</p>
+<p>再提句题外话，我印象中的语言模型一直都是n-gram类的统计模型，在最初接触深度神经网络的语言模型时很不理解神经网络是如何与概率分布联系起来的，一个神经网络为什么是一个语言模型？很长时间后才明白可以把神经网络语言模型当成一个黑盒，模型输入还是前n-1个token，在最后一层模型输出时用softmax函数将token预测的概率归一化即可。本质上是把整个概率分布用一个nn模型来表示而已。</p>
+<h1 id="autoregressive-model">Autoregressive Model</h1>
+<blockquote>
+<p>Autoregressive models are pretrained on the classic language modeling task: guess the next token having read all the previous ones.</p>
+</blockquote>
+<p>自回归模型即在传统的语言模型上训练，给定之前的所有token，猜想下一个token是什么，这也是一个自回归模型的训练任务。可以看出自回归模型是单向的语言模型，适合用于文本生成。典型的自回归模型：GPT。</p>
+<h1 id="autoencoding-model">Autoencoding Model</h1>
+<blockquote>
+<p>Autoencoding models are pretrained by corrupting the input tokens in some way and trying to reconstruct the original sentence.</p>
+</blockquote>
+<p>自编码模型是把输入token打乱，学习出一个中间表示，再用这个中间表示还原出原始的序列。为了让学习出的中间表示更通用，常常会在输入中引入一些噪声，增加重建输入的难度，这种模型也叫做<code>denoising autoencoder</code>。自编码模型往往会构建一个双向上下文的表示，因此天然适用于文本分类等任务。典型自编码模型：BERT。</p>
+<p>Masked Language Model (MLM)和Next Sentence Prediction (NSP)就是最典型的自编码预训练任务。BERT在MLM上的训练，就是通过把输入进行一定的掩盖，再重建恢复原始token序列的过程。</p>
+<h1 id="模型区别与改进">模型区别与改进</h1>
+<blockquote>
+<p>Note that the only difference between autoregressive models and autoencoding models is in the way the model is pretrained. Therefore, the same architecture can be used for both autoregressive and autoencoding models.</p>
+</blockquote>
+<p>自编码和自回归模型的主要区别是它们预训练的任务。同样的模型结构既可以是自编码模型也可以是自回归模型。</p>
+<p>基于这些，就可以看出之后的模型有了哪些改进。比如UniLM，基于BERT，把三种不同的预训练任务结合在一起训练了同一个模型，从而可以使模型既可以做文本预测 (NLU)，也可以做文本生成 (NLG)。</p>
+<p>再例如BART，是一个<code>denosing autoencoder</code>，使用bidirectional encoder与left-to-right autoregressive decoder构建模型。在预训练时，除了MLM，还用了多种不同corrupting输入文档的任务：如删除token，打乱token输入次序，文本旋转和文本填空等方式。BART也能同时用于NLU和NLG，但它天然更适合做NLG的任务，毕竟是个seq2seq的模型。</p>
+<p>参考：</p>
+<ul>
+<li>https://www.machinecurve.com/index.php/2020/12/29/differences-between-autoregressive-autoencoding-and-sequence-to-sequence-models-in-machine-learning/</li>
+<li>https://en.wikipedia.org/wiki/Language_model</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/01/pretrainchinesegpt/" rel="bookmark">中文GPT2预训练实战</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/nucleussampling/" rel="bookmark">Nucleus Sampling与文本生成中的不同解码策略比较</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/NLU/" rel="tag"># NLU</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/commonmarktostandardmarkdown/" rel="prev" title="段落和列表中间添加空行的脚本">
+                  <i class="fa fa-chevron-left"></i> 段落和列表中间添加空行的脚本
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/changestreamcauseserverrestart.en/" rel="next" title="MongoDB Change Stream Makes the Cluster Down">
+                  MongoDB Change Stream Makes the Cluster Down <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/autoencodervsautoregressive/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

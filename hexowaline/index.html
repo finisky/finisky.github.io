@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：  Disqus: 好用好配置，但国内访问不了（弃用原因） Valine: 好用好配置，但存在 # 安全性问题 Github issue: 应该可用，没有亲自尝试 Remark42: 自行部署，但对于htt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo使用Waline评论系统">
+<meta property="og:url" content="https://finisky.github.io/hexowaline/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：  Disqus: 好用好配置，但国内访问不了（弃用原因） Valine: 好用好配置，但存在 # 安全性问题 Github issue: 应该可用，没有亲自尝试 Remark42: 自行部署，但对于htt">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-06-28T16:22:59.000Z">
+<meta property="article:modified_time" content="2021-09-26T10:53:37.462Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="NexT">
+<meta property="article:tag" content="Hexo Extension">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/hexowaline/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/hexowaline/","path":"hexowaline/","title":"Hexo使用Waline评论系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hexo使用Waline评论系统 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEwaline"><span class="nav-number">1.</span> <span class="nav-text">配置Waline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0next%E5%88%B0v8.5.0"><span class="nav-number">2.</span> <span class="nav-text">更新NexT到v8.5.0</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/hexowaline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo使用Waline评论系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-06-29 00:22:59" itemprop="dateCreated datePublished" datetime="2021-06-29T00:22:59+08:00">2021-06-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-09-26 18:53:37" itemprop="dateModified" datetime="2021-09-26T18:53:37+08:00">2021-09-26</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/hexowaline/" class="post-meta-item leancloud_visitors" data-flag-title="Hexo使用Waline评论系统" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/hexowaline/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/hexowaline/" data-xid="/hexowaline/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：</p>
+<ul>
+<li>Disqus: 好用好配置，但国内访问不了（弃用原因）</li>
+<li>Valine: 好用好配置，但存在 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985"># 安全性问题</a></li>
+<li>Github issue: 应该可用，没有亲自尝试</li>
+<li>Remark42: 自行部署，但对于https网站需要一个可用域名</li>
+</ul>
+<p>我对评论系统的需求：</p>
+<ul>
+<li>用户评论方便：支持匿名评论，不强制登录，降低用户评论门槛</li>
+<li>数据可迁移：将来如果切换到其他评论系统比较方便</li>
+<li>不要求独立域名</li>
+<li>无安全问题</li>
+</ul>
+<p>这几条限制加上之后，可选项也就不多了，最终选择了Waline。<strong>本文所用版本：Hexo v5.4.0，NexT v8.5.0。</strong></p>
+<span id="more"></span>
+<h1 id="配置waline">配置Waline</h1>
+<p>上文提到了Valine有 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985"># 安全性问题</a>，简单说就是serverless架构导致前端直接访问存储，从而存在数据暴露风险。而Waline解决问题的方法是加了一层，使用<code>Vercel</code>部署了一个 webapp 从而隔离了前端和存储，避免了安全问题。但部署也略复杂一些，server和client都要部署。</p>
+<p>服务端的配置不再多说，按照 <a target="_blank" rel="noopener" href="https://waline.js.org/en/guide/get-started.html"># 官方文档</a> 步骤一步步来即可。如果没用过Vercel的话，在这一步可能会有一点卡壳。不过也是通过这次配置发现了这么个有趣的免费serve webapp的网站 :-)，这暂不展开。</p>
+<p>客户端的配置说起来简单，就是需要把一段js嵌入到需要评论的页面中去。第一反应是看Hexo的NexT主题是否天然支持Waline，答案是否定的。搜了一下发现Waline的作者给NexT提过PR，但并未被采纳：</p>
+<p>https://github.com/next-theme/hexo-theme-next/pull/147</p>
+<blockquote><p>Thanks for your contribution. Unfortunately, we cannot accept any comment systems related to Leancloud or Valine until we have thoroughly investigated the attack against Valine that occurred a few days ago. Ensuring user data security and privacy protection is our consistent pursuit, and we are planning to remove Valine in the next version. Maybe you can make your comment system into a third-party plug-in like this: <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-next-valine">https://github.com/next-theme/hexo-next-valine</a> And submit a pull request here: <a target="_blank" rel="noopener" href="https://github.com/next-theme/awesome-next#comment">https://github.com/next-theme/awesome-next#comment</a></p>
+</blockquote>
+<p>好了，那就用第三方的插件, <span class="citation" data-cites="waline/hexo-next">[@waline/hexo-next]</span>(https://www.npmjs.com/package/<span class="citation" data-cites="waline/hexo-next">@waline/hexo-next</span>) 。结果使用<code>npm install</code>在Hexo目录安装后发现并不生效，运行<code>hexo s</code>出现如下错误：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo s
+INFO  Validating config
+INFO  Start processing
+INFO  Hexo is running at http:&#x2F;&#x2F;localhost:5000 . Press Ctrl+C to stop.
+Unhandled rejection Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig) [Line 41, Column 16]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig) [Line 54, Column 17]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;head&#x2F;head-unique.swig) [Line 10, Column 23]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig) [Line 3, Column 3]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;header&#x2F;index.swig) [Line 6, Column 15]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;header&#x2F;sub-menu.swig) [Line 2, Column 29]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;header&#x2F;sub-menu.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig) [Line 5, Column 3]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig) [Line 9, Column 12]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;comments.swig) [Line 3, Column 14]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_partials&#x2F;languages.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_third-party&#x2F;math&#x2F;index.swig) [Line 4, Column 16]
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;post.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;_third-party&#x2F;quicklink.swig)
+  Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout&#x2F;inject&#x2F;bodyEnd&#x2F;waline.swig) [Line 5, Column 15]
+  Error: Unable to call &#96;next_data&#96;, which is undefined or falsey
+    at Object._prettifyError (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;nunjucks&#x2F;src&#x2F;lib.js:36:11)
+    at &#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;nunjucks&#x2F;src&#x2F;environment.js:563:19
+    at Template.root [as rootRenderFunc] (eval at _compile (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;nunjucks&#x2F;src&#x2F;environment.js:633:18), &lt;anonymous&gt;:45:3)
+    at Template.render (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;nunjucks&#x2F;src&#x2F;environment.js:552:10)
+    at &#x2F;home&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;scripts&#x2F;renderer.js:32:29
+    at _View._compiled (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo&#x2F;lib&#x2F;theme&#x2F;view.js:136:50)
+    at _View.render (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo&#x2F;lib&#x2F;theme&#x2F;view.js:39:17)
+    at &#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo&#x2F;lib&#x2F;hexo&#x2F;index.js:64:21
+    at tryCatcher (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;util.js:16:23)
+    at &#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;bluebird&#x2F;js&#x2F;release&#x2F;method.js:15:34
+    at RouteStream._read (&#x2F;home&#x2F;finisky&#x2F;node_modules&#x2F;hexo&#x2F;lib&#x2F;hexo&#x2F;router.js:47:5)
+    at RouteStream.Readable.read (node:internal&#x2F;streams&#x2F;readable:483:10)
+    at resume_ (node:internal&#x2F;streams&#x2F;readable:981:12)
+    at processTicksAndRejections (node:internal&#x2F;process&#x2F;task_queues:83:21)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>看起来是找不到swig模板文件，感觉有点莫名其妙。后来想自己用Hexo扩展写个 script注入这些代码，但发现如果不改模板文件还不太容易实现。</p>
+<h1 id="更新next到v8.5.0">更新NexT到v8.5.0</h1>
+<p>最后找到了问题的根源，我用的是 NexT v7.8.0。<code>git log</code>看了下最新的代码已经是去年的了。再搜索发现了个更匪夷所思的事情，我发现了两个repo: https://github.com/theme-next/hexo-theme-next 和 https://github.com/next-theme/hexo-theme-next</p>
+<p>而且前者在Google中的排名更高，Star更多。但再一看二者的最新版本，下面的居然是 v8.5.0。研究了半天终于在这找到了区别：</p>
+<p>https://github.com/next-theme/hexo-theme-next/issues/36</p>
+<p>https://github.com/next-theme/hexo-theme-next/issues/4#issuecomment-626205848</p>
+<blockquote><ol type="1">
+<li><p>简单来说，问题就是 theme-next 团队的 owner 始终拒绝向其它任何团队成员提供足够的权限，且 owner 本人自 2019 年 10 月起已连续半年不在线，导致其它活跃的团队成员无法管理仓库，也无法邀请新的成员。<br />
+由于对 theme-next 团队的未来不抱有期望，我作为 theme-next 的主要贡献者，自 2020 年 4 月起停止为旧的仓库贡献代码，并创建了新的组织，以确保维护工作正常进行。</p></li>
+<li><p>只要能够收到足够多的 Bugfix / Feature Request，每月更新肯定不是问题。</p></li>
+<li><p>目前已经发布的版本在这里： <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next/releases">https://github.com/next-theme/hexo-theme-next/releases</a><br />
+v8.0.0 版本计划在 Hexo 5.0 版本后发布。</p></li>
+</ol>
+</blockquote>
+<p>好了，问题变成了要把v7.8.0的NexT更新到v8.5.0，但由于两个repo是独立的，只能手动更新<code>_config.yml</code>。而且更大的麻烦在于如果之前直接修改过模板源码，升级版本就更是费劲。</p>
+<p>按照官方推荐的方式更新到v8.5.0： https://theme-next.js.org/docs/getting-started/upgrade.html</p>
+<p>然后一切就简单了，再在Hexo目录安装<code>@waline/hexo-next</code>，<code>hexo clean &amp; hexo g</code>一次通过，效果直接看评论区。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/customizecategorybyextension/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局(简洁版)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/simplestblogroll.en/" rel="bookmark">Customize Hexo Blogroll Page</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/simplestblogroll/" rel="bookmark">最简单的Hexo友情链接页面定制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/commonmarktostandardmarkdown/" rel="bookmark">段落和列表中间添加空行的脚本</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/24/customizedcategory/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/NexT/" rel="tag"># NexT</a>
+              <a href="/tags/Hexo-Extension/" rel="tag"># Hexo Extension</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/customizecategorybyextension/" rel="prev" title="Hexo添加自定义分类菜单项并定制页面布局(简洁版)">
+                  <i class="fa fa-chevron-left"></i> Hexo添加自定义分类菜单项并定制页面布局(简洁版)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/beijingbeefnoodles/" rel="next" title="两家网红牛肉面">
+                  两家网红牛肉面 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/hexowaline/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

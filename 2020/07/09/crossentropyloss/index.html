@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="熵，交叉熵，KL散度公式与计算实例">
+<meta property="og:url" content="https://finisky.github.io/2020/07/09/crossentropyloss/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-09T08:49:42.000Z">
+<meta property="article:modified_time" content="2021-11-11T08:55:39.199Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="pytorch">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/07/09/crossentropyloss/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/07/09/crossentropyloss/","path":"2020/07/09/crossentropyloss/","title":"熵，交叉熵，KL散度公式与计算实例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>熵，交叉熵，KL散度公式与计算实例 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%86%B5entropy"><span class="nav-number">1.</span> <span class="nav-text">熵(Entropy)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%8E%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">代码与实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E7%86%B5relative-entropy"><span class="nav-number">2.</span> <span class="nav-text">相对熵(Relative Entropy)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%8E%E5%AE%9E%E4%BE%8B-1"><span class="nav-number">2.1.</span> <span class="nav-text">代码与实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5cross-entropy"><span class="nav-number">3.</span> <span class="nav-text">交叉熵(Cross Entropy)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%8E%E5%AE%9E%E4%BE%8B-2"><span class="nav-number">3.1.</span> <span class="nav-text">代码与实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">交叉熵损失函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/07/09/crossentropyloss/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          熵，交叉熵，KL散度公式与计算实例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-09 16:49:42" itemprop="dateCreated datePublished" datetime="2020-07-09T16:49:42+08:00">2020-07-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-11 16:55:39" itemprop="dateModified" datetime="2021-11-11T16:55:39+08:00">2021-11-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/07/09/crossentropyloss/" class="post-meta-item leancloud_visitors" data-flag-title="熵，交叉熵，KL散度公式与计算实例" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/07/09/crossentropyloss/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/07/09/crossentropyloss/" data-xid="/2020/07/09/crossentropyloss/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。</p>
+<span id="more"></span>
+<h1 id="熵entropy">熵(Entropy)</h1>
+<p>此处为方便讨论及与后续实例呼应，所有随机变量均为离散随机变量。</p>
+<p>定义随机变量x在概率分布p的熵： <span class="math display">\[H(p)=-\sum_{x}p(x) \log p(x)\]</span></p>
+<h2 id="代码与实例">代码与实例</h2>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
+
+<span class="token comment"># Entropy</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+
+Hp <span class="token operator">=</span> <span class="token operator">-</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"H(p) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Hp<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+dist_p <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch H(p) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>dist_p<span class="token punctuation">.</span>entropy<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果： <pre class="line-numbers language-none"><code class="language-none">H(p) &#x3D; 1.2798542258336676
+Torch H(p) &#x3D; 1.2798542976379395<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<h1 id="相对熵relative-entropy">相对熵(Relative Entropy)</h1>
+<p>相对熵(Relative Entropy)，也称KL散度 (Kullback–Leibler divergence)。</p>
+<p>p(x)，q(x)为随机变量x的两个概率分布，定义p对q的相对熵(KL散度)为： <span class="math display">\[D(p||q)=\sum_{x}p(x) \log \frac{p(x)}{q(x)}\]</span></p>
+<p>KL散度在p(x)和q(x)相同时取到最小值0，两个概率分布越相似，则KL散度越小。</p>
+<p>注意，<span class="math inline">\(D(p||q) != D(q||p)\)</span>，也不满足三角不等式。</p>
+<p>假设p(x)是随机变量的真实分布，q(x)是模型预测的分布，则可以用KL散度作为分类问题的Loss Function，通过训练使预测分布接近于真实分布。</p>
+<h2 id="代码与实例-1">代码与实例</h2>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
+
+<span class="token comment"># KL divergence</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.7</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">]</span>
+
+Dpq <span class="token operator">=</span> <span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">/</span> q<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"D(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Dpq<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+dist_p <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span>
+dist_q <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>q<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch D(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>kl<span class="token punctuation">.</span>kl_divergence<span class="token punctuation">(</span>dist_p<span class="token punctuation">,</span> dist_q<span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果： <pre class="line-numbers language-none"><code class="language-none">D(p, q) &#x3D; 0.43895782244378423
+Torch D(p, q) &#x3D; 0.4389578104019165<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<h1 id="交叉熵cross-entropy">交叉熵(Cross Entropy)</h1>
+<p>对KL散度进行变形： <span class="math display">\[D(p||q)=\sum_{x}p(x) \log p(x) - \sum_{x}p(x) \log q(x)\]</span> <span class="math display">\[D(p||q)=-H(p) - \sum_{x}p(x) \log q(x)\]</span></p>
+<p>定义p对q的交叉熵为： <span class="math display">\[H(p, q)=-\sum_{x}p(x) \log q(x)\]</span></p>
+<p>于是KL散度变为： <span class="math display">\[D(p||q)=H(p, q) - H(p)\]</span></p>
+<p>在分类问题中，随机变量的真实分布p(x)是确定的，于是H(p)也是确定的，相当于一个常数。因此，优化KL散度与优化交叉熵等价，这也是为什么用交叉熵作为分类问题损失函数的原因。</p>
+<h2 id="代码与实例-2">代码与实例</h2>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
+
+<span class="token comment"># Cross entropy</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.7</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">]</span>
+
+Hpq <span class="token operator">=</span> <span class="token operator">-</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>q<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"H(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Hpq<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果： <pre class="line-numbers language-none"><code class="language-none">H(p, q) &#x3D; 1.7188120482774516<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 验证了上面的公式 <span class="math inline">\(D(p||q)=H(p, q) - H(p)\)</span>。</p>
+<h1 id="交叉熵损失函数">交叉熵损失函数</h1>
+<p>具体地来看下交叉熵作为分类问题的损失函数是如何工作的。 参考pytorch的文档：<a target="_blank" rel="noopener" href="https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html">https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html</a></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">torch<span class="token punctuation">.</span>nn<span class="token punctuation">.</span>CrossEntropyLoss<span class="token punctuation">(</span>weight<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span> size_average<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> ignore_index<span class="token punctuation">:</span> <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">,</span> <span class="token builtin">reduce</span><span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> reduction<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token string">'mean'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>输入为两部分Input和Target，其中Input的Shape是(batch_size, C)，CrossEntropyLoss是softmax和NLLLoss的结合体，Matrix每行的值是模型输出的各分类的概率值，无须经过softmax；Target的Shape是(batch_size)，取值是true label对应的类的index。 输出是一个tensor。</p>
+<p>听起来复杂，举个例子： 一个4分类问题，假设模型输出的结果是p = [1,2,3,4]，true label是1，即第二类： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> CrossEntropyLoss
+
+<span class="token comment"># Cross entropy loss</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token comment"># [0, 1, 0, 0] = torch.nn.functional.one_hot(torch.tensor(q), len(p))</span>
+
+celoss <span class="token operator">=</span> <span class="token operator">-</span>p<span class="token punctuation">[</span>q<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">+</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>np<span class="token punctuation">.</span>exp<span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> p<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Cross Entropy Loss: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>celoss<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+loss <span class="token operator">=</span> CrossEntropyLoss<span class="token punctuation">(</span><span class="token punctuation">)</span>
+tensor_p <span class="token operator">=</span> torch<span class="token punctuation">.</span>FloatTensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+tensor_q <span class="token operator">=</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>q<span class="token punctuation">)</span>
+output <span class="token operator">=</span> loss<span class="token punctuation">(</span>tensor_p<span class="token punctuation">,</span> tensor_q<span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch Cross Entropy Loss: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>output<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>结果： <pre class="line-numbers language-none"><code class="language-none">Cross Entropy Loss: 2.4401896985611957
+Torch Cross Entropy Loss: 2.4401895999908447<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<p>解释一下(其中tl是true label，上例取值1)，参考softmax函数的定义，把q变成one-hot encoding后为[0, 1, 0, 0]，计算p与q的交叉熵： <span class="math display">\[loss(p, tl) = -\log \frac{exp(x[tl])}{\sum_{i} exp(x[i])}\]</span></p>
+<p>即：</p>
+<p><span class="math display">\[loss(p, tl) = -x[tl] + \log {\sum_{i} exp(x[i])}\]</span></p>
+<p>简洁起见，本文仅从公式和实例的角度直观地解释了熵，KL散度和交叉熵的几个概念，如果对几个定义的原理和在信息论中的解释有兴趣，可以参考如下几篇文章：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35379531"># 详解机器学习中的熵、条件熵、相对熵和交叉熵</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/41252833"># 如何通俗的解释交叉熵与相对熵？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.itread01.com/content/1544701150.html"># KL散度(相對熵)、交叉熵的解析</a></p>
+<h1 id="完整代码">完整代码</h1>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> CrossEntropyLoss
+
+<span class="token comment"># Entropy</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+
+Hp <span class="token operator">=</span> <span class="token operator">-</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"H(p) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Hp<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+dist_p <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch H(p) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>dist_p<span class="token punctuation">.</span>entropy<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+<span class="token comment"># KL divergence</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.7</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">]</span>
+
+Dpq <span class="token operator">=</span> <span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">/</span> q<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"D(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Dpq<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+dist_p <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span>
+dist_q <span class="token operator">=</span> Categorical<span class="token punctuation">(</span>torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>q<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch D(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>kl<span class="token punctuation">.</span>kl_divergence<span class="token punctuation">(</span>dist_p<span class="token punctuation">,</span> dist_q<span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+<span class="token comment"># Cross entropy</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">0.7</span><span class="token punctuation">,</span> <span class="token number">0.1</span><span class="token punctuation">]</span>
+
+Hpq <span class="token operator">=</span> <span class="token operator">-</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>q<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"H(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Hpq<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+<span class="token comment"># Cross entropy loss</span>
+p <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">]</span>
+q <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token comment"># [0, 1, 0, 0] = torch.nn.functional.one_hot(torch.tensor(q), len(p))</span>
+
+celoss <span class="token operator">=</span> <span class="token operator">-</span>p<span class="token punctuation">[</span>q<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">+</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>np<span class="token punctuation">.</span>exp<span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> p<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Cross Entropy Loss: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>celoss<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+loss <span class="token operator">=</span> CrossEntropyLoss<span class="token punctuation">(</span><span class="token punctuation">)</span>
+tensor_p <span class="token operator">=</span> torch<span class="token punctuation">.</span>FloatTensor<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+tensor_q <span class="token operator">=</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>q<span class="token punctuation">)</span>
+output <span class="token operator">=</span> loss<span class="token punctuation">(</span>tensor_p<span class="token punctuation">,</span> tensor_q<span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch Cross Entropy Loss: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>output<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/07/03/textcnnmvp/" rel="bookmark">TextCNN pytorch实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/apexprimaryexpressionerror.en/" rel="bookmark">Apex Compile Error: expected primary-expression before ‘>’ token</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pytorch/" rel="tag"># pytorch</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/03/textcnnmvp/" rel="prev" title="TextCNN pytorch实现">
+                  <i class="fa fa-chevron-left"></i> TextCNN pytorch实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/13/nineninesix/" rel="next" title="996是自己选择的福报">
+                  996是自己选择的福报 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/07/09/crossentropyloss/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

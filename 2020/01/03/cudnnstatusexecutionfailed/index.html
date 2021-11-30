@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work. Ac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution">
+<meta property="og:url" content="https://finisky.github.io/2020/01/03/cudnnstatusexecutionfailed/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work. Ac">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-03T09:05:21.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.658Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="pytorch">
+<meta property="article:tag" content="cuda">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/01/03/cudnnstatusexecutionfailed/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/01/03/cudnnstatusexecutionfailed/","path":"2020/01/03/cudnnstatusexecutionfailed/","title":"RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#solution"><span class="nav-number">1.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#detailed-error-message"><span class="nav-number">1.1.</span> <span class="nav-text">Detailed Error Message</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#do-not-upgrade-ubuntu"><span class="nav-number">1.2.</span> <span class="nav-text">DO NOT Upgrade Ubuntu</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/01/03/cudnnstatusexecutionfailed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-01-03 17:05:21" itemprop="dateCreated datePublished" datetime="2020-01-03T17:05:21+08:00">2020-01-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/01/03/cudnnstatusexecutionfailed/" class="post-meta-item leancloud_visitors" data-flag-title="RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/01/03/cudnnstatusexecutionfailed/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/01/03/cudnnstatusexecutionfailed/" data-xid="/2020/01/03/cudnnstatusexecutionfailed/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <pre class="line-numbers language-none"><code class="language-none">RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work.</p>
+<p>Actually, the root cause is <strong>pytorch/cuda/python compatibility issue</strong>.</p>
+<span id="more"></span>
+<h1 id="solution">Solution</h1>
+<p>The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine.</p>
+<p>My environment:</p>
+<ol type="1">
+<li>Ubuntu 18.04 LTS</li>
+<li>Python 3.6.9</li>
+<li>PyTorch 1.3.0</li>
+<li>cuda 10.1</li>
+</ol>
+<p>This command resolved my issue (PyTorch version really matters! from 1.3.0 to 1.2.0):</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda install pytorch&#x3D;&#x3D;1.2.0 torchvision&#x3D;&#x3D;0.4.0 cudatoolkit&#x3D;10.0 -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>If you use conda, you can refer to this page to find a working combination (downgrade might be better than upgrade...): <a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING PREVIOUS VERSIONS OF PYTORCH</a></p>
+<h2 id="detailed-error-message">Detailed Error Message</h2>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ python seq2seq.py
+Traceback (most recent call last):
+  File &quot;seq2seq.py&quot;, line 311, in &lt;module&gt;
+    trainIters(encoder, attndecoder, 75000, print_every&#x3D;5000)
+  File &quot;seq2seq.py&quot;, line 289, in trainIters
+    decoder, encoder_optimizer, decoder_optimizer, criterion)
+  File &quot;seq2seq.py&quot;, line 233, in train
+    encoder_output, encoder_hidden &#x3D; encoder(input_tensor[ei], encoder_hidden)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;module.py&quot;, line 541, in __call__
+    result &#x3D; self.forward(*input, **kwargs)
+  File &quot;seq2seq.py&quot;, line 154, in forward
+    output, hidden &#x3D; self.gru(output, hidden)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;module.py&quot;, line 541, in __call__
+    result &#x3D; self.forward(*input, **kwargs)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 729, in forward
+    return self.forward_tensor(input, hx)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 721, in forward_tensor
+    output, hidden &#x3D; self.forward_impl(input, hx, batch_sizes, max_batch_size, sorted_indices)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 699, in forward_impl
+    result &#x3D; self.run_impl(input, hx, batch_sizes)
+  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 680, in run_impl
+    self.dropout, self.training, self.bidirectional, self.batch_first)
+RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="do-not-upgrade-ubuntu">DO NOT Upgrade Ubuntu</h2>
+<p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded Ubuntu from 14.04 to 16.04 and then to 18.04, nothing happened.</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/apexprimaryexpressionerror.en/" rel="bookmark">Apex Compile Error: expected primary-expression before ‘>’ token</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/01/06/classadviceimpossible/" rel="bookmark">TypeError Class advice impossible in Python3</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/01/06/jupyterdlopen/" rel="bookmark">Jupyter dlopen cannot load any more object with static TLS</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/07/09/crossentropyloss/" rel="bookmark">熵，交叉熵，KL散度公式与计算实例</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pytorch/" rel="tag"># pytorch</a>
+              <a href="/tags/cuda/" rel="tag"># cuda</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/12/31/k8sinvalidobject/" rel="prev" title="invalid object doesn't have additional properties error">
+                  <i class="fa fa-chevron-left"></i> invalid object doesn't have additional properties error
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/01/06/jupyterdlopen/" rel="next" title="Jupyter dlopen cannot load any more object with static TLS">
+                  Jupyter dlopen cannot load any more object with static TLS <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/01/03/cudnnstatusexecutionfailed/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

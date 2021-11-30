@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="MongoDB transaction is a nice feature. Although MongoDB uses optimistic concurrency control, write conflict is unavoidable. The situation becomes worse in multi-document transaction which modifies man">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Retry MongoDB Transaction">
+<meta property="og:url" content="https://finisky.github.io/2021/02/20/mongodbretrytransaction.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="MongoDB transaction is a nice feature. Although MongoDB uses optimistic concurrency control, write conflict is unavoidable. The situation becomes worse in multi-document transaction which modifies man">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-02-20T12:03:00.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.678Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="Transaction">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2021/02/20/mongodbretrytransaction.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2021/02/20/mongodbretrytransaction.en/","path":"2021/02/20/mongodbretrytransaction.en/","title":"How to Retry MongoDB Transaction"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>How to Retry MongoDB Transaction | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#reproduce-writeconflict"><span class="nav-number">1.</span> <span class="nav-text">Reproduce WriteConflict</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#old-transactions-api"><span class="nav-number">1.1.</span> <span class="nav-text">Old Transactions API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#writeconflict-example"><span class="nav-number">1.2.</span> <span class="nav-text">WriteConflict Example</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#solutions"><span class="nav-number">2.</span> <span class="nav-text">Solutions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#manually-retry"><span class="nav-number">2.1.</span> <span class="nav-text">Manually Retry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#use-new-transactions-api-recommended"><span class="nav-number">2.2.</span> <span class="nav-text">Use New Transactions API (recommended)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">3.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2021/02/20/mongodbretrytransaction.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          How to Retry MongoDB Transaction
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-02-20 20:03:00" itemprop="dateCreated datePublished" datetime="2021-02-20T20:03:00+08:00">2021-02-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2021/02/20/mongodbretrytransaction.en/" class="post-meta-item leancloud_visitors" data-flag-title="How to Retry MongoDB Transaction" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2021/02/20/mongodbretrytransaction.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2021/02/20/mongodbretrytransaction.en/" data-xid="/2021/02/20/mongodbretrytransaction.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>MongoDB transaction is a nice feature. Although MongoDB uses optimistic concurrency control, write conflict is unavoidable. The situation becomes worse in multi-document transaction which modifies many documents in one transaction. If a write conflict happens, a MongoDBCommandException will be thrown:</p>
+<blockquote>
+<p>Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..</p>
+</blockquote>
+<p>How to handle the writeconflict error in MongoDB?</p>
+<span id="more"></span>
+<p>A straightforwad way is to manually retry the transaction in application level when exception happens. However, the retry logic is non-trivial: What's the exception type? Is it a <a target="_blank" rel="noopener" href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">transient or persistent error</a>? How many times should we retry? How to apply the retry logic while keep the code clean?</p>
+<p>Fortunately, the new MongoDB driver has already solved the issue. It incorperates the retry logic in the driver: https://docs.mongodb.com/manual/core/transactions/#transactions-api</p>
+<blockquote>
+<p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p>
+</blockquote>
+<p>What we need is to use the new transaction API instead of the old one. However, even the official document samples still use the old API. In this article, we will compare the difference between them and provide easy-to-understand example usage.</p>
+<h1 id="reproduce-writeconflict">Reproduce WriteConflict</h1>
+<h2 id="old-transactions-api">Old Transactions API</h2>
+<p>Unfortunately, the official <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.11/reference/driver/crud/sessions_and_transactions/#starttransaction">C# MongoDB driver documentation</a> still use the old API: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> client<span class="token punctuation">.</span><span class="token function">StartSession</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    session<span class="token punctuation">.</span><span class="token function">StartTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// execute operations using the session</span>
+    session<span class="token punctuation">.</span><span class="token function">CommitTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// if an exception is thrown before reaching here the transaction will be implicitly aborted</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="writeconflict-example">WriteConflict Example</h2>
+<p>Let's reproduce the writeconflict error by the old API. We created two threads to update the same document, while intentionally make the first update slow by waiting 2s before commit: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading<span class="token punctuation">.</span>Tasks</span><span class="token punctuation">;</span>
+
+<span class="token keyword">namespace</span> <span class="token namespace">MongoTest</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RetryableTransaction</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> DatabaseName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> CollectionName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">public</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> ConnectionString <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">WriteConflictAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> mongoClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">MongoClient</span><span class="token punctuation">(</span>ConnectionString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token class-name"><span class="token keyword">var</span></span> uuid <span class="token operator">=</span> <span class="token string">"conflict1"</span><span class="token punctuation">;</span>
+            <span class="token keyword">await</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"init"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"------ Bare Replace ------"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> slowReplaceTask <span class="token operator">=</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"slow"</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Execute at least 2s</span>
+            <span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Wait a moment to make sure the slow task enter into a transaction</span>
+            <span class="token keyword">try</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token keyword">await</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"fast"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Exception: "</span></span> <span class="token operator">+</span> e<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token keyword">await</span> slowReplaceTask<span class="token punctuation">;</span>
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Completed..."</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> delay <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                session<span class="token punctuation">.</span><span class="token function">StartTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                <span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>session<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonDocument</span> <span class="token punctuation">&#123;</span> <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> <span class="token string">"op"</span><span class="token punctuation">,</span> <span class="token keyword">value</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ReplaceOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span>delay<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Intentionally slow the transaction</span>
+
+                <span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">CommitTransactionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Done [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token keyword">value</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>WriteConflictAsync() running result:</p>
+<blockquote>
+<p>[2021/2/19 13:35:51] Done [init] ------ Bare Replace ------ [2021/2/19 13:35:51] Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction.. [2021/2/19 13:35:53] Done [slow]</p>
+</blockquote>
+<p>The second replace task failed due to writeconflict error. If we look into the <code>MongoDBCommandException</code>, we will find a "TransientTransactionError" in the exception ErrorLabel field.</p>
+<h1 id="solutions">Solutions</h1>
+<h2 id="manually-retry">Manually Retry</h2>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/53202345/how-does-mongodb-deal-with-transactional-conflicts">This article</a> provides a manual retry solution for such transient error. However, if we use the latest MongoDB driver with server version &gt;= 4.2, there is a more graceful way to handle such exception.</p>
+<h2 id="use-new-transactions-api-recommended">Use New Transactions API (recommended)</h2>
+<p>As aforementioned, the new MongoDB driver already builtin the retry logic: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/transactions/#transactions-api">https://docs.mongodb.com/manual/core/transactions/#transactions-api</a></p>
+<blockquote>
+<p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p>
+</blockquote>
+<p><code>WithTransactionAsync</code> definition: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token comment">//</span>
+<span class="token comment">// Summary:</span>
+<span class="token comment">//     Executes a callback within a transaction, with retries if needed.</span>
+<span class="token comment">//</span>
+<span class="token comment">// Parameters:</span>
+<span class="token comment">//   callbackAsync:</span>
+<span class="token comment">//     The user defined callback.</span>
+<span class="token comment">//</span>
+<span class="token comment">//   transactionOptions:</span>
+<span class="token comment">//     The transaction options.</span>
+<span class="token comment">//</span>
+<span class="token comment">//   cancellationToken:</span>
+<span class="token comment">//     The cancellation token.</span>
+<span class="token comment">//</span>
+<span class="token comment">// Type parameters:</span>
+<span class="token comment">//   TResult:</span>
+<span class="token comment">//     The type of callback result.</span>
+<span class="token comment">//</span>
+<span class="token comment">// Returns:</span>
+<span class="token comment">//     The callback result.</span>
+<span class="token return-type class-name">Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span> <span class="token generic-method"><span class="token function">WithTransactionAsync</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>IClientSessionHandle<span class="token punctuation">,</span> CancellationToken<span class="token punctuation">,</span> Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span><span class="token punctuation">></span></span> callbackAsync<span class="token punctuation">,</span> <span class="token class-name">TransactionOptions</span> transactionOptions <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token class-name">CancellationToken</span> cancellationToken <span class="token operator">=</span> <span class="token keyword">default</span><span class="token punctuation">(</span><span class="token type-expression class-name">CancellationToken</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Note that <code>WithTransactionAsync</code> is a <code>Func</code> instead of an <code>Action</code>, we must return a value in the callback function.</p>
+<p>Here is the sample usage: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">WithTransactionAsync</span><span class="token punctuation">(</span>
+		<span class="token keyword">async</span> <span class="token punctuation">(</span>s<span class="token punctuation">,</span> ct<span class="token punctuation">)</span> <span class="token operator">=></span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token comment">// execute operations using the session</span>
+			<span class="token keyword">return</span> <span class="token keyword">string</span><span class="token punctuation">.</span>Empty<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Compare with the old API: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> client<span class="token punctuation">.</span><span class="token function">StartSession</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    session<span class="token punctuation">.</span><span class="token function">StartTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// execute operations using the session</span>
+    session<span class="token punctuation">.</span><span class="token function">CommitTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Now we write <code>RetryReplaceAsync</code> (compared to <code>BareReplaceAsync</code>): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">&#123;</span>
+		<span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+		<span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">WithTransactionAsync</span><span class="token punctuation">(</span>
+			<span class="token keyword">async</span> <span class="token punctuation">(</span>s<span class="token punctuation">,</span> ct<span class="token punctuation">)</span> <span class="token operator">=></span>
+			<span class="token punctuation">&#123;</span>
+				<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonDocument</span> <span class="token punctuation">&#123;</span> <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> <span class="token string">"op"</span><span class="token punctuation">,</span> <span class="token keyword">value</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ReplaceOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+				<span class="token keyword">return</span> <span class="token keyword">string</span><span class="token punctuation">.</span>Empty<span class="token punctuation">;</span>
+			<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+
+	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Done [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token keyword">value</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Replace <code>BareReplaceAsync</code> by <code>RetryReplaceAsync</code> in <code>WriteConflictAsync</code> try block: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">WriteConflictAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> mongoClient <span class="token operator">=</span> <span class="token function">GetMongoClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token class-name"><span class="token keyword">var</span></span> uuid <span class="token operator">=</span> <span class="token string">"conflict1"</span><span class="token punctuation">;</span>
+	<span class="token keyword">await</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"init"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"------ Retry Replace ------"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> slowReplaceTask <span class="token operator">=</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"slow"</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Execute at least 2s</span>
+	<span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Wait a moment to make the slow task enter into a transaction</span>
+	<span class="token keyword">try</span>
+	<span class="token punctuation">&#123;</span>
+		<span class="token keyword">await</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"fast"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+	<span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span>
+	<span class="token punctuation">&#123;</span>
+		Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Exception: "</span></span> <span class="token operator">+</span> e<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">await</span> slowReplaceTask<span class="token punctuation">;</span>
+	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Completed..."</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Running result:</p>
+<blockquote>
+<p>[2021/2/19 17:55:00] Done [init] ------ Retry Replace ------ [2021/2/19 17:55:02] Done [slow] [2021/2/19 17:55:03] Done [fast]</p>
+<p>[2021/2/19 17:55:03] Completed...</p>
+</blockquote>
+<p>The retry logic works as no exception is thrown. Even for a very long transaction (about 20s), the above code works fine. But we need taking timeout into account by passing a proper cancellation token.</p>
+<p>Actually, the writeconflict error is rarely happen even without retry. For our production environment, the error rate is less than 0.00001%. After adding the above retry logic, the writeconflict error never happens.</p>
+<h1 id="full-code">Full Code</h1>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading<span class="token punctuation">.</span>Tasks</span><span class="token punctuation">;</span>
+
+<span class="token keyword">namespace</span> <span class="token namespace">MongoTest</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RetryableTransaction</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> DatabaseName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> CollectionName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">public</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> ConnectionString <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">WriteConflictAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> mongoClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">MongoClient</span><span class="token punctuation">(</span>ConnectionString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token class-name"><span class="token keyword">var</span></span> uuid <span class="token operator">=</span> <span class="token string">"conflict1"</span><span class="token punctuation">;</span>
+            <span class="token keyword">await</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"init"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"------ Bare Replace ------"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> slowReplaceTask <span class="token operator">=</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"slow"</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Execute at least 2s</span>
+            <span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Wait a moment to make sure the slow task enter into a transaction</span>
+            <span class="token keyword">try</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token keyword">await</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"fast"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Exception: "</span></span> <span class="token operator">+</span> e<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token keyword">await</span> slowReplaceTask<span class="token punctuation">;</span>
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"------ Retry Replace ------"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            slowReplaceTask <span class="token operator">=</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"slow"</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Execute at least 2s</span>
+            <span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Wait a moment to make the slow task enter into a transaction</span>
+            <span class="token keyword">try</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token keyword">await</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span>mongoClient<span class="token punctuation">,</span> uuid<span class="token punctuation">,</span> <span class="token string">"fast"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Exception: "</span></span> <span class="token operator">+</span> e<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token keyword">await</span> slowReplaceTask<span class="token punctuation">;</span>
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Completed..."</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">BareReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> delay <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                session<span class="token punctuation">.</span><span class="token function">StartTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                <span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>session<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonDocument</span> <span class="token punctuation">&#123;</span> <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> <span class="token string">"op"</span><span class="token punctuation">,</span> <span class="token keyword">value</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ReplaceOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">await</span> Task<span class="token punctuation">.</span><span class="token function">Delay</span><span class="token punctuation">(</span>delay<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Intentionally slow the transaction</span>
+
+                <span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">CommitTransactionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Done [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token keyword">value</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                <span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">WithTransactionAsync</span><span class="token punctuation">(</span>
+                    <span class="token keyword">async</span> <span class="token punctuation">(</span>s<span class="token punctuation">,</span> ct<span class="token punctuation">)</span> <span class="token operator">=></span>
+                    <span class="token punctuation">&#123;</span>
+                        <span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonDocument</span> <span class="token punctuation">&#123;</span> <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token punctuation">,</span> uuid <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> <span class="token string">"op"</span><span class="token punctuation">,</span> <span class="token keyword">value</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ReplaceOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        <span class="token keyword">return</span> <span class="token keyword">string</span><span class="token punctuation">.</span>Empty<span class="token punctuation">;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Done [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token keyword">value</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/20/mongodbretrytransaction/" rel="bookmark">MongoDB事务重试实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbslavesync.en/" rel="bookmark">MongoDB Master-Slave Replication by Change Stream</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbslavesync/" rel="bookmark">MongoDB使用Change Stream主从复制</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/Transaction/" rel="tag"># Transaction</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/20/mongodbagentmonitoringnotwork.en/" rel="prev" title="MongoDB Agent Monitoring and Backup not Working">
+                  <i class="fa fa-chevron-left"></i> MongoDB Agent Monitoring and Backup not Working
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/20/mongodbretrytransaction/" rel="next" title="MongoDB事务重试实现">
+                  MongoDB事务重试实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2021/02/20/mongodbretrytransaction.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

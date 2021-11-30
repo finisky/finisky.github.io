@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Lightsquid is a handy log analyzer for squid proxy. However, the project is not maintained since 2009. Today, I found lightsquid doesn&#39;t work in 2021. Why?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lightsquid Stop Working in 2021">
+<meta property="og:url" content="https://finisky.github.io/2021/01/03/lightsquidhardcodeyear.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Lightsquid is a handy log analyzer for squid proxy. However, the project is not maintained since 2009. Today, I found lightsquid doesn&#39;t work in 2021. Why?">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-01-03T15:30:03.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.666Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Squid">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2021/01/03/lightsquidhardcodeyear.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2021/01/03/lightsquidhardcodeyear.en/","path":"2021/01/03/lightsquidhardcodeyear.en/","title":"Lightsquid Stop Working in 2021"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Lightsquid Stop Working in 2021 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#lightsquid-error"><span class="nav-number">1.</span> <span class="nav-text">Lightsquid Error</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#analyze-the-problem"><span class="nav-number">2.</span> <span class="nav-text">Analyze the Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#first-issue"><span class="nav-number">2.1.</span> <span class="nav-text">First Issue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#second-issue"><span class="nav-number">2.2.</span> <span class="nav-text">Second Issue</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#summary"><span class="nav-number">3.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2021/01/03/lightsquidhardcodeyear.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Lightsquid Stop Working in 2021
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-01-03 23:30:03" itemprop="dateCreated datePublished" datetime="2021-01-03T23:30:03+08:00">2021-01-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2021/01/03/lightsquidhardcodeyear.en/" class="post-meta-item leancloud_visitors" data-flag-title="Lightsquid Stop Working in 2021" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2021/01/03/lightsquidhardcodeyear.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2021/01/03/lightsquidhardcodeyear.en/" data-xid="/2021/01/03/lightsquidhardcodeyear.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">Lightsquid</a> is a handy log analyzer for squid proxy. However, the project is not maintained since 2009.</p>
+<p>Today, I found lightsquid doesn't work in 2021. Why?</p>
+<span id="more"></span>
+<h1 id="lightsquid-error">Lightsquid Error</h1>
+<p>When I run lightparser, the output looks like this: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ .&#x2F;lightparser.pl access.log.66666
+&gt;&gt;&gt; use file :: &#x2F;var&#x2F;log&#x2F;squid&#x2F;access.log.66666
+run TIME: 1 sec
+LightSquid parser statistic report
+
+                 3312 lines processed (average 3312.00 lines per second)
+                    0 lines parsed
+                    0 lines recovered
+                    0 lines notrecovered
+                    0 lines skiped by bad year
+                 3312 lines skiped by date filter
+                    0 lines skiped by Denied filter
+                    0 lines skiped by skipURL filter
+
+WARNING !!!!, parsed 0 lines from total : 3312
+please check confiuration !!!!
+may be wrong log format selected ?<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Seems that all lines are filtered by the date filter. I double checked the log format and make sure it is correct and the same with previous days.</p>
+<h1 id="analyze-the-problem">Analyze the Problem</h1>
+<p>Look at this piece of code (I am a Perl layman): <a target="_blank" rel="noopener" href="https://github.com/aleksey200505/lightsquid/blob/master/lightparser.pl">here</a></p>
+<pre class="line-numbers language-perl" data-language="perl"><code class="language-perl"><span class="token keyword">my</span> <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2020</span><span class="token operator">-</span><span class="token number">1900</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">1000</span><span class="token punctuation">;</span>
+
+<span class="token variable">$fToday</span><span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"today"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$fToday</span><span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"yesterday"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$fToday</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token punctuation">(</span><span class="token variable">$sec</span><span class="token punctuation">,</span><span class="token variable">$min</span><span class="token punctuation">,</span><span class="token variable">$hour</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token punctuation">,</span><span class="token variable">$wday</span><span class="token punctuation">,</span><span class="token variable">$yday</span><span class="token punctuation">,</span><span class="token variable">$isdst</span><span class="token punctuation">)</span> <span class="token operator">=</span> localtime<span class="token punctuation">;</span>
+
+   <span class="token variable">$filterdate</span><span class="token operator">=</span>sprintf<span class="token punctuation">(</span><span class="token string">"%04d%02d%02d"</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token operator">+</span><span class="token number">1900</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestart</span><span class="token operator">=</span>timelocal<span class="token punctuation">(</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token keyword">print</span> <span class="token string">">>> filter today: $filterdate\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"yesterday"</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token variable">$filterdatestart</span><span class="token operator">=</span><span class="token variable">$filterdatestart</span><span class="token operator">-</span><span class="token punctuation">(</span><span class="token number">24</span><span class="token variable">*60</span><span class="token variable">*60</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestop</span> <span class="token operator">=</span><span class="token variable">$filterdatestop</span> <span class="token operator">-</span><span class="token punctuation">(</span><span class="token number">24</span><span class="token variable">*60</span><span class="token variable">*60</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">(</span><span class="token variable">$sec</span><span class="token punctuation">,</span><span class="token variable">$min</span><span class="token punctuation">,</span><span class="token variable">$hour</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token punctuation">,</span><span class="token variable">$wday</span><span class="token punctuation">,</span><span class="token variable">$yday</span><span class="token punctuation">,</span><span class="token variable">$isdst</span><span class="token punctuation">)</span> <span class="token operator">=</span> localtime<span class="token punctuation">(</span><span class="token variable">$filterdatestart</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdate</span><span class="token operator">=</span>sprintf<span class="token punctuation">(</span><span class="token string">"%04d%02d%02d"</span><span class="token punctuation">,</span><span class="token variable">$year</span><span class="token operator">+</span><span class="token number">1900</span><span class="token punctuation">,</span><span class="token variable">$mon</span><span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$mday</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
+   <span class="token keyword">print</span> <span class="token string">">>> filter yesterday: $filterdate\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/^(\d\d\d\d)(\d\d)(\d\d)$/</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token variable">$filterdate</span><span class="token operator">=</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestart</span><span class="token operator">=</span>timelocal<span class="token punctuation">(</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token variable">$3</span><span class="token punctuation">,</span><span class="token variable">$2</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token variable">$3</span><span class="token punctuation">,</span><span class="token variable">$2</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token keyword">print</span> <span class="token string">">>> filter date:	$filterdate\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/access\.log\.(\d)/</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token variable">$filename</span><span class="token operator">=</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token variable">$catname</span><span class="token operator">=</span><span class="token string">"zcat"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/\.gz$/</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$catname</span><span class="token operator">=</span><span class="token string">"bzcat"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/\.bz2$/</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">print</span> <span class="token string">">>> use file :: $logpath/$filename\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">...</span>
+
+	   <span class="token comment">#speed optimization for FILTERDATE mode</span>
+	   <span class="token variable">$Ltimestamp</span><span class="token operator">=</span>substr <span class="token variable">$_</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">11</span><span class="token punctuation">;</span>
+	   <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$Ltimestamp</span><span class="token operator">&lt;</span><span class="token variable">$filterdatestart</span> <span class="token operator">or</span> <span class="token variable">$Ltimestamp</span><span class="token operator">></span><span class="token variable">$filterdatestop</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+		  <span class="token keyword">print</span> <span class="token string">">>>> skipDafteFilter URL $Lurl\n$_"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug2</span> <span class="token operator">>=</span> <span class="token number">2</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+		  <span class="token variable">$skipfilterdatecntr</span><span class="token operator">++</span><span class="token punctuation">;</span>
+		  <span class="token keyword">next</span><span class="token punctuation">;</span>
+	   <span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Found two issues:</p>
+<ol type="1">
+<li>A hardcode <code>2020</code> in <code>$filterdatestop</code> which makes lightsquid not work in 2021</li>
+<li><code>today</code> argument cannot work with customized file at the same time</li>
+</ol>
+<h2 id="first-issue">First Issue</h2>
+<p>Obviously, <code>$filterdatestop</code> is the culprit: <pre class="line-numbers language-perl" data-language="perl"><code class="language-perl"><span class="token keyword">my</span> <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2020</span><span class="token operator">-</span><span class="token number">1900</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">1000</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>A quick fix is to change the hardcoded <code>2020</code> to <code>2100</code>. It seems that the month and year parameter are weird...</p>
+<p>I read the document of <a target="_blank" rel="noopener" href="https://perldoc.perl.org/Time::Local">Perl's "Time::Local"</a> and found that the design is really complex and hard to understand (personally I think it is anti-pattern, why not make it a simple design which supports only absolute year?):</p>
+<blockquote><ul>
+<li>Years greater than 999 are interpreted as being the actual year, rather than the offset from 1900. Thus, 1964 would indicate the year Martin Luther King won the Nobel prize, not the year 3864.</li>
+<li>Years in the range 100..999 are interpreted as offset from 1900, so that 112 indicates 2012. This rule also applies to years less than zero (but see note below regarding date range).</li>
+<li>Years in the range 0..99 are interpreted as shorthand for years in the rolling "current century," defined as 50 years on either side of the current year. Thus, today, in 1999, 0 would refer to 2000, and 45 to 2045, but 55 would refer to 1955. Twenty years from now, 55 would instead refer to 2055. This is messy, but matches the way people currently think about two digit dates. Whenever possible, use an absolute four digit year instead.</li>
+</ul>
+</blockquote>
+<p>Then I try to understand what these lines means: <pre class="line-numbers language-perl" data-language="perl"><code class="language-perl"><span class="token keyword">use</span> Time<span class="token punctuation">:</span><span class="token punctuation">:</span>Local<span class="token punctuation">;</span>
+
+<span class="token keyword">my</span> <span class="token variable">$date1</span> <span class="token operator">=</span> timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2020</span><span class="token operator">-</span><span class="token number">1900</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">$date2</span> <span class="token operator">=</span> timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2020</span><span class="token operator">-</span><span class="token number">1900</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">1000</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">$date3</span> <span class="token operator">=</span> timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">11</span><span class="token punctuation">,</span><span class="token number">2020</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">print</span> <span class="token string">"$date1\n"</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> <span class="token string">"$date2\n"</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> <span class="token string">"$date3\n"</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Output: <pre class="line-numbers language-none"><code class="language-none">1609430399
+1609431399
+1609430399<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+<p>The solution is easy, change this line to(note that the month is zero indexed (0..11)), and now it works until 2100: <pre class="line-numbers language-perl" data-language="perl"><code class="language-perl"><span class="token keyword">my</span> <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token number">31</span><span class="token punctuation">,</span><span class="token number">11</span><span class="token punctuation">,</span><span class="token number">2100</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">1000</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h2 id="second-issue">Second Issue</h2>
+<p>Another problem is that <code>today</code> argument cannot work with customized filename: <pre class="line-numbers language-perl" data-language="perl"><code class="language-perl"><span class="token variable">$fToday</span><span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"today"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$fToday</span><span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"yesterday"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$fToday</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+<span class="token operator">...</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">eq</span> <span class="token string">"yesterday"</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+<span class="token operator">...</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/^(\d\d\d\d)(\d\d)(\d\d)$/</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token variable">$filterdate</span><span class="token operator">=</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestart</span><span class="token operator">=</span>timelocal<span class="token punctuation">(</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token variable">$3</span><span class="token punctuation">,</span><span class="token variable">$2</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$filterdatestop</span> <span class="token operator">=</span>timelocal<span class="token punctuation">(</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">59</span><span class="token punctuation">,</span><span class="token number">23</span><span class="token punctuation">,</span><span class="token variable">$3</span><span class="token punctuation">,</span><span class="token variable">$2</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token variable">$1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token keyword">print</span> <span class="token string">">>> filter date:	$filterdate\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/access\.log\.(\d)/</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+   <span class="token variable">$filename</span><span class="token operator">=</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token variable">$catname</span><span class="token operator">=</span><span class="token string">"zcat"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/\.gz$/</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token variable">$catname</span><span class="token operator">=</span><span class="token string">"bzcat"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">m/\.bz2$/</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">print</span> <span class="token string">">>> use file :: $logpath/$filename\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Apparently, only one argument <code>ARGV[0]</code> is applied. If you wrote the command like this and not fixed the first issue: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$.&#x2F;lightparser.pl access.log.66666 today<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> or <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$.&#x2F;lightparser.pl today access.log.66666<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> You will encounter the "parsed 0 lines" error.</p>
+<h1 id="summary">Summary</h1>
+<p>Just fix the first issue and you will make lightsquid works longer :-) <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ .&#x2F;lightparser.pl access.log.66666
+&gt;&gt;&gt; use file :: &#x2F;var&#x2F;log&#x2F;squid&#x2F;access.log.66666
+&gt;&gt;&gt; Make Report 20210102 (1577 - log line parsed)
+&gt;&gt;&gt; Make Report 20210103 (1572 - log line parsed)
+run TIME: 1 sec
+LightSquid parser statistic report
+
+                 3312 lines processed (average 3312.00 lines per second)
+                 3149 lines parsed
+                    0 lines recovered
+                    0 lines notrecovered
+                    0 lines skiped by bad year
+                    0 lines skiped by date filter
+                  163 lines skiped by Denied filter
+                    0 lines skiped by skipURL filter
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Fixed version: https://github.com/finisky/lightsquid-1.8.1</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/29/bashstartupfiles/" rel="bookmark">.bashrc不起作用与bash初始化文件执行顺序</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/07/22/cleanuplinuxdisk/" rel="bookmark">清理Linux的磁盘使用空间</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/31/cleanuptmp.en/" rel="bookmark">Clean .com.google.Chrome.* in /tmp</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/08/29/googlebbr/" rel="bookmark">Linux服务器使用BBR提升网速</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/multiplegithubaccountsononemachine.en/" rel="bookmark">Confgure Multiple Github Accounts On One Machine</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Squid/" rel="tag"># Squid</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="prev" title="Deploy MongoDB Sharded Cluster by Ops Manager">
+                  <i class="fa fa-chevron-left"></i> Deploy MongoDB Sharded Cluster by Ops Manager
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="next" title="Don't Use Load Balancer In front of Mongos">
+                  Don't Use Load Balancer In front of Mongos <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2021/01/03/lightsquidhardcodeyear.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

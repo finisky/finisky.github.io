@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="GPT2是一个很好的长文本生成模型，但官方版本并没有开源中文预训练好的模型。因此，最近用开源的中文新闻，wiki，评论等从头训练了一个中文GPT2用于文本生成任务。 预训练使用的是HuggingFace的transformers库，这库是个好东西，把当前主流的transfomer-based模型都封装了一遍，使用起来方便很多。但由于不同模型的结构、参数等等细节不同，封装成统一的interface还">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中文GPT2预训练实战">
+<meta property="og:url" content="https://finisky.github.io/2020/05/01/pretrainchinesegpt/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="GPT2是一个很好的长文本生成模型，但官方版本并没有开源中文预训练好的模型。因此，最近用开源的中文新闻，wiki，评论等从头训练了一个中文GPT2用于文本生成任务。 预训练使用的是HuggingFace的transformers库，这库是个好东西，把当前主流的transfomer-based模型都封装了一遍，使用起来方便很多。但由于不同模型的结构、参数等等细节不同，封装成统一的interface还">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-01T10:32:30.000Z">
+<meta property="article:modified_time" content="2021-11-25T10:35:53.758Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/05/01/pretrainchinesegpt/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/05/01/pretrainchinesegpt/","path":"2020/05/01/pretrainchinesegpt/","title":"中文GPT2预训练实战"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>中文GPT2预训练实战 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E6%96%87tokenizer"><span class="nav-number">1.</span> <span class="nav-text">中文Tokenizer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E4%B8%AD%E6%96%87gpt2tokenizer%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.1.</span> <span class="nav-text">训练中文GPT2Tokenizer(失败)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%A2berttokenizer"><span class="nav-number">1.2.</span> <span class="nav-text">换BertTokenizer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#berttokenizerfast"><span class="nav-number">1.3.</span> <span class="nav-text">BertTokenizerFast</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%AF%AD%E6%96%99%E7%88%86%E5%86%85%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">大规模语料爆内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%BC%8Fdataset"><span class="nav-number">2.1.</span> <span class="nav-text">流式Dataset</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/01/pretrainchinesegpt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中文GPT2预训练实战
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-01 18:32:30" itemprop="dateCreated datePublished" datetime="2020-05-01T18:32:30+08:00">2020-05-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-25 18:35:53" itemprop="dateModified" datetime="2021-11-25T18:35:53+08:00">2021-11-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/05/01/pretrainchinesegpt/" class="post-meta-item leancloud_visitors" data-flag-title="中文GPT2预训练实战" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/05/01/pretrainchinesegpt/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/05/01/pretrainchinesegpt/" data-xid="/2020/05/01/pretrainchinesegpt/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>GPT2是一个很好的长文本生成模型，但官方版本并没有开源中文预训练好的模型。因此，最近用开源的中文新闻，wiki，评论等从头训练了一个中文GPT2用于文本生成任务。</p>
+<p>预训练使用的是HuggingFace的<a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers">transformers</a>库，这库是个好东西，把当前主流的transfomer-based模型都封装了一遍，使用起来方便很多。但由于不同模型的结构、参数等等细节不同，封装成统一的interface还是有难度，因此此库上也有一些折衷，也并不像想像中那么好使。就pretrain和fine-tune来说，都是训练一个language model，理论上调用它examples/run_language_modeling.py即可。不过真训练起来发现还是有些坑：</p>
+<ul>
+<li>中文Tokenizer用什么？</li>
+<li>大规模语料爆内存</li>
+<li>fp16混合精度训练？</li>
+</ul>
+<p>最后一个问题坑有点深，nvidia的apex库用起来并不是那么顺滑，尝试了多次并未成功。此外听朋友说即使fp16也仅能提升约20%的训练速度，看起来并不太promising。另外inference时也要使用apex，增加了额外依赖，麻烦。</p>
+<p>这里就说说前两个问题。</p>
+<span id="more"></span>
+<h1 id="中文tokenizer">中文Tokenizer</h1>
+<p>GPT2有对应的GPT2Tokenizer，用的是BPE分词，但是并没有中文分词器。理论上来说BPE是语言无关的，但对于中日韩文来说，还是字级别character-level的分词更合理些，直接用GPT2Tokenizer不太好。因此，要么自己train一个中文tokenizer，要么换tokenizer。</p>
+<h2 id="训练中文gpt2tokenizer失败">训练中文GPT2Tokenizer(失败)</h2>
+<p>根据语言自己训练一个tokenizer想法很直接，看了眼GPT2Tokenizer的源码，其实就是个BPETokenizer，于是直接用HuggingFace的tokenizer库就可以训练。这个库的底层是用Rust写的，可以最大程度地并行处理。</p>
+<p>训练代码： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">from</span> tokenizers <span class="token keyword">import</span> ByteLevelBPETokenizer
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> GPT2Tokenizer
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> CONFIG_MAPPING<span class="token punctuation">,</span> AutoConfig<span class="token punctuation">,</span> GPT2Config
+
+model_type <span class="token operator">=</span> <span class="token string">'gpt2'</span>
+model_path <span class="token operator">=</span> <span class="token string">'./modeltest'</span>
+vocab_size <span class="token operator">=</span> <span class="token number">50000</span>
+
+<span class="token comment"># training tokenizer</span>
+tokenizer <span class="token operator">=</span> ByteLevelBPETokenizer<span class="token punctuation">(</span><span class="token punctuation">)</span>
+tokenizer<span class="token punctuation">.</span>train<span class="token punctuation">(</span>files<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'data/traint.txt'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> min_frequency<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">,</span> vocab_size<span class="token operator">=</span>vocab_size<span class="token punctuation">,</span> special_tokens<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"&lt;|endoftext|>"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+tokenizer<span class="token punctuation">.</span>save<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+
+tokenizer <span class="token operator">=</span> GPT2Tokenizer<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>model_path<span class="token punctuation">,</span> <span class="token string">'vocab.json'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>model_path<span class="token punctuation">,</span> <span class="token string">'merges.txt'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> errors<span class="token operator">=</span><span class="token string">'replace'</span><span class="token punctuation">)</span>
+tokenizer<span class="token punctuation">.</span>model_max_length <span class="token operator">=</span> <span class="token number">1024</span>
+tokenizer<span class="token punctuation">.</span>save_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+
+config <span class="token operator">=</span> GPT2Config<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_type<span class="token punctuation">)</span>
+config<span class="token punctuation">.</span>bos_token_id <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>bos_token_id
+config<span class="token punctuation">.</span>eos_token_id <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>eos_token_id
+config<span class="token punctuation">.</span>vocab_size <span class="token operator">=</span> vocab_size
+config<span class="token punctuation">.</span>save_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+
+tokenizer <span class="token operator">=</span> GPT2Tokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+config <span class="token operator">=</span> AutoConfig<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+
+text <span class="token operator">=</span> <span class="token string">'中国手机'</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>tokenizer<span class="token punctuation">.</span>tokenize<span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>tokenizer<span class="token punctuation">.</span>convert_tokens_to_ids<span class="token punctuation">(</span>tokenizer<span class="token punctuation">.</span>tokenize<span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 注意ModelConfig和Tokenizer本身是耦合的，需要里面的bos_token_id, eos_token_id及vocab_size，因此需要加载默认的GPT2Config，改好这些配置后存储到自己的model文件夹中。</p>
+<p>运行结果： <pre class="line-numbers language-none"><code class="language-none">[00:00:00] Reading files                            █████████████████████████████████████████████████████████████████████████                 100
+[00:00:00] Tokenize words                           █████████████████████████████████████████████████████████████████████████ 576      &#x2F;      576
+[00:00:00] Count pairs                              █████████████████████████████████████████████████████████████████████████ 576      &#x2F;      576
+[00:00:00] Compute merges                           █████████████████████████████████████████████████████████████████████████ 696      &#x2F;      696
+
+[&#39;ä¸Ń&#39;, &#39;åĽ½&#39;, &#39;æīĭ&#39;, &#39;æľ&#39;, &#39;º&#39;]
+[435, 456, 484, 261, 119]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>看起来不错？那就太naive了。数据量太小，换了个小数据集再测，发现tokenizer直接崩掉： <pre class="line-numbers language-none"><code class="language-none">[00:00:00] Reading files                            █████████████████████████████████████████████████████████████████████████                 100
+[00:00:00] Tokenize words                           █████████████████████████████████████████████████████████████████████████ 774      &#x2F;      774
+[00:00:00] Count pairs                              █████████████████████████████████████████████████████████████████████████ 774      &#x2F;      774
+thread &#39;thread &#39;&lt;unnamed&gt;&#39; panicked at &#39;called &#96;Option::unwrap()&#96; on a &#96;None&#96; value&#39;, &#x2F;__w&#x2F;tokenizers&#x2F;tokenizers&#x2F;tokenizers&#x2F;src&#x2F;models&#x2F;bpe&#x2F;trainer.rs:373:34
+note: run with &#96;RUST_BACKTRACE&#x3D;1&#96; environment variable to display a backtrace
+&lt;unnamed&gt;&#39; panicked at &#39;called &#96;Option::unwrap()&#96; on a &#96;None&#96; value&#39;, &#x2F;__w&#x2F;tokenizers&#x2F;tokenizers&#x2F;tokenizers&#x2F;src&#x2F;models&#x2F;bpe&#x2F;trainer.rs:373:34
+fatal runtime error: failed to initiate panic, error 5
+Aborted (core dumped)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Debug了好长时间，发现原来是因为数据集中有一个<code>~</code>字符……这只是一个测试，当然可以通过处理数据集的方式来解决问题，但鬼知道还有哪些特殊字符会引起tokenizer core dump。而且因为底层是Rust，这玩意儿也不懂，无法通过改源码的方式Fix……</p>
+<p>如果看下生成的merges.txt和vocab.json，会发现里面都是bytes，并非可见字符，也是BPE分词应有的效果，但考虑到在中文上的适用性，还是算了。</p>
+<h2 id="换berttokenizer">换BertTokenizer</h2>
+<p>看到大部分中文预训练模型都是直接用的Google开源的BertTokenizer，我们也直接用吧： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> transformers <span class="token keyword">import</span> BertTokenizer
+
+tokenizer <span class="token operator">=</span> BertTokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"bert-base-chinese"</span><span class="token punctuation">)</span>
+tokenizer<span class="token punctuation">.</span>save_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>但用的时候要注意设置bos_token_id, eos_token_id及vocab_size到GPT2Config中: <pre class="line-numbers language-python" data-language="python"><code class="language-python">config <span class="token operator">=</span> CONFIG_MAPPING<span class="token punctuation">[</span><span class="token string">'gpt2'</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+config<span class="token punctuation">.</span>bos_token_id <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>cls_token_id
+config<span class="token punctuation">.</span>eos_token_id <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>sep_token_id
+config<span class="token punctuation">.</span>vocab_size <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>vocab_size<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="berttokenizerfast">BertTokenizerFast</h2>
+<p>用大规模语料训练时发现，预处理数据太慢了，htop一看只用了一个CPU核，不慌，BertTokenizerFast可以上场了，它们都是基于tokenizer库直接开发的，可以用上所有的CPU核，分词速度与核数按比例提升：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> transformers <span class="token keyword">import</span> BertTokenizerFast
+
+tokenizer <span class="token operator">=</span> BertTokenizerFast<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span><span class="token string">"bert-base-chinese"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h1 id="大规模语料爆内存">大规模语料爆内存</h1>
+<p>训练语料大概10几G，在creating feature时就崩了且没有任何有用的提示： <pre class="line-numbers language-none"><code class="language-none">transformers.data.datasets.language_modeling -   Creating features from dataset file at &#x2F;data&#x2F;transformers&#x2F;data
+.&#x2F;pretrain.sh: line 13:  2692 Killed                  CUDA_VISIBLE_DEVICES&#x3D;0 python run_pretrain.py
+--output_dir output --model_type gpt2 --model_name_or_path $MODEL_PATH --do_train --train_data_file
+$TRAIN_FILE --per_gpu_train_batch_size 16 --per_gpu_eval_batch_size 4 --seed 1024<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>htop观察了一下，是内存爆了out of memory，注意是内存不是显存，如果是显存问题可以通过减少batch_size，但内存……</p>
+<h2 id="流式dataset">流式Dataset</h2>
+<p>原始数据用的是LineByLineTextDataset，看了一下 <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/blob/e73595bd649a149879816a59b56f57c8b37c73d0/src/transformers/data/datasets/language_modeling.py#L16">LineByLineTextDataset实现</a>：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">LineByLineTextDataset</span><span class="token punctuation">(</span>Dataset<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    This will be superseded by a framework-agnostic approach
+    soon.
+    """</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> tokenizer<span class="token punctuation">:</span> PreTrainedTokenizer<span class="token punctuation">,</span> file_path<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">,</span> block_size<span class="token punctuation">:</span> <span class="token builtin">int</span><span class="token punctuation">,</span> local_rank<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">assert</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isfile<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>
+        <span class="token comment"># Here, we do not cache the features, operating under the assumption</span>
+        <span class="token comment"># that we will soon use fast multithreaded tokenizers from the</span>
+        <span class="token comment"># `tokenizers` repo everywhere =)</span>
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"Creating features from dataset file at %s"</span><span class="token punctuation">,</span> file_path<span class="token punctuation">)</span>
+
+        <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>file_path<span class="token punctuation">,</span> encoding<span class="token operator">=</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+            lines <span class="token operator">=</span> <span class="token punctuation">[</span>line <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>splitlines<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>line<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> line<span class="token punctuation">.</span>isspace<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+
+        batch_encoding <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>batch_encode_plus<span class="token punctuation">(</span>lines<span class="token punctuation">,</span> add_special_tokens<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span>block_size<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>examples <span class="token operator">=</span> batch_encoding<span class="token punctuation">[</span><span class="token string">"input_ids"</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">def</span> <span class="token function">__len__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token builtin">len</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>examples<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">__getitem__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> i<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>self<span class="token punctuation">.</span>examples<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注意到它是把所有数据都load到内存中，然后存储batch_encoding["input_ids"]，再看下batch_encoding的代码，里面好多额外的数据结构，内存撑不住了。最好改成流式读取和处理的方式，下面实现了一个StreamingLineByLineTextDataset，简单起见，只在class中存原始数据，而在<code>__getitem__</code>方法中将其转换成tensor:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>data<span class="token punctuation">.</span>dataset <span class="token keyword">import</span> Dataset
+
+<span class="token keyword">class</span> <span class="token class-name">StreamingLineByLineTextDataset</span><span class="token punctuation">(</span>Dataset<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> tokenizer<span class="token punctuation">:</span> PreTrainedTokenizer<span class="token punctuation">,</span> file_path<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">,</span> block_size<span class="token punctuation">:</span> <span class="token builtin">int</span><span class="token punctuation">,</span> local_rank<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">assert</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isfile<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>tokenizer <span class="token operator">=</span> tokenizer
+        self<span class="token punctuation">.</span>block_size <span class="token operator">=</span> block_size
+
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"Creating features from dataset file at %s"</span><span class="token punctuation">,</span> file_path<span class="token punctuation">)</span>
+
+        <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>file_path<span class="token punctuation">,</span> encoding<span class="token operator">=</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>lines <span class="token operator">=</span> <span class="token punctuation">[</span>line <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>splitlines<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>line<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> line<span class="token punctuation">.</span>isspace<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"Loaded lines: %s"</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>lines<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">__len__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token builtin">len</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>lines<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">__getitem__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> i<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">:</span>
+        batch_encoding <span class="token operator">=</span> self<span class="token punctuation">.</span>tokenizer<span class="token punctuation">.</span>batch_encode_plus<span class="token punctuation">(</span><span class="token punctuation">[</span>self<span class="token punctuation">.</span>lines<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">,</span> add_special_tokens <span class="token operator">=</span> <span class="token boolean">True</span><span class="token punctuation">,</span> max_length <span class="token operator">=</span> self<span class="token punctuation">.</span>block_size<span class="token punctuation">)</span>
+        input_ids <span class="token operator">=</span> batch_encoding<span class="token punctuation">[</span><span class="token string">"input_ids"</span><span class="token punctuation">]</span>
+        <span class="token keyword">return</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span>input_ids<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="小结">小结</h1>
+<p>以上简单记录了下训练中文GPT2模型中遇到的一些坑和解决方案，期待训练出来的模型效果。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/autoencodervsautoregressive/" rel="bookmark">Autoencoding和Autoregressive的区别</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/nucleussampling/" rel="bookmark">Nucleus Sampling与文本生成中的不同解码策略比较</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/28/emacsinputswitch/" rel="prev" title="Windows下emacs输入法切换">
+                  <i class="fa fa-chevron-left"></i> Windows下emacs输入法切换
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/01/codinginterviewcppcheatsheet/" rel="next" title="代码面试C++/STL Cheat Sheet">
+                  代码面试C++/STL Cheat Sheet <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/05/01/pretrainchinesegpt/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

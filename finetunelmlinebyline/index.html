@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial: Transformers Language Model Training 示例提供了三个脚本: run_clm.py, run_mlm.py 和 run_plm.py。GPT是个causal language model，可以使用 run_clm.py 进行训练或微调。但这脚本并不支持行式数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用LineByLine数据集训练GPT">
+<meta property="og:url" content="https://finisky.github.io/finetunelmlinebyline/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial: Transformers Language Model Training 示例提供了三个脚本: run_clm.py, run_mlm.py 和 run_plm.py。GPT是个causal language model，可以使用 run_clm.py 进行训练或微调。但这脚本并不支持行式数">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-11-14T01:49:59.000Z">
+<meta property="article:modified_time" content="2021-11-25T10:37:14.757Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/finetunelmlinebyline/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/finetunelmlinebyline/","path":"finetunelmlinebyline/","title":"使用LineByLine数据集训练GPT"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用LineByLine数据集训练GPT | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%AF%E6%8C%81linebyline%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">支持LineByLine数据集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/finetunelmlinebyline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用LineByLine数据集训练GPT
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-14 09:49:59" itemprop="dateCreated datePublished" datetime="2021-11-14T09:49:59+08:00">2021-11-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-25 18:37:14" itemprop="dateModified" datetime="2021-11-25T18:37:14+08:00">2021-11-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/finetunelmlinebyline/" class="post-meta-item leancloud_visitors" data-flag-title="使用LineByLine数据集训练GPT" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/finetunelmlinebyline/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/finetunelmlinebyline/" data-xid="/finetunelmlinebyline/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial: <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/tree/master/examples/pytorch/language-modeling">Transformers Language Model Training</a></p>
+<p>示例提供了三个脚本: <code>run_clm.py</code>, <code>run_mlm.py</code> 和 <code>run_plm.py</code>。GPT是个causal language model，可以使用 <code>run_clm.py</code> 进行训练或微调。但这脚本并不支持行式数据集，即每行一个训练样本的数据集。它默认的数据处理是按行读取样本并把它们连接成一个<code>block_size</code>的连续文本。</p>
+<p>而这种数据处理方式在某些情况下并不适用，可能会让语言模型学偏。比如QA任务：</p>
+<blockquote>
+<p>Q1 [SEP] A1 Q2 [SEP] A2 ...</p>
+</blockquote>
+<p>连接后就成了 <code>Q1 [SEP] A1 Q2 [SEP] A2 ...</code> ，可能会让模型认为Q1的答案是<code>A1 Q2</code>。可对<code>run_clm.py</code>支持行式数据集。</p>
+<span id="more"></span>
+<h1 id="支持linebyline数据集">支持LineByLine数据集</h1>
+<p><code>run_clm.py</code>的默认数据处理逻辑:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># Main data processing function that will concatenate all texts from our dataset and generate chunks of block_size.</span>
+<span class="token keyword">def</span> <span class="token function">group_texts</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token comment"># Concatenate all texts.</span>
+	concatenated_examples <span class="token operator">=</span> <span class="token punctuation">&#123;</span>k<span class="token punctuation">:</span> <span class="token builtin">sum</span><span class="token punctuation">(</span>examples<span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> k <span class="token keyword">in</span> examples<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+	total_length <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>concatenated_examples<span class="token punctuation">[</span><span class="token builtin">list</span><span class="token punctuation">(</span>examples<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+	<span class="token comment"># We drop the small remainder, we could add padding if the model supported it instead of this drop, you can</span>
+	<span class="token comment"># customize this part to your needs.</span>
+	<span class="token keyword">if</span> total_length <span class="token operator">>=</span> block_size<span class="token punctuation">:</span>
+		total_length <span class="token operator">=</span> <span class="token punctuation">(</span>total_length <span class="token operator">//</span> block_size<span class="token punctuation">)</span> <span class="token operator">*</span> block_size
+	<span class="token comment"># Split by chunks of max_len.</span>
+	result <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+		k<span class="token punctuation">:</span> <span class="token punctuation">[</span>t<span class="token punctuation">[</span>i <span class="token punctuation">:</span> i <span class="token operator">+</span> block_size<span class="token punctuation">]</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> total_length<span class="token punctuation">,</span> block_size<span class="token punctuation">)</span><span class="token punctuation">]</span>
+		<span class="token keyword">for</span> k<span class="token punctuation">,</span> t <span class="token keyword">in</span> concatenated_examples<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token punctuation">&#125;</span>
+	result<span class="token punctuation">[</span><span class="token string">"labels"</span><span class="token punctuation">]</span> <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token string">"input_ids"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">return</span> result
+
+<span class="token comment"># Note that with `batched=True`, this map processes 1,000 texts together, so group_texts throws away a remainder</span>
+<span class="token comment"># for each of those groups of 1,000 texts. You can adjust that batch_size here but a higher value might be slower</span>
+<span class="token comment"># to preprocess.</span>
+<span class="token comment">#</span>
+<span class="token comment"># To speed up this part, we use multiprocessing. See the documentation of the map method for more information:</span>
+<span class="token comment"># https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Dataset.map</span>
+
+<span class="token keyword">with</span> training_args<span class="token punctuation">.</span>main_process_first<span class="token punctuation">(</span>desc<span class="token operator">=</span><span class="token string">"grouping texts together"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	lm_datasets <span class="token operator">=</span> tokenized_datasets<span class="token punctuation">.</span><span class="token builtin">map</span><span class="token punctuation">(</span>
+		group_texts<span class="token punctuation">,</span>
+		batched<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+		num_proc<span class="token operator">=</span>data_args<span class="token punctuation">.</span>preprocessing_num_workers<span class="token punctuation">,</span>
+		load_from_cache_file<span class="token operator">=</span><span class="token keyword">not</span> data_args<span class="token punctuation">.</span>overwrite_cache<span class="token punctuation">,</span>
+		desc<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"Grouping texts in chunks of </span><span class="token interpolation"><span class="token punctuation">&#123;</span>block_size<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">,</span>
+	<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>可有三种思路：</p>
+<ul>
+<li>修改data collator动态padding (失败，总报错)</li>
+<li>修改tokenize函数对每行直接padding到max_length</li>
+<li>实现 LineByLineDataset 类，参考<a href="https://finisky.github.io/2020/05/01/pretrainchinesegpt/">这里</a></li>
+</ul>
+<p>先来尝试修改tokenize函数并且让<code>lm_datasets = tokenized_datasets</code>:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">tokenize_function</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span>line <span class="token keyword">for</span> line <span class="token keyword">in</span> examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>line<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> line<span class="token punctuation">.</span>isspace<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+	tokens <span class="token operator">=</span> tokenizer<span class="token punctuation">(</span>
+		examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span><span class="token punctuation">,</span>
+		truncation<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+		max_length<span class="token operator">=</span>block_size<span class="token punctuation">,</span>
+	<span class="token punctuation">)</span>
+	tokens<span class="token punctuation">[</span><span class="token string">'labels'</span><span class="token punctuation">]</span> <span class="token operator">=</span> tokens<span class="token punctuation">[</span><span class="token string">'input_ids'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">return</span> tokens
+
+tokenized_datasets <span class="token operator">=</span> raw_datasets<span class="token punctuation">.</span><span class="token builtin">map</span><span class="token punctuation">(</span>
+	tokenize_function<span class="token punctuation">,</span>
+	batched<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+	num_proc<span class="token operator">=</span>data_args<span class="token punctuation">.</span>preprocessing_num_workers<span class="token punctuation">,</span>
+	remove_columns<span class="token operator">=</span>column_names<span class="token punctuation">,</span>
+	load_from_cache_file<span class="token operator">=</span><span class="token keyword">not</span> data_args<span class="token punctuation">.</span>overwrite_cache<span class="token punctuation">,</span>
+	desc<span class="token operator">=</span><span class="token string">"Running tokenizer on dataset"</span><span class="token punctuation">,</span>
+<span class="token punctuation">)</span>
+
+lm_datasets <span class="token operator">=</span> tokenized_datasets<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>但运行上面代码会报错:</p>
+<blockquote>
+<p>Traceback (most recent call last): File "/home/user/gpt/run_finetunelinebyline.py", line 527, in &lt;module&gt; main() File "/home/user/gpt/run_finetunelinebyline.py", line 475, in main train_result = trainer.train(resume_from_checkpoint=checkpoint) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py", line 1290, in train for step, inputs in enumerate(epoch_iterator): File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 521, in <strong>next</strong> data = self._next_data() File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may raise StopIteration File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 47, in fetch return self.collate_fn(data) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 66, in default_data_collator return torch_default_data_collator(features) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 112, in torch_default_data_collator batch[k] = torch.tensor([f[k] for f in features]) ValueError: expected sequence of length 56 at dim 1 (got 46) 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
+</blockquote>
+<p>打印一些调试信息，看看<code>raw_datasets</code>和<code>tokenized_datasets</code>的shape和示例:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** raw_datasets/tokenized_datasets "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>raw_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">" / "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>tokenized_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span><span class="token punctuation">)</span>
+logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** train_dataset shape: "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"/"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"/"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token string">'input_ids'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	 logger<span class="token punctuation">.</span>info <span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>输出像这样:</p>
+<blockquote>
+<p>11/11/2021 18:58:28 - INFO - <strong>main</strong> - *** raw_datasets/tokenized_datasets (9500, 1) / (9500, 4) 11/11/2021 18:58:29 - INFO - <strong>main</strong> - *** train_dataset shape: dict_keys(['attention_mask', 'input_ids', 'labels', 'token_type_ids'])/(9500, 4)/44 11/11/2021 18:58:29 - INFO - <strong>main</strong> - {'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 'input_ids': [101, 100, 2146, 2357, 8108, 945, 3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199, 7030, 772, 8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357, 102, 8108, 945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024, 4669, 6629, 3341, 102], 'labels': [101, 100, 2146, 2357, 8108, 945, 3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199, 7030, 772, 8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357, 102, 8108, 945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024, 4669, 6629, 3341, 102], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} ...</p>
+</blockquote>
+<p>看起来每个batch的输入并没有pad成功。尝试使用 <code>DataCollatorWithPadding</code> 换掉 <code>default_data_collator</code>:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># Initialize our Trainer</span>
+collator <span class="token operator">=</span> DataCollatorWithPadding<span class="token punctuation">(</span>tokenizer<span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token string">'max_length'</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span>block_size<span class="token punctuation">)</span>
+trainer <span class="token operator">=</span> Trainer<span class="token punctuation">(</span>
+	model<span class="token operator">=</span>model<span class="token punctuation">,</span>
+	args<span class="token operator">=</span>training_args<span class="token punctuation">,</span>
+	train_dataset<span class="token operator">=</span>train_dataset <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_train <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+	eval_dataset<span class="token operator">=</span>eval_dataset <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_eval <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+	tokenizer<span class="token operator">=</span>tokenizer<span class="token punctuation">,</span>
+	<span class="token comment"># Data collator will default to DataCollatorWithPadding, so we change it.</span>
+	data_collator<span class="token operator">=</span>collator
+<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>又报了另一个错:</p>
+<blockquote>
+<p>... ValueError: expected sequence of length 56 at dim 1 (got 46) During handling of the above exception, another exception occurred: Traceback (most recent call last): File "/home/user/gpt/run_finetunelinebyline.py", line 534, in &lt;module&gt; main() File "/home/user/gpt/run_finetunelinebyline.py", line 482, in main train_result = trainer.train(resume_from_checkpoint=checkpoint) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py", line 1290, in train for step, inputs in enumerate(epoch_iterator): File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 521, in <strong>next</strong> data = self._next_data() File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may raise StopIteration File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 47, in fetch return self.collate_fn(data) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 226, in <strong>call</strong> batch = self.tokenizer.pad( File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 2796, in pad return BatchEncoding(batch_outputs, tensor_type=return_tensors) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 210, in <strong>init</strong> self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 721, in convert_to_tensors raise ValueError( ValueError: Unable to create tensor, you should probably activate truncation and/or padding with 'padding=True' 'truncation=True' to have batched tensors with the same length. 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
+</blockquote>
+<p>最后还是从支持行式数据集的 <code>run_mlm.py</code> 抄来一段逻辑并稍做修改，去掉 <code>return_special_tokens_mask=True</code> ，并在分词函数中对每行数据增加 <code>labels</code> 列:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">tokenize_function</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token comment"># Remove empty lines</span>
+	examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span>
+		line <span class="token keyword">for</span> line <span class="token keyword">in</span> examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>line<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> line<span class="token punctuation">.</span>isspace<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token punctuation">]</span>
+	tokens <span class="token operator">=</span> tokenizer<span class="token punctuation">(</span>
+		examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span><span class="token punctuation">,</span>
+		padding<span class="token operator">=</span><span class="token string">'max_length'</span><span class="token punctuation">,</span>
+		truncation<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+		max_length<span class="token operator">=</span><span class="token number">1024</span>
+	<span class="token punctuation">)</span>
+	tokens<span class="token punctuation">[</span><span class="token string">'labels'</span><span class="token punctuation">]</span> <span class="token operator">=</span> tokens<span class="token punctuation">[</span><span class="token string">'input_ids'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">return</span> tokens
+
+<span class="token keyword">with</span> training_args<span class="token punctuation">.</span>main_process_first<span class="token punctuation">(</span>desc<span class="token operator">=</span><span class="token string">"dataset map tokenization"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	tokenized_datasets <span class="token operator">=</span> raw_datasets<span class="token punctuation">.</span><span class="token builtin">map</span><span class="token punctuation">(</span>
+		tokenize_function<span class="token punctuation">,</span>
+		batched<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+		num_proc<span class="token operator">=</span>data_args<span class="token punctuation">.</span>preprocessing_num_workers<span class="token punctuation">,</span>
+		remove_columns<span class="token operator">=</span><span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span><span class="token punctuation">,</span>
+		load_from_cache_file<span class="token operator">=</span><span class="token keyword">not</span> data_args<span class="token punctuation">.</span>overwrite_cache<span class="token punctuation">,</span>
+		desc<span class="token operator">=</span><span class="token string">"Running tokenizer on dataset line_by_line"</span><span class="token punctuation">,</span>
+	<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>主要区别是之前的tokenize函数中少了 <code>padding='max_length'</code> 参数。这里的实现思路是用 <code>tokenize_function</code> 替换 <code>group_texts</code> 分词函数，并使用 tokenizer 手动给每行padding 至 max_length。</p>
+<h1 id="完整代码">完整代码</h1>
+<p>在如下版本中测试通过: <strong>pytorch v1.9.0, transformers v4.12.2, datasets v1.11.0</strong>.</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding=utf-8</span>
+<span class="token comment"># Copyright 2020 The HuggingFace Inc. team. All rights reserved.</span>
+<span class="token comment">#</span>
+<span class="token comment"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="token comment"># you may not use this file except in compliance with the License.</span>
+<span class="token comment"># You may obtain a copy of the License at</span>
+<span class="token comment">#</span>
+<span class="token comment">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="token comment">#</span>
+<span class="token comment"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="token comment"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="token comment"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="token comment"># See the License for the specific language governing permissions and</span>
+<span class="token comment"># limitations under the License.</span>
+<span class="token triple-quoted-string string">"""
+Fine-tuning the library models for causal language modeling (GPT, GPT-2, CTRL, ...) on a text file or a dataset.
+
+Here is the full list of checkpoints on the hub that can be fine-tuned by this script:
+https://huggingface.co/models?filter=causal-lm
+"""</span>
+<span class="token comment"># You can also adapt this script on your own causal language modeling task. Pointers for this are left as comments.</span>
+
+<span class="token keyword">import</span> logging
+<span class="token keyword">import</span> math
+<span class="token keyword">import</span> os
+<span class="token keyword">import</span> sys
+<span class="token keyword">from</span> dataclasses <span class="token keyword">import</span> dataclass<span class="token punctuation">,</span> field
+<span class="token keyword">from</span> typing <span class="token keyword">import</span> Optional
+
+<span class="token keyword">import</span> datasets
+<span class="token keyword">from</span> datasets <span class="token keyword">import</span> load_dataset
+
+<span class="token keyword">import</span> transformers
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> <span class="token punctuation">(</span>
+    CONFIG_MAPPING<span class="token punctuation">,</span>
+    MODEL_FOR_CAUSAL_LM_MAPPING<span class="token punctuation">,</span>
+    AutoConfig<span class="token punctuation">,</span>
+    AutoModelForCausalLM<span class="token punctuation">,</span>
+    AutoTokenizer<span class="token punctuation">,</span>
+    HfArgumentParser<span class="token punctuation">,</span>
+    Trainer<span class="token punctuation">,</span>
+    TrainingArguments<span class="token punctuation">,</span>
+    default_data_collator<span class="token punctuation">,</span>
+    set_seed<span class="token punctuation">,</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">from</span> transformers<span class="token punctuation">.</span>testing_utils <span class="token keyword">import</span> CaptureLogger
+<span class="token keyword">from</span> transformers<span class="token punctuation">.</span>trainer_utils <span class="token keyword">import</span> get_last_checkpoint
+<span class="token keyword">from</span> transformers<span class="token punctuation">.</span>utils <span class="token keyword">import</span> check_min_version
+<span class="token keyword">from</span> transformers<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>versions <span class="token keyword">import</span> require_version
+<span class="token keyword">from</span> transformers<span class="token punctuation">.</span>data<span class="token punctuation">.</span>data_collator <span class="token keyword">import</span> DataCollatorWithPadding
+
+
+<span class="token comment"># Will error if the minimal version of Transformers is not installed. Remove at your own risks.</span>
+<span class="token comment">#check_min_version("4.13.0.dev0")</span>
+
+require_version<span class="token punctuation">(</span><span class="token string">"datasets>=1.8.0"</span><span class="token punctuation">,</span> <span class="token string">"To fix: pip install -r examples/pytorch/language-modeling/requirements.txt"</span><span class="token punctuation">)</span>
+
+logger <span class="token operator">=</span> logging<span class="token punctuation">.</span>getLogger<span class="token punctuation">(</span>__name__<span class="token punctuation">)</span>
+
+
+MODEL_CONFIG_CLASSES <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>MODEL_FOR_CAUSAL_LM_MAPPING<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+MODEL_TYPES <span class="token operator">=</span> <span class="token builtin">tuple</span><span class="token punctuation">(</span>conf<span class="token punctuation">.</span>model_type <span class="token keyword">for</span> conf <span class="token keyword">in</span> MODEL_CONFIG_CLASSES<span class="token punctuation">)</span>
+
+
+<span class="token decorator annotation punctuation">@dataclass</span>
+<span class="token keyword">class</span> <span class="token class-name">ModelArguments</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Arguments pertaining to which model/config/tokenizer we are going to fine-tune, or train from scratch.
+    """</span>
+
+    model_name_or_path<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The model checkpoint for weights initialization."</span>
+            <span class="token string">"Don't set if you want to train a model from scratch."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    model_type<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"If training from scratch, pass a model type from the list: "</span> <span class="token operator">+</span> <span class="token string">", "</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>MODEL_TYPES<span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    config_overrides<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Override some existing default config settings when a model is trained from scratch. Example: "</span>
+            <span class="token string">"n_embd=10,resid_pdrop=0.2,scale_attn_weights=false,summary_type=cls_index"</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    config_name<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Pretrained config name or path if not the same as model_name"</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+    tokenizer_name<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Pretrained tokenizer name or path if not the same as model_name"</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+    cache_dir<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Where do you want to store the pretrained models downloaded from huggingface.co"</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    use_fast_tokenizer<span class="token punctuation">:</span> <span class="token builtin">bool</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    model_revision<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token string">"main"</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The specific model version to use (can be a branch name, tag name or commit id)."</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    use_auth_token<span class="token punctuation">:</span> <span class="token builtin">bool</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Will use the token generated when running `transformers-cli login` (necessary to use this script "</span>
+            <span class="token string">"with private models)."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">__post_init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>config_overrides <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">and</span> <span class="token punctuation">(</span>self<span class="token punctuation">.</span>config_name <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">or</span> self<span class="token punctuation">.</span>model_name_or_path <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span>
+                <span class="token string">"--config_overrides can't be used in combination with --config_name or --model_name_or_path"</span>
+            <span class="token punctuation">)</span>
+
+
+<span class="token decorator annotation punctuation">@dataclass</span>
+<span class="token keyword">class</span> <span class="token class-name">DataTrainingArguments</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Arguments pertaining to what data we are going to input our model for training and eval.
+    """</span>
+
+    dataset_name<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The name of the dataset to use (via the datasets library)."</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+    dataset_config_name<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The configuration name of the dataset to use (via the datasets library)."</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+    train_file<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The input training data file (a text file)."</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    validation_file<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"An optional input evaluation data file to evaluate the perplexity on (a text file)."</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    max_train_samples<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"For debugging purposes or quicker training, truncate the number of training examples to this "</span>
+            <span class="token string">"value if set."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    max_eval_samples<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"For debugging purposes or quicker training, truncate the number of evaluation examples to this "</span>
+            <span class="token string">"value if set."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+
+    block_size<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Optional input sequence length after tokenization. "</span>
+            <span class="token string">"The training dataset will be truncated in block of this size for training. "</span>
+            <span class="token string">"Default to the model max input length for single sentence inputs (take into account special tokens)."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    overwrite_cache<span class="token punctuation">:</span> <span class="token builtin">bool</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Overwrite the cached training and evaluation sets"</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+    validation_split_percentage<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span>
+            <span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The percentage of the train set used as validation set in case there's no validation split"</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    preprocessing_num_workers<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"The number of processes to use for the preprocessing."</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+    keep_linebreaks<span class="token punctuation">:</span> <span class="token builtin">bool</span> <span class="token operator">=</span> field<span class="token punctuation">(</span>
+        default<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> metadata<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"help"</span><span class="token punctuation">:</span> <span class="token string">"Whether to keep line breaks when using TXT files or not."</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">__post_init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>dataset_name <span class="token keyword">is</span> <span class="token boolean">None</span> <span class="token keyword">and</span> self<span class="token punctuation">.</span>train_file <span class="token keyword">is</span> <span class="token boolean">None</span> <span class="token keyword">and</span> self<span class="token punctuation">.</span>validation_file <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"Need either a dataset name or a training/validation file."</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> self<span class="token punctuation">.</span>train_file <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                extension <span class="token operator">=</span> self<span class="token punctuation">.</span>train_file<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+                <span class="token keyword">assert</span> extension <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token string">"csv"</span><span class="token punctuation">,</span> <span class="token string">"json"</span><span class="token punctuation">,</span> <span class="token string">"txt"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">"`train_file` should be a csv, a json or a txt file."</span>
+            <span class="token keyword">if</span> self<span class="token punctuation">.</span>validation_file <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                extension <span class="token operator">=</span> self<span class="token punctuation">.</span>validation_file<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+                <span class="token keyword">assert</span> extension <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token string">"csv"</span><span class="token punctuation">,</span> <span class="token string">"json"</span><span class="token punctuation">,</span> <span class="token string">"txt"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">"`validation_file` should be a csv, a json or a txt file."</span>
+
+
+<span class="token keyword">def</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># See all possible arguments in src/transformers/training_args.py</span>
+    <span class="token comment"># or by passing the --help flag to this script.</span>
+    <span class="token comment"># We now keep distinct sets of args, for a cleaner separation of concerns.</span>
+
+    parser <span class="token operator">=</span> HfArgumentParser<span class="token punctuation">(</span><span class="token punctuation">(</span>ModelArguments<span class="token punctuation">,</span> DataTrainingArguments<span class="token punctuation">,</span> TrainingArguments<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>sys<span class="token punctuation">.</span>argv<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">2</span> <span class="token keyword">and</span> sys<span class="token punctuation">.</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>endswith<span class="token punctuation">(</span><span class="token string">".json"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># If we pass only one argument to the script and it's the path to a json file,</span>
+        <span class="token comment"># let's parse it to get our arguments.</span>
+        model_args<span class="token punctuation">,</span> data_args<span class="token punctuation">,</span> training_args <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse_json_file<span class="token punctuation">(</span>json_file<span class="token operator">=</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span>sys<span class="token punctuation">.</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        model_args<span class="token punctuation">,</span> data_args<span class="token punctuation">,</span> training_args <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse_args_into_dataclasses<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Setup logging</span>
+    logging<span class="token punctuation">.</span>basicConfig<span class="token punctuation">(</span>
+        <span class="token builtin">format</span><span class="token operator">=</span><span class="token string">"%(asctime)s - %(levelname)s - %(name)s - %(message)s"</span><span class="token punctuation">,</span>
+        datefmt<span class="token operator">=</span><span class="token string">"%m/%d/%Y %H:%M:%S"</span><span class="token punctuation">,</span>
+        handlers<span class="token operator">=</span><span class="token punctuation">[</span>logging<span class="token punctuation">.</span>StreamHandler<span class="token punctuation">(</span>sys<span class="token punctuation">.</span>stdout<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+
+    log_level <span class="token operator">=</span> training_args<span class="token punctuation">.</span>get_process_log_level<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    logger<span class="token punctuation">.</span>setLevel<span class="token punctuation">(</span>log_level<span class="token punctuation">)</span>
+    datasets<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>set_verbosity<span class="token punctuation">(</span>log_level<span class="token punctuation">)</span>
+    transformers<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>set_verbosity<span class="token punctuation">(</span>log_level<span class="token punctuation">)</span>
+    transformers<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>enable_default_handler<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    transformers<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>enable_explicit_format<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Log on each process the small summary:</span>
+    logger<span class="token punctuation">.</span>warning<span class="token punctuation">(</span>
+        <span class="token string-interpolation"><span class="token string">f"Process rank: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">.</span>local_rank<span class="token punctuation">&#125;</span></span><span class="token string">, device: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">.</span>device<span class="token punctuation">&#125;</span></span><span class="token string">, n_gpu: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">.</span>n_gpu<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+        <span class="token operator">+</span> <span class="token string-interpolation"><span class="token string">f"distributed training: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token builtin">bool</span><span class="token punctuation">(</span>training_args<span class="token punctuation">.</span>local_rank <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">, 16-bits training: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">.</span>fp16<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+    <span class="token punctuation">)</span>
+    logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Training/evaluation parameters </span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Detecting last checkpoint.</span>
+    last_checkpoint <span class="token operator">=</span> <span class="token boolean">None</span>
+    <span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isdir<span class="token punctuation">(</span>training_args<span class="token punctuation">.</span>output_dir<span class="token punctuation">)</span> <span class="token keyword">and</span> training_args<span class="token punctuation">.</span>do_train <span class="token keyword">and</span> <span class="token keyword">not</span> training_args<span class="token punctuation">.</span>overwrite_output_dir<span class="token punctuation">:</span>
+        last_checkpoint <span class="token operator">=</span> get_last_checkpoint<span class="token punctuation">(</span>training_args<span class="token punctuation">.</span>output_dir<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> last_checkpoint <span class="token keyword">is</span> <span class="token boolean">None</span> <span class="token keyword">and</span> <span class="token builtin">len</span><span class="token punctuation">(</span>os<span class="token punctuation">.</span>listdir<span class="token punctuation">(</span>training_args<span class="token punctuation">.</span>output_dir<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span>
+                <span class="token string-interpolation"><span class="token string">f"Output directory (</span><span class="token interpolation"><span class="token punctuation">&#123;</span>training_args<span class="token punctuation">.</span>output_dir<span class="token punctuation">&#125;</span></span><span class="token string">) already exists and is not empty. "</span></span>
+                <span class="token string">"Use --overwrite_output_dir to overcome."</span>
+            <span class="token punctuation">)</span>
+        <span class="token keyword">elif</span> last_checkpoint <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">and</span> training_args<span class="token punctuation">.</span>resume_from_checkpoint <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span>
+                <span class="token string-interpolation"><span class="token string">f"Checkpoint detected, resuming training at </span><span class="token interpolation"><span class="token punctuation">&#123;</span>last_checkpoint<span class="token punctuation">&#125;</span></span><span class="token string">. To avoid this behavior, change "</span></span>
+                <span class="token string">"the `--output_dir` or add `--overwrite_output_dir` to train from scratch."</span>
+            <span class="token punctuation">)</span>
+
+    <span class="token comment"># Set seed before initializing model.</span>
+    set_seed<span class="token punctuation">(</span>training_args<span class="token punctuation">.</span>seed<span class="token punctuation">)</span>
+
+    <span class="token comment"># Get the datasets: you can either provide your own CSV/JSON/TXT training and evaluation files (see below)</span>
+    <span class="token comment"># or just provide the name of one of the public datasets available on the hub at https://huggingface.co/datasets/</span>
+    <span class="token comment"># (the dataset will be downloaded automatically from the datasets Hub).</span>
+    <span class="token comment">#</span>
+    <span class="token comment"># For CSV/JSON files, this script will use the column called 'text' or the first column if no column called</span>
+    <span class="token comment"># 'text' is found. You can easily tweak this behavior (see below).</span>
+    <span class="token comment">#</span>
+    <span class="token comment"># In distributed training, the load_dataset function guarantee that only one local process can concurrently</span>
+    <span class="token comment"># download the dataset.</span>
+    <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>dataset_name <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token comment"># Downloading and loading a dataset from the hub.</span>
+        raw_datasets <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>
+            data_args<span class="token punctuation">.</span>dataset_name<span class="token punctuation">,</span> data_args<span class="token punctuation">.</span>dataset_config_name<span class="token punctuation">,</span> cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir
+        <span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token string">"validation"</span> <span class="token keyword">not</span> <span class="token keyword">in</span> raw_datasets<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            raw_datasets<span class="token punctuation">[</span><span class="token string">"validation"</span><span class="token punctuation">]</span> <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>
+                data_args<span class="token punctuation">.</span>dataset_name<span class="token punctuation">,</span>
+                data_args<span class="token punctuation">.</span>dataset_config_name<span class="token punctuation">,</span>
+                split<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"train[:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>validation_split_percentage<span class="token punctuation">&#125;</span></span><span class="token string">%]"</span></span><span class="token punctuation">,</span>
+                cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+            <span class="token punctuation">)</span>
+            raw_datasets<span class="token punctuation">[</span><span class="token string">"train"</span><span class="token punctuation">]</span> <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>
+                data_args<span class="token punctuation">.</span>dataset_name<span class="token punctuation">,</span>
+                data_args<span class="token punctuation">.</span>dataset_config_name<span class="token punctuation">,</span>
+                split<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"train[</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>validation_split_percentage<span class="token punctuation">&#125;</span></span><span class="token string">%:]"</span></span><span class="token punctuation">,</span>
+                cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+            <span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        data_files <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+        dataset_args <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>train_file <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            data_files<span class="token punctuation">[</span><span class="token string">"train"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>train_file
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>validation_file <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            data_files<span class="token punctuation">[</span><span class="token string">"validation"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>validation_file
+        extension <span class="token operator">=</span> <span class="token punctuation">(</span>
+            data_args<span class="token punctuation">.</span>train_file<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+            <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>train_file <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span>
+            <span class="token keyword">else</span> data_args<span class="token punctuation">.</span>validation_file<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+        <span class="token punctuation">)</span>
+        <span class="token keyword">if</span> extension <span class="token operator">==</span> <span class="token string">"txt"</span><span class="token punctuation">:</span>
+            extension <span class="token operator">=</span> <span class="token string">"text"</span>
+            dataset_args<span class="token punctuation">[</span><span class="token string">"keep_linebreaks"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>keep_linebreaks
+        raw_datasets <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>extension<span class="token punctuation">,</span> data_files<span class="token operator">=</span>data_files<span class="token punctuation">,</span> cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span> <span class="token operator">**</span>dataset_args<span class="token punctuation">)</span>
+        <span class="token comment"># If no validation data is there, validation_split_percentage will be used to divide the dataset.</span>
+        <span class="token keyword">if</span> <span class="token string">"validation"</span> <span class="token keyword">not</span> <span class="token keyword">in</span> raw_datasets<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            raw_datasets<span class="token punctuation">[</span><span class="token string">"validation"</span><span class="token punctuation">]</span> <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>
+                extension<span class="token punctuation">,</span>
+                data_files<span class="token operator">=</span>data_files<span class="token punctuation">,</span>
+                split<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"train[:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>validation_split_percentage<span class="token punctuation">&#125;</span></span><span class="token string">%]"</span></span><span class="token punctuation">,</span>
+                cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+                <span class="token operator">**</span>dataset_args<span class="token punctuation">,</span>
+            <span class="token punctuation">)</span>
+            raw_datasets<span class="token punctuation">[</span><span class="token string">"train"</span><span class="token punctuation">]</span> <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span>
+                extension<span class="token punctuation">,</span>
+                data_files<span class="token operator">=</span>data_files<span class="token punctuation">,</span>
+                split<span class="token operator">=</span><span class="token string-interpolation"><span class="token string">f"train[</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>validation_split_percentage<span class="token punctuation">&#125;</span></span><span class="token string">%:]"</span></span><span class="token punctuation">,</span>
+                cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+                <span class="token operator">**</span>dataset_args<span class="token punctuation">,</span>
+            <span class="token punctuation">)</span>
+
+    <span class="token comment"># See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at</span>
+    <span class="token comment"># https://huggingface.co/docs/datasets/loading_datasets.html.</span>
+
+    <span class="token comment"># Load pretrained model and tokenizer</span>
+    <span class="token comment">#</span>
+    <span class="token comment"># Distributed training:</span>
+    <span class="token comment"># The .from_pretrained methods guarantee that only one local process can concurrently</span>
+    <span class="token comment"># download model &amp; vocab.</span>
+
+    config_kwargs <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"cache_dir"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+        <span class="token string">"revision"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>model_revision<span class="token punctuation">,</span>
+        <span class="token string">"use_auth_token"</span><span class="token punctuation">:</span> <span class="token boolean">True</span> <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>use_auth_token <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>config_name<span class="token punctuation">:</span>
+        config <span class="token operator">=</span> AutoConfig<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_args<span class="token punctuation">.</span>config_name<span class="token punctuation">,</span> <span class="token operator">**</span>config_kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">elif</span> model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">:</span>
+        config <span class="token operator">=</span> AutoConfig<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">,</span> <span class="token operator">**</span>config_kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        config <span class="token operator">=</span> CONFIG_MAPPING<span class="token punctuation">[</span>model_args<span class="token punctuation">.</span>model_type<span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        logger<span class="token punctuation">.</span>warning<span class="token punctuation">(</span><span class="token string">"You are instantiating a new config instance from scratch."</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>config_overrides <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Overriding config: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>model_args<span class="token punctuation">.</span>config_overrides<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+            config<span class="token punctuation">.</span>update_from_string<span class="token punctuation">(</span>model_args<span class="token punctuation">.</span>config_overrides<span class="token punctuation">)</span>
+
+    tokenizer_kwargs <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"cache_dir"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+        <span class="token string">"use_fast"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>use_fast_tokenizer<span class="token punctuation">,</span>
+        <span class="token string">"revision"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>model_revision<span class="token punctuation">,</span>
+        <span class="token string">"use_auth_token"</span><span class="token punctuation">:</span> <span class="token boolean">True</span> <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>use_auth_token <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>tokenizer_name<span class="token punctuation">:</span>
+        tokenizer <span class="token operator">=</span> AutoTokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_args<span class="token punctuation">.</span>tokenizer_name<span class="token punctuation">,</span> <span class="token operator">**</span>tokenizer_kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">elif</span> model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">:</span>
+        tokenizer <span class="token operator">=</span> AutoTokenizer<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">,</span> <span class="token operator">**</span>tokenizer_kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span>
+            <span class="token string">"You are instantiating a new tokenizer from scratch. This is not supported by this script."</span>
+            <span class="token string">"You can do it from another script, save it, and load it from here, using --tokenizer_name."</span>
+        <span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">:</span>
+        model <span class="token operator">=</span> AutoModelForCausalLM<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>
+            model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">,</span>
+            from_tf<span class="token operator">=</span><span class="token builtin">bool</span><span class="token punctuation">(</span><span class="token string">".ckpt"</span> <span class="token keyword">in</span> model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">)</span><span class="token punctuation">,</span>
+            config<span class="token operator">=</span>config<span class="token punctuation">,</span>
+            cache_dir<span class="token operator">=</span>model_args<span class="token punctuation">.</span>cache_dir<span class="token punctuation">,</span>
+            revision<span class="token operator">=</span>model_args<span class="token punctuation">.</span>model_revision<span class="token punctuation">,</span>
+            use_auth_token<span class="token operator">=</span><span class="token boolean">True</span> <span class="token keyword">if</span> model_args<span class="token punctuation">.</span>use_auth_token <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        model <span class="token operator">=</span> AutoModelForCausalLM<span class="token punctuation">.</span>from_config<span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+        n_params <span class="token operator">=</span> <span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token punctuation">(</span>p<span class="token punctuation">.</span>data_ptr<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> p<span class="token punctuation">.</span>numel<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">for</span> p <span class="token keyword">in</span> model<span class="token punctuation">.</span>parameters<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>values<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Training new model from scratch - Total size=</span><span class="token interpolation"><span class="token punctuation">&#123;</span>n_params<span class="token operator">/</span><span class="token number">2</span><span class="token operator">**</span><span class="token number">20</span><span class="token punctuation">:</span><span class="token format-spec">.2f</span><span class="token punctuation">&#125;</span></span><span class="token string">M params"</span></span><span class="token punctuation">)</span>
+
+    model<span class="token punctuation">.</span>resize_token_embeddings<span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>tokenizer<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Preprocessing the datasets.</span>
+    <span class="token comment"># First we tokenize all the texts.</span>
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_train<span class="token punctuation">:</span>
+        column_names <span class="token operator">=</span> raw_datasets<span class="token punctuation">[</span><span class="token string">"train"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>column_names
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        column_names <span class="token operator">=</span> raw_datasets<span class="token punctuation">[</span><span class="token string">"validation"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>column_names
+    text_column_name <span class="token operator">=</span> <span class="token string">"text"</span> <span class="token keyword">if</span> <span class="token string">"text"</span> <span class="token keyword">in</span> column_names <span class="token keyword">else</span> column_names<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+
+    <span class="token comment"># since this will be pickled to avoid _LazyModule error in Hasher force logger loading before tokenize_function</span>
+    tok_logger <span class="token operator">=</span> transformers<span class="token punctuation">.</span>utils<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>get_logger<span class="token punctuation">(</span><span class="token string">"transformers.tokenization_utils_base"</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">tokenize_function</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># Remove empty lines</span>
+        examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span>
+            line <span class="token keyword">for</span> line <span class="token keyword">in</span> examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>line<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> line<span class="token punctuation">.</span>isspace<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">]</span>
+        tokens <span class="token operator">=</span> tokenizer<span class="token punctuation">(</span>
+            examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            padding<span class="token operator">=</span><span class="token string">'max_length'</span><span class="token punctuation">,</span>
+            truncation<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+            max_length<span class="token operator">=</span><span class="token number">1024</span><span class="token punctuation">,</span>
+            <span class="token comment"># # We use this option because DataCollatorForLanguageModeling (see below) is more efficient when it</span>
+            <span class="token comment"># # receives the `special_tokens_mask`.</span>
+            <span class="token comment"># return_special_tokens_mask=True,</span>
+        <span class="token punctuation">)</span>
+        tokens<span class="token punctuation">[</span><span class="token string">'labels'</span><span class="token punctuation">]</span> <span class="token operator">=</span> tokens<span class="token punctuation">[</span><span class="token string">'input_ids'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> tokens
+
+    <span class="token keyword">with</span> training_args<span class="token punctuation">.</span>main_process_first<span class="token punctuation">(</span>desc<span class="token operator">=</span><span class="token string">"dataset map tokenization"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        tokenized_datasets <span class="token operator">=</span> raw_datasets<span class="token punctuation">.</span><span class="token builtin">map</span><span class="token punctuation">(</span>
+            tokenize_function<span class="token punctuation">,</span>
+            batched<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+            num_proc<span class="token operator">=</span>data_args<span class="token punctuation">.</span>preprocessing_num_workers<span class="token punctuation">,</span>
+            remove_columns<span class="token operator">=</span><span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            load_from_cache_file<span class="token operator">=</span><span class="token keyword">not</span> data_args<span class="token punctuation">.</span>overwrite_cache<span class="token punctuation">,</span>
+            desc<span class="token operator">=</span><span class="token string">"Running tokenizer on dataset line_by_line"</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>block_size <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        block_size <span class="token operator">=</span> tokenizer<span class="token punctuation">.</span>model_max_length
+        <span class="token keyword">if</span> block_size <span class="token operator">></span> <span class="token number">1024</span><span class="token punctuation">:</span>
+            logger<span class="token punctuation">.</span>warning<span class="token punctuation">(</span>
+                <span class="token string-interpolation"><span class="token string">f"The tokenizer picked seems to have a very large `model_max_length` (</span><span class="token interpolation"><span class="token punctuation">&#123;</span>tokenizer<span class="token punctuation">.</span>model_max_length<span class="token punctuation">&#125;</span></span><span class="token string">). "</span></span>
+                <span class="token string">"Picking 1024 instead. You can change that default value by passing --block_size xxx."</span>
+            <span class="token punctuation">)</span>
+            block_size <span class="token operator">=</span> <span class="token number">1024</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>block_size <span class="token operator">></span> tokenizer<span class="token punctuation">.</span>model_max_length<span class="token punctuation">:</span>
+            logger<span class="token punctuation">.</span>warning<span class="token punctuation">(</span>
+                <span class="token string-interpolation"><span class="token string">f"The block_size passed (</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>block_size<span class="token punctuation">&#125;</span></span><span class="token string">) is larger than the maximum length for the model"</span></span>
+                <span class="token string-interpolation"><span class="token string">f"(</span><span class="token interpolation"><span class="token punctuation">&#123;</span>tokenizer<span class="token punctuation">.</span>model_max_length<span class="token punctuation">&#125;</span></span><span class="token string">). Using block_size=</span><span class="token interpolation"><span class="token punctuation">&#123;</span>tokenizer<span class="token punctuation">.</span>model_max_length<span class="token punctuation">&#125;</span></span><span class="token string">."</span></span>
+            <span class="token punctuation">)</span>
+        block_size <span class="token operator">=</span> <span class="token builtin">min</span><span class="token punctuation">(</span>data_args<span class="token punctuation">.</span>block_size<span class="token punctuation">,</span> tokenizer<span class="token punctuation">.</span>model_max_length<span class="token punctuation">)</span>
+
+    <span class="token comment"># Main data processing function that will concatenate all texts from our dataset and generate chunks of block_size.</span>
+    <span class="token keyword">def</span> <span class="token function">group_texts</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># Concatenate all texts.</span>
+        concatenated_examples <span class="token operator">=</span> <span class="token punctuation">&#123;</span>k<span class="token punctuation">:</span> <span class="token builtin">sum</span><span class="token punctuation">(</span>examples<span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> k <span class="token keyword">in</span> examples<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+        total_length <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>concatenated_examples<span class="token punctuation">[</span><span class="token builtin">list</span><span class="token punctuation">(</span>examples<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token comment"># We drop the small remainder, we could add padding if the model supported it instead of this drop, you can</span>
+        <span class="token comment"># customize this part to your needs.</span>
+        <span class="token keyword">if</span> total_length <span class="token operator">>=</span> block_size<span class="token punctuation">:</span>
+            total_length <span class="token operator">=</span> <span class="token punctuation">(</span>total_length <span class="token operator">//</span> block_size<span class="token punctuation">)</span> <span class="token operator">*</span> block_size
+        <span class="token comment"># Split by chunks of max_len.</span>
+        result <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+            k<span class="token punctuation">:</span> <span class="token punctuation">[</span>t<span class="token punctuation">[</span>i <span class="token punctuation">:</span> i <span class="token operator">+</span> block_size<span class="token punctuation">]</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> total_length<span class="token punctuation">,</span> block_size<span class="token punctuation">)</span><span class="token punctuation">]</span>
+            <span class="token keyword">for</span> k<span class="token punctuation">,</span> t <span class="token keyword">in</span> concatenated_examples<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+        result<span class="token punctuation">[</span><span class="token string">"labels"</span><span class="token punctuation">]</span> <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token string">"input_ids"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> result
+
+    <span class="token comment"># Note that with `batched=True`, this map processes 1,000 texts together, so group_texts throws away a remainder</span>
+    <span class="token comment"># for each of those groups of 1,000 texts. You can adjust that batch_size here but a higher value might be slower</span>
+    <span class="token comment"># to preprocess.</span>
+    <span class="token comment">#</span>
+    <span class="token comment"># To speed up this part, we use multiprocessing. See the documentation of the map method for more information:</span>
+    <span class="token comment"># https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Dataset.map</span>
+
+    <span class="token comment"># with training_args.main_process_first(desc="grouping texts together"):</span>
+    <span class="token comment">#     lm_datasets = tokenized_datasets.map(</span>
+    <span class="token comment">#         group_texts,</span>
+    <span class="token comment">#         batched=True,</span>
+    <span class="token comment">#         num_proc=data_args.preprocessing_num_workers,</span>
+    <span class="token comment">#         load_from_cache_file=not data_args.overwrite_cache,</span>
+    <span class="token comment">#         desc=f"Grouping texts in chunks of &#123;block_size&#125;",</span>
+    <span class="token comment">#     )</span>
+
+    lm_datasets <span class="token operator">=</span> tokenized_datasets
+
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_train<span class="token punctuation">:</span>
+        <span class="token keyword">if</span> <span class="token string">"train"</span> <span class="token keyword">not</span> <span class="token keyword">in</span> tokenized_datasets<span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"--do_train requires a train dataset"</span><span class="token punctuation">)</span>
+        train_dataset <span class="token operator">=</span> lm_datasets<span class="token punctuation">[</span><span class="token string">"train"</span><span class="token punctuation">]</span>
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>max_train_samples <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            train_dataset <span class="token operator">=</span> train_dataset<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span>data_args<span class="token punctuation">.</span>max_train_samples<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_eval<span class="token punctuation">:</span>
+        <span class="token keyword">if</span> <span class="token string">"validation"</span> <span class="token keyword">not</span> <span class="token keyword">in</span> tokenized_datasets<span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span><span class="token string">"--do_eval requires a validation dataset"</span><span class="token punctuation">)</span>
+        eval_dataset <span class="token operator">=</span> lm_datasets<span class="token punctuation">[</span><span class="token string">"validation"</span><span class="token punctuation">]</span>
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>max_eval_samples <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            eval_dataset <span class="token operator">=</span> eval_dataset<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token builtin">range</span><span class="token punctuation">(</span>data_args<span class="token punctuation">.</span>max_eval_samples<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+
+    <span class="token comment"># Initialize our Trainer</span>
+    trainer <span class="token operator">=</span> Trainer<span class="token punctuation">(</span>
+        model<span class="token operator">=</span>model<span class="token punctuation">,</span>
+        args<span class="token operator">=</span>training_args<span class="token punctuation">,</span>
+        train_dataset<span class="token operator">=</span>train_dataset <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_train <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        eval_dataset<span class="token operator">=</span>eval_dataset <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_eval <span class="token keyword">else</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        tokenizer<span class="token operator">=</span>tokenizer<span class="token punctuation">,</span>
+        <span class="token comment"># Data collator will default to DataCollatorWithPadding, so we change it.</span>
+        data_collator<span class="token operator">=</span>default_data_collator
+    <span class="token punctuation">)</span>
+
+    logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** raw_datasets/tokenized_datasets "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>raw_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">" / "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>tokenized_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** train_dataset shape: "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"/"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"/"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token string">'input_ids'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Training</span>
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_train<span class="token punctuation">:</span>
+        checkpoint <span class="token operator">=</span> <span class="token boolean">None</span>
+        <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>resume_from_checkpoint <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            checkpoint <span class="token operator">=</span> training_args<span class="token punctuation">.</span>resume_from_checkpoint
+        <span class="token keyword">elif</span> last_checkpoint <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            checkpoint <span class="token operator">=</span> last_checkpoint
+        train_result <span class="token operator">=</span> trainer<span class="token punctuation">.</span>train<span class="token punctuation">(</span>resume_from_checkpoint<span class="token operator">=</span>checkpoint<span class="token punctuation">)</span>
+        trainer<span class="token punctuation">.</span>save_model<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># Saves the tokenizer too for easy upload</span>
+
+        metrics <span class="token operator">=</span> train_result<span class="token punctuation">.</span>metrics
+
+        max_train_samples <span class="token operator">=</span> <span class="token punctuation">(</span>
+            data_args<span class="token punctuation">.</span>max_train_samples <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>max_train_samples <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">else</span> <span class="token builtin">len</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">)</span>
+        <span class="token punctuation">)</span>
+        metrics<span class="token punctuation">[</span><span class="token string">"train_samples"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">min</span><span class="token punctuation">(</span>max_train_samples<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        trainer<span class="token punctuation">.</span>log_metrics<span class="token punctuation">(</span><span class="token string">"train"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">)</span>
+        trainer<span class="token punctuation">.</span>save_metrics<span class="token punctuation">(</span><span class="token string">"train"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">)</span>
+        trainer<span class="token punctuation">.</span>save_state<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># Evaluation</span>
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>do_eval<span class="token punctuation">:</span>
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** Evaluate ***"</span><span class="token punctuation">)</span>
+
+        metrics <span class="token operator">=</span> trainer<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        max_eval_samples <span class="token operator">=</span> data_args<span class="token punctuation">.</span>max_eval_samples <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>max_eval_samples <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">else</span> <span class="token builtin">len</span><span class="token punctuation">(</span>eval_dataset<span class="token punctuation">)</span>
+        metrics<span class="token punctuation">[</span><span class="token string">"eval_samples"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">min</span><span class="token punctuation">(</span>max_eval_samples<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>eval_dataset<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">try</span><span class="token punctuation">:</span>
+            perplexity <span class="token operator">=</span> math<span class="token punctuation">.</span>exp<span class="token punctuation">(</span>metrics<span class="token punctuation">[</span><span class="token string">"eval_loss"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token keyword">except</span> OverflowError<span class="token punctuation">:</span>
+            perplexity <span class="token operator">=</span> <span class="token builtin">float</span><span class="token punctuation">(</span><span class="token string">"inf"</span><span class="token punctuation">)</span>
+        metrics<span class="token punctuation">[</span><span class="token string">"perplexity"</span><span class="token punctuation">]</span> <span class="token operator">=</span> perplexity
+
+        trainer<span class="token punctuation">.</span>log_metrics<span class="token punctuation">(</span><span class="token string">"eval"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">)</span>
+        trainer<span class="token punctuation">.</span>save_metrics<span class="token punctuation">(</span><span class="token string">"eval"</span><span class="token punctuation">,</span> metrics<span class="token punctuation">)</span>
+
+    kwargs <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"finetuned_from"</span><span class="token punctuation">:</span> model_args<span class="token punctuation">.</span>model_name_or_path<span class="token punctuation">,</span> <span class="token string">"tasks"</span><span class="token punctuation">:</span> <span class="token string">"text-generation"</span><span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>dataset_name <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        kwargs<span class="token punctuation">[</span><span class="token string">"dataset_tags"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>dataset_name
+        <span class="token keyword">if</span> data_args<span class="token punctuation">.</span>dataset_config_name <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            kwargs<span class="token punctuation">[</span><span class="token string">"dataset_args"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>dataset_config_name
+            kwargs<span class="token punctuation">[</span><span class="token string">"dataset"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>dataset_name<span class="token punctuation">&#125;</span></span><span class="token string"> </span><span class="token interpolation"><span class="token punctuation">&#123;</span>data_args<span class="token punctuation">.</span>dataset_config_name<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            kwargs<span class="token punctuation">[</span><span class="token string">"dataset"</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_args<span class="token punctuation">.</span>dataset_name
+
+    <span class="token keyword">if</span> training_args<span class="token punctuation">.</span>push_to_hub<span class="token punctuation">:</span>
+        trainer<span class="token punctuation">.</span>push_to_hub<span class="token punctuation">(</span><span class="token operator">**</span>kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        trainer<span class="token punctuation">.</span>create_model_card<span class="token punctuation">(</span><span class="token operator">**</span>kwargs<span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">_mp_fn</span><span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># For xla_spawn (TPUs)</span>
+    main<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    main<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>References: <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/1145"># How to finetune GPT2 #1145</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/01/pretrainchinesegpt/" rel="bookmark">中文GPT2预训练实战</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/autoencodervsautoregressive/" rel="bookmark">Autoencoding和Autoregressive的区别</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/nucleussampling/" rel="bookmark">Nucleus Sampling与文本生成中的不同解码策略比较</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/finetunelmlinebyline.en/" rel="prev" title="Fine-tune GPT with Line-by-Line Dataset">
+                  <i class="fa fa-chevron-left"></i> Fine-tune GPT with Line-by-Line Dataset
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/preventpodrestart/" rel="next" title="避免Pod反复自动重启">
+                  避免Pod反复自动重启 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/finetunelmlinebyline/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

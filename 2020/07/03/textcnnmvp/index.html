@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="TextCNN 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。 项目地址：https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;TextCNN 这里的实现基于： https:&#x2F;&#x2F;github.com&#x2F;Shawn1993&#x2F;cnn-text-classificatio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TextCNN pytorch实现">
+<meta property="og:url" content="https://finisky.github.io/2020/07/03/textcnnmvp/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="TextCNN 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。 项目地址：https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;TextCNN 这里的实现基于： https:&#x2F;&#x2F;github.com&#x2F;Shawn1993&#x2F;cnn-text-classificatio">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="article:published_time" content="2020-07-03T11:49:43.000Z">
+<meta property="article:modified_time" content="2021-11-25T10:37:57.301Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="pytorch">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="NLU">
+<meta property="article:tag" content="CNN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/07/03/textcnnmvp/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/07/03/textcnnmvp/","path":"2020/07/03/textcnnmvp/","title":"TextCNN pytorch实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TextCNN pytorch实现 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#nlp%E4%B8%ADcnn%E7%9A%84channel%E4%B8%8Efilter"><span class="nav-number">1.</span> <span class="nav-text">NLP中CNN的Channel与Filter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#textcnn%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">TextCNN模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nn.conv2d%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">nn.Conv2d详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E5%90%AB%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">参数含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA"><span class="nav-number">3.2.</span> <span class="nav-text">输入与输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">3.3.</span> <span class="nav-text">例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#model.py"><span class="nav-number">4.1.</span> <span class="nav-text">model.py</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#operation.py"><span class="nav-number">4.2.</span> <span class="nav-text">operation.py</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#main.py"><span class="nav-number">4.3.</span> <span class="nav-text">main.py</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-number">4.4.</span> <span class="nav-text">运行方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train"><span class="nav-number">4.4.1.</span> <span class="nav-text">Train</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#test"><span class="nav-number">4.4.2.</span> <span class="nav-text">Test</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#predict"><span class="nav-number">4.4.3.</span> <span class="nav-text">Predict</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/07/03/textcnnmvp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TextCNN pytorch实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-03 19:49:43" itemprop="dateCreated datePublished" datetime="2020-07-03T19:49:43+08:00">2020-07-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-25 18:37:57" itemprop="dateModified" datetime="2021-11-25T18:37:57+08:00">2021-11-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/07/03/textcnnmvp/" class="post-meta-item leancloud_visitors" data-flag-title="TextCNN pytorch实现" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/07/03/textcnnmvp/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/07/03/textcnnmvp/" data-xid="/2020/07/03/textcnnmvp/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1408.5882">TextCNN</a> 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/finisky/TextCNN">https://github.com/finisky/TextCNN</a></p>
+<p>这里的实现基于： <a target="_blank" rel="noopener" href="https://github.com/Shawn1993/cnn-text-classification-pytorch">https://github.com/Shawn1993/cnn-text-classification-pytorch</a></p>
+<p>主要改动：</p>
+<ul>
+<li>简化了参数配置，希望呈现一个最简版本</li>
+<li>Fix一些由于pytorch版本升级接口变动所致语法错误</li>
+<li>Fix模型padding导致的runtime error</li>
+<li>解耦模型model.py与training/test/prediction逻辑</li>
+<li>定制tokenizer，默认中文jieba分词</li>
+<li>使用torchtext的TabularDataset读取数据集：text abel</li>
+</ul>
+<span id="more"></span>
+<h1 id="nlp中cnn的channel与filter">NLP中CNN的Channel与Filter</h1>
+<p>注：此处的Filter与Kernel的意义相同。</p>
+<p><a target="_blank" rel="noopener" href="http://www.wildml.com/2015/11/understanding-convolutional-neural-networks-for-nlp/"># Understanding Convolutional Neural Networks for NLP</a> 对Channel和Filter的解释比较清楚。CNN是源于CV领域的一个概念，对于一张图来讲，RGB天然就是3个不同的Channel输入，而迁移到NLP中之后，文本其实只有一个Channel，但也可以通过使用不同的embedding(word2vec, glove, BERT等)或rephrase等方法将输入变成多个Channel。而Filter的目的是对于同一个输入用不同的kernel做卷积，从而提取出不同的Feature。用一个不是非常严谨的表述，Channel像是输入本身的一个天然存在的性质，而Filter是人为增加不同维度来提取Feature。</p>
+<h1 id="textcnn模型">TextCNN模型</h1>
+<p>模型的细节参考下图（wildml盗图），无须赘述： <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="http://www.wildml.com/wp-content/uploads/2015/11/Screen-Shot-2015-11-06-at-12.05.40-PM-1024x937.png" alt="TextCNN Model Illustration" /></p>
+<p>值得一提的是NLP的卷积操作和CV中有所不同，CV中的图像为二维输入，卷积会在横纵两个方向上进行，而NLP中的输入虽然看起来是二维的(token_num, embedding_dim)，但卷积只在第一维方向进行，即每个滑动窗口都包括了整个embedding vector。道理很容易理解，每个token的语义由整个embedding vector表示，在局部的embedding vector上做卷积不太说得通。</p>
+<h1 id="nn.conv2d详解">nn.Conv2d详解</h1>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">torch<span class="token punctuation">.</span>nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>in_channels<span class="token punctuation">,</span> out_channels<span class="token punctuation">,</span> kernel_size<span class="token punctuation">,</span> stride<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span> dilation<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> groups<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> bias<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> padding_mode<span class="token operator">=</span><span class="token string">'zeros'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="参数含义">参数含义</h2>
+<p>stride, padding, dilation这些参数的意义，<code>a picture is worth a thousand words</code>, 直接看动画即可： <a target="_blank" rel="noopener" href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md"># Convolution animations</a></p>
+<p><code>kernel_size</code>, <code>stride</code>, <code>padding</code>, <code>dilation</code>参数类型可以是int也可以是tuple of two ints，若为tuple，分别用在H维度与W维度。</p>
+<h2 id="输入与输出">输入与输出</h2>
+<p>输入：(N,C_{in}​,H,W)</p>
+<p>输出：(N,C_{out}​,H,W)</p>
+<p>就TextCNN而言，N为batchsize，C_{in} = 1, C_{out}为指定的kernel_num，H为一个句子中的token_num，W为embedding_dim。</p>
+<h2 id="例子">例子</h2>
+<p>假设有个句子 token_num=4, embed_dim=5，使用一个3*embed_dim的kernel进行卷积，kernel_num = Co = 2。</p>
+<p>既然是在H维度上卷积，每个卷积操作滑过整个embedding vector，所以kernel_size的第二个维度必定是embed_dim。此外，必须满足kernel_size[0] &gt;= token_num，否则会有如下错误：</p>
+<blockquote><p>RuntimeError: Calculated padded input size per channel: (? x 5). Kernel size: (? x 5). Kernel size can't be greater than actual input size</p>
+</blockquote>
+<p>特别地，在kernel_size[0]=3, token_num &gt;= 1的情景下，需要在H维度上进行padding，且一定不能在W维度上padding，以保证卷积操作有效，每次都滑过整个embedding vector。因此，padding = (1, 0)。本文参考的原始实现没有对文本进行padding，如果数据集中存在过短的文本，训练时会出现runtime error。 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">as</span> nn
+
+torch<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+
+token_num <span class="token operator">=</span> <span class="token number">4</span>
+embed_dim <span class="token operator">=</span> <span class="token number">5</span>
+kernel_size <span class="token operator">=</span> <span class="token number">3</span>
+Ci <span class="token operator">=</span> <span class="token number">1</span>
+Co <span class="token operator">=</span> <span class="token number">2</span>
+
+m <span class="token operator">=</span> nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>Ci<span class="token punctuation">,</span> Co<span class="token punctuation">,</span> <span class="token punctuation">(</span>kernel_size<span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span><span class="token punctuation">)</span>
+fixed_weight <span class="token operator">=</span> <span class="token punctuation">(</span>m<span class="token punctuation">.</span>weight<span class="token punctuation">,</span> m<span class="token punctuation">.</span>bias<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">conv_padding</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> padding<span class="token punctuation">,</span> fixed_weight <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    conv <span class="token operator">=</span> nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>Ci<span class="token punctuation">,</span> Co<span class="token punctuation">,</span> <span class="token punctuation">(</span>kernel_size<span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span><span class="token punctuation">,</span> padding <span class="token operator">=</span> padding<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> fixed_weight <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        conv<span class="token punctuation">.</span>weight <span class="token operator">=</span> fixed_weight<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        conv<span class="token punctuation">.</span>bias <span class="token operator">=</span> fixed_weight<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+    x <span class="token operator">=</span> conv<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> x
+
+raw_x <span class="token operator">=</span> torch<span class="token punctuation">.</span>randn<span class="token punctuation">(</span>token_num<span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span> <span class="token comment"># (token_num, embed_dim)</span>
+x <span class="token operator">=</span> raw_x<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token comment"># (1, 1, token_num, embed_dim)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string">"x size: "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>x<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string">"\nNo padding:"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>conv_padding<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>conv_padding<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string">"\nPadding in the height axis:"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>conv_padding<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> fixed_weight<span class="token punctuation">)</span><span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>conv_padding<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> fixed_weight<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string">"\nVerify padding vectors:"</span><span class="token punctuation">)</span>
+pad_x <span class="token operator">=</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span><span class="token punctuation">(</span>torch<span class="token punctuation">.</span>zeros<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span><span class="token punctuation">,</span> raw_x<span class="token punctuation">,</span> torch<span class="token punctuation">.</span>zeros<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>pad_x<span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token punctuation">(</span>conv_padding<span class="token punctuation">(</span>pad_x<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> fixed_weight<span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>执行结果如下： <pre class="line-numbers language-none"><code class="language-none">x size: torch.Size([1, 1, 4, 5])
+tensor([[[[-0.6136,  0.0316, -0.4927,  0.2484, -0.2303],
+          [-0.3918,  0.5433, -0.3952,  0.2055, -0.4503],
+          [-0.5731, -0.5554, -1.5312, -1.2341,  1.8197],
+          [-0.5515, -1.3253,  0.1886, -0.0691, -0.4949]]]])
+
+No padding:
+torch.Size([1, 2, 2, 1])
+tensor([[[[ 0.1010],
+          [ 0.3119]],
+
+         [[ 0.3740],
+          [-0.1368]]]], grad_fn&#x3D;&lt;MkldnnConvolutionBackward&gt;)
+
+Padding in the height axis:
+torch.Size([1, 2, 4, 1])
+tensor([[[[-0.1523],
+          [ 0.3070],
+          [-0.0044],
+          [ 0.1774]],
+
+         [[ 0.4631],
+          [ 0.5886],
+          [-0.5039],
+          [-0.4035]]]], grad_fn&#x3D;&lt;MkldnnConvolutionBackward&gt;)
+
+Verify padding vectors:
+tensor([[[[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000],
+          [-0.6136,  0.0316, -0.4927,  0.2484, -0.2303],
+          [-0.3918,  0.5433, -0.3952,  0.2055, -0.4503],
+          [-0.5731, -0.5554, -1.5312, -1.2341,  1.8197],
+          [-0.5515, -1.3253,  0.1886, -0.0691, -0.4949],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000]]]])
+tensor([[[[-0.1523],
+          [ 0.3070],
+          [-0.0044],
+          [ 0.1774]],
+
+         [[ 0.4631],
+          [ 0.5886],
+          [-0.5039],
+          [-0.4035]]]], grad_fn&#x3D;&lt;MkldnnConvolutionBackward&gt;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>易得，原始的句子输入为 4<em>5，如果是未padding的输入经过3</em>5卷积核后结果为2<em>1，在H维度padding之后卷积的结果为4</em>1。</p>
+<p>从nn.Conv2d中很难拿到padding之后的输入vector，为了验证padding与我们预期的结果一致，将nn.Conv2d中的weight和bias都固定下来，分别计算no padding input + model padding = (1,0) 与padding input + model padding = 0的结果，二者输出一致，证明padding正确。</p>
+<h1 id="代码实现">代码实现</h1>
+<p><a target="_blank" rel="noopener" href="https://github.com/finisky/TextCNN">https://github.com/finisky/TextCNN</a></p>
+<h2 id="model.py">model.py</h2>
+<p>https://github.com/finisky/TextCNN/blob/master/model.py</p>
+<p>核心模型代码，比较简洁，与args解耦： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">as</span> nn
+<span class="token keyword">import</span> torch<span class="token punctuation">.</span>nn<span class="token punctuation">.</span>functional <span class="token keyword">as</span> F
+
+<span class="token keyword">class</span> <span class="token class-name">TextCnn</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> embed_num<span class="token punctuation">,</span> embed_dim<span class="token punctuation">,</span> class_num<span class="token punctuation">,</span> kernel_num<span class="token punctuation">,</span> kernel_sizes<span class="token punctuation">,</span> dropout <span class="token operator">=</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span>TextCnn<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        Ci <span class="token operator">=</span> <span class="token number">1</span>
+        Co <span class="token operator">=</span> kernel_num
+
+        self<span class="token punctuation">.</span>embed <span class="token operator">=</span> nn<span class="token punctuation">.</span>Embedding<span class="token punctuation">(</span>embed_num<span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>convs1 <span class="token operator">=</span> nn<span class="token punctuation">.</span>ModuleList<span class="token punctuation">(</span><span class="token punctuation">[</span>nn<span class="token punctuation">.</span>Conv2d<span class="token punctuation">(</span>Ci<span class="token punctuation">,</span> Co<span class="token punctuation">,</span> <span class="token punctuation">(</span>f<span class="token punctuation">,</span> embed_dim<span class="token punctuation">)</span><span class="token punctuation">,</span> padding <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">for</span> f <span class="token keyword">in</span> kernel_sizes<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>dropout <span class="token operator">=</span> nn<span class="token punctuation">.</span>Dropout<span class="token punctuation">(</span>dropout<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>fc <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>Co <span class="token operator">*</span> <span class="token builtin">len</span><span class="token punctuation">(</span>kernel_sizes<span class="token punctuation">)</span><span class="token punctuation">,</span> class_num<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        x <span class="token operator">=</span> self<span class="token punctuation">.</span>embed<span class="token punctuation">(</span>x<span class="token punctuation">)</span>  <span class="token comment"># (N, token_num, embed_dim)</span>
+        x <span class="token operator">=</span> x<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>  <span class="token comment"># (N, Ci, token_num, embed_dim)</span>
+        x <span class="token operator">=</span> <span class="token punctuation">[</span>F<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>conv<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span> <span class="token keyword">for</span> conv <span class="token keyword">in</span> self<span class="token punctuation">.</span>convs1<span class="token punctuation">]</span>  <span class="token comment"># [(N, Co, token_num) * len(kernel_sizes)]</span>
+        x <span class="token operator">=</span> <span class="token punctuation">[</span>F<span class="token punctuation">.</span>max_pool1d<span class="token punctuation">(</span>i<span class="token punctuation">,</span> i<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> x<span class="token punctuation">]</span>  <span class="token comment"># [(N, Co) * len(kernel_sizes)]</span>
+        x <span class="token operator">=</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token comment"># (N, Co * len(kernel_sizes))</span>
+        x <span class="token operator">=</span> self<span class="token punctuation">.</span>dropout<span class="token punctuation">(</span>x<span class="token punctuation">)</span>  <span class="token comment"># (N, Co * len(kernel_sizes))</span>
+        logit <span class="token operator">=</span> self<span class="token punctuation">.</span>fc<span class="token punctuation">(</span>x<span class="token punctuation">)</span>  <span class="token comment"># (N, class_num)</span>
+        <span class="token keyword">return</span> logit<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 因为最大kernel_size是5，所以padding=(2,0)，保证卷积操作有效。</p>
+<p>还有个比较费解的地方，kernel_num和len(kernel_sizes)有什么区别？kernel_sizes是一组不同size的kernel，而kernel_num指的是有多少组这样的kernel。所以，实际上整个网络中kernel的总数是kernel_num * len(kernel_sizes)。这点从TextCNN模型图中也可看出，共有kernel_num=2组kernels，每个组中有3/4/5三个不同size的kernel，共6个kernel。</p>
+<h2 id="operation.py">operation.py</h2>
+<p>https://github.com/finisky/TextCNN/blob/master/operation.py</p>
+<p>完成模型的外围操作，包括train(), test(), predict()和save()。 不贴完整代码了，只有一处需要解释： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">for</span> batch <span class="token keyword">in</span> train_iter<span class="token punctuation">:</span>
+    feature<span class="token punctuation">,</span> target <span class="token operator">=</span> batch<span class="token punctuation">.</span>text<span class="token punctuation">,</span> batch<span class="token punctuation">.</span>label
+    feature<span class="token punctuation">.</span>t_<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> target<span class="token punctuation">.</span>sub_<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>  <span class="token comment"># batch first, index align</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+<p>target为什么需要减1？原因在于label_field.vocab里包括一个<code>&lt;unk&gt;</code>: <pre class="line-numbers language-none"><code class="language-none">&#123;&#39;&lt;unk&gt;&#39;: 0, &#39;1&#39;: 1, &#39;0&#39;: 2&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h2 id="main.py">main.py</h2>
+<p>https://github.com/finisky/TextCNN/blob/master/main.py</p>
+<p>程序入口，parse参数，读取数据，分词。 也不贴完整代码了，只贴读取数据和建词表(data format: text abel)： <pre class="line-numbers language-python" data-language="python"><code class="language-python">text_field <span class="token operator">=</span> data<span class="token punctuation">.</span>Field<span class="token punctuation">(</span>lower<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> tokenize <span class="token operator">=</span> tokenize<span class="token punctuation">)</span>
+label_field <span class="token operator">=</span> data<span class="token punctuation">.</span>Field<span class="token punctuation">(</span>sequential<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+fields <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token string">'text'</span><span class="token punctuation">,</span> text_field<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token string">'label'</span><span class="token punctuation">,</span> label_field<span class="token punctuation">)</span><span class="token punctuation">]</span>
+train_dataset<span class="token punctuation">,</span> test_dataset <span class="token operator">=</span> data<span class="token punctuation">.</span>TabularDataset<span class="token punctuation">.</span>splits<span class="token punctuation">(</span>
+    path <span class="token operator">=</span> <span class="token string">'./data/'</span><span class="token punctuation">,</span> <span class="token builtin">format</span> <span class="token operator">=</span> <span class="token string">'tsv'</span><span class="token punctuation">,</span> skip_header <span class="token operator">=</span> <span class="token boolean">False</span><span class="token punctuation">,</span>
+    train <span class="token operator">=</span> <span class="token string">'train.tsv'</span><span class="token punctuation">,</span> test <span class="token operator">=</span> <span class="token string">'test.tsv'</span><span class="token punctuation">,</span> fields <span class="token operator">=</span> fields
+<span class="token punctuation">)</span>
+text_field<span class="token punctuation">.</span>build_vocab<span class="token punctuation">(</span>train_dataset<span class="token punctuation">,</span> test_dataset<span class="token punctuation">,</span> min_freq <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">,</span> max_size <span class="token operator">=</span> <span class="token number">50000</span><span class="token punctuation">)</span>
+label_field<span class="token punctuation">.</span>build_vocab<span class="token punctuation">(</span>train_dataset<span class="token punctuation">,</span> test_dataset<span class="token punctuation">)</span>
+train_iter<span class="token punctuation">,</span> test_iter <span class="token operator">=</span> data<span class="token punctuation">.</span>Iterator<span class="token punctuation">.</span>splits<span class="token punctuation">(</span><span class="token punctuation">(</span>train_dataset<span class="token punctuation">,</span> test_dataset<span class="token punctuation">)</span><span class="token punctuation">,</span>
+                                             batch_sizes <span class="token operator">=</span> <span class="token punctuation">(</span>args<span class="token punctuation">.</span>batch_size<span class="token punctuation">,</span> args<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span><span class="token punctuation">,</span> sort_key <span class="token operator">=</span> <span class="token keyword">lambda</span> x<span class="token punctuation">:</span> <span class="token builtin">len</span><span class="token punctuation">(</span>x<span class="token punctuation">.</span>text<span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>替换原始实现的mydataset.py，同时建词表时设置了min_freq和max_size。</p>
+<h2 id="运行方法">运行方法</h2>
+<p>随机选了23000条 weibo_senti_100k 数据，其中train/test分别有20000和3000条。</p>
+<h3 id="train">Train</h3>
+<p><code>python main.py -train</code></p>
+<h3 id="test">Test</h3>
+<p><code>python main.py -test -snapshot snapshot/best_steps_400.pt</code></p>
+<p>运行结果： <pre class="line-numbers language-none"><code class="language-none">Evaluation - loss: 0.061201  acc: 98.053% (2518&#x2F;2568)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h3 id="predict">Predict</h3>
+<p><code>python main.py -predict -snapshot snapshot/best_steps_400.pt</code></p>
+<p>运行结果： <pre class="line-numbers language-none"><code class="language-none">&gt;&gt;内牛满面~[泪]
+0 | 内牛满面~[泪]
+&gt;&gt;啧啧啧，好幸福好幸福
+1 | 啧啧啧，好幸福好幸福<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>虽然测试的准确率很高，但实际测试的效果一般，原因在于weibo_senti_100k的文本分类任务比较简单，这个数据集比较脏，大概率是按文本中的emoji写了规则进行的正负向标注。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/07/09/crossentropyloss/" rel="bookmark">熵，交叉熵，KL散度公式与计算实例</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/25/multiheadattention/" rel="bookmark">MultiHeadAttention实现详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/autoencodervsautoregressive/" rel="bookmark">Autoencoding和Autoregressive的区别</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pytorch/" rel="tag"># pytorch</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/NLU/" rel="tag"># NLU</a>
+              <a href="/tags/CNN/" rel="tag"># CNN</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/25/multiheadattention/" rel="prev" title="MultiHeadAttention实现详解">
+                  <i class="fa fa-chevron-left"></i> MultiHeadAttention实现详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/09/crossentropyloss/" rel="next" title="熵，交叉熵，KL散度公式与计算实例">
+                  熵，交叉熵，KL散度公式与计算实例 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/07/03/textcnnmvp/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

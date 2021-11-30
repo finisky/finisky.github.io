@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fai">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Migrate Ops Manager to a new Kubernetes Cluster">
+<meta property="og:url" content="https://finisky.github.io/2021/03/21/migrateopsmanager.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fai">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-21T05:03:50.000Z">
+<meta property="article:modified_time" content="2021-11-16T06:36:19.260Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="MongoDB Ops Manager">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2021/03/21/migrateopsmanager.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2021/03/21/migrateopsmanager.en/","path":"2021/03/21/migrateopsmanager.en/","title":"Migrate Ops Manager to a new Kubernetes Cluster"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Migrate Ops Manager to a new Kubernetes Cluster | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-ops-manager-works"><span class="nav-number">1.</span> <span class="nav-text">How Ops Manager Works</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#steps-to-migrate"><span class="nav-number">2.</span> <span class="nav-text">Steps to Migrate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#make-ops-manager-capable-to-manage-external-deployments-in-new-cluster"><span class="nav-number">2.1.</span> <span class="nav-text">Make Ops Manager Capable to Manage External Deployments (in new cluster)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#edit-deployment-configuration-in-old-cluster"><span class="nav-number">2.2.</span> <span class="nav-text">Edit Deployment Configuration (in old cluster)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2021/03/21/migrateopsmanager.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Migrate Ops Manager to a new Kubernetes Cluster
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-03-21 13:03:50" itemprop="dateCreated datePublished" datetime="2021-03-21T13:03:50+08:00">2021-03-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-16 14:36:19" itemprop="dateModified" datetime="2021-11-16T14:36:19+08:00">2021-11-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2021/03/21/migrateopsmanager.en/" class="post-meta-item leancloud_visitors" data-flag-title="Migrate Ops Manager to a new Kubernetes Cluster" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2021/03/21/migrateopsmanager.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2021/03/21/migrateopsmanager.en/" data-xid="/2021/03/21/migrateopsmanager.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fails, you cannot restore the backup data to a new cluster as both Ops Manager and deployments are unavailable.</p>
+<p>Of course, we don't want to re-deploy the existing MongoDB deployments in Kubernetes. But how to make the deployments sending data to the new ops manager URL?</p>
+<span id="more"></span>
+<h1 id="how-ops-manager-works">How Ops Manager Works</h1>
+<p>Previously I thought the Ops Manager and deployments were tightly coupled which is totally wrong. Actually they are independent of each other and can be independently deployed.</p>
+<p>Here we deploy them in Kubernetes cluster. However, it's fine to deploy one in a VM and another in Kubernetes. MongoDB deployments use MongoDB Agent to send data to Ops Manager, and the Ops Manager uses <code>groupId</code> and <code>apiKey</code> to verify the deployment's identity and keep track of its status.</p>
+<p>Therefore, the problem becomes how to set the new Ops Manager Url, project id and agent key for the old MongoDB deployment.</p>
+<p>Let's exec to a deployment pod and see its processes:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">I have no name!@shard-1-0:&#x2F;$ ps aux|grep mongod
+2000         51  6.1  0.0 1769520 55632 ?       Sl   09:32   0:08 &#x2F;mongodb-automation&#x2F;files&#x2F;mongodb-mms-automation-agent -mmsGroupId 603dfcb99870377752adff58 -pidfilepath &#x2F;mongodb-automation&#x2F;mongodb-mms-automation-agent.pid -maxLogFileDurationHrs 24 -logLevel INFO -healthCheckFilePath &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;agent-health-status.json -useLocalMongoDbTools -mmsBaseUrl http:&#x2F;&#x2F;ops-manager-svc.mongodb.svc.cluster.local:8080 -sslRequireValidMMSServerCertificates -mmsApiKey 603dfcb99870377752adff5ef7c231f11b5xxxxx -logFile &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;automation-agent.log
+2000         57  0.0  0.0  10752   860 ?        S    09:32   0:00 tail -F &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;automation-agent-verbose.log
+2000         60  0.0  0.0  10752   868 ?        S    09:32   0:00 tail -F &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;automation-agent-stderr.log
+2000         67  0.0  0.0  10752   844 ?        S    09:32   0:00 tail -F &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;mongodb.log
+2000         70  0.0  0.0  16532  1264 ?        S    09:32   0:00 jq --unbuffered --null-input -c --raw-input inputs | &#123;&quot;logType&quot;: &quot;mongodb&quot;, &quot;contents&quot;: .&#125;
+2000        201  2.6  0.1 2086868 107356 ?      Sl   09:32   0:02 &#x2F;var&#x2F;lib&#x2F;mongodb-mms-automation&#x2F;mongodb-linux-x86_64-4.4.3-ent&#x2F;bin&#x2F;mongod -f &#x2F;data&#x2F;automation-mongod.conf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>How does the pod get <code>mmsBaseUrl</code>, <code>mmsApiKey</code> and <code>mmsGroupId</code>? The answer is MongoDB Kubernetes Operator set envs in the pod. Explore the pod's yaml in the stateful set, it has following sections in <code>spec.template.spec.containers</code>:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">env</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> AGENT_API_KEY
+    <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
+      <span class="token key atrule">secretKeyRef</span><span class="token punctuation">:</span>
+        <span class="token key atrule">name</span><span class="token punctuation">:</span> 603dfcb99870377752adff58<span class="token punctuation">-</span>group<span class="token punctuation">-</span>secret
+        <span class="token key atrule">key</span><span class="token punctuation">:</span> agentApiKey
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> AGENT_FLAGS
+    <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">'-logFile,/var/log/mongodb-mms-automation/automation-agent.log,'</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> BASE_URL
+    <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">'http://ops-manager-svc.mongodb.svc.cluster.local:8080'</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> GROUP_ID
+    <span class="token key atrule">value</span><span class="token punctuation">:</span> 603dfcb99870377752adff58
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> LOG_LEVEL
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> SSL_REQUIRE_VALID_MMS_CERTIFICATES
+    <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">'true'</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> USER_LOGIN
+    <span class="token key atrule">value</span><span class="token punctuation">:</span> admin<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="steps-to-migrate">Steps to Migrate</h1>
+<h2 id="make-ops-manager-capable-to-manage-external-deployments-in-new-cluster">Make Ops Manager Capable to Manage External Deployments (in new cluster)</h2>
+<p><a target="_blank" rel="noopener" href="https://www.mongodb.com/blog/post/running-mongodb-ops-manager-in-kubernetes">The tutorial</a> configure the Ops Manager Url as internl endpoints <code>http://ops-manager-svc.mongodb.svc.cluster.local:8080</code> which is only accessible to the same Kubernetes cluster. As a result, we must make the new Ops Manager accessible to the public first.</p>
+<p>Refer to: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/plan-om-resource/#mdb-resource-deployment-locations">Managing External MongoDB Deployments</a></p>
+<p>Add the <code>mms.centralUrl</code> setting to <code>spec.configuration</code> in the new Ops Manager resource specification: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+    <span class="token key atrule">mms.centralUrl</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//newopsmanager.com<span class="token punctuation">:</span>8080/<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+<p>Example Ops Manager yaml with specified resource configuration: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDBOpsManager
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> mongodb
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token comment"># the version of Ops Manager distro to use</span>
+  <span class="token key atrule">version</span><span class="token punctuation">:</span> 4.4.6
+  <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+    <span class="token key atrule">mms.centralUrl</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//newopsmanager.com<span class="token punctuation">:</span>8080/
+
+  <span class="token comment"># the name of the secret containing admin user credentials.</span>
+  <span class="token key atrule">adminCredentials</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>secret
+
+  <span class="token key atrule">externalConnectivity</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> LoadBalancer
+
+  <span class="token comment"># the Replica Set backing Ops Manager. </span>
+  <span class="token comment"># appDB has the SCRAM-SHA authentication mode always enabled</span>
+  <span class="token key atrule">applicationDatabase</span><span class="token punctuation">:</span>
+    <span class="token key atrule">members</span><span class="token punctuation">:</span> <span class="token number">3</span>
+    <span class="token key atrule">podSpec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+      <span class="token key atrule">cpuRequests</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+      <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+      <span class="token key atrule">memoryRequests</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+      <span class="token key atrule">persistence</span><span class="token punctuation">:</span>
+        <span class="token key atrule">single</span><span class="token punctuation">:</span>
+          <span class="token key atrule">storage</span><span class="token punctuation">:</span> 16Gi
+      
+  <span class="token key atrule">statefulSet</span><span class="token punctuation">:</span>
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">template</span><span class="token punctuation">:</span>
+        <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+          <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager
+              <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+                <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                  <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+                  <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+                <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                  <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+                  <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+  <span class="token key atrule">backup</span><span class="token punctuation">:</span>
+    <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+    <span class="token key atrule">headDB</span><span class="token punctuation">:</span>
+      <span class="token key atrule">storage</span><span class="token punctuation">:</span> 16Gi
+    <span class="token key atrule">statefulSet</span><span class="token punctuation">:</span>
+      <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+        <span class="token key atrule">template</span><span class="token punctuation">:</span>
+          <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+            <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+              <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>backup<span class="token punctuation">-</span>daemon
+                <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+                  <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                    <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+                    <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+                  <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                    <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
+                    <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="edit-deployment-configuration-in-old-cluster">Edit Deployment Configuration (in old cluster)</h2>
+<p>Now let's modify MongoDB deployments in old Kubernetes cluster.</p>
+<p><strong>Warning:</strong> Do this operation when traffic is low, because the deployment will be temporarily unaccessible for several minutes. Each pod of the cluster will be restarted to apply the new setttings.</p>
+<p>Create a new configmap <code>new-ops-manager-connection</code> <strong>in the old cluster</strong>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl create configmap new-ops-manager-connection --from-literal&#x3D;&quot;baseUrl&#x3D;http:&#x2F;&#x2F;newopsmanager.com:8080&quot;  -n mongodb  
+configmap&#x2F;new-ops-manager-connection created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<p>Create new Ops Manager admin secret <code>new-ops-manager-admin-secret</code> <strong>in the old cluster</strong>, the secret value should be the same as it in the new cluster:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl create secret generic new-ops-manager-admin-key --from-literal&#x3D;&quot;publicKey&#x3D;xxx&quot;  --from-literal&#x3D;&quot;privateKey&#x3D;xxx&quot; -n mongodb  
+secret&#x2F;new-ops-manager-admin-key created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>Finally modify the deployment <code>spec.opsManager</code> section from: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
+  <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+    <span class="token key atrule">name</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
+<span class="token key atrule">credentials</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>to:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
+  <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+    <span class="token key atrule">name</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
+<span class="token key atrule">credentials</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Apply the yaml and waiting for the cluster reconciling to running state. The new Ops Manager will automatically create a new project to manage the deployment.</p>
+<p><strong>Tips:</strong></p>
+<ul>
+<li>The project id will be changed after migration</li>
+<li>TLS will not be affected during the migration</li>
+<li>If the deployment enabled Auth, after migration the Ops Manager will show "AUTH" status as "Disabled". Don't worry, old users will be kept in the deployment (online traffic will not be affected). We need to make the new Ops Manager and the deployment status be consistent. Just import the users through "Security -&gt; MongoDB Users", enabled the AUTH from the UI then it's done. A short break might be happen during the AUTH status transition process.</li>
+</ul>
+<p>Example sharded cluster deployment yaml with resource configuration by podTemplate: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> mongodb
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">shardCount</span><span class="token punctuation">:</span> <span class="token number">2</span>
+  <span class="token key atrule">mongodsPerShardCount</span><span class="token punctuation">:</span> <span class="token number">3</span>
+  <span class="token key atrule">mongosCount</span><span class="token punctuation">:</span> <span class="token number">2</span>
+  <span class="token key atrule">configServerCount</span><span class="token punctuation">:</span> <span class="token number">3</span>
+  <span class="token key atrule">version</span><span class="token punctuation">:</span> 4.4.3<span class="token punctuation">-</span>ent
+  <span class="token key atrule">setFeatureCompatibilityVersion</span><span class="token punctuation">:</span> <span class="token string">"4.4"</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> ShardedCluster
+  
+  <span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
+    <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
+  <span class="token key atrule">credentials</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key
+  <span class="token key atrule">exposedExternally</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  
+  <span class="token key atrule">shardPodSpec</span><span class="token punctuation">:</span>
+    <span class="token key atrule">podTemplate</span><span class="token punctuation">:</span>
+      <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+        <span class="token key atrule">initContainers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>init<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+        <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"15Gi"</span>
+    <span class="token key atrule">persistence</span><span class="token punctuation">:</span>
+      <span class="token key atrule">single</span><span class="token punctuation">:</span>
+        <span class="token key atrule">storage</span><span class="token punctuation">:</span> 30Gi
+        <span class="token key atrule">storageClass</span><span class="token punctuation">:</span> managed<span class="token punctuation">-</span>premium
+  <span class="token key atrule">configSrvPodSpec</span><span class="token punctuation">:</span>
+    <span class="token key atrule">podTemplate</span><span class="token punctuation">:</span>
+      <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+        <span class="token key atrule">initContainers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>init<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"8Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"8Gi"</span>
+        <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"8Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"8Gi"</span>
+    <span class="token key atrule">persistence</span><span class="token punctuation">:</span>
+      <span class="token key atrule">single</span><span class="token punctuation">:</span>
+        <span class="token key atrule">storage</span><span class="token punctuation">:</span> 5Gi
+        <span class="token key atrule">storageClass</span><span class="token punctuation">:</span> managed<span class="token punctuation">-</span>premium
+  <span class="token key atrule">mongosPodSpec</span><span class="token punctuation">:</span>
+    <span class="token key atrule">podTemplate</span><span class="token punctuation">:</span>
+      <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+        <span class="token key atrule">initContainers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>init<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+        <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>database
+            <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+              <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"2"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+              <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+                <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"4"</span>
+                <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span>
+
+  <span class="token key atrule">security</span><span class="token punctuation">:</span>
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+      <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/20/mongodbagentmonitoringnotwork.en/" rel="bookmark">MongoDB Agent Monitoring and Backup not Working</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbchunkmigrationfailed.en/" rel="bookmark">MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/19/mongodbhostdiscoveryissue.en/" rel="bookmark">MongoDB Agent Host Discovery Issue</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/MongoDB-Ops-Manager/" rel="tag"># MongoDB Ops Manager</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/27/mongodbstronlytypedcollectionexample/" rel="prev" title="MongoDB强类型Collection用法示例">
+                  <i class="fa fa-chevron-left"></i> MongoDB强类型Collection用法示例
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/sqlservercleanupqueries.en/" rel="next" title="SQL Server CleanUp Database Queries">
+                  SQL Server CleanUp Database Queries <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2021/03/21/migrateopsmanager.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

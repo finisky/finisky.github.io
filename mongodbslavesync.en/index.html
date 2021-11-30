@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="By the official manual:  Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to al">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB Master-Slave Replication by Change Stream">
+<meta property="og:url" content="https://finisky.github.io/mongodbslavesync.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="By the official manual:  Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to al">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-22T12:27:32.000Z">
+<meta property="article:modified_time" content="2021-07-22T16:04:23.979Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="MongoDB Ops Manager">
+<meta property="article:tag" content="Change Stream">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/mongodbslavesync.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/mongodbslavesync.en/","path":"mongodbslavesync.en/","title":"MongoDB Master-Slave Replication by Change Stream"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB Master-Slave Replication by Change Stream | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-construct-startatoperationtime"><span class="nav-number">1.</span> <span class="nav-text">How to construct startAtOperationTime</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-replay-the-change"><span class="nav-number">2.</span> <span class="nav-text">How to replay the change</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">3.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/mongodbslavesync.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB Master-Slave Replication by Change Stream
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-07-22 20:27:32" itemprop="dateCreated datePublished" datetime="2021-07-22T20:27:32+08:00">2021-07-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-23 00:04:23" itemprop="dateModified" datetime="2021-07-23T00:04:23+08:00">2021-07-23</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/mongodbslavesync.en/" class="post-meta-item leancloud_visitors" data-flag-title="MongoDB Master-Slave Replication by Change Stream" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/mongodbslavesync.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/mongodbslavesync.en/" data-xid="/mongodbslavesync.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>By the <a target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">official manual</a>:</p>
+<blockquote>
+<p>Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.</p>
+</blockquote>
+<p>Here we leverage change stream to replicate data from one MongoDB to another <strong>in realtime</strong>.</p>
+<p>There is some existing tools such as <a target="_blank" rel="noopener" href="https://github.com/alibaba/MongoShake">MongoShake</a> do the same thing. However, MongoShake is a little bit complicated to use. We encoutered two issues:</p>
+<ul>
+<li>Modify the source code to use TLS authentication</li>
+<li>Cannot perform increment sync in <code>all</code> sync_mode</li>
+</ul>
+<p>Since our goal is realtime replication, we choose a more straightforward and controllable way: MongoDB Ops Manager cluster restore and change stream to apply realtime changes.</p>
+<span id="more"></span>
+<p><strong>Notes</strong>: we use <code>master</code> and <code>slave</code> to represent the source and the target MongoDB for simplicity. They are not formal MongoDB concepts. They are also different from <code>primary</code> and <code>secondary</code> ( <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/replication/">Replication</a> ).</p>
+<p>Our replication method can be applied to any MongoDB architectures (including both source and target): standalone, replica set and sharded cluster.</p>
+<p>The replication process:</p>
+<ul>
+<li>Restore a recent source snapshot to the target cluster</li>
+<li>Set the start point before the snapshot timestamp and start the realtime replication program</li>
+<li>Wait the target to keep up with the source (small replication lag)</li>
+</ul>
+<p>The change stream interface is pretty simple. For instance, use the following code to watch changes in all collections in all databases (refer to <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.9/reference/driver/change_streams/#watching-changes-in-all-collections-in-all-databases">this</a> ):</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cursor <span class="token operator">=</span> <span class="token keyword">await</span> client<span class="token punctuation">.</span><span class="token function">WatchAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">await</span> cursor<span class="token punctuation">.</span><span class="token function">ForEachAsync</span><span class="token punctuation">(</span>change <span class="token operator">=></span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token comment">// process change event</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>So the realtime replication needs to solve the following problems:</p>
+<ul>
+<li>How to setup the change stream start point on the source cluster</li>
+<li>How to replay the change to the target cluster</li>
+</ul>
+<h1 id="how-to-construct-startatoperationtime">How to construct startAtOperationTime</h1>
+<p>According to the <a target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">manual</a>:</p>
+<blockquote>
+<p>Change streams are resumable by specifying a resume token to either resumeAfter or startAfter when opening the cursor.</p>
+</blockquote>
+<p>However, the <code>resumeAfter</code> or <code>startAfter</code> must be retrieved from the last change stream. So how to set the start point before now?</p>
+<p>We finally found the solution: use <code>StartAtOperationTime</code> in the <code>ChangeStreamOptions</code> to specify the start time like this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChangeStreamOptions</span>
+<span class="token punctuation">&#123;</span>
+	BatchSize <span class="token operator">=</span> <span class="token number">2000</span><span class="token punctuation">,</span>
+	StartAtOperationTime <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonTimestamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>startPoint<span class="token punctuation">.</span><span class="token function">ToUnixTimeSeconds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	FullDocument <span class="token operator">=</span> ChangeStreamFullDocumentOption<span class="token punctuation">.</span>UpdateLookup
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p><code>BsonTimestamp</code> <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.5/apidocs/html/M_MongoDB_Bson_BsonTimestamp__ctor.htm">definition</a>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token function">BsonTimestamp</span><span class="token punctuation">(</span>
+	<span class="token class-name"><span class="token keyword">int</span></span> timestamp<span class="token punctuation">,</span>
+	<span class="token class-name"><span class="token keyword">int</span></span> increment
+<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h1 id="how-to-replay-the-change">How to replay the change</h1>
+<p>Note that another <code>ChangeStreamOptions</code> <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> means the change's <code>FullDocument</code> property will contains the full updated documents for update operations. We use this property to replay the update change to the target.</p>
+<p>Replay the change needs to handle different change types, our implementation refer to <a target="_blank" rel="noopener" href="https://github.com/Lailaimonkey/mongo-sync/blob/master/mongo/sync.go">this</a> .</p>
+<p><code>ChangeStreamOperationType</code> definition: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">ChangeStreamOperationType</span>
+<span class="token punctuation">&#123;</span>
+	Insert <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+	Update <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+	Replace <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">,</span>
+	Delete <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">,</span>
+	Invalidate <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span>
+	Rename <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">,</span>
+	Drop <span class="token operator">=</span> <span class="token number">6</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Code to handle these types: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Insert<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">InsertOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Delete<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> id <span class="token operator">=</span> change<span class="token punctuation">.</span>DocumentKey<span class="token punctuation">.</span><span class="token function">GetValue</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">,</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">DeleteOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Update <span class="token operator">||</span> change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Replace<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> id <span class="token operator">=</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">.</span><span class="token function">GetValue</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">,</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span>
+<span class="token punctuation">&#123;</span>
+	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"Unknown type: [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>OperationType</span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Actually, we only process insert, delete, replace and update operations. Moreover, replace and update operations are handled by the same logic as we leverage the <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> option.</p>
+<p>Sometimes the <code>FullDocument</code> is null for the update operation. This is caused by document deletion. Refer to <a target="_blank" rel="noopener" href="https://developer.mongodb.com/community/forums/t/how-can-change-stream-update-operations-come-with-null-fulldocument-when-changestreamfulldocumentoption-updatelookup-was-used/2537">this</a>.</p>
+<h1 id="full-code">Full Code</h1>
+<p>See this repo: https://github.com/finisky/MongoDBSync</p>
+<p>Implementation notes:</p>
+<ul>
+<li>Use transaction to guarantee replay operation success</li>
+<li>NOT use bulkwrite for simplicity</li>
+<li>Make sure your source MongoDB version &gt;= v4.4.4, see also: <a href="https://finisky.github.io/changestreamcauseserverrestart.en/"># MongoDB Change Stream Makes the Cluster Down</a></li>
+</ul>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Linq</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading<span class="token punctuation">.</span>Tasks</span><span class="token punctuation">;</span>
+
+<span class="token keyword">namespace</span> <span class="token namespace">ConsoleApp1</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">class</span> <span class="token class-name">Program</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">static</span> <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Main</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span><span class="token punctuation">[</span><span class="token punctuation">]</span></span> args<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> sourceConnString <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> targetConnString <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+
+			<span class="token class-name"><span class="token keyword">var</span></span> sourceClientSettings <span class="token operator">=</span> MongoClientSettings<span class="token punctuation">.</span><span class="token function">FromConnectionString</span><span class="token punctuation">(</span>sourceConnString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> targetClientSettings <span class="token operator">=</span> MongoClientSettings<span class="token punctuation">.</span><span class="token function">FromConnectionString</span><span class="token punctuation">(</span>targetConnString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			<span class="token class-name"><span class="token keyword">var</span></span> sourceClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">MongoClient</span><span class="token punctuation">(</span>sourceClientSettings<span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> targetClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">MongoClient</span><span class="token punctuation">(</span>targetClientSettings<span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> startPoint <span class="token operator">=</span> DateTimeOffset<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">AddHours</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			<span class="token function">SyncDb</span><span class="token punctuation">(</span>sourceClient<span class="token punctuation">,</span> targetClient<span class="token punctuation">,</span> startPoint<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Wait</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			Console<span class="token punctuation">.</span><span class="token function">ReadLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+		<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token return-type class-name"><span class="token keyword">long</span></span> <span class="token function">DelaySeconds</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> clusterTimestamp<span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token keyword">return</span> DateTimeOffset<span class="token punctuation">.</span>UtcNow<span class="token punctuation">.</span><span class="token function">ToUnixTimeSeconds</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> clusterTimestamp<span class="token punctuation">;</span>
+		<span class="token punctuation">&#125;</span>
+
+		<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">SyncDb</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> sourceClient<span class="token punctuation">,</span> <span class="token class-name">IMongoClient</span> targetClient<span class="token punctuation">,</span> <span class="token class-name">DateTimeOffset</span> startPoint<span class="token punctuation">)</span>
+		<span class="token punctuation">&#123;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChangeStreamOptions</span>
+			<span class="token punctuation">&#123;</span>
+				BatchSize <span class="token operator">=</span> <span class="token number">2000</span><span class="token punctuation">,</span>
+				StartAtOperationTime <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonTimestamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>startPoint<span class="token punctuation">.</span><span class="token function">ToUnixTimeSeconds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+				FullDocument <span class="token operator">=</span> ChangeStreamFullDocumentOption<span class="token punctuation">.</span>UpdateLookup
+			<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+			<span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cursor <span class="token operator">=</span> <span class="token keyword">await</span> sourceClient<span class="token punctuation">.</span><span class="token function">WatchAsync</span><span class="token punctuation">(</span>options<span class="token punctuation">)</span><span class="token punctuation">)</span>
+			<span class="token punctuation">&#123;</span>
+				<span class="token class-name"><span class="token keyword">long</span></span> count <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+				<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">await</span> cursor<span class="token punctuation">.</span><span class="token function">MoveNextAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+				<span class="token punctuation">&#123;</span>
+					<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>cursor<span class="token punctuation">.</span>Current<span class="token punctuation">.</span><span class="token function">Any</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+					<span class="token punctuation">&#123;</span>
+						Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"No changes, skip..."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+						<span class="token keyword">continue</span><span class="token punctuation">;</span>
+					<span class="token punctuation">&#125;</span>
+
+					<span class="token class-name"><span class="token keyword">var</span></span> token <span class="token operator">=</span> cursor<span class="token punctuation">.</span><span class="token function">GetResumeToken</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+					<span class="token class-name"><span class="token keyword">var</span></span> headDoc <span class="token operator">=</span> cursor<span class="token punctuation">.</span>Current<span class="token punctuation">.</span><span class="token function">First</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+					Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token function">DelaySeconds</span><span class="token punctuation">(</span>headDoc<span class="token punctuation">.</span>ClusterTime<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">s] [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">count</span><span class="token punctuation">&#125;</span></span><span class="token string">] Token: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">token</span><span class="token punctuation">&#125;</span></span><span class="token string"> ----------------------------"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+					<span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> change <span class="token keyword">in</span> cursor<span class="token punctuation">.</span>Current<span class="token punctuation">)</span>
+					<span class="token punctuation">&#123;</span>
+						<span class="token operator">++</span>count<span class="token punctuation">;</span>
+						<span class="token keyword">await</span> <span class="token function">ReplayChangeToTarget</span><span class="token punctuation">(</span>targetClient<span class="token punctuation">,</span> change<span class="token punctuation">)</span><span class="token punctuation">;</span>
+					<span class="token punctuation">&#125;</span>
+				<span class="token punctuation">&#125;</span>
+			<span class="token punctuation">&#125;</span>
+		<span class="token punctuation">&#125;</span>
+
+		<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">ReplayChangeToTarget</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> targetClient<span class="token punctuation">,</span> <span class="token class-name">ChangeStreamDocument<span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span> change<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> dbName <span class="token operator">=</span> change<span class="token punctuation">.</span>CollectionNamespace<span class="token punctuation">.</span>DatabaseNamespace<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> collectionName <span class="token operator">=</span> change<span class="token punctuation">.</span>CollectionNamespace<span class="token punctuation">.</span>CollectionName<span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> targetClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>dbName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>collectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment">// Uncomment the following two lines to print changes without replaying to the target</span>
+			<span class="token comment">//Console.WriteLine($"[&#123;DelaySeconds(change.ClusterTime.Timestamp)&#125;s] &#123;change.CollectionNamespace.FullName&#125;");</span>
+			<span class="token comment">//return;</span>
+			
+			<span class="token keyword">try</span>
+			<span class="token punctuation">&#123;</span>
+				<span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> targetClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+				<span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+				<span class="token punctuation">&#123;</span>
+					<span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">WithTransactionAsync</span><span class="token punctuation">(</span>
+						<span class="token keyword">async</span> <span class="token punctuation">(</span>s<span class="token punctuation">,</span> ct<span class="token punctuation">)</span> <span class="token operator">=></span>
+						<span class="token punctuation">&#123;</span>
+							<span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Insert<span class="token punctuation">)</span>
+							<span class="token punctuation">&#123;</span>
+								<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">InsertOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+							<span class="token punctuation">&#125;</span>
+							<span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Delete<span class="token punctuation">)</span>
+							<span class="token punctuation">&#123;</span>
+								<span class="token class-name"><span class="token keyword">var</span></span> id <span class="token operator">=</span> change<span class="token punctuation">.</span>DocumentKey<span class="token punctuation">.</span><span class="token function">GetValue</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+								<span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">,</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+								<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">DeleteOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+							<span class="token punctuation">&#125;</span>
+							<span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Update <span class="token operator">||</span> change<span class="token punctuation">.</span>OperationType <span class="token operator">==</span> ChangeStreamOperationType<span class="token punctuation">.</span>Replace<span class="token punctuation">)</span>
+							<span class="token punctuation">&#123;</span>
+								<span class="token class-name"><span class="token keyword">var</span></span> id <span class="token operator">=</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">.</span><span class="token function">GetValue</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+								<span class="token class-name"><span class="token keyword">var</span></span> filter <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>BsonDocument<span class="token operator">></span><span class="token punctuation">.</span>Filter<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">,</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+								<span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">ReplaceOneAsync</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span>
+							<span class="token punctuation">&#125;</span>
+							<span class="token keyword">else</span>
+							<span class="token punctuation">&#123;</span>
+								Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"Unknown type: [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>OperationType</span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+							<span class="token punctuation">&#125;</span>
+
+							<span class="token keyword">return</span> <span class="token keyword">string</span><span class="token punctuation">.</span>Empty<span class="token punctuation">;</span>
+						<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+				<span class="token punctuation">&#125;</span>
+			<span class="token punctuation">&#125;</span>
+			<span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">MongoWriteException</span> ex<span class="token punctuation">)</span>
+			<span class="token punctuation">&#123;</span>
+				<span class="token keyword">if</span> <span class="token punctuation">(</span>ex<span class="token punctuation">.</span>WriteError<span class="token punctuation">.</span>Code <span class="token operator">==</span> <span class="token number">11000</span><span class="token punctuation">)</span>
+				<span class="token punctuation">&#123;</span>
+					Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token function">DelaySeconds</span><span class="token punctuation">(</span>change<span class="token punctuation">.</span>ClusterTime<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">s] Dup key: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>FullDocument<span class="token punctuation">.</span><span class="token function">GetValue</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">, ignore..."</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+				<span class="token punctuation">&#125;</span>
+				<span class="token keyword">else</span>
+				<span class="token punctuation">&#123;</span>
+					Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token function">DelaySeconds</span><span class="token punctuation">(</span>change<span class="token punctuation">.</span>ClusterTime<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">s] [# </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>OperationType</span><span class="token punctuation">&#125;</span></span><span class="token string">] MongoWriteException: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span><span class="token function">ToJson</span><span class="token punctuation">(</span><span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+				<span class="token punctuation">&#125;</span>
+			<span class="token punctuation">&#125;</span>
+			<span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> ex<span class="token punctuation">)</span>
+			<span class="token punctuation">&#123;</span>
+				Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token function">DelaySeconds</span><span class="token punctuation">(</span>change<span class="token punctuation">.</span>ClusterTime<span class="token punctuation">.</span>Timestamp<span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">s] [# </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>OperationType</span><span class="token punctuation">&#125;</span></span><span class="token string">] Exception [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>DocumentKey<span class="token punctuation">.</span><span class="token function">ToJson</span><span class="token punctuation">(</span><span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">] [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">ex<span class="token punctuation">.</span><span class="token function">GetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">ex<span class="token punctuation">.</span>Message</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token punctuation">&#125;</span>
+		<span class="token punctuation">&#125;</span>
+	<span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Other references:</p>
+<ul>
+<li>https://stackoverflow.com/questions/48665409/how-do-i-resume-a-mongodb-changestream-at-the-first-document-and-not-just-change</li>
+<li>https://vinta.ws/code/mongodb-change-stream-react-to-real-time-data-changes.html</li>
+<li>https://medium.com/expedia-group-tech/mongo-change-streams-in-production-97a07c7c0420</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbslavesync/" rel="bookmark">MongoDB使用Change Stream主从复制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/changestreamcauseserverrestart.en/" rel="bookmark">MongoDB Change Stream Makes the Cluster Down</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/20/mongodbretrytransaction.en/" rel="bookmark">How to Retry MongoDB Transaction</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/MongoDB-Ops-Manager/" rel="tag"># MongoDB Ops Manager</a>
+              <a href="/tags/Change-Stream/" rel="tag"># Change Stream</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/changestreamcauseserverrestart.en/" rel="prev" title="MongoDB Change Stream Makes the Cluster Down">
+                  <i class="fa fa-chevron-left"></i> MongoDB Change Stream Makes the Cluster Down
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/mongodbslavesync/" rel="next" title="MongoDB使用Change Stream主从复制">
+                  MongoDB使用Change Stream主从复制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/mongodbslavesync.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

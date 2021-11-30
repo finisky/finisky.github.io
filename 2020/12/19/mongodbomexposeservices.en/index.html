@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="This is part3, we will expose the user database pods to the public so that Mongo client is able to access it. MongoDB Ops Manager Series:  Install MongoDB Ops Manager Create a UserDB ReplicaSet Expose">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB Cluster In Kubernetes(3): Expose UserDB to Public">
+<meta property="og:url" content="https://finisky.github.io/2020/12/19/mongodbomexposeservices.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="This is part3, we will expose the user database pods to the public so that Mongo client is able to access it. MongoDB Ops Manager Series:  Install MongoDB Ops Manager Create a UserDB ReplicaSet Expose">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-19T15:45:28.000Z">
+<meta property="article:modified_time" content="2021-07-17T13:48:02.674Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="MongoDB Ops Manager">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="TLS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/2020/12/19/mongodbomexposeservices.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/12/19/mongodbomexposeservices.en/","path":"2020/12/19/mongodbomexposeservices.en/","title":"MongoDB Cluster In Kubernetes(3): Expose UserDB to Public"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB Cluster In Kubernetes(3): Expose UserDB to Public | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#create-loadbalancer-service"><span class="nav-number">1.</span> <span class="nav-text">Create LoadBalancer Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mongoclient-connection-test-getaddrinfo-enotfound-error"><span class="nav-number">2.</span> <span class="nav-text">MongoClient Connection Test, getaddrinfo ENOTFOUND Error</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/12/19/mongodbomexposeservices.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB Cluster In Kubernetes(3): Expose UserDB to Public
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-19 23:45:28" itemprop="dateCreated datePublished" datetime="2020-12-19T23:45:28+08:00">2020-12-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/12/19/mongodbomexposeservices.en/" class="post-meta-item leancloud_visitors" data-flag-title="MongoDB Cluster In Kubernetes(3): Expose UserDB to Public" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/12/19/mongodbomexposeservices.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/12/19/mongodbomexposeservices.en/" data-xid="/2020/12/19/mongodbomexposeservices.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>This is part3, we will expose the user database pods to the public so that Mongo client is able to access it.</p>
+<p>MongoDB Ops Manager Series:</p>
+<ol type="1">
+<li><a href="/2020/12/19/mongodbopsmanager.en/">Install MongoDB Ops Manager</a></li>
+<li><a href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB ReplicaSet</a></li>
+<li><a href="/2020/12/19/mongodbomexposeservices.en/">Expose UserDB to Public</a></li>
+<li><a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a></li>
+<li><a href="/2020/12/19/mongodbomtlsauth.en/">Enable UserDB TLS and Auth</a></li>
+</ol>
+<p>So far, the user database can be accessed only inside the kubernetes cluster. The official blog's approach is to expose the pods by NodePort: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/"># Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
+<p>I don't know why the official blog recommend NodePort. Obviously, LoadBalancer is a better way to expose MongoDB. We will use LoadBalancer to expose userdb pods.</p>
+<span id="more"></span>
+<h1 id="create-loadbalancer-service">Create LoadBalancer Service</h1>
+<p>Configure <code>userdb0service.yaml</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span>0<span class="token punctuation">-</span>svc<span class="token punctuation">-</span>ext
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> mongodb
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span>svc
+    <span class="token key atrule">controller</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>operator
+    <span class="token key atrule">pod-anti-affinity</span><span class="token punctuation">:</span> userdb
+    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span><span class="token number">0</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> LoadBalancer
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">27017</span>
+      <span class="token key atrule">targetPort</span><span class="token punctuation">:</span> <span class="token number">27017</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span>svc
+    <span class="token key atrule">controller</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>operator
+    <span class="token key atrule">pod-anti-affinity</span><span class="token punctuation">:</span> userdb
+    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span><span class="token number">0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Apply it: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl apply -f userdb0service.yaml
+service&#x2F;userdb-0-svc-ext created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> After a while, the service <code>userdb-0-svc-ext</code> will be assigned a public IP. Then we can bind a domain name to the IP (optional). Suppose the domain name is <code>userdb0.com</code>.</p>
+<p>Modify the above yaml and create another two services <code>userdb-1-svc-ext</code> and <code>userdb-2-svc-ext</code> to expose the two remaining pods.</p>
+<h1 id="mongoclient-connection-test-getaddrinfo-enotfound-error">MongoClient Connection Test, <code>getaddrinfo ENOTFOUND</code> Error</h1>
+<p>Now we can use mongo shell to access <code>userdb</code>: <pre class="line-numbers language-none"><code class="language-none">$ mongo &quot;mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;&quot;
+MongoDB shell version v4.4.2
+connecting to: mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
+Implicit session: session &#123; &quot;id&quot; : UUID(&quot;6b780874-6ecb-4510-b7e9-61bff04a4711&quot;) &#125;
+MongoDB server version: 4.2.2
+WARNING: shell and server versions do not match
+---
+The server generated these startup warnings when booting:
+2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten]
+2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten] **          See http:&#x2F;&#x2F;dochub.mongodb.org&#x2F;core&#x2F;prodnotes-filesystem
+2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
+2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
+---
+MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Looks something wrong. Why the prompt shows that we connect to a <code>SECONDARY</code> node? The default mongo readPreference is <code>PRIMARY</code>.</p>
+<p>If you connect the DB through <code>MongoDB Compass</code>, the following error appears: <pre class="line-numbers language-none"><code class="language-none">getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>After investigation, this article <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with"># Connecting from external sources to MongoDB replica set in Kubernetes fails with getaddrinfo ENOTFOUND error but standalone works</a> answered my question:</p>
+<blockquote><p>When connecting to a replica set, the host:port pairs in the connection string are a seedlist.</p>
+<p>The driver/client will attempt to connect to each host in the seedlist in turn until it gets a connection.</p>
+<p>It runs the isMaster command to determine which node is primary, and to get a list of all replica set members.</p>
+<p>Then is drops the original seedlist connection, and attempts to connect to each replica set member using the host and port information retrieved.</p>
+<p>The host information returned by the isMaster usually matches the entry in rs.conf(), which are the hostnames used to initiate the replica set.</p>
+<p>In your Kubernetes cluster, the nodes have internal hostnames that are used to initiate the replica set, but that your external clients can't resolve.</p>
+<p>In order to get this to work, you will need to have the mongod nodes isMaster command return a different set of hostnames depending on where the client request is coming from. This is similar to split-horizon DNS.</p>
+<p>Look over the Deploy a Replica Set documentation for mongodb/kubernetes, and the replicaSetHorizons setting.</p>
+</blockquote>
+<p>Verify by running <code>rs.conf()</code> in the mongo shell: <pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
+&#123;
+        &quot;_id&quot; : &quot;userdb&quot;,
+        &quot;version&quot; : 1,
+        &quot;protocolVersion&quot; : NumberLong(1),
+        &quot;writeConcernMajorityJournalDefault&quot; : true,
+        &quot;members&quot; : [
+                &#123;
+                        &quot;_id&quot; : 0,
+                        &quot;host&quot; : &quot;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                &#125;,
+                &#123;
+                        &quot;_id&quot; : 1,
+                        &quot;host&quot; : &quot;userdb-1.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                &#125;,
+                &#123;
+                        &quot;_id&quot; : 2,
+                        &quot;host&quot; : &quot;userdb-2.userdb-svc.mongodb.svc.cluster.local:27017&quot;,
+...
+                &#125;
+        ],
+        &quot;settings&quot; : &#123;
+...
+        &#125;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>Besides, mongo shell and <code>MongoDB Compass</code> have different behaviors when connecting to multiple hosts:</p>
+<ul>
+<li>mongo shell: show connect success but it might not be true: only one node is connected</li>
+<li>MongoDB Compass: connect failed The behavior is caused by different connection policies.</li>
+</ul>
+<p>To solve the problem, we need to use <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a> to specify the public address. However, to use this setting, <code>spec.security.tls</code> must be enabled first: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span>
+      <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">connectivity</span><span class="token punctuation">:</span>
+    <span class="token key atrule">replicaSetHorizons</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb0.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb1.com:27017"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb2.com:27017"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>The bad news is that enable TLS is more complicated than I thought before. Here we use self-signed certificates to encrypt the transport layer communication. Four certificates are required: 1 CA certificate and 3 server certificates.</p>
+<p>Let's create the certificates step by step: <a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="bookmark">Deploy MongoDB Sharded Cluster by Ops Manager</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="bookmark">部署Kubernetes MongoDB Sharded Cluster</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="bookmark">MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/12/mongodbomcreateuserdb/" rel="bookmark">Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/12/mongodbomexposeservices/" rel="bookmark">Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/MongoDB-Ops-Manager/" rel="tag"># MongoDB Ops Manager</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/TLS/" rel="tag"># TLS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="prev" title="MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet">
+                  <i class="fa fa-chevron-left"></i> MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/19/mongodbomselfsignedcertificates.en/" rel="next" title="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates">
+                  MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/12/19/mongodbomexposeservices.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
