@@ -30,7 +30,7 @@
 <meta property="og:description" content="MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:  Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: t">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-20T12:36:59.000Z">
-<meta property="article:modified_time" content="2021-07-17T13:48:02.678Z">
+<meta property="article:modified_time" content="2021-12-15T16:34:24.777Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-count">147</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+        <time title="Modified: 2021-12-16 00:34:24" itemprop="dateModified" datetime="2021-12-16T00:34:24+08:00">2021-12-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -449,6 +449,7 @@
 </blockquote>
 <p>没有异常抛出，第二个task在两秒后执行成功，可见重试逻辑已经生效。经过测试发现即使第一个task拖了很长时间(20秒)，上面代码总是可以执行成功。但在实际应用中应该通过传入cancellation token实现超时机制，此处不再赘述。</p>
 <p>实际上，即使不加超时机制，写冲突也很少发生。在生产环境中，写冲突的错误率在 0.00001% 以下。加上重试机制之后，这错误基本没再出现过。</p>
+<p>一些其他事务实现的建议，可参考：<a href="/mongodbendlessretry/"># MongoDB BulkWrite无限重试问题解决</a></p>
 <h1 id="完整代码">完整代码</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
@@ -551,6 +552,12 @@
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbendlessretry.en/" rel="bookmark">MongoDB Transaction BulkWrite Endless Retry</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/mongodbendlessretry/" rel="bookmark">MongoDB BulkWrite无限重试问题解决</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/02/20/mongodbretrytransaction.en/" rel="bookmark">How to Retry MongoDB Transaction</a></div>
     </li>
     <li class="popular-posts-item">
@@ -558,12 +565,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/mongodbslavesync.en/" rel="bookmark">MongoDB Master-Slave Replication by Change Stream</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/mongodbslavesync/" rel="bookmark">MongoDB使用Change Stream主从复制</a></div>
     </li>
   </ul>
 
