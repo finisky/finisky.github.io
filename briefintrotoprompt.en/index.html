@@ -22,15 +22,15 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Prompt是当下最热的NLP技术之一，本文通过 what, why 和 how 三个问题对它进行介绍。力求简明扼要，不是完整综述，更多细节，可参考更多论文原文。 Prompt是什么 首先来看什么是Prompt，没有找到权威定义，引用一些论文中的描述来说明什么是Prompt。  Users prepend a natural language task instruction and a few">
+<meta name="description" content="Prompting is one of the hottest NLP techniques. This is a brief introduction to prompting by three questions: what&#39;s prompting, why prompting and how to prompting. As a brief introduction, we do not c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NLP Prompt技术简介">
-<meta property="og:url" content="https://finisky.github.io/briefintrotoprompt/index.html">
+<meta property="og:title" content="Brief Introduction to NLP Prompting">
+<meta property="og:url" content="https://finisky.github.io/briefintrotoprompt.en/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="Prompt是当下最热的NLP技术之一，本文通过 what, why 和 how 三个问题对它进行介绍。力求简明扼要，不是完整综述，更多细节，可参考更多论文原文。 Prompt是什么 首先来看什么是Prompt，没有找到权威定义，引用一些论文中的描述来说明什么是Prompt。  Users prepend a natural language task instruction and a few">
+<meta property="og:description" content="Prompting is one of the hottest NLP techniques. This is a brief introduction to prompting by three questions: what&#39;s prompting, why prompting and how to prompting. As a brief introduction, we do not c">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-12-14T02:00:45.000Z">
-<meta property="article:modified_time" content="2021-12-14T04:01:14.828Z">
+<meta property="article:published_time" content="2021-12-15T10:15:46.000Z">
+<meta property="article:modified_time" content="2021-12-15T10:20:52.739Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -41,14 +41,14 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/briefintrotoprompt/">
+<link rel="canonical" href="https://finisky.github.io/briefintrotoprompt.en/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/briefintrotoprompt/","path":"briefintrotoprompt/","title":"NLP Prompt技术简介"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/briefintrotoprompt.en/","path":"briefintrotoprompt.en/","title":"Brief Introduction to NLP Prompting"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>NLP Prompt技术简介 | Finisky Garden</title>
+<title>Brief Introduction to NLP Prompting | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -133,7 +133,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#prompt%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">Prompt是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8prompt"><span class="nav-number">2.</span> <span class="nav-text">为什么用Prompt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E7%94%A8prompt"><span class="nav-number">3.</span> <span class="nav-text">怎么用Prompt</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E5%BC%8F%E6%A8%A1%E6%9D%BF"><span class="nav-number">3.1.</span> <span class="nav-text">离散式模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pet"><span class="nav-number">3.1.1.</span> <span class="nav-text">PET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#autoprompt"><span class="nav-number">3.1.2.</span> <span class="nav-text">AutoPrompt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E5%90%91%E9%87%8F%E6%A8%A1%E6%9D%BF"><span class="nav-number">3.2.</span> <span class="nav-text">连续向量模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prefix-tuning"><span class="nav-number">3.2.1.</span> <span class="nav-text">Prefix-Tuning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#p-tuning"><span class="nav-number">3.2.2.</span> <span class="nav-text">P-Tuning</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#whats-prompting"><span class="nav-number">1.</span> <span class="nav-text">What&#39;s Prompting</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#why-prompting"><span class="nav-number">2.</span> <span class="nav-text">Why Prompting</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-prompting"><span class="nav-number">3.</span> <span class="nav-text">How to Prompting</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#discrete-prompt-templates"><span class="nav-number">3.1.</span> <span class="nav-text">Discrete Prompt Templates</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pet"><span class="nav-number">3.1.1.</span> <span class="nav-text">PET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#autoprompt"><span class="nav-number">3.1.2.</span> <span class="nav-text">AutoPrompt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#continuous-prompt-templates"><span class="nav-number">3.2.</span> <span class="nav-text">Continuous Prompt Templates</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prefix-tuning"><span class="nav-number">3.2.1.</span> <span class="nav-text">Prefix-Tuning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#p-tuning"><span class="nav-number">3.2.2.</span> <span class="nav-text">P-Tuning</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#summary"><span class="nav-number">4.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -202,7 +202,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/briefintrotoprompt/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/briefintrotoprompt.en/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -215,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          NLP Prompt技术简介
+          Brief Introduction to NLP Prompting
         </h1>
 
         <div class="post-meta-container">
@@ -227,7 +227,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-12-14 10:00:45 / Modified: 12:01:14" itemprop="dateCreated datePublished" datetime="2021-12-14T10:00:45+08:00">2021-12-14</time>
+      <time title="Created: 2021-12-15 18:15:46 / Modified: 18:20:52" itemprop="dateCreated datePublished" datetime="2021-12-15T18:15:46+08:00">2021-12-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -240,7 +240,7 @@
     </span>
 
   
-    <span id="/briefintrotoprompt/" class="post-meta-item leancloud_visitors" data-flag-title="NLP Prompt技术简介" title="Views">
+    <span id="/briefintrotoprompt.en/" class="post-meta-item leancloud_visitors" data-flag-title="Brief Introduction to NLP Prompting" title="Views">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -255,8 +255,8 @@
     </span>
     <span class="post-meta-item-text">Waline: </span>
   
-    <a title="waline" href="/briefintrotoprompt/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/briefintrotoprompt/" data-xid="/briefintrotoprompt/" itemprop="commentCount"></span>
+    <a title="waline" href="/briefintrotoprompt.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/briefintrotoprompt.en/" data-xid="/briefintrotoprompt.en/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -270,72 +270,73 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Prompt是当下最热的NLP技术之一，本文通过 what, why 和 how 三个问题对它进行介绍。力求简明扼要，不是完整综述，更多细节，可参考更多论文原文。</p>
-<h1 id="prompt是什么">Prompt是什么</h1>
-<p>首先来看什么是Prompt，没有找到权威定义，引用一些论文中的描述来说明什么是Prompt。</p>
+        <p>Prompting is one of the hottest NLP techniques. This is a brief introduction to prompting by three questions: what's prompting, why prompting and how to prompting. As a brief introduction, we do not cover too much details but try to summarize the main idea of prompting. For more details, please refer to the original papers.</p>
+<h1 id="whats-prompting">What's Prompting</h1>
+<p>I don't find a rigorous defintion for prompting. Just quoting some pieces from papers.</p>
 <blockquote>
 <p>Users prepend a natural language task instruction and a few examples to the task input; then generate the output from the LM. This approach is known as in-context learning or prompting.</p>
 <p>By: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2101.00190"># Prefix-Tuning: Optimizing Continuous Prompts for Generation</a></p>
 </blockquote>
-<p>简单来说，用户用一段任务描述和少量示例作为输入，然后用语言模型生成输出。这种方法就叫做<code>in-context learning</code>或<code>prompting</code>。Prompting也有另一种偏概率的解释：</p>
+<p>This description brought two concepts: <code>in-context learning</code> and <code>prompting</code>.</p>
+<p>Another explantion from probability perspective:</p>
 <blockquote>
 <p>Prompting is the approach of adding extra information for the model to condition on during its generation of Y .</p>
 <p>By: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.08691"># The Power of Scale for Parameter-Efficient Prompt Tuning</a></p>
 </blockquote>
 <span id="more"></span>
-<p>举个PET中的示例来说明什么是Prompt，假设我们要对一句话<code>Best pizza ever!</code>进行情感分类，可以在这句话后面加上一句模板:</p>
+<p>For example, to analyze the sentiment of sentence <code>Best pizza ever!</code>, we construct a template like this:</p>
 <pre class="line-numbers language-none"><code class="language-none">Best pizza ever! It was ___.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>那么基于前面这句话填空的结果，模型预测为<code>great</code>的概率要远高于<code>bad</code>。因此我们可以通过构造合适的Prompt把情感分类问题变成完形填空问题，从而可以很好地利用预训练模型本身的潜力。</p>
-<p>关于Prompt为什么好使，PET中有如下解释：</p>
+<p>Then the sentiment analysis task is reduced to a cloze task. The prediction probability of <code>great</code> would be much higher than <code>bad</code>. Therefore, through constructing proper templates, we are able to extract the potential of pretrained language models.</p>
+<p>Pattern-Exploiting Training <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.07676">PET</a> explains why prompting works:</p>
 <blockquote>
 <p>This illustrates that solving a task from only a few examples becomes much easier when we also have a task description, i.e., a textual explanation that helps us understand what the task is about.</p>
 </blockquote>
-<p>Pretrain-finetune与Prompt-tuning的主要区别在于前者通过finetune让模型更好地适应下游任务，而后者则是通过设计Prompt来挖掘预训练模型本身的潜能。</p>
-<h1 id="为什么用prompt">为什么用Prompt</h1>
-<p>现在的NLP模型都很大，下游任务也繁多，finetune的范式就需要对每个任务都使用一个特定的模型拷贝。解决这个问题的直观方案是轻量的finetune，即在finetune阶段只调整少量的参数，而保持大多数参数不可训练。</p>
-<p>将这种做法做到极致就是Prompt，比如GPT3可以不经过finetune而完成多种下游任务。也就是说，Prompt是一种很好的Few-shot learning甚至Zero-shot learning的方法。</p>
-<p>Prompt重在挖掘预训练模型本身的潜力，甚至在某些情况下可以超越之前finetune的SOTA。</p>
-<p>此外，因为Prompt对原模型的改动较小甚至不改，可以比较轻量地实现个性化而无须每用户一个大模型，serving开销显著变小。</p>
-<h1 id="怎么用prompt">怎么用Prompt</h1>
-<p>那下面的问题就在于，如何找到合适的Prompt?</p>
-<p>此处将不同方案使用的模板列出，保持与原文一致的符号标记。</p>
-<h2 id="离散式模板">离散式模板</h2>
-<p>制定离散式Prompt的模板需要对模型本身有一定的理解，而且考虑到模型的不可解释性，就需要对Prompt的模板进行不断的试验，所谓“有多少人工就有多少智能”。</p>
+<p>The main difference between pretrain-finetuning and prompt-tuning is that the former makes the model fits the downstream task, while the latter elicits the knowledge from the model by prompting.</p>
+<h1 id="why-prompting">Why Prompting</h1>
+<p>Recently language models are typically of large volumes of parameters. Given kinds of downstream tasks, fintuning produces a model copy for each of them. A straightforward approach is light-weight finetuning, aka freeze most of the parameters while only a small number of parameters are finetuned.</p>
+<p>On the extreme end, GPT-3 can be deployed without any task-specific tuning. By prompting, we can easily accomplish few-shot learning or even zero-shot learning.</p>
+<p>Moreover, by designing good templates, the model can achieve comparable or even better performance on many benchmarks.</p>
+<p>Besides, for the sake of negligible modification to the model, enabling personalization is more viable. Because we can only store small number of parameters for each user to accomplish user-specific customizations.</p>
+<h1 id="how-to-prompting">How to Prompting</h1>
+<p>The next question, how to find a proper prompt template?</p>
+<p>In this section, we list the main idea of the papers with different prompt templates. For simplicity, we keep the same notation as the original paper.</p>
+<h2 id="discrete-prompt-templates">Discrete Prompt Templates</h2>
+<p>Design prompts is non-trivial and a little bit tricky. Good understanding of language model and tasks are required. Many efforts should be paid to find suitable pattern which leads to better performance.</p>
 <h3 id="pet">PET</h3>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.07676"># Exploiting Cloze Questions for Few Shot Text Classification and Natural Language Inference</a></p>
-<p>PET通过构造自然语言式的模板，将一些文本任务转换成完形填空任务，比如第一节中的示例。</p>
-<p>PET提供的模板花样比较多，不同任务对应不同的人工设计模板，大概长这个样子，其中a和b是输入文本：</p>
+<p>PET reformulates the text input as cloze-style phrases to help language models understand a task. PET proposed different templates for different tasks. The templates look like this (<code>a</code> and <code>b</code> are text inputs):</p>
 <pre class="line-numbers language-none"><code class="language-none">It was ___. a
 a. All in all, it was ___.
 a ( ___ ) b
 [ Category: ___ ] a b<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="autoprompt">AutoPrompt</h3>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.15980"># AutoPrompt: Eliciting Knowledge from Language Models with Automatically Generated Prompts</a></p>
-<p>AutoPrompt本质上也是一种自然语言式的模板，但它的模板看起来通用性更强，分为三部分，原句，Trigger Tokens [T]和预测Token [P]。</p>
+<p>Essentially, AutoPrompt is a sort of discrete natural language template. The template has three parts: sentence, trigger tokens and prediction token.</p>
 <pre class="line-numbers language-none"><code class="language-none">&#123;sentence&#125; [T][T] . . [T] [P].<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>在标注数据集上，通过最大化预测准确率的方法自动搜索最优的Trigger Tokens [T]。此方法的直觉是，通过标注数据搜索与任务相关的模板关键词知识 (auto knowledge probing)。并在之后通过这些寻找到的Trigger Token作为自动模板，将模型泛化。</p>
-<h2 id="连续向量模板">连续向量模板</h2>
-<p>寻找像自然语言一样的离散模板比较困难，于是有一些后续改进的工作。实际上，Prompt不一定是离散的，甚至不一定是自然语言，Prompt可以是一个embedding，可以通过训练在连续向量空间中搜索得出。</p>
+<p>AutoPrompt generates trigger tokens by maximizing the label liklihood over the labeled examples. These trigger tokens are regarded as the related knowledge of the task. Based on this generated template, the model generalizes to each specific task.</p>
+<h2 id="continuous-prompt-templates">Continuous Prompt Templates</h2>
+<p>Generating natural language templates requires manual efforts and guesswork. Actually, the prompt is not necessarily to be natural language, it can be of differnet styles such as a continuous vector. As a result, another line of work try to develop continuous prompt templates which is obtained via training.</p>
 <h3 id="prefix-tuning">Prefix-Tuning</h3>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2101.00190"># Prefix-Tuning: Optimizing Continuous Prompts for Generation</a></p>
-<p>Prefix-Tuning固定了语言模型本身的参数，只在每层输入加入一个Prefix Vector，也就是一个Prefix Matrix，仅训练这一小部分连续并任务相关的参数即可提升一些文本生成任务(NLG)的效果。把这些virtual token对应的向量看做prompt。Prefix-Tuning的模板形式：</p>
+<p>Prefix-Tuning freezes the language model parameter while add a prefix vector to each layer of the model. These prefix vectors work like <code>virtual tokens</code> and are regarded as continuous prompts. By only tuning these vectors, Prefix-Tuning outperforms finetuning in low-data settings of NLG task.</p>
+<p>Prefix-Tuning templates：</p>
 <pre class="line-numbers language-none"><code class="language-none">Autoregressive Model: [T] x y
 Encoder-Decoder Model: [T] x [T&#39;] y<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>其中x是输入的source，y是target。</p>
-<p>同时，在实验中也有一个关于表达力的比较，看起来连续的向量比离散的关键词模板更富有表达力 (expressive)：</p>
+<p>where x is the source table, y is the target utterance.</p>
+<p>Notice that there is a comparison of prompting expressive power, it seems that continuous vector is more expressive than discrete templates:</p>
 <blockquote>
 <p>discrete prompting &lt; embedding-only ablation &lt; prefix-tuning</p>
 </blockquote>
 <h3 id="p-tuning">P-Tuning</h3>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.10385"># GPT Understands, Too</a></p>
-<p>P-Tuning的思路其实与Prefix-Tuning非常类似，都是希望通过少量标注数据学习一个连续向量模板，主要区别在于P-Tuning更关注NLU。</p>
+<p>The idea of P-Tuning is quite similar to Prefix-Tuning, both of them try to training continuous prompts by labeled data. The difference is that P-Tuning is mainly focusing on NLU tasks.</p>
 <blockquote>
 <p>To automatically search prompts in the continuous space to bridge the gap between GPTs and NLU applications.</p>
 </blockquote>
-<p>即P-Tuning通过自动搜索Prompt，让GPT这样的autoregressive model很好地完成NLU的任务。具体地来看下P-Tuning的模板形式：</p>
+<p>The template of P-Tuning：</p>
 <pre class="line-numbers language-none"><code class="language-none">[h(0)]...[h(i)]; e(x); [h(i+1)]...[h(m)]; e(y)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>其中，h(i)就是Prompt，e是embedding函数，x是sentence tokens，y是target。</p>
-<p>还有个值得注意的点，Prefix-Tuning和P-Tuning在训练搜索模板时都采用了reparametrize的方法，因为它们遇到了优化不稳定的问题：</p>
+<p>where h(i) is the prompt, e() is the embedding function, x is input tokens and y is the target.</p>
+<p>In practice, both Prefix-Tuning and P-Tuning use reparameterize techniques to solve the unstable optimization problem:</p>
 <blockquote>
 <p>Empirically, directly updating the P parameters leads to unstable optimization and a slight drop in performance.</p>
 <p>By: Prefix-Tuning</p>
@@ -344,16 +345,15 @@ Encoder-Decoder Model: [T] x [T&#39;] y<span aria-hidden="true" class="line-numb
 <p>In the P-tuning we propose to also model the h(i) as a sequence using a prompt encoder consists of a very lite neural network that can solve the discreteness and association problems.</p>
 <p>By: P-Tuning</p>
 </blockquote>
-<p>说句题外话，之前有许多关于BERT适合NLU而GPT适合NLG的说法和对应的解释，这篇论文是否推翻了这些推断？ :-)</p>
-<p><strong>本质上，连续prompt模板就是在原有LM上增加了少量参数，并通过小样本仅学习这些参数调优取得更好性能的方法。</strong>与直接添加参数相比，这些参数具有模板的形式（虽然不是自然语言形式），所以取得了更好的效果。</p>
-<h1 id="总结">总结</h1>
-<p>Prompt无疑是当下最火的NLP技术之一，大家通过各种不同的Prompt方式来挖掘预训练模型本身的潜能。通过构造或查找合适的模板，prompt已经在在各种不同的NLP任务上大放异彩。</p>
-<p>同时，Prompt也存在一些问题，比如最优模板的构建和查找，模板的稳定性等：</p>
+<p>By the way, there were many explanations on why BERT is more suitable for NLU and GPT is more suitable for NLG. Does this paper proves the previous explanations are wrong? :-)</p>
+<h1 id="summary">Summary</h1>
+<p>Prompting is undoubtedly one of the most popular NLP directions. Through constructing or searching proper templates, prompt learning has created new SOTA for many NLP tasks.</p>
+<p>However, prompting still faces many challenges:</p>
 <blockquote>
 <p>Most of the work takes manually-designed prompts—prompt engineering is non-trivial since a small perturbation can significantly affect the model’s performance, and creating a perfect prompt requires both understanding of LMs' inner workings and trial-and-error.</p>
 <p>By: <a target="_blank" rel="noopener" href="https://gaotianyu.xyz/prompting/"># Prompting: Better Ways of Using Language Models for NLP Tasks</a></p>
 </blockquote>
-<p>总之，作为一种对预训练模型知识提取和挖掘的方法，Prompt瑕不掩瑜，相信之后会有更多Prompt的工作推进NLP的发展。</p>
+<p>In conclusion, prompting is a promising technique to release the power of pretrained language models. Nice to see more excellent work in this area.</p>
 <h1 id="reference">Reference</h1>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/399295895"># NLP新宠——浅谈Prompt的前世今生</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/395115779"># 近代自然语言处理技术发展的“第四范式”</a></p>
@@ -367,7 +367,7 @@ Encoder-Decoder Model: [T] x [T&#39;] y<span aria-hidden="true" class="line-numb
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/briefintrotoprompt.en/" rel="bookmark">Brief Introduction to NLP Prompting</a></div>
+      <div class="popular-posts-title"><a href="/briefintrotoprompt/" rel="bookmark">NLP Prompt技术简介</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/autoencodervsautoregressive/" rel="bookmark">Autoencoding和Autoregressive的区别</a></div>
@@ -398,14 +398,11 @@ Encoder-Decoder Model: [T] x [T&#39;] y<span aria-hidden="true" class="line-numb
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/hugoaddcssjs.en/" rel="prev" title="Hugo Add Customized CSS or Javascript">
-                  <i class="fa fa-chevron-left"></i> Hugo Add Customized CSS or Javascript
+                <a href="/briefintrotoprompt/" rel="prev" title="NLP Prompt技术简介">
+                  <i class="fa fa-chevron-left"></i> NLP Prompt技术简介
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/briefintrotoprompt.en/" rel="next" title="Brief Introduction to NLP Prompting">
-                  Brief Introduction to NLP Prompting <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -461,7 +458,7 @@ Encoder-Decoder Model: [T] x [T&#39;] y<span aria-hidden="true" class="line-numb
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/briefintrotoprompt/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/briefintrotoprompt.en/"}</script>
 <script>
 document.addEventListener('page:loaded', () => {
   NexT.utils.loadComments(CONFIG.waline.el).then(() => 

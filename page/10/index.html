@@ -141,7 +141,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">144</span>
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -183,6 +183,135 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/03/31/cleanuptmp.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/31/cleanuptmp.en/" class="post-title-link" itemprop="url">Clean .com.google.Chrome.* in /tmp</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-03-31 17:52:51" itemprop="dateCreated datePublished" datetime="2020-03-31T17:52:51+08:00">2020-03-31</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/03/31/cleanuptmp.en/" class="post-meta-item leancloud_visitors" data-flag-title="Clean .com.google.Chrome.* in /tmp" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/03/31/cleanuptmp.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/03/31/cleanuptmp.en/" data-xid="/2020/03/31/cleanuptmp.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Recently, I found there were huge amount of files named <code>.com.google.Chrome.*</code> be created in my /tmp folder. Obviously the culprit is Chrome. However, after some research no solution is found to prevent Chrome creating these garbage.</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;tmp$ du -csh .com.google.Chrome.*
+
+8.0K    .com.google.Chrome.00OKwD
+104K    .com.google.Chrome.013jYf
+172K    .com.google.Chrome.015x5t
+...
+48K     .com.google.Chrome.Zytrhf
+16K     .com.google.Chrome.zz233G
+36K     .com.google.Chrome.ZzrsZY
+163M    total
+&#x2F;tmp$  find &#x2F;tmp -name &quot;.com.google.Chrome*&quot; -ls| wc -l
+3468<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>Update 2020/12/12</strong> I found there are lots of <code>.com.google.Chrome.*</code> files in <code>/tmp/snap.chromium/tmp</code> :-( . Look at the <code>ncdu</code>results: <pre class="line-numbers language-none"><code class="language-none">--- &#x2F;tmp&#x2F;snap.chromium&#x2F;tmp -------------------------------------------------------------------------
+                         &#x2F;..
+    4.1 MiB [##########] &#x2F;.com.google.Chrome.xTBobr
+    4.1 MiB [######### ] &#x2F;.com.google.Chrome.0hcsFR
+    4.0 MiB [######### ] &#x2F;.com.google.Chrome.YdhzL5
+    4.0 MiB [######### ] &#x2F;.com.google.Chrome.nJ5W3A
+    4.0 MiB [######### ] &#x2F;.com.google.Chrome.unS6es
+...
+ Total disk usage:   6.8 GiB  Apparent size:  12.1 GiB  Items: 482530<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Now the cleanup script has been updated.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/31/cleanuptmp.en/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1144,118 +1273,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/02/15/googleautoads/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/01/25/vsnetcoreloadfailed.en/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/01/25/vsnetcoreloadfailed.en/" class="post-title-link" itemprop="url">VS2017 .NET Core Projects Load Failed</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-01-25 12:29:58" itemprop="dateCreated datePublished" datetime="2020-01-25T12:29:58+08:00">2020-01-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-17 21:48:02" itemprop="dateModified" datetime="2021-07-17T21:48:02+08:00">2021-07-17</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/2020/01/25/vsnetcoreloadfailed.en/" class="post-meta-item leancloud_visitors" data-flag-title="VS2017 .NET Core Projects Load Failed" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline: </span>
-  
-    <a title="waline" href="/2020/01/25/vsnetcoreloadfailed.en/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2020/01/25/vsnetcoreloadfailed.en/" data-xid="/2020/01/25/vsnetcoreloadfailed.en/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear:</p>
-<blockquote><p>The current .NET SDK does not support targeting .NET Standard 2.0. Either target .NET Standard 1.6 or lower, or use a version of the .NET SDK that supports .NET Standard 2.0. XXXProject C:Files (x86)Visual Studio\2017.NET.Sdk.NET.TargetFrameworkInference.targets</p>
-</blockquote>
-<p>Another related issue is .NET Core project load failed. Both errors point out that the corresponding .NET SDK is missing.</p>
-<p>If you follow the instructions to install .NET Core SDK with a random version from here: https://aka.ms/dotnet-download . Most likely that the issue cannot be resolved.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/01/25/vsnetcoreloadfailed.en/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
