@@ -31,7 +31,7 @@
 <meta property="og:description" content="在迁移博客之后，就切换了图床，使用github作免费的图床。但最近发现它不太稳定，常常打不开。研究发现可以用jsdelivr作github的CDN加速，只需替换下图片地址即可。这才是github图床正确的打开方式 :-)">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-19T05:15:40.000Z">
-<meta property="article:modified_time" content="2021-12-19T05:16:15.437Z">
+<meta property="article:modified_time" content="2021-12-20T11:29:29.515Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="Hexo">
@@ -132,7 +132,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jsdelivr%E5%8A%A0%E9%80%9Fgithub%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">jsdelivr加速github图片地址格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sed%E8%84%9A%E6%9C%AC%E6%9B%BF%E6%8D%A2%E6%89%80%E6%9C%89post%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80"><span class="nav-number">2.</span> <span class="nav-text">sed脚本替换所有post图片地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jsdelivr%E5%8A%A0%E9%80%9Fgithub%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">jsdelivr加速github图片地址格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E6%9B%BF%E6%8D%A2%E6%89%80%E6%9C%89post%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80"><span class="nav-number">2.</span> <span class="nav-text">shell脚本替换所有post图片地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -224,10 +224,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2021-12-19 13:15:40 / Modified: 13:16:15" itemprop="dateCreated datePublished" datetime="2021-12-19T13:15:40+08:00">2021-12-19</time>
+      <time title="Created: 2021-12-19 13:15:40" itemprop="dateCreated datePublished" datetime="2021-12-19T13:15:40+08:00">2021-12-19</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-12-20 19:29:29" itemprop="dateModified" datetime="2021-12-20T19:29:29+08:00">2021-12-20</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -291,7 +297,7 @@ https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo
 <p>Package size exceeded the configured limit of 50 MB. Try https://github.com/user/repo/tree/master/master/a/xxx.jpg instead.</p>
 </blockquote>
 <p>大概率是图片地址写错了，比如这里就多了一个<code>master</code>，正确地址应该是：<code>https://cdn.jsdelivr.net/gh/user/repo/a/xxx.jpg</code></p>
-<h1 id="sed脚本替换所有post图片地址">sed脚本替换所有post图片地址</h1>
+<h1 id="shell脚本替换所有post图片地址">shell脚本替换所有post图片地址</h1>
 <p>可直接用如下脚本在Hexo根目录中执行完成替换工作：</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">#!&#x2F;bin&#x2F;bash
 
@@ -312,6 +318,9 @@ done<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/speedupgithubbycdn.en/" rel="bookmark">Speed Up Github Image Hosting By Jsdelivr CDN</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/commonmarktostandardmarkdown/" rel="bookmark">段落和列表中间添加空行的脚本</a></div>
     </li>
     <li class="popular-posts-item">
@@ -322,9 +331,6 @@ done<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/10/15/twocolumnpic/" rel="bookmark">Markdown并排显示图片</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/apexprimaryexpressionerror.en/" rel="bookmark">Apex Compile Error: expected primary-expression before ‘>’ token</a></div>
     </li>
   </ul>
 
@@ -346,6 +352,9 @@ done<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/speedupgithubbycdn.en/" rel="next" title="Speed Up Github Image Hosting By Jsdelivr CDN">
+                  Speed Up Github Image Hosting By Jsdelivr CDN <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

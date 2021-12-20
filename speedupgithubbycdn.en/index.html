@@ -23,30 +23,31 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如Interface or abstract class? 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。">
+<meta name="description" content="This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading spee">
 <meta property="og:type" content="article">
-<meta property="og:title" content="interface还是abstract class?">
-<meta property="og:url" content="https://finisky.github.io/2019/12/15/interfaceorabstractclass/index.html">
+<meta property="og:title" content="Speed Up Github Image Hosting By Jsdelivr CDN">
+<meta property="og:url" content="https://finisky.github.io/speedupgithubbycdn.en/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如Interface or abstract class? 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。">
+<meta property="og:description" content="This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading spee">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2019-12-15T03:36:10.000Z">
-<meta property="article:modified_time" content="2021-12-19T04:01:25.445Z">
+<meta property="article:published_time" content="2021-12-20T11:43:59.000Z">
+<meta property="article:modified_time" content="2021-12-20T11:44:40.942Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="Software Engineering">
-<meta property="article:tag" content="OOP">
-<meta property="article:tag" content="Design Pattern">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Markdown">
+<meta property="article:tag" content="Hugo">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/2019/12/15/interfaceorabstractclass/">
+<link rel="canonical" href="https://finisky.github.io/speedupgithubbycdn.en/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2019/12/15/interfaceorabstractclass/","path":"2019/12/15/interfaceorabstractclass/","title":"interface还是abstract class?"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/speedupgithubbycdn.en/","path":"speedupgithubbycdn.en/","title":"Speed Up Github Image Hosting By Jsdelivr CDN"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>interface还是abstract class? | Finisky Garden</title>
+<title>Speed Up Github Image Hosting By Jsdelivr CDN | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -131,7 +132,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#interface%E4%B8%8Eabstract-class%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">interface与abstract class区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BB%A5%E7%94%A8interface"><span class="nav-number">2.</span> <span class="nav-text">滥用interface</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jsdelivr-image-url-format"><span class="nav-number">1.</span> <span class="nav-text">Jsdelivr Image Url Format</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#script-to-replace-image-url"><span class="nav-number">2.</span> <span class="nav-text">Script to Replace Image Url</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -200,7 +201,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2019/12/15/interfaceorabstractclass/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/speedupgithubbycdn.en/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -213,7 +214,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          interface还是abstract class?
+          Speed Up Github Image Hosting By Jsdelivr CDN
         </h1>
 
         <div class="post-meta-container">
@@ -223,28 +224,22 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2019-12-15 11:36:10" itemprop="dateCreated datePublished" datetime="2019-12-15T11:36:10+08:00">2019-12-15</time>
+      <time title="Created: 2021-12-20 19:43:59 / Modified: 19:44:40" itemprop="dateCreated datePublished" datetime="2021-12-20T19:43:59+08:00">2021-12-20</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-12-19 12:01:25" itemprop="dateModified" datetime="2021-12-19T12:01:25+08:00">2021-12-19</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Software-Engineering/" itemprop="url" rel="index"><span itemprop="name">Software Engineering</span></a>
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
         </span>
     </span>
 
   
-    <span id="/2019/12/15/interfaceorabstractclass/" class="post-meta-item leancloud_visitors" data-flag-title="interface还是abstract class?" title="Views">
+    <span id="/speedupgithubbycdn.en/" class="post-meta-item leancloud_visitors" data-flag-title="Speed Up Github Image Hosting By Jsdelivr CDN" title="Views">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -259,8 +254,8 @@
     </span>
     <span class="post-meta-item-text">Waline: </span>
   
-    <a title="waline" href="/2019/12/15/interfaceorabstractclass/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2019/12/15/interfaceorabstractclass/" data-xid="/2019/12/15/interfaceorabstractclass/" itemprop="commentCount"></span>
+    <a title="waline" href="/speedupgithubbycdn.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/speedupgithubbycdn.en/" data-xid="/speedupgithubbycdn.en/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -274,43 +269,39 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1165332/interface-or-abstract-class">Interface or abstract class?</a> 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。</p>
+        <p>This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading speed by jsdelivr CDN.</p>
 <span id="more"></span>
-<h1 id="interface与abstract-class区别">interface与abstract class区别</h1>
-<p>在语法上的几点区别：</p>
-<ol type="1">
-<li>abstract class可以包含成员变量，保存类的状态。</li>
-<li>abstract class可以有方法实现，interface不能有实现。 abstract class中的实现可以用于派生类的代码复用，起到util/helper类(anti-pattern)的作用。</li>
-<li>C#用interface完成“多继承”的功能，一个类可以实现多个interface，但只能继承一个abstract class。</li>
-</ol>
-<p>而选用interface或abstract class不应从语法实现的层面思考，更应关注设计中的抽象。因此二者最重要的区别在于：</p>
-<p><strong>abstract class代表“是一种”(a kind of)关系，而interface只定义它能做什么的外围功能。二者的区别有点类似继承和聚合的关系。</strong></p>
-<p>举个例子。Cat和Bird都是一种Animal，都有weight(体重)属性，此时，使用abstract class更合适些，同时将weight也置于abstract class中以复用。但会不会飞，Fly()实现成IFly interface更合理，因为Cat不会飞，只有Bird实现IFly即可。</p>
-<h1 id="滥用interface">滥用interface</h1>
-<p>顺嘴提下滥用interface的现象。曾见过一个项目中的所有类都配上了一个特有的interface，"I+ClassName"式的interface遍布整个项目。乍一看似乎挺规整，仔细一看全是无效操作。所谓“一顿操作猛如虎，仔细一看原地杵”，甚至还不如原地杵：如此之多本不该存在的interface，增加了额外的抽象和开销，极影响可读性。举例说明，如何看待这样的一个"interface"？</p>
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> IGetSpecificServiceRankScore
-<span class="token punctuation">&#123;</span>
-    <span class="token return-type class-name"><span class="token keyword">double</span></span> <span class="token function">GetSpecificServiceRankScore</span><span class="token punctuation">(</span><span class="token keyword">enum</span> <span class="token class-name">serviceType</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> maxReturnNum<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">double</span></span> threshold1<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">double</span></span> threshold2<span class="token punctuation">,</span> <span class="token class-name">List<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> blackList<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上述interface的作者犯了教条主义错误，没有理解“面向interface编程”和依赖倒置的意义。有如下问题：</p>
-<ol type="1">
-<li>interface的定义需要通用，具有普适性，从而可以有多个不同的实现。如此“一个萝卜一个坑”式的定义，显然不太可能会有多个不同实现，那么也就失去了interface的意义。</li>
-<li>即使有多个不同的实现，实际开发中笔者不只一次看到interface随着实现一并修改的情况。实现可以增加或修改，interface不能天天改。假设interface已有n个实现，此时为了增加第n+1个实现修改了接口定义，那么就要改动所有n个实现和增加第n+1个实现，显然带来了额外的开发成本。</li>
-</ol>
-<p>就此例而言，可做如下改进： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> IGetServiceRankScore
-<span class="token punctuation">&#123;</span>
-    <span class="token return-type class-name"><span class="token keyword">double</span></span> <span class="token function">GetServiceRankScore</span><span class="token punctuation">(</span><span class="token keyword">enum</span> <span class="token class-name">serviceType</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>可以看下C# System命名空间中IDisposable和IComparable的定义，简明、通用。虽然实际业务逻辑相对复杂，但从逻辑抽象层次方面抽象interface，还是应该遵从通用、普适的原则，取到可用和通用的折衷。 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IDisposable</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Dispose</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+<h1 id="jsdelivr-image-url-format">Jsdelivr Image Url Format</h1>
+<p>Assume the original github image url is:</p>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;master&#x2F;&#123;folderpath&#125;&#x2F;&#123;filename&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>To leverage jsdelivr CDN, just convert the url to this:</p>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;&#123;folderpath&#125;&#x2F;&#123;filename&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Or just do a prefix replacement:</p>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;master&#x2F;
 
-<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IComparable</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token return-type class-name"><span class="token keyword">int</span></span> <span class="token function">CompareTo</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">object</span></span> obj<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>依赖倒置原则无可争议，但在复杂业务逻辑实践中我更推崇“先实现后抽象”的做法。即程序中先有多个不同的实现(至少两个)，然后根据这些实现通用的内容抽象出一个通用的interface。原因在于在开始设计和实现之时，大部分人其实想不明白这个接口的输入输出是什么，与其如此，不如先摸着石头过河，让现实告诉你正确的路径。</p>
+--&gt;
+
+https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>For example, for image <code>p.png</code> in github user <code>user</code>'s repository <code>repo</code>, folder <code>a/</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;user&#x2F;repo&#x2F;master&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>The CDN url should be:</p>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;user&#x2F;repo&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>If you encounter the following error:</p>
+<blockquote>
+<p>Package size exceeded the configured limit of 50 MB. Try https://github.com/user/repo/tree/master/master/a/xxx.jpg instead.</p>
+</blockquote>
+<p>Probably the image url is wrong. For this case, there is a duplicate <code>master</code> and the url should be: <code>https://cdn.jsdelivr.net/gh/user/repo/a/xxx.jpg</code></p>
+<h1 id="script-to-replace-image-url">Script to Replace Image Url</h1>
+<p>Use the following script to replace the image url:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">#!&#x2F;bin&#x2F;bash
+
+for f in .&#x2F;source&#x2F;_posts&#x2F;*.md; do
+	echo &quot;Process &quot;$f
+	sed -i &#39;s&#x2F;https:\&#x2F;\&#x2F;raw.githubusercontent.com\&#x2F;user\&#x2F;repo\&#x2F;master\&#x2F;&#x2F;https:\&#x2F;\&#x2F;cdn.jsdelivr.net\&#x2F;gh\&#x2F;user\&#x2F;repo\&#x2F;&#x2F;&#39; $f
+done<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="reference">Reference</h1>
+<p>https://blog.csdn.net/q906270629/article/details/115394248</p>
+<p>https://zhuanlan.zhihu.com/p/76951130</p>
 
     </div>
 
@@ -321,42 +312,40 @@
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/10/15/factorydiff/" rel="bookmark">工厂模式和抽象工厂模式的区别</a></div>
+      <div class="popular-posts-title"><a href="/speedupgithubbycdn/" rel="bookmark">CDN jsdelivr加速github图床</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/12/09/interfacederivedparameter/" rel="bookmark">参数或返回值为派生类的接口或抽象方法</a></div>
+      <div class="popular-posts-title"><a href="/commonmarktostandardmarkdown/" rel="bookmark">段落和列表中间添加空行的脚本</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/02/04/solid/" rel="bookmark">软件设计中的SOLID原则</a></div>
+      <div class="popular-posts-title"><a href="/hugoaddcssjs.en/" rel="bookmark">Hugo Add Customized CSS or Javascript</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/11/30/staticandutil/" rel="bookmark">谈谈static和util/helper类</a></div>
+      <div class="popular-posts-title"><a href="/hugoaddcssjs/" rel="bookmark">Hugo添加自定义css和javascript</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/04/14/computerquotes/" rel="bookmark">计算机界有趣的名言金句</a></div>
+      <div class="popular-posts-title"><a href="/2019/10/15/twocolumnpic/" rel="bookmark">Markdown并排显示图片</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Software-Engineering/" rel="tag"># Software Engineering</a>
-              <a href="/tags/OOP/" rel="tag"># OOP</a>
-              <a href="/tags/Design-Pattern/" rel="tag"># Design Pattern</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/Markdown/" rel="tag"># Markdown</a>
+              <a href="/tags/Hugo/" rel="tag"># Hugo</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2019/12/11/migrategithubpages/" rel="prev" title="迁移Hexo博客到GitHub Pages">
-                  <i class="fa fa-chevron-left"></i> 迁移Hexo博客到GitHub Pages
+                <a href="/speedupgithubbycdn/" rel="prev" title="CDN jsdelivr加速github图床">
+                  <i class="fa fa-chevron-left"></i> CDN jsdelivr加速github图床
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2019/12/18/seleniumpageloadstrategy/" rel="next" title="selenium禁止页面加载javascript">
-                  selenium禁止页面加载javascript <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -412,7 +401,7 @@
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2019/12/15/interfaceorabstractclass/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/speedupgithubbycdn.en/"}</script>
 <script>
 document.addEventListener('page:loaded', () => {
   NexT.utils.loadComments(CONFIG.waline.el).then(() => 
