@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="LeetCode Top K Frequent Words 中会用到priority_queue，同时需要定义priority_queue的排序算法。 priority_queue的定义: template&lt;     class T,     class Container &#x3D; std::vector&lt;T&gt;,     class Compare &#x3D; std::less&lt;typen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ priority_queue使用示例">
+<meta property="og:url" content="https://finisky.github.io/priorityqueueexample/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="LeetCode Top K Frequent Words 中会用到priority_queue，同时需要定义priority_queue的排序算法。 priority_queue的定义: template&lt;     class T,     class Container &#x3D; std::vector&lt;T&gt;,     class Compare &#x3D; std::less&lt;typen">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-01-04T16:45:40.000Z">
+<meta property="article:modified_time" content="2022-01-04T17:10:50.634Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Coding Interview">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/priorityqueueexample/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/priorityqueueexample/","path":"priorityqueueexample/","title":"C++ priority_queue使用示例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C++ priority_queue使用示例 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD%E7%AE%97%E7%AC%A6%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">重载算符比较函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lambda%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">lambda比较函数</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/priorityqueueexample/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++ priority_queue使用示例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-05 00:45:40 / Modified: 01:10:50" itemprop="dateCreated datePublished" datetime="2022-01-05T00:45:40+08:00">2022-01-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Coding-Interview/" itemprop="url" rel="index"><span itemprop="name">Coding Interview</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/priorityqueueexample/" class="post-meta-item leancloud_visitors" data-flag-title="C++ priority_queue使用示例" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/priorityqueueexample/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/priorityqueueexample/" data-xid="/priorityqueueexample/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>LeetCode <a target="_blank" rel="noopener" href="https://leetcode.com/problems/top-k-frequent-words/">Top K Frequent Words</a> 中会用到priority_queue，同时需要定义priority_queue的排序算法。</p>
+<p><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/container/priority_queue">priority_queue的定义</a>:</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span>
+    <span class="token keyword">class</span> <span class="token class-name">T</span><span class="token punctuation">,</span>
+    <span class="token keyword">class</span> <span class="token class-name">Container</span> <span class="token operator">=</span> std<span class="token double-colon punctuation">::</span>vector<span class="token operator">&lt;</span>T<span class="token operator">></span><span class="token punctuation">,</span>
+    <span class="token keyword">class</span> <span class="token class-name">Compare</span> <span class="token operator">=</span> std<span class="token double-colon punctuation">::</span>less<span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">Container</span><span class="token double-colon punctuation">::</span>value_type<span class="token operator">></span>
+<span class="token operator">></span> <span class="token keyword">class</span> <span class="token class-name">priority_queue</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>有两种方式实现自定义类型priority_queue的比较函数。</p>
+<span id="more"></span>
+<h1 id="重载算符比较函数">重载算符比较函数</h1>
+<p>需要定义一个类<code>Cmp</code>，重载<code>()</code>算符：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">Cmp</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">bool</span> <span class="token keyword">operator</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">const</span> pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">&amp;</span>a<span class="token punctuation">,</span> <span class="token keyword">const</span> pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">&amp;</span>b<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>second <span class="token operator">==</span> b<span class="token punctuation">.</span>second<span class="token punctuation">)</span> <span class="token keyword">return</span> a<span class="token punctuation">.</span>first <span class="token operator">&lt;</span> b<span class="token punctuation">.</span>first<span class="token punctuation">;</span>
+        <span class="token keyword">return</span> a<span class="token punctuation">.</span>second <span class="token operator">></span> b<span class="token punctuation">.</span>second<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+priority_queue<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span><span class="token punctuation">,</span> vector<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">>></span><span class="token punctuation">,</span> Cmp<span class="token operator">></span> pq<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="lambda比较函数">lambda比较函数</h1>
+<p>使用lambda函数定义比较函数的方法更简洁，可省去引入一个新的辅助类。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">auto</span> cmp <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">const</span> pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">&amp;</span>a<span class="token punctuation">,</span> <span class="token keyword">const</span> pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">&amp;</span>b<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>second <span class="token operator">==</span> b<span class="token punctuation">.</span>second<span class="token punctuation">)</span> <span class="token keyword">return</span> a<span class="token punctuation">.</span>first <span class="token operator">&lt;</span> b<span class="token punctuation">.</span>first<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> a<span class="token punctuation">.</span>second <span class="token operator">></span> b<span class="token punctuation">.</span>second<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+priority_queue<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span><span class="token punctuation">,</span> vector<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">>></span><span class="token punctuation">,</span> <span class="token keyword">decltype</span><span class="token punctuation">(</span>cmp<span class="token punctuation">)</span><span class="token operator">></span> <span class="token function">pq</span><span class="token punctuation">(</span>cmp<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注意: 此处与重载算符的初始化方法不同，<strong>一定要把比较函数<code>cmp</code>也传入构造函数</strong>。否则会出现编译错误：</p>
+<blockquote>
+<p>Line 16: Char 85: error: no matching constructor for initialization of 'priority_queue&lt;pair&lt;std::string, int&gt;, vector&lt;pair&lt;std::string, int&gt;&gt;, decltype(cmp)&gt;' (aka 'priority_queue&lt;pair&lt;basic_string<char>, int&gt;, vector&lt;pair&lt;basic_string<char>, int&gt;&gt;, (lambda at solution.cpp:20:20)&gt;') priority_queue&lt;pair&lt;string, int&gt;, vector&lt;pair&lt;string, int&gt;&gt;, decltype(cmp)&gt; pq; ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:501:2: note: candidate template ignored: requirement '__and_&lt;std::is_default_constructible&lt;(lambda at prog_joined.cpp:20:20)&gt;, std::is_default_constructible&lt;std::vector&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>&gt;, int&gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>&gt;, int&gt;&gt;&gt;&gt;&gt;::value' was not satisfied [with _Seq = std::vector&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&gt;&gt;&gt;] priority_queue() ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:516:2: note: candidate constructor template not viable: requires single argument '__a', but no arguments were provided priority_queue(const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 0 were provided class priority_queue ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 0 were provided /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:505:7: note: candidate constructor not viable: requires 2 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Sequence&amp; __s) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:510:7: note: candidate constructor not viable: requires at least argument '__x', but no arguments were provided priority_queue(const _Compare&amp; __x, _Sequence&amp;&amp; __s = _Sequence()) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:520:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:537:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(const priority_queue&amp; __q, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:541:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(priority_queue&amp;&amp; __q, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:526:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Sequence&amp; __c, ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:532:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, _Sequence&amp;&amp; __c, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:573:2: note: candidate constructor template not viable: requires 4 arguments, but 0 were provided priority_queue(_InputIterator __first, _InputIterator __last, ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:584:2: note: candidate constructor template not viable: requires at least 2 arguments, but 0 were provided priority_queue(_InputIterator __first, _InputIterator __last, ^ 1 error generated.</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/priorityqueueexample.en/" rel="bookmark">C++ priority_queue Example</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/02/23/cleanquicksort/" rel="bookmark">快速排序简洁实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/01/codinginterviewcppcheatsheet/" rel="bookmark">代码面试C++/STL Cheat Sheet</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/05/22/findpeakelement/" rel="bookmark">Find Peak Element 寻找峰值</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Coding-Interview/" rel="tag"># Coding Interview</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/speedupgithubbycdn.en/" rel="prev" title="Speed Up Github Image Hosting By Jsdelivr CDN">
+                  <i class="fa fa-chevron-left"></i> Speed Up Github Image Hosting By Jsdelivr CDN
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/priorityqueueexample.en/" rel="next" title="C++ priority_queue Example">
+                  C++ priority_queue Example <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/priorityqueueexample/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
