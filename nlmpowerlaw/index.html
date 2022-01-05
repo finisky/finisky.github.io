@@ -23,28 +23,32 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Today I found that some pods in kubernetes cluster are failed, the status is Waiting: ContainerCreating. The pod events: MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&amp;quot">
+<meta name="description" content="# Scaling Laws for Neural Language Models 一篇实验Paper，调研了神经网络语言模型交叉熵损失变化满足power-law定律，挺有意思的文章。Transformer之后有许多探索不同模型结构的文章，并在一些任务上取得了新的SOTA，却鲜有人考虑影响模型性能的主要因素是什么。  Throughout we will observe precise power">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MountVolume.SetUp failed for volume secret not found Issue">
-<meta property="og:url" content="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/index.html">
+<meta property="og:title" content="Scaling Laws for Neural Language Models简读">
+<meta property="og:url" content="https://finisky.github.io/nlmpowerlaw/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="Today I found that some pods in kubernetes cluster are failed, the status is Waiting: ContainerCreating. The pod events: MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&amp;quot">
+<meta property="og:description" content="# Scaling Laws for Neural Language Models 一篇实验Paper，调研了神经网络语言模型交叉熵损失变化满足power-law定律，挺有意思的文章。Transformer之后有许多探索不同模型结构的文章，并在一些任务上取得了新的SOTA，却鲜有人考虑影响模型性能的主要因素是什么。  Throughout we will observe precise power">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-05-21T09:05:20.000Z">
-<meta property="article:modified_time" content="2021-12-19T04:01:25.457Z">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="article:published_time" content="2022-01-05T03:31:00.000Z">
+<meta property="article:modified_time" content="2022-01-05T03:31:27.293Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
 
 
-<link rel="canonical" href="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/">
+<link rel="canonical" href="https://finisky.github.io/nlmpowerlaw/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/05/21/kubernetesrecoversecret/","path":"2020/05/21/kubernetesrecoversecret/","title":"MountVolume.SetUp failed for volume secret not found Issue"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/nlmpowerlaw/","path":"nlmpowerlaw/","title":"Scaling Laws for Neural Language Models简读"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>MountVolume.SetUp failed for volume secret not found Issue | Finisky Garden</title>
+<title>Scaling Laws for Neural Language Models简读 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -197,7 +201,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/nlmpowerlaw/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -210,7 +214,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MountVolume.SetUp failed for volume secret not found Issue
+          Scaling Laws for Neural Language Models简读
         </h1>
 
         <div class="post-meta-container">
@@ -220,28 +224,22 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2020-05-21 17:05:20" itemprop="dateCreated datePublished" datetime="2020-05-21T17:05:20+08:00">2020-05-21</time>
+      <time title="Created: 2022-01-05 11:31:00 / Modified: 11:31:27" itemprop="dateCreated datePublished" datetime="2022-01-05T11:31:00+08:00">2022-01-05</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-12-19 12:01:25" itemprop="dateModified" datetime="2021-12-19T12:01:25+08:00">2021-12-19</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Misc/" itemprop="url" rel="index"><span itemprop="name">Misc</span></a>
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
         </span>
     </span>
 
   
-    <span id="/2020/05/21/kubernetesrecoversecret/" class="post-meta-item leancloud_visitors" data-flag-title="MountVolume.SetUp failed for volume secret not found Issue" title="Views">
+    <span id="/nlmpowerlaw/" class="post-meta-item leancloud_visitors" data-flag-title="Scaling Laws for Neural Language Models简读" title="Views">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -256,8 +254,8 @@
     </span>
     <span class="post-meta-item-text">Waline: </span>
   
-    <a title="waline" href="/2020/05/21/kubernetesrecoversecret/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2020/05/21/kubernetesrecoversecret/" data-xid="/2020/05/21/kubernetesrecoversecret/" itemprop="commentCount"></span>
+    <a title="waline" href="/nlmpowerlaw/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/nlmpowerlaw/" data-xid="/nlmpowerlaw/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -271,34 +269,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Today I found that some pods in kubernetes cluster are failed, the status is <code>Waiting: ContainerCreating</code>. The pod events: <pre class="line-numbers language-none"><code class="language-none">MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&quot; not found
-kubelet aks-agentpool-xxx-vmss000001
-
-Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached volumes&#x3D;[xxxxx]: timed out waiting for the condition<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
-<span id="more"></span>
-<p>I remember that about one week ago I delete some secretes in this cluster. Therefore, the problem becomes how to recover the deleted secret "xxxxx"?</p>
-<p>Refer the following documents: <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#to-create-additional-api-tokens"># To create additional API tokens</a></p>
-<p>According to <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#service-account-admission-controller"># Service Account Admission Controller</a>: <pre class="line-numbers language-none"><code class="language-none">if the pod does not have a ServiceAccount set, it sets the ServiceAccount to default.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Since the missing secret format is "default-token-xxxxx", the <code>ServiceAccount</code> must be <code>default</code>.</p>
-<p>Then we create a service.json file: <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
-    <span class="token property">"kind"</span><span class="token operator">:</span> <span class="token string">"Secret"</span><span class="token punctuation">,</span>
-    <span class="token property">"apiVersion"</span><span class="token operator">:</span> <span class="token string">"v1"</span><span class="token punctuation">,</span>
-    <span class="token property">"metadata"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
-        <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"default-token-xxxxx"</span><span class="token punctuation">,</span>
-        <span class="token property">"annotations"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
-            <span class="token property">"kubernetes.io/service-account.name"</span><span class="token operator">:</span> <span class="token string">"default"</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"kubernetes.io/service-account-token"</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> There are two fields in metadata need to be modified:</p>
+        <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.08361"># Scaling Laws for Neural Language Models</a></p>
+<p>一篇实验Paper，调研了神经网络语言模型交叉熵损失变化满足power-law定律，挺有意思的文章。Transformer之后有许多探索不同模型结构的文章，并在一些任务上取得了新的SOTA，却鲜有人考虑影响模型性能的主要因素是什么。</p>
+<blockquote>
+<p>Throughout we will observe precise power-law scalings for performance as a function of training time, context length, dataset size, model size, and compute budget.</p>
+</blockquote>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/nlmpowerlaw.png" alt="Natural Lanuage Models Power-law Relationship" /></p>
+<p>该文主要建模了模型性能与非embedding参数 N，数据集大小 D 与计算量 C之间的关系。最主要的发现：</p>
 <ul>
-<li>name: change to your missing secret name which is included in the warning message</li>
-<li>kubernetes.io/service-account.name: <code>default</code></li>
+<li>性能主要与模型大小相关，而与模型结构弱相关</li>
+<li>性能与上面三个因素有比较贴合的power-law关系</li>
 </ul>
-<p>Execute the following command: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl create -f .&#x2F;secret.json<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Check if the secret is there: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl get secrets<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Done. Waiting for the pod to start!</p>
-<p>If you deleted the default kubernetes secret by mistake, hope this artible helps. :-)</p>
+<p>从实验来看，模型越大越好，小模型确实达不到大模型大力出奇迹的效果，而模型结构也并没有那么重要（虽然有很多工作是在改进模型结构本身）。</p>
+<p>结论部分更强调了大模型比大数据更重要：</p>
+<blockquote>
+<p>Our results strongly suggest that larger models will continue to perform better, and will also be much more sample efficient than has been previously appreciated. Big models may be more important than big data.</p>
+</blockquote>
 
     </div>
 
@@ -309,40 +295,39 @@ Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached vo
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/createstorageclassinaks.en/" rel="bookmark">Create Storage Class in Azure Kubernetes Cluster</a></div>
+      <div class="popular-posts-title"><a href="/briefintrotoprompt.en/" rel="bookmark">Brief Introduction to NLP Prompting</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+      <div class="popular-posts-title"><a href="/briefintrotoprompt/" rel="bookmark">NLP Prompt技术简介</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/01/06/k8sdashboardlanguage/" rel="bookmark">Kubernetes Dashboard语言设置为英文</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/12/31/k8sinvalidobject/" rel="bookmark">invalid object doesn't have additional properties error</a></div>
+      <div class="popular-posts-title"><a href="/nucleussampling/" rel="bookmark">Nucleus Sampling与文本生成中的不同解码策略比较</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/05/03/simplicity/" rel="prev" title="简约的哲学">
-                  <i class="fa fa-chevron-left"></i> 简约的哲学
+                <a href="/priorityqueueexample.en/" rel="prev" title="C++ priority_queue Example">
+                  <i class="fa fa-chevron-left"></i> C++ priority_queue Example
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/05/22/findpeakelement/" rel="next" title="Find Peak Element 寻找峰值">
-                  Find Peak Element 寻找峰值 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -398,7 +383,7 @@ Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached vo
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2020/05/21/kubernetesrecoversecret/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/nlmpowerlaw/"}</script>
 <script>
 document.addEventListener('page:loaded', () => {
   NexT.utils.loadComments(CONFIG.waline.el).then(() => 
