@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Last time we talked how to deploy Hugo from private repository to GitHub Pages. I thought it is trivial to modify the workflow yaml to make it works for Hexo. However, it is much more complicated than">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deploy Hexo From Private Repository to GitHub Pages">
+<meta property="og:url" content="https://finisky.github.io/deployhexofromprivaterepo.en/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Last time we talked how to deploy Hugo from private repository to GitHub Pages. I thought it is trivial to modify the workflow yaml to make it works for Hexo. However, it is much more complicated than">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+<meta property="article:published_time" content="2022-05-02T06:02:15.000Z">
+<meta property="article:modified_time" content="2022-05-02T06:16:42.216Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Hugo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
+
+
+<link rel="canonical" href="https://finisky.github.io/deployhexofromprivaterepo.en/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/deployhexofromprivaterepo.en/","path":"deployhexofromprivaterepo.en/","title":"Deploy Hexo From Private Repository to GitHub Pages"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deploy Hexo From Private Repository to GitHub Pages | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#github-action-workflow-yaml-for-hexo"><span class="nav-number">1.</span> <span class="nav-text">GitHub Action Workflow Yaml for Hexo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#setup-the-theme-submodule"><span class="nav-number">2.</span> <span class="nav-text">Setup the Theme Submodule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#create-personal-access-token"><span class="nav-number">3.</span> <span class="nav-text">Create Personal Access Token</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#configure-the-pat-as-a-secret-in-source-repo"><span class="nav-number">4.</span> <span class="nav-text">Configure the PAT as a Secret in Source Repo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#create-deploy-key"><span class="nav-number">5.</span> <span class="nav-text">Create Deploy Key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#install-pandoc-for-mathjax-optional"><span class="nav-number">6.</span> <span class="nav-text">Install Pandoc for mathjax (Optional)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#checkout-submodule-in-github-actions"><span class="nav-number">7.</span> <span class="nav-text">Checkout Submodule in GitHub Actions</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#two-ways-to-deploy-hexo-artifacts"><span class="nav-number">8.</span> <span class="nav-text">Two Ways to Deploy Hexo Artifacts</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#summary"><span class="nav-number">9.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/deployhexofromprivaterepo.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deploy Hexo From Private Repository to GitHub Pages
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-05-02 14:02:15 / Modified: 14:16:42" itemprop="dateCreated datePublished" datetime="2022-05-02T14:02:15+08:00">2022-05-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hugo/" itemprop="url" rel="index"><span itemprop="name">Hugo</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/deployhexofromprivaterepo.en/" class="post-meta-item leancloud_visitors" data-flag-title="Deploy Hexo From Private Repository to GitHub Pages" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/deployhexofromprivaterepo.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/deployhexofromprivaterepo.en/" data-xid="/deployhexofromprivaterepo.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Last time we talked how to deploy Hugo from private repository to GitHub Pages. I thought it is trivial to modify the workflow yaml to make it works for Hexo. However, it is much more complicated than I ever thought. The reason is that Hexo has to setup more dependencies with compatibility issues while Hugo is relatively self-contained and clean.</p>
+<p>Actually, I spent several hours and attempted more than 20 times to make the workflow yaml works. :-)</p>
+<p>Compared to Hugo workflow, there are several issues to be resolved:</p>
+<ul>
+<li>Setup private submodules for your themes</li>
+<li>Configure PAT to pull private submodules as well as your main repo</li>
+<li>Pandoc installation for mathjax (optional)</li>
+</ul>
+<p>Let's start!</p>
+<span id="more"></span>
+<p>Typically, assume you have three repos (can belong to different github accounts). Without loss of generality, we assume the source repo, the target repo and the theme submodule repo are belong to the SAME github account.</p>
+<ul>
+<li>Source Repo (private): store the source code</li>
+<li>Theme Repo (private): store the modified theme source code</li>
+<li>Target Repo (public): host the GitHub Pages (xxx.github.io)</li>
+</ul>
+<p>What we need to do is to create an account-level personal access token in the github account, configure it in the source repo and create an action workflow yaml.</p>
+<h1 id="github-action-workflow-yaml-for-hexo">GitHub Action Workflow Yaml for Hexo</h1>
+<p>We will take a top-down approach for this tutorial. See the workflow yaml first:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo Build &amp; Deploy <span class="token punctuation">-</span> Private to Public
+
+<span class="token key atrule">on</span><span class="token punctuation">:</span>
+  <span class="token key atrule">push</span><span class="token punctuation">:</span>
+    <span class="token key atrule">branches</span><span class="token punctuation">:</span> <span class="token punctuation">[</span> master <span class="token punctuation">]</span>
+
+<span class="token key atrule">jobs</span><span class="token punctuation">:</span>
+  <span class="token key atrule">build</span><span class="token punctuation">:</span>
+    <span class="token key atrule">runs-on</span><span class="token punctuation">:</span> ubuntu<span class="token punctuation">-</span>latest
+
+    <span class="token key atrule">steps</span><span class="token punctuation">:</span>
+    <span class="token comment"># Checkout</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Checkout
+      <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v3.0.0
+      <span class="token key atrule">with</span><span class="token punctuation">:</span>
+        <span class="token key atrule">token</span><span class="token punctuation">:</span> $<span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span> secrets.MYPAT <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+        <span class="token key atrule">submodules</span><span class="token punctuation">:</span> <span class="token string">'true'</span>
+        <span class="token key atrule">persist-credentials</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+
+    <span class="token comment"># Setup Node Env</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Prepare Node env
+      <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/setup<span class="token punctuation">-</span>node@v3
+      <span class="token key atrule">with</span><span class="token punctuation">:</span>
+        <span class="token key atrule">node-version</span><span class="token punctuation">:</span> <span class="token number">16</span>
+
+    <span class="token comment"># Install pandoc for mathjax (Optional)</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Install pandoc
+      <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+        cd /tmp
+        wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
+        sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span>
+
+    <span class="token comment"># Setup and Run Hexo to build the Static Site</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
+      <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+        pandoc --version
+        npm i -g hexo-cli
+        npm i
+        hexo clean &amp;&amp; hexo g</span>
+
+    <span class="token comment"># Deploy the Static Site to Public Repo (GitHub Pages)</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+      <span class="token key atrule">uses</span><span class="token punctuation">:</span> JamesIves/github<span class="token punctuation">-</span>pages<span class="token punctuation">-</span>deploy<span class="token punctuation">-</span>action@v4.3.3
+      <span class="token key atrule">with</span><span class="token punctuation">:</span>
+        <span class="token key atrule">ssh-key</span><span class="token punctuation">:</span> $<span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span> secrets.DEPLOY_KEY <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+        <span class="token key atrule">repository-name</span><span class="token punctuation">:</span> finisky/finisky.github.io
+        <span class="token key atrule">branch</span><span class="token punctuation">:</span> master <span class="token comment"># The branch the action should deploy to.</span>
+        <span class="token key atrule">folder</span><span class="token punctuation">:</span> public <span class="token comment"># The folder the action should deploy.</span>
+        <span class="token key atrule">single-commit</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+        <span class="token key atrule">commit-message</span><span class="token punctuation">:</span> <span class="token string">"Deploy by source"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The action workflow consists of the following parts:</p>
+<ul>
+<li>Checkout: checkout the source code as well as submodules</li>
+<li>Setup Node Env: setup node environment</li>
+<li>Install pandoc for mathjax (Optional): if your use pandoc and mathjax to render math formulas</li>
+<li>Setup and Run Hexo: build the static website</li>
+<li>Deploy: use <a target="_blank" rel="noopener" href="https://github.com/JamesIves/github-pages-deploy-action"># GitHub Pages Deploy Action</a> to publish the website to the target GitHub Page</li>
+</ul>
+<p>The action workflow yaml is based on: <a target="_blank" rel="noopener" href="https://blog.euc-rt.me/post/github-actions-publish-private-hugo-repo-to-public-pages-site/"># Using GitHub Actions to Publish Hugo Site From Private to Public Repo</a>. Modify according to your needs, create a new workflow action in the source repo by <code>Setup a workflow yourself</code> and paste it into the editor. The yaml should be put in the path: <code>.github/workflows/main.yml</code>.</p>
+<p>Next steps:</p>
+<ul>
+<li>Setup the theme submodule</li>
+</ul>
+<p>Fill the following fields in the above yaml:</p>
+<ul>
+<li><code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code>: change the secret name to the PAT secret name</li>
+<li><code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code>: create a deploy key to push the built site HTML to the target repo</li>
+<li><code>repository-name: xxx/xxx.github.io</code>: the target GitHub Page repository address</li>
+</ul>
+<h1 id="setup-the-theme-submodule">Setup the Theme Submodule</h1>
+<p>The recommended way to manage Hexo themes is to use git submodule. However, there are several considerations:</p>
+<ul>
+<li>Save your customized theme config</li>
+<li>Theme upgrade is tough and complicated (merge and resolve conflicts for breaking change)</li>
+</ul>
+<p>The easier way to bypass the submodule issue is NOT use it. Just remove the theme's <code>.git</code> folder and checkin it to the source repo. However, it's hard to follow the latest theme version and upgrade.</p>
+<p>Here, we choose to FORK the theme repo to our own private repo. Use two branches to manage it: the main branch can be fast-forwarded to the latest official version, while the <code>v8.5</code> branch holds our customized changes.</p>
+<p>General add submodule command:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">git submodule add -b master &lt;git@github.com:MYSUBMODULE.git&gt; &lt;path&#x2F;to&#x2F;MYSUBMODULE&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>This creates the submodule and makes it track submodule's <code>master</code> branch. You can change the branch name if you want to track a different branch.</p>
+<p>Now we setup the submodule as follow:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">git remote add mythemenext git@github.com:finisky&#x2F;mythemenext
+git submodule add -b v8.5 https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;mythemenext themes&#x2F;next&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>If you encounter: <code>'themes/next' already exists in the index</code> . Add option <code>--force</code> after <code>git submodule add</code>.</p>
+<p>References for this topic:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.singee.me/2020/02/15/deploy-hexo-with-github-action/">利用 Github Action 部署 Hexo</a> <a target="_blank" rel="noopener" href="https://achillessatan.github.io/posts/54991/">How to Setup Blog with Hexo and NexT on GitHub Pages</a></p>
+<h1 id="create-personal-access-token">Create Personal Access Token</h1>
+<blockquote>
+<p>Personal access tokens (PATs) are an alternative to using passwords for authentication to GitHub Enterprise Server when using the GitHub API or the command line.</p>
+</blockquote>
+<p>We will use the PAT to push the built hugo website from the source repo to the target repo.</p>
+<p>Just follow <a target="_blank" rel="noopener" href="https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">this post</a> to generate a PAT:</p>
+<blockquote>
+<p>Profile Photo -&gt; Settings -&gt; Developer settings -&gt; Personal access tokens -&gt; Generate new token</p>
+</blockquote>
+<p>Remember to check the following two scopes: <code>workflow</code> and <code>write:packages</code>.</p>
+<p>Copy the token and properly save it, assume its value is <code>TOKENXXX</code>.</p>
+<p>Notice that the PAT is an account-level token, deploy key is recommended to use as a repo-level token. Here we MUST use the PAT to pull the website source code as well as the submodule code.</p>
+<h1 id="configure-the-pat-as-a-secret-in-source-repo">Configure the PAT as a Secret in Source Repo</h1>
+<p>Go to the source repo: &gt; Settings -&gt; Secrets -&gt; Actions -&gt; New repository secret</p>
+<p>Paste the token created before <code>TOKENXXX</code> to the value field. Name the secret as <code>MYPAT</code>.</p>
+<h1 id="create-deploy-key">Create Deploy Key</h1>
+<p><strong>Tips</strong>: You can SKIP this step and use the PAT to deploy the websites. Just replace <code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code> by <code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code> . But deploy key is <strong>recommended</strong>.</p>
+<p>Follow <a target="_blank" rel="noopener" href="https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys">this post</a> and <a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key">this</a> to create a deploy key:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Follow <a target="_blank" rel="noopener" href="https://cyfeng.science/2020/12/02/use-github-action-to-automatically-deploy-hexo/">this post</a> to add the deploy key to the source repo:</p>
+<blockquote>
+<p>Once you've generated the key pair you must add the contents of the public key within your repository's <a target="_blank" rel="noopener" href="https://developer.github.com/v3/guides/managing-deploy-keys/">deploy keys menu</a>. You can find this option by going to <code>Settings &gt; Deploy Keys</code>, you can name the public key whatever you want, but you <strong>do</strong> need to give it write access. Afterwards, add the contents of the private key to the <code>Settings &gt; Secrets</code> menu as <code>DEPLOY_KEY</code>.</p>
+</blockquote>
+<h1 id="install-pandoc-for-mathjax-optional">Install Pandoc for mathjax (Optional)</h1>
+<p>You may encounter the following error:</p>
+<blockquote>
+<p>Error: R][hexo-renderer-pandoc] pandoc exited with code null.</p>
+</blockquote>
+<p>If you use pandoc and mathjax to render formulas, the following workflow step is mandatory (modify the pandoc version to your environment). Otherwise, just remove this part and <code>pandoc --version</code> in the next part:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Install pandoc for mathjax (Optional)</span>
+<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Install pandoc
+  <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    cd /tmp
+    wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
+    sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>If you encounter the following error:</p>
+<blockquote>
+<p>Error: R][hexo-renderer-pandoc] pandoc exited with code 64: YAML parse exception at line 4, column 0, while scanning a simple key: could not find expected ':'</p>
+</blockquote>
+<p>It's pandoc version compatibility issue, try to modify the above <code>wget</code> command to use the same version as in your local environment.</p>
+<hr />
+<p>The trick is that we cannot use the official document docker file like this: <a target="_blank" rel="noopener" href="https://github.com/pandoc/pandoc-action-example"># Using pandoc with GitHub Actions</a></p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">steps</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> docker<span class="token punctuation">:</span>//pandoc/core<span class="token punctuation">:</span><span class="token number">2.9</span>
+    <span class="token key atrule">with</span><span class="token punctuation">:</span>
+      <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token string">"--help"</span> <span class="token comment"># gets appended to pandoc command</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Because the <code>pandoc</code> command will be used in the next step <code>Setup and Run Hexo to build the Static Site</code>.</p>
+<p>Therefore, we follow this post <a target="_blank" rel="noopener" href="https://pxxyyz.com/posts/hexo-problem/">Hexo之问题集合</a> and use <code>dpkg</code> to install the pandoc globally.</p>
+<h1 id="checkout-submodule-in-github-actions">Checkout Submodule in GitHub Actions</h1>
+<p>If you see many warn messages in step <code>Hexo</code>:</p>
+<blockquote>
+<p>WARN No layout: tags/index.html WARN No layout: nlpadapters/index.html WARN No layout: deployhugofromprivaterepo/index.html</p>
+</blockquote>
+<p>Probably the submodule <code>themes/next</code> are not correctly pulled. By default, the submodule will not be pulled. Need to add <code>submodules: 'true'</code>.</p>
+<p>We follow this post <a target="_blank" rel="noopener" href="https://samuelsson.dev/access-private-submodules-in-github-actions/"># Access private submodules in GitHub Actions</a> to use a deploy key to pull the submodule. Unfortunately, the following error appears:</p>
+<blockquote>
+<p>Run actions/checkout@v2.3.4 Syncing repository: finisky/finiskyblogsource ... Fetching the repository Removing auth Error: The process '/usr/bin/git' failed with exit code 128</p>
+</blockquote>
+<p>Seems that the main repo <code>finisky/finiskyblogsource</code> cannot be properly pulled because <strong>the main repo and the submodule repo should have the same deploy key</strong>. However, we failed to add the same deploy key to the main repo as GitHub said it's already been used.</p>
+<p>Therefore, we can only use PAT to pull the main repo and the submodule repo at the same time. Modify the checkout part like this:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Checkout</span>
+<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Checkout
+  <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v3.0.0
+  <span class="token key atrule">with</span><span class="token punctuation">:</span>
+    <span class="token key atrule">token</span><span class="token punctuation">:</span> $<span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span> secrets.MYPAT <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+    <span class="token key atrule">submodules</span><span class="token punctuation">:</span> <span class="token string">'true'</span>
+    <span class="token key atrule">persist-credentials</span><span class="token punctuation">:</span> <span class="token boolean important">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="two-ways-to-deploy-hexo-artifacts">Two Ways to Deploy Hexo Artifacts</h1>
+<p>Look at steps:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Setup and Run Hexo to build the Static Site</span>
+<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
+  <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    pandoc --version
+    npm i -g hexo-cli
+    npm i
+    hexo clean &amp;&amp; hexo g</span>
+
+<span class="token comment"># Deploy the Static Site to Public Repo (GitHub Pages)</span>
+<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+  <span class="token key atrule">uses</span><span class="token punctuation">:</span> JamesIves/github<span class="token punctuation">-</span>pages<span class="token punctuation">-</span>deploy<span class="token punctuation">-</span>action@v4.3.3
+  <span class="token punctuation">...</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Actually, there are two ways to deploy artifacts:</p>
+<ul>
+<li><code>hexo deploy</code> in step <code>Setup and Run Hexo to build the Static Site</code></li>
+<li><code>github-pages-deploy-action</code> as we used</li>
+</ul>
+<p>We choose the second way to keep it consistent with Hugo deploy action.</p>
+<h1 id="summary">Summary</h1>
+<p>Congratulations!</p>
+<p>After you push the source code to the source repo, the deployment action will be triggered:</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/hexodeployaction.png" alt="Hexo Deployment Action" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/deployhugofromprivaterepo.en/" rel="bookmark">Deploy Hugo From Private Repository to GitHub Pages</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/deployhugofromprivaterepo/" rel="bookmark">从私有代码库自动部署Hugo站到GitHub Pages</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/hugoaddcssjs.en/" rel="bookmark">Hugo Add Customized CSS or Javascript</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/hugoaddcssjs/" rel="bookmark">Hugo添加自定义css和javascript</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/speedupgithubbycdn.en/" rel="bookmark">Speed Up Github Image Hosting By Jsdelivr CDN</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/Hugo/" rel="tag"># Hugo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/nlpadapters/" rel="prev" title="NLP中的Adapters是什么？">
+                  <i class="fa fa-chevron-left"></i> NLP中的Adapters是什么？
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dan6IxkRMXwPv0hks3I2pKEk-MdYXbMMI","app_key":"P2MOv4zxDuo7PiNelAkOk2aK","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/deployhexofromprivaterepo.en/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
