@@ -31,7 +31,7 @@
 <meta property="og:description" content="After I upgraded pandoc from 2.14.0.3 to 2.18, hexo-renderer-pandoc cannot render one of my post correctly. Everything works fine in 2.14.0.3. The error looks like:  INFO Start processing FATAL { err:">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-04T04:39:08.000Z">
-<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
+<meta property="article:modified_time" content="2022-05-04T10:42:55.171Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Hexo">
 <meta property="article:tag" content="NexT">
@@ -120,7 +120,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -133,6 +133,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#reproduce-and-debug"><span class="nav-number">1.</span> <span class="nav-text">Reproduce and Debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#root-cause"><span class="nav-number">2.</span> <span class="nav-text">Root Cause</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#solution"><span class="nav-number">3.</span> <span class="nav-text">Solution</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -226,7 +227,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-05-04 12:39:08 / Modified: 12:41:50" itemprop="dateCreated datePublished" datetime="2022-05-04T12:39:08+08:00">2022-05-04</time>
+      <time title="Created: 2022-05-04 12:39:08 / Modified: 18:42:55" itemprop="dateCreated datePublished" datetime="2022-05-04T12:39:08+08:00">2022-05-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -296,9 +297,11 @@ find expected ':'</p>
 https://hexo.io/docs/troubleshooting.html</p>
 </blockquote>
 <span id="more"></span>
+<h1 id="reproduce-and-debug">Reproduce and Debug</h1>
 <p>I use binary search to find which lines has bug.</p>
 <p>Then I construct a minimum version <code>a.md</code> to reproduce the
-issue:</p>
+issue (I want to insert two separator lines before and after the code
+block):</p>
 <pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">begin.
 
 <span class="token hr punctuation">---</span>
@@ -315,10 +318,10 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 YAML parse exception at line 2, column 0,
 while scanning for the next token:
 found character that cannot start any token<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Seems that the bug is around line 3~5: <code>---</code>,
+<p>Seems that the issue is around line 3~5: <code>---</code>,
 <code>:</code> and triple backtick cannot be appeared at the same
 time.</p>
-<p>There are several ways to bypass the bug:</p>
+<p>There are several ways to bypass the issue:</p>
 <ul>
 <li>Add a blank line after <code>---</code>:</li>
 </ul>
@@ -344,8 +347,44 @@ first:
 <span class="token punctuation">```</span></span>
 
 end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>I think adding a blank line after <code>---</code> is the best
-solution.</p>
+<h1 id="root-cause">Root Cause</h1>
+<p>Refer to this <a
+target="_blank" rel="noopener" href="https://github.com/jgm/pandoc/issues/8056">github issue</a> I
+submitted:</p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token hr punctuation">---</span>
+<span class="token code"><span class="token punctuation">```</span>
+<span class="token code-block">first:</span>
+<span class="token punctuation">```</span></span>
+test
+<span class="token code"><span class="token punctuation">```</span>
+<span class="token punctuation">```</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The above is not a valid yaml. It's a markdown, why we talk about
+yaml?</p>
+<p>Because the parser regards it as an inline
+<code>yaml meta block</code>.</p>
+<p>Refer to <a
+target="_blank" rel="noopener" href="https://www.uv.es/wikibase/doc/cas/pandoc_manual_2.7.3.wiki?96">PANDOC
+MANUAL</a>:</p>
+<blockquote>
+<p>A YAML metadata block is a valid YAML object, delimited by a line of
+three hyphens (<code>---</code>) at the top and a line of three hyphens
+(<code>---</code>) or three dots (<code>...</code>) at the bottom. A
+YAML metadata block may occur anywhere in the document, but if it is not
+at the beginning, it must be preceded by a blank line.</p>
+</blockquote>
+<h1 id="solution">Solution</h1>
+<p><strong>Solution</strong>: To avoid ambiguity, adding a blank line
+before and after <code>---</code> if you want a separator line.</p>
+<p>The interesting point is that both <a
+target="_blank" rel="noopener" href="https://stackedit.io">StackEdit</a> and <a
+target="_blank" rel="noopener" href="https://dillinger.io">DILLINGER</a> parse the markdown correctly
+as well as pandoc <code>2.14</code>.</p>
+<p>I use StackEdit to write posts and pandoc to generate Hexo posts.
+StackEdit and DILLNGER try their best to optimize the user experience
+but the gap hides the imprecise grammar. Actually, pandoc is the most
+strict parser I met as this is not the first time I encountered such
+grammar issue. The best solution is to use rigorous grammar as pandoc.
+:-)</p>
 
     </div>
 
