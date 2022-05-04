@@ -31,7 +31,7 @@
 <meta property="og:description" content="训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial: Transformers Language Model Training 示例提供了三个脚本: run_clm.py, run_mlm.py 和 run_plm.py。GPT是个causal language model，可以使用 run_clm.py 进行训练或微调。但这脚本并不支持行式数">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-11-14T01:49:59.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="Machine Learning">
@@ -152,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -235,7 +235,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,13 +278,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial: <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/tree/master/examples/pytorch/language-modeling">Transformers Language Model Training</a></p>
-<p>示例提供了三个脚本: <code>run_clm.py</code>, <code>run_mlm.py</code> 和 <code>run_plm.py</code>。GPT是个causal language model，可以使用 <code>run_clm.py</code> 进行训练或微调。但这脚本并不支持行式数据集，即每行一个训练样本的数据集。它默认的数据处理是按行读取样本并把它们连接成一个<code>block_size</code>的连续文本。</p>
+        <p>训练GPT等语言模型可以参考Huggingface
+Transformer训练语言模型的tutorial: <a
+target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/tree/master/examples/pytorch/language-modeling">Transformers
+Language Model Training</a></p>
+<p>示例提供了三个脚本: <code>run_clm.py</code>, <code>run_mlm.py</code>
+和 <code>run_plm.py</code>。GPT是个causal language model，可以使用
+<code>run_clm.py</code>
+进行训练或微调。但这脚本并不支持行式数据集，即每行一个训练样本的数据集。它默认的数据处理是按行读取样本并把它们连接成一个<code>block_size</code>的连续文本。</p>
 <p>而这种数据处理方式在某些情况下并不适用，可能会让语言模型学偏。比如QA任务：</p>
 <blockquote>
 <p>Q1 [SEP] A1 Q2 [SEP] A2 ...</p>
 </blockquote>
-<p>连接后就成了 <code>Q1 [SEP] A1 Q2 [SEP] A2 ...</code> ，可能会让模型认为Q1的答案是<code>A1 Q2</code>。可对<code>run_clm.py</code>支持行式数据集。</p>
+<p>连接后就成了 <code>Q1 [SEP] A1 Q2 [SEP] A2 ...</code>
+，可能会让模型认为Q1的答案是<code>A1 Q2</code>。可对<code>run_clm.py</code>支持行式数据集。</p>
 <span id="more"></span>
 <h1 id="支持linebyline数据集">支持LineByLine数据集</h1>
 <p><code>run_clm.py</code>的默认数据处理逻辑:</p>
@@ -324,7 +331,8 @@
 <ul>
 <li>修改data collator动态padding (失败，总报错)</li>
 <li>修改tokenize函数对每行直接padding到max_length</li>
-<li>实现 LineByLineDataset 类，参考<a href="https://finisky.github.io/2020/05/01/pretrainchinesegpt/">这里</a></li>
+<li>实现 LineByLineDataset 类，参考<a
+href="https://finisky.github.io/2020/05/01/pretrainchinesegpt/">这里</a></li>
 </ul>
 <p>先来尝试修改tokenize函数并且让<code>lm_datasets = tokenized_datasets</code>:</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">tokenize_function</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
@@ -349,7 +357,27 @@ tokenized_datasets <span class="token operator">=</span> raw_datasets<span class
 lm_datasets <span class="token operator">=</span> tokenized_datasets<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>但运行上面代码会报错:</p>
 <blockquote>
-<p>Traceback (most recent call last): File "/home/user/gpt/run_finetunelinebyline.py", line 527, in &lt;module&gt; main() File "/home/user/gpt/run_finetunelinebyline.py", line 475, in main train_result = trainer.train(resume_from_checkpoint=checkpoint) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py", line 1290, in train for step, inputs in enumerate(epoch_iterator): File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 521, in <strong>next</strong> data = self._next_data() File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may raise StopIteration File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 47, in fetch return self.collate_fn(data) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 66, in default_data_collator return torch_default_data_collator(features) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 112, in torch_default_data_collator batch[k] = torch.tensor([f[k] for f in features]) ValueError: expected sequence of length 56 at dim 1 (got 46) 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
+<p>Traceback (most recent call last): File
+"/home/user/gpt/run_finetunelinebyline.py", line 527, in &lt;module&gt;
+main() File "/home/user/gpt/run_finetunelinebyline.py", line 475, in
+main train_result = trainer.train(resume_from_checkpoint=checkpoint)
+File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py",
+line 1290, in train for step, inputs in enumerate(epoch_iterator): File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py",
+line 521, in <strong>next</strong> data = self._next_data() File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py",
+line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may
+raise StopIteration File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py",
+line 47, in fetch return self.collate_fn(data) File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py",
+line 66, in default_data_collator return
+torch_default_data_collator(features) File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py",
+line 112, in torch_default_data_collator batch[k] = torch.tensor([f[k]
+for f in features]) ValueError: expected sequence of length 56 at dim 1
+(got 46) 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
 </blockquote>
 <p>打印一些调试信息，看看<code>raw_datasets</code>和<code>tokenized_datasets</code>的shape和示例:</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python">logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"*** raw_datasets/tokenized_datasets "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>raw_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">" / "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>tokenized_datasets<span class="token punctuation">[</span><span class="token string">'train'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>shape<span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -358,9 +386,28 @@ logger<span class="token punctuation">.</span>info<span class="token punctuation
 	 logger<span class="token punctuation">.</span>info <span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <p>输出像这样:</p>
 <blockquote>
-<p>11/11/2021 18:58:28 - INFO - <strong>main</strong> - *** raw_datasets/tokenized_datasets (9500, 1) / (9500, 4) 11/11/2021 18:58:29 - INFO - <strong>main</strong> - *** train_dataset shape: dict_keys(['attention_mask', 'input_ids', 'labels', 'token_type_ids'])/(9500, 4)/44 11/11/2021 18:58:29 - INFO - <strong>main</strong> - {'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 'input_ids': [101, 100, 2146, 2357, 8108, 945, 3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199, 7030, 772, 8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357, 102, 8108, 945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024, 4669, 6629, 3341, 102], 'labels': [101, 100, 2146, 2357, 8108, 945, 3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199, 7030, 772, 8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357, 102, 8108, 945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024, 4669, 6629, 3341, 102], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} ...</p>
+<p>11/11/2021 18:58:28 - INFO - <strong>main</strong> - ***
+raw_datasets/tokenized_datasets (9500, 1) / (9500, 4) 11/11/2021
+18:58:29 - INFO - <strong>main</strong> - *** train_dataset shape:
+dict_keys(['attention_mask', 'input_ids', 'labels',
+'token_type_ids'])/(9500, 4)/44 11/11/2021 18:58:29 - INFO -
+<strong>main</strong> - {'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1,
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 'input_ids': [101, 100, 2146, 2357,
+8108, 945, 3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199,
+7030, 772, 8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357,
+102, 8108, 945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024,
+4669, 6629, 3341, 102], 'labels': [101, 100, 2146, 2357, 8108, 945,
+3921, 1394, 1045, 2110, 1359, 4193, 2825, 3318, 1315, 2199, 7030, 772,
+8024, 4685, 1068, 772, 1501, 9160, 2399, 100, 1355, 2357, 102, 8108,
+945, 1359, 4193, 2825, 3318, 4685, 2496, 5543, 2802, 8024, 4669, 6629,
+3341, 102], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0]} ...</p>
 </blockquote>
-<p>看起来每个batch的输入并没有pad成功。尝试使用 <code>DataCollatorWithPadding</code> 换掉 <code>default_data_collator</code>:</p>
+<p>看起来每个batch的输入并没有pad成功。尝试使用
+<code>DataCollatorWithPadding</code> 换掉
+<code>default_data_collator</code>:</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># Initialize our Trainer</span>
 collator <span class="token operator">=</span> DataCollatorWithPadding<span class="token punctuation">(</span>tokenizer<span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token string">'max_length'</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span>block_size<span class="token punctuation">)</span>
 trainer <span class="token operator">=</span> Trainer<span class="token punctuation">(</span>
@@ -374,9 +421,41 @@ trainer <span class="token operator">=</span> Trainer<span class="token punctuat
 <span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>又报了另一个错:</p>
 <blockquote>
-<p>... ValueError: expected sequence of length 56 at dim 1 (got 46) During handling of the above exception, another exception occurred: Traceback (most recent call last): File "/home/user/gpt/run_finetunelinebyline.py", line 534, in &lt;module&gt; main() File "/home/user/gpt/run_finetunelinebyline.py", line 482, in main train_result = trainer.train(resume_from_checkpoint=checkpoint) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py", line 1290, in train for step, inputs in enumerate(epoch_iterator): File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 521, in <strong>next</strong> data = self._next_data() File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may raise StopIteration File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 47, in fetch return self.collate_fn(data) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py", line 226, in <strong>call</strong> batch = self.tokenizer.pad( File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 2796, in pad return BatchEncoding(batch_outputs, tensor_type=return_tensors) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 210, in <strong>init</strong> self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis) File "/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 721, in convert_to_tensors raise ValueError( ValueError: Unable to create tensor, you should probably activate truncation and/or padding with 'padding=True' 'truncation=True' to have batched tensors with the same length. 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
+<p>... ValueError: expected sequence of length 56 at dim 1 (got 46)
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last): File
+"/home/user/gpt/run_finetunelinebyline.py", line 534, in &lt;module&gt;
+main() File "/home/user/gpt/run_finetunelinebyline.py", line 482, in
+main train_result = trainer.train(resume_from_checkpoint=checkpoint)
+File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/trainer.py",
+line 1290, in train for step, inputs in enumerate(epoch_iterator): File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py",
+line 521, in <strong>next</strong> data = self._next_data() File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/dataloader.py",
+line 561, in _next_data data = self._dataset_fetcher.fetch(index) # may
+raise StopIteration File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py",
+line 47, in fetch return self.collate_fn(data) File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/data/data_collator.py",
+line 226, in <strong>call</strong> batch = self.tokenizer.pad( File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py",
+line 2796, in pad return BatchEncoding(batch_outputs,
+tensor_type=return_tensors) File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py",
+line 210, in <strong>init</strong>
+self.convert_to_tensors(tensor_type=tensor_type,
+prepend_batch_axis=prepend_batch_axis) File
+"/home/user/miniconda3/envs/trans/lib/python3.9/site-packages/transformers/tokenization_utils_base.py",
+line 721, in convert_to_tensors raise ValueError( ValueError: Unable to
+create tensor, you should probably activate truncation and/or padding
+with 'padding=True' 'truncation=True' to have batched tensors with the
+same length. 0%| | 0/1782 [00:00&lt;?, ?it/s]</p>
 </blockquote>
-<p>最后还是从支持行式数据集的 <code>run_mlm.py</code> 抄来一段逻辑并稍做修改，去掉 <code>return_special_tokens_mask=True</code> ，并在分词函数中对每行数据增加 <code>labels</code> 列:</p>
+<p>最后还是从支持行式数据集的 <code>run_mlm.py</code>
+抄来一段逻辑并稍做修改，去掉
+<code>return_special_tokens_mask=True</code>
+，并在分词函数中对每行数据增加 <code>labels</code> 列:</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">tokenize_function</span><span class="token punctuation">(</span>examples<span class="token punctuation">)</span><span class="token punctuation">:</span>
 	<span class="token comment"># Remove empty lines</span>
 	examples<span class="token punctuation">[</span>text_column_name<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span>
@@ -400,9 +479,13 @@ trainer <span class="token operator">=</span> Trainer<span class="token punctuat
 		load_from_cache_file<span class="token operator">=</span><span class="token keyword">not</span> data_args<span class="token punctuation">.</span>overwrite_cache<span class="token punctuation">,</span>
 		desc<span class="token operator">=</span><span class="token string">"Running tokenizer on dataset line_by_line"</span><span class="token punctuation">,</span>
 	<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>主要区别是之前的tokenize函数中少了 <code>padding='max_length'</code> 参数。这里的实现思路是用 <code>tokenize_function</code> 替换 <code>group_texts</code> 分词函数，并使用 tokenizer 手动给每行padding 至 max_length。</p>
+<p>主要区别是之前的tokenize函数中少了 <code>padding='max_length'</code>
+参数。这里的实现思路是用 <code>tokenize_function</code> 替换
+<code>group_texts</code> 分词函数，并使用 tokenizer 手动给每行padding 至
+max_length。</p>
 <h1 id="完整代码">完整代码</h1>
-<p>在如下版本中测试通过: <strong>pytorch v1.9.0, transformers v4.12.2, datasets v1.11.0</strong>.</p>
+<p>在如下版本中测试通过: <strong>pytorch v1.9.0, transformers v4.12.2,
+datasets v1.11.0</strong>.</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
 <span class="token comment"># coding=utf-8</span>
 <span class="token comment"># Copyright 2020 The HuggingFace Inc. team. All rights reserved.</span>
@@ -941,7 +1024,9 @@ MODEL_TYPES <span class="token operator">=</span> <span class="token builtin">tu
 
 <span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
     main<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>References: <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/1145"># How to finetune GPT2 #1145</a></p>
+<p>References: <a
+target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/1145"># How to
+finetune GPT2 #1145</a></p>
 
     </div>
 

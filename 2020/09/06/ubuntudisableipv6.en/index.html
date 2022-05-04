@@ -31,7 +31,7 @@
 <meta property="og:description" content="Someone may argue that there is no reason to disable ipv6 on Linux. For me, the reason is that in some ipv6-enabled website, I frequently be classified as a bot who need to solve captcha which is real">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-09-06T03:40:32.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,17 +273,32 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Someone may argue that there is no reason to disable ipv6 on Linux. For me, the reason is that in some ipv6-enabled website, I frequently be classified as a bot who need to solve captcha which is really annoying :-( . Consider the ipv6 address is never change (assigned by service provider), disable ipv6 is the simplest solution.</p>
+        <p>Someone may argue that there is no reason to disable ipv6 on Linux.
+For me, the reason is that in some ipv6-enabled website, I frequently be
+classified as a bot who need to solve captcha which is really annoying
+:-( . Consider the ipv6 address is never change (assigned by service
+provider), disable ipv6 is the simplest solution.</p>
 <span id="more"></span>
-<p>Let's come to the solution. Just use your favorite editor to add one line in <code>/etc/sysctl.conf</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">net.ipv6.conf.&lt;your.device.name&gt;.disable_ipv6&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> where <code>&lt;your.device.name&gt;</code> maybe <code>eth0</code>, <code>lo</code> or the device name shown by <code>ifconfig</code>. Then you can use <code>sysctl -p</code> to take effect immediately or reboot to test if ipv6 has been persistently disabled.</p>
+<p>Let's come to the solution. Just use your favorite editor to add one
+line in <code>/etc/sysctl.conf</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">net.ipv6.conf.&lt;your.device.name&gt;.disable_ipv6&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> where
+<code>&lt;your.device.name&gt;</code> maybe <code>eth0</code>,
+<code>lo</code> or the device name shown by <code>ifconfig</code>. Then
+you can use <code>sysctl -p</code> to take effect immediately or reboot
+to test if ipv6 has been persistently disabled.</p>
 <p>The above solution is tested on Ubuntu 20.04 LTS.</p>
 <p>Notes:</p>
 <ul>
 <li><code>net.ipv6.conf.all.disable_ipv6 = 1</code> is unnecessary.</li>
-<li><code>net.ipv6.conf.default.disable_ipv6 = 1</code> doesn't work on my server (maybe <code>default</code> is not well defined?).</li>
-<li>Personally I don't like the update-grub solution as we cannot re-enable ipv6 without reboot.</li>
+<li><code>net.ipv6.conf.default.disable_ipv6 = 1</code> doesn't work on
+my server (maybe <code>default</code> is not well defined?).</li>
+<li>Personally I don't like the update-grub solution as we cannot
+re-enable ipv6 without reboot.</li>
 </ul>
-<p>Reference: <a target="_blank" rel="noopener" href="https://askubuntu.com/questions/309461/how-to-disable-ipv6-permanently"># How to disable IPv6 permanently?</a> <a target="_blank" rel="noopener" href="https://itsfoss.com/disable-ipv6-ubuntu-linux/"># How to Disable IPv6 on Ubuntu Linux</a></p>
+<p>Reference: <a
+target="_blank" rel="noopener" href="https://askubuntu.com/questions/309461/how-to-disable-ipv6-permanently">#
+How to disable IPv6 permanently?</a> <a
+target="_blank" rel="noopener" href="https://itsfoss.com/disable-ipv6-ubuntu-linux/"># How to Disable
+IPv6 on Ubuntu Linux</a></p>
 
     </div>
 

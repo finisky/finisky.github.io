@@ -31,7 +31,7 @@
 <meta property="og:description" content=".NET中使用MongoDB非常简单，一般来说可以直接使用BsonDocument，也可以使用定义好的数据类型对文档进行CRUD操作。本文通过实例对比一下两种方式的优劣，通常，通过强类型Collection对文档进行操作更为便捷。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-27T12:16:05.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -131,7 +131,9 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bsondocument-crud"><span class="nav-number">1.</span> <span class="nav-text">BsonDocument CRUD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%BA%E7%B1%BB%E5%9E%8Bcrud%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">强类型CRUD示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E8%A6%81%E4%BD%BF%E7%94%A8%E5%BC%BA%E7%B1%BB%E5%9E%8Bcollection"><span class="nav-number">3.</span> <span class="nav-text">是否要使用强类型collection?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ignoreextraelements-convention"><span class="nav-number">4.</span> <span class="nav-text">IgnoreExtraElements Convention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bsonignoreextraelements-annotation"><span class="nav-number">4.1.</span> <span class="nav-text">[BsonIgnoreExtraElements] Annotation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEignoreextraelementsconvention"><span class="nav-number">4.2.</span> <span class="nav-text">设置IgnoreExtraElementsConvention</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">5.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bsondocument-crud"><span class="nav-number">1.</span> <span class="nav-text">BsonDocument CRUD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%BA%E7%B1%BB%E5%9E%8Bcrud%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">强类型CRUD示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E8%A6%81%E4%BD%BF%E7%94%A8%E5%BC%BA%E7%B1%BB%E5%9E%8Bcollection"><span class="nav-number">3.</span> <span class="nav-text">是否要使用强类型collection?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ignoreextraelements-convention"><span class="nav-number">4.</span> <span class="nav-text">IgnoreExtraElements
+Convention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bsonignoreextraelements-annotation"><span class="nav-number">4.1.</span> <span class="nav-text">[BsonIgnoreExtraElements]
+Annotation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEignoreextraelementsconvention"><span class="nav-number">4.2.</span> <span class="nav-text">设置IgnoreExtraElementsConvention</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">5.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -148,7 +150,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +233,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,7 +279,11 @@
         <p>.NET中使用MongoDB非常简单，一般来说可以直接使用BsonDocument，也可以使用定义好的数据类型对文档进行CRUD操作。本文通过实例对比一下两种方式的优劣，通常，通过强类型Collection对文档进行操作更为便捷。</p>
 <span id="more"></span>
 <h1 id="bsondocument-crud">BsonDocument CRUD</h1>
-<p><a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.11/getting_started/quick_tour/#query-the-collection">MongoDB C# Driver官方文档</a> 是直接用BsonDocument进行操作的，猜想官方文档可能是想突出体现MongoDB是schema-less的，可以不定义schema而读写文档。但noSQL不代表schema-less，而是<code>not only SQL</code>。在同一个collection中还是推荐使用统一的data model，因为统一的schema可以更方便读写，而且也方便使用索引。</p>
+<p><a
+target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.11/getting_started/quick_tour/#query-the-collection">MongoDB
+C# Driver官方文档</a>
+是直接用BsonDocument进行操作的，猜想官方文档可能是想突出体现MongoDB是schema-less的，可以不定义schema而读写文档。但noSQL不代表schema-less，而是<code>not only SQL</code>。在同一个collection中还是推荐使用统一的data
+model，因为统一的schema可以更方便读写，而且也方便使用索引。</p>
 <p>下文将使用的示例文档定义： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoEntry</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> Uuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
@@ -314,7 +320,10 @@ Console<span class="token punctuation">.</span><span class="token function">Writ
 
 <span class="token comment">// Delete</span>
 <span class="token class-name"><span class="token keyword">var</span></span> t <span class="token operator">=</span> <span class="token keyword">await</span> _bsonCollection<span class="token punctuation">.</span><span class="token function">DeleteOneAsync</span><span class="token punctuation">(</span>filter<span class="token punctuation">)</span><span class="token punctuation">;</span>
-Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"[Delete] deleted count: "</span> <span class="token operator">+</span> t<span class="token punctuation">.</span>DeletedCount<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 注意在弱类型collection的读写中，我们需要在写操作之前手动将class转换成bsondocument (<code>entry.ToBsonDocument()</code>)，同时在读操作之后手动将bsondocument解析成class (<code>BsonSerializer.Deserialize&lt;DemoEntry&gt;(doc)</code>)。此外，我们在构建filter时需要手动输入field名称的字符串，很容易出错，而且是运行时错误。</p>
+Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"[Delete] deleted count: "</span> <span class="token operator">+</span> t<span class="token punctuation">.</span>DeletedCount<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+注意在弱类型collection的读写中，我们需要在写操作之前手动将class转换成bsondocument
+(<code>entry.ToBsonDocument()</code>)，同时在读操作之后手动将bsondocument解析成class
+(<code>BsonSerializer.Deserialize&lt;DemoEntry&gt;(doc)</code>)。此外，我们在构建filter时需要手动输入field名称的字符串，很容易出错，而且是运行时错误。</p>
 <h1 id="强类型crud示例">强类型CRUD示例</h1>
 <p>获取一个强类型collection: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name">IMongoCollection<span class="token punctuation">&lt;</span>DemoEntry<span class="token punctuation">></span></span> _stronglyTypedCollection <span class="token operator">=</span> database<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>DemoEntry<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>CRUD示例: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">StronglyTypedCrudAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">)</span>
@@ -346,22 +355,31 @@ Console<span class="token punctuation">.</span><span class="token function">Writ
 <h1 id="是否要使用强类型collection">是否要使用强类型collection?</h1>
 <p><strong>推荐使用强类型collection。</strong> 优点非常明显：</p>
 <ul>
-<li>不易出错：使用lambda表达式指定filter，在编译时就确定了field name</li>
+<li>不易出错：使用lambda表达式指定filter，在编译时就确定了field
+name</li>
 <li>代码简捷：不需要手动在class和bsondocument之间转换。</li>
-<li>LINQ语法支持：这一点在使用aggregation的时候极为便捷，一行代码就能处理十行的一个aggregation pipeline。</li>
+<li>LINQ语法支持：这一点在使用aggregation的时候极为便捷，一行代码就能处理十行的一个aggregation
+pipeline。</li>
 </ul>
-<h1 id="ignoreextraelements-convention">IgnoreExtraElements Convention</h1>
+<h1 id="ignoreextraelements-convention">IgnoreExtraElements
+Convention</h1>
 <p>大部分MongoDB新用户想必都会遇到如下错误：</p>
 <blockquote>
 <p>Element '_id' does not match any field or property of class</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/document/#the-id-field"><code>_id</code>是什么</a>?</p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/document/#the-id-field"><code>_id</code>是什么</a>?</p>
 <blockquote>
-<p>In MongoDB, each document stored in a collection requires a unique _id field that acts as a primary key. If an inserted document omits the _id field, the MongoDB driver automatically generates an ObjectId for the _id field.</p>
+<p>In MongoDB, each document stored in a collection requires a unique
+_id field that acts as a primary key. If an inserted document omits the
+_id field, the MongoDB driver automatically generates an ObjectId for
+the _id field.</p>
 </blockquote>
 <p>但在代码中我们往往不想显式定义这么个字段，因为它对开发者来说没有太多意义。可以通过两种方法解决这个问题。</p>
-<h2 id="bsonignoreextraelements-annotation">[BsonIgnoreExtraElements] Annotation</h2>
-<p>在类定义中加上<code>[BsonIgnoreExtraElements]</code> annotation: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">BsonIgnoreExtraElements</span></span><span class="token punctuation">]</span>
+<h2 id="bsonignoreextraelements-annotation">[BsonIgnoreExtraElements]
+Annotation</h2>
+<p>在类定义中加上<code>[BsonIgnoreExtraElements]</code> annotation:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">BsonIgnoreExtraElements</span></span><span class="token punctuation">]</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoEntry</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> Uuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
@@ -371,21 +389,29 @@ Console<span class="token punctuation">.</span><span class="token function">Writ
     <span class="token punctuation">&#123;</span>
         <span class="token keyword">return</span> Uuid <span class="token operator">+</span> <span class="token string">": "</span> <span class="token operator">+</span> Value<span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 此方法的缺点在于要引入MongoDB驱动包的依赖。如果这个类定义在一个接口库中，其他用户在使用此接口库时也会依赖MongoDB nuget包。而在系统设计中，底层存储逻辑对上层用户应该是透明的。</p>
-<h2 id="设置ignoreextraelementsconvention">设置IgnoreExtraElementsConvention</h2>
-<p>另一种方案是<strong>在获取collection之前</strong>设置<code>IgnoreExtraElementsConvention</code>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> ignoreExtraElementsConvention <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ConventionPack</span> <span class="token punctuation">&#123;</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">IgnoreExtraElementsConvention</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-ConventionRegistry<span class="token punctuation">.</span><span class="token function">Register</span><span class="token punctuation">(</span><span class="token string">"IgnoreExtraElements"</span><span class="token punctuation">,</span> ignoreExtraElementsConvention<span class="token punctuation">,</span> type <span class="token operator">=></span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> <code>IgnoreExtraElementsConvention</code>的意思是在反序列化文档时，忽略映射类中未定义的字段。</p>
-<p>对强类型collection的用法，设置<code>IgnoreExtraElementsConvention</code>和获取collection的顺序<strong>非常重要</strong>： <pre class="line-numbers language-chsarp" data-language="chsarp"><code class="language-chsarp">_beingCollection &#x3D; database.GetCollection&lt;BsonDocument&gt;(AvatarFrameworkMongoConfig.BeingCollectionName);
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+此方法的缺点在于要引入MongoDB驱动包的依赖。如果这个类定义在一个接口库中，其他用户在使用此接口库时也会依赖MongoDB
+nuget包。而在系统设计中，底层存储逻辑对上层用户应该是透明的。</p>
+<h2
+id="设置ignoreextraelementsconvention">设置IgnoreExtraElementsConvention</h2>
+<p>另一种方案是<strong>在获取collection之前</strong>设置<code>IgnoreExtraElementsConvention</code>:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> ignoreExtraElementsConvention <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ConventionPack</span> <span class="token punctuation">&#123;</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">IgnoreExtraElementsConvention</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+ConventionRegistry<span class="token punctuation">.</span><span class="token function">Register</span><span class="token punctuation">(</span><span class="token string">"IgnoreExtraElements"</span><span class="token punctuation">,</span> ignoreExtraElementsConvention<span class="token punctuation">,</span> type <span class="token operator">=></span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<code>IgnoreExtraElementsConvention</code>的意思是在反序列化文档时，忽略映射类中未定义的字段。</p>
+<p>对强类型collection的用法，设置<code>IgnoreExtraElementsConvention</code>和获取collection的顺序<strong>非常重要</strong>：
+<pre class="line-numbers language-chsarp" data-language="chsarp"><code class="language-chsarp">_beingCollection &#x3D; database.GetCollection&lt;BsonDocument&gt;(AvatarFrameworkMongoConfig.BeingCollectionName);
 
 var ignoreExtraElementsConvention &#x3D; new ConventionPack &#123; new IgnoreExtraElementsConvention(true) &#125;;
-ConventionRegistry.Register(&quot;IgnoreExtraElements&quot;, ignoreExtraElementsConvention, type &#x3D;&gt; true);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> 上面就是<strong>错误</strong>的顺序，下面错误依然会发生：</p>
+ConventionRegistry.Register(&quot;IgnoreExtraElements&quot;, ignoreExtraElementsConvention, type &#x3D;&gt; true);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+上面就是<strong>错误</strong>的顺序，下面错误依然会发生：</p>
 <blockquote>
 <p>Element '_id' does not match any field or property of class</p>
 </blockquote>
 <p>正确设置方法： <pre class="line-numbers language-chsarp" data-language="chsarp"><code class="language-chsarp">var ignoreExtraElementsConvention &#x3D; new ConventionPack &#123; new IgnoreExtraElementsConvention(true) &#125;;
 ConventionRegistry.Register(&quot;IgnoreExtraElements&quot;, ignoreExtraElementsConvention, type &#x3D;&gt; true);
 
-_beingCollection &#x3D; database.GetCollection&lt;BsonDocument&gt;(AvatarFrameworkMongoConfig.BeingCollectionName);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> 而对于弱类型collection，这个设置顺序似乎是无所谓的。猜想应该是在创建强类型collection时会使用当前的<code>ConventionRegistry</code>设置<code>BsonClassMap</code>。</p>
+_beingCollection &#x3D; database.GetCollection&lt;BsonDocument&gt;(AvatarFrameworkMongoConfig.BeingCollectionName);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+而对于弱类型collection，这个设置顺序似乎是无所谓的。猜想应该是在创建强类型collection时会使用当前的<code>ConventionRegistry</code>设置<code>BsonClassMap</code>。</p>
 <h1 id="full-code">Full Code</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading<span class="token punctuation">.</span>Tasks</span><span class="token punctuation">;</span>

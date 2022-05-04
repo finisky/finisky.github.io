@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近发现MongoDB分片集群的流量不太均衡，研究之后发现根本原因在于数据分布不均衡。虽然数据分布均衡不等于流量均衡，但还是应该尽量使得数据分布在不同shard之间基本均衡。三个shard的数据分布大概这样：    Shard Data Size     mongo-0 10.55 GB   mongo-1 25.76 GB   mongo-2 10.04 GB    mongo-1这个分片的数据">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-22T12:33:16.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="Kubernetes">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,7 +274,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>最近发现MongoDB分片集群的流量不太均衡，研究之后发现根本原因在于数据分布不均衡。虽然<a target="_blank" rel="noopener" href="https://www.mongodb.com/blog/post/sharding-pitfalls-part-iii-chunk-balancing-and">数据分布均衡不等于流量均衡</a>，但还是应该尽量使得数据分布在不同shard之间基本均衡。三个shard的数据分布大概这样：</p>
+        <p>最近发现MongoDB分片集群的流量不太均衡，研究之后发现根本原因在于数据分布不均衡。虽然<a
+target="_blank" rel="noopener" href="https://www.mongodb.com/blog/post/sharding-pitfalls-part-iii-chunk-balancing-and">数据分布均衡不等于流量均衡</a>，但还是应该尽量使得数据分布在不同shard之间基本均衡。三个shard的数据分布大概这样：</p>
 <table>
 <thead>
 <tr class="header">
@@ -299,7 +300,8 @@
 </table>
 <p><code>mongo-1</code>这个分片的数据大小显著高于其他分片，而三个分片的chunk数目是基本一致的，所以需要分析不同分片上的chunk大小分布。</p>
 <span id="more"></span>
-<p>坏消息是并没有直接获取每个chunk数据大小的API。虽然chunk的基本信息存储在<code>config.chunks</code>表中，但这个表并没有<code>data size</code>类似的字段。假设有一个<code>cxx</code> collection，使用<code>Uuid</code>作为片键，查看<code>config.chunks</code>表，它的某一个chunk的信息长这样：</p>
+<p>坏消息是并没有直接获取每个chunk数据大小的API。虽然chunk的基本信息存储在<code>config.chunks</code>表中，但这个表并没有<code>data size</code>类似的字段。假设有一个<code>cxx</code>
+collection，使用<code>Uuid</code>作为片键，查看<code>config.chunks</code>表，它的某一个chunk的信息长这样：</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
     <span class="token property">"_id"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
         <span class="token property">"$oid"</span><span class="token operator">:</span> <span class="token string">"603348a8b74404eea898cc25"</span>
@@ -332,7 +334,10 @@
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">]</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>好消息是这个信息包括了一个chunk中所含数据的min/max key。因此，我们可以通过 <code>dataSize</code> <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/command/dataSize/">API</a> 来间接获取chunk数据大小:</p>
+<p>好消息是这个信息包括了一个chunk中所含数据的min/max
+key。因此，我们可以通过 <code>dataSize</code> <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/command/dataSize/">API</a>
+来间接获取chunk数据大小:</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
    dataSize<span class="token operator">:</span> &lt;string><span class="token punctuation">,</span>
    keyPattern<span class="token operator">:</span> &lt;document><span class="token punctuation">,</span>
@@ -340,7 +345,9 @@
    max<span class="token operator">:</span> &lt;document><span class="token punctuation">,</span>
    estimate<span class="token operator">:</span> &lt;boolean>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>原理也很简单，就是使用<code>dataSize</code> API计算在此chunk中的所有文档的大小总和。就上面的chunk的例子，可以在mongo shell中使用如下命令获取它的实际大小(注意指定命令执行的最大超时时间<code>maxTimeMS</code>)：</p>
+<p>原理也很简单，就是使用<code>dataSize</code>
+API计算在此chunk中的所有文档的大小总和。就上面的chunk的例子，可以在mongo
+shell中使用如下命令获取它的实际大小(注意指定命令执行的最大超时时间<code>maxTimeMS</code>)：</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json">db.runCommand(<span class="token punctuation">&#123;</span> dataSize<span class="token operator">:</span> <span class="token string">"cxx"</span><span class="token punctuation">,</span> keyPattern<span class="token operator">:</span> <span class="token punctuation">&#123;</span> <span class="token property">"Uuid"</span><span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> min<span class="token operator">:</span> <span class="token punctuation">&#123;</span> <span class="token property">"Uuid"</span><span class="token operator">:</span> <span class="token string">"044B96CA34334FBE860D47BD63339B8E"</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> max<span class="token operator">:</span> <span class="token punctuation">&#123;</span> <span class="token property">"Uuid"</span><span class="token operator">:</span> <span class="token string">"0494E87F8ED34B0E9ECF6BE5363BBD3C"</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> maxTimeMS<span class="token operator">:</span><span class="token number">1000</span> <span class="token punctuation">&#125;</span>)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>为了分析某个collection的所有chunk的数据大小分布，可以通过遍历<code>config.chunks</code>表中的所有chunk并逐个获取它的数据大小来完成。最终的脚本如下(按需修改<code>ns</code>和<code>Uuid</code>等字段):</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">var ns &#x3D; &quot;&quot;;

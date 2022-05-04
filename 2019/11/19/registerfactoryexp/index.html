@@ -31,7 +31,7 @@
 <meta property="og:description" content="使用Unity的InjectionFactory进行依赖注入遇到如下提示： &#39;InjectionFactory&#39; is obsolete: &#39;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(...) method">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-11-19T10:53:10.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="Software Engineering">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,7 +276,9 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>使用Unity的InjectionFactory进行依赖注入遇到如下提示：</p>
-<blockquote><p>'InjectionFactory' is obsolete: 'InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(...) method instead.</p>
+<blockquote><p>'InjectionFactory' is obsolete: 'InjectionFactory has been deprecated
+and will be removed in next release. Please use
+IUnityContainer.RegisterFactory(...) method instead.</p>
 </blockquote>
 <span id="more"></span>
 <p>提示InjectionFactory将被淘汰的注入代码： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> container <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">UnityContainer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -302,7 +304,8 @@ container<span class="token punctuation">.</span><span class="token generic-meth
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>两段代码比较，区别在于将"RegisterType"方法替换为"RegisterFactory"方法，并将InjectionFactory这层的wrapper去除即可。</p>
-<p>比较下RegisterType和RegisterFactory的构造函数，也可以看出diff: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IUnityContainer</span> <span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>T<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token keyword">this</span> <span class="token class-name">IUnityContainer</span> container<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> name<span class="token punctuation">,</span> <span class="token keyword">params</span> <span class="token class-name">InjectionMember<span class="token punctuation">[</span><span class="token punctuation">]</span></span> injectionMembers<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<p>比较下RegisterType和RegisterFactory的构造函数，也可以看出diff:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IUnityContainer</span> <span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>T<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token keyword">this</span> <span class="token class-name">IUnityContainer</span> container<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> name<span class="token punctuation">,</span> <span class="token keyword">params</span> <span class="token class-name">InjectionMember<span class="token punctuation">[</span><span class="token punctuation">]</span></span> injectionMembers<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token function">InjectionFactory</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>IUnityContainer<span class="token punctuation">,</span> <span class="token keyword">object</span><span class="token punctuation">></span></span> factoryFunc<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 <span class="token return-type class-name">IUnityContainer</span> <span class="token generic-method"><span class="token function">RegisterFactory</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TInterface<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token keyword">this</span> <span class="token class-name">IUnityContainer</span> container<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> name<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>IUnityContainer<span class="token punctuation">,</span> <span class="token keyword">object</span><span class="token punctuation">></span></span> factory<span class="token punctuation">,</span> <span class="token class-name">IFactoryLifetimeManager</span> lifetimeManager <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>

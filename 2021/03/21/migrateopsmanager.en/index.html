@@ -31,7 +31,7 @@
 <meta property="og:description" content="Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fai">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-21T05:03:50.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -132,7 +132,9 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-ops-manager-works"><span class="nav-number">1.</span> <span class="nav-text">How Ops Manager Works</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#steps-to-migrate"><span class="nav-number">2.</span> <span class="nav-text">Steps to Migrate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#make-ops-manager-capable-to-manage-external-deployments-in-new-cluster"><span class="nav-number">2.1.</span> <span class="nav-text">Make Ops Manager Capable to Manage External Deployments (in new cluster)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#edit-deployment-configuration-in-old-cluster"><span class="nav-number">2.2.</span> <span class="nav-text">Edit Deployment Configuration (in old cluster)</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-ops-manager-works"><span class="nav-number">1.</span> <span class="nav-text">How Ops Manager Works</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#steps-to-migrate"><span class="nav-number">2.</span> <span class="nav-text">Steps to Migrate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#make-ops-manager-capable-to-manage-external-deployments-in-new-cluster"><span class="nav-number">2.1.</span> <span class="nav-text">Make
+Ops Manager Capable to Manage External Deployments (in new cluster)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#edit-deployment-configuration-in-old-cluster"><span class="nav-number">2.2.</span> <span class="nav-text">Edit Deployment
+Configuration (in old cluster)</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,13 +277,26 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fails, you cannot restore the backup data to a new cluster as both Ops Manager and deployments are unavailable.</p>
-<p>Of course, we don't want to re-deploy the existing MongoDB deployments in Kubernetes. But how to make the deployments sending data to the new ops manager URL?</p>
+        <p>Recently we want to deploy MongoDB Ops Manager and MongoDB
+deployments in different data centers to improve disaster recovery. If
+they are deploymented in the same data center and unfortunately it
+fails, you cannot restore the backup data to a new cluster as both Ops
+Manager and deployments are unavailable.</p>
+<p>Of course, we don't want to re-deploy the existing MongoDB
+deployments in Kubernetes. But how to make the deployments sending data
+to the new ops manager URL?</p>
 <span id="more"></span>
 <h1 id="how-ops-manager-works">How Ops Manager Works</h1>
-<p>Previously I thought the Ops Manager and deployments were tightly coupled which is totally wrong. Actually they are independent of each other and can be independently deployed.</p>
-<p>Here we deploy them in Kubernetes cluster. However, it's fine to deploy one in a VM and another in Kubernetes. MongoDB deployments use MongoDB Agent to send data to Ops Manager, and the Ops Manager uses <code>groupId</code> and <code>apiKey</code> to verify the deployment's identity and keep track of its status.</p>
-<p>Therefore, the problem becomes how to set the new Ops Manager Url, project id and agent key for the old MongoDB deployment.</p>
+<p>Previously I thought the Ops Manager and deployments were tightly
+coupled which is totally wrong. Actually they are independent of each
+other and can be independently deployed.</p>
+<p>Here we deploy them in Kubernetes cluster. However, it's fine to
+deploy one in a VM and another in Kubernetes. MongoDB deployments use
+MongoDB Agent to send data to Ops Manager, and the Ops Manager uses
+<code>groupId</code> and <code>apiKey</code> to verify the deployment's
+identity and keep track of its status.</p>
+<p>Therefore, the problem becomes how to set the new Ops Manager Url,
+project id and agent key for the old MongoDB deployment.</p>
 <p>Let's exec to a deployment pod and see its processes:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">I have no name!@shard-1-0:&#x2F;$ ps aux|grep mongod
 2000         51  6.1  0.0 1769520 55632 ?       Sl   09:32   0:08 &#x2F;mongodb-automation&#x2F;files&#x2F;mongodb-mms-automation-agent -mmsGroupId 603dfcb99870377752adff58 -pidfilepath &#x2F;mongodb-automation&#x2F;mongodb-mms-automation-agent.pid -maxLogFileDurationHrs 24 -logLevel INFO -healthCheckFilePath &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;agent-health-status.json -useLocalMongoDbTools -mmsBaseUrl http:&#x2F;&#x2F;ops-manager-svc.mongodb.svc.cluster.local:8080 -sslRequireValidMMSServerCertificates -mmsApiKey 603dfcb99870377752adff5ef7c231f11b5xxxxx -logFile &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;automation-agent.log
@@ -290,7 +305,10 @@
 2000         67  0.0  0.0  10752   844 ?        S    09:32   0:00 tail -F &#x2F;var&#x2F;log&#x2F;mongodb-mms-automation&#x2F;mongodb.log
 2000         70  0.0  0.0  16532  1264 ?        S    09:32   0:00 jq --unbuffered --null-input -c --raw-input inputs | &#123;&quot;logType&quot;: &quot;mongodb&quot;, &quot;contents&quot;: .&#125;
 2000        201  2.6  0.1 2086868 107356 ?      Sl   09:32   0:02 &#x2F;var&#x2F;lib&#x2F;mongodb-mms-automation&#x2F;mongodb-linux-x86_64-4.4.3-ent&#x2F;bin&#x2F;mongod -f &#x2F;data&#x2F;automation-mongod.conf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>How does the pod get <code>mmsBaseUrl</code>, <code>mmsApiKey</code> and <code>mmsGroupId</code>? The answer is MongoDB Kubernetes Operator set envs in the pod. Explore the pod's yaml in the stateful set, it has following sections in <code>spec.template.spec.containers</code>:</p>
+<p>How does the pod get <code>mmsBaseUrl</code>, <code>mmsApiKey</code>
+and <code>mmsGroupId</code>? The answer is MongoDB Kubernetes Operator
+set envs in the pod. Explore the pod's yaml in the stateful set, it has
+following sections in <code>spec.template.spec.containers</code>:</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">env</span><span class="token punctuation">:</span>
   <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> AGENT_API_KEY
     <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
@@ -309,13 +327,25 @@
   <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> USER_LOGIN
     <span class="token key atrule">value</span><span class="token punctuation">:</span> admin<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="steps-to-migrate">Steps to Migrate</h1>
-<h2 id="make-ops-manager-capable-to-manage-external-deployments-in-new-cluster">Make Ops Manager Capable to Manage External Deployments (in new cluster)</h2>
-<p><a target="_blank" rel="noopener" href="https://www.mongodb.com/blog/post/running-mongodb-ops-manager-in-kubernetes">The tutorial</a> configure the Ops Manager Url as internl endpoints <code>http://ops-manager-svc.mongodb.svc.cluster.local:8080</code> which is only accessible to the same Kubernetes cluster. As a result, we must make the new Ops Manager accessible to the public first.</p>
-<p>Refer to: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/plan-om-resource/#mdb-resource-deployment-locations">Managing External MongoDB Deployments</a></p>
-<p>Add the <code>mms.centralUrl</code> setting to <code>spec.configuration</code> in the new Ops Manager resource specification: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">spec</span><span class="token punctuation">:</span>
+<h2
+id="make-ops-manager-capable-to-manage-external-deployments-in-new-cluster">Make
+Ops Manager Capable to Manage External Deployments (in new cluster)</h2>
+<p><a
+target="_blank" rel="noopener" href="https://www.mongodb.com/blog/post/running-mongodb-ops-manager-in-kubernetes">The
+tutorial</a> configure the Ops Manager Url as internl endpoints
+<code>http://ops-manager-svc.mongodb.svc.cluster.local:8080</code> which
+is only accessible to the same Kubernetes cluster. As a result, we must
+make the new Ops Manager accessible to the public first.</p>
+<p>Refer to: <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/plan-om-resource/#mdb-resource-deployment-locations">Managing
+External MongoDB Deployments</a></p>
+<p>Add the <code>mms.centralUrl</code> setting to
+<code>spec.configuration</code> in the new Ops Manager resource
+specification: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">spec</span><span class="token punctuation">:</span>
   <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
     <span class="token key atrule">mms.centralUrl</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//newopsmanager.com<span class="token punctuation">:</span>8080/<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
-<p>Example Ops Manager yaml with specified resource configuration: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<p>Example Ops Manager yaml with specified resource configuration:
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDBOpsManager
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager
@@ -375,15 +405,24 @@
                   <span class="token key atrule">limits</span><span class="token punctuation">:</span>
                     <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
                     <span class="token key atrule">memory</span><span class="token punctuation">:</span> <span class="token string">"10Gi"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<h2 id="edit-deployment-configuration-in-old-cluster">Edit Deployment Configuration (in old cluster)</h2>
+<h2 id="edit-deployment-configuration-in-old-cluster">Edit Deployment
+Configuration (in old cluster)</h2>
 <p>Now let's modify MongoDB deployments in old Kubernetes cluster.</p>
-<p><strong>Warning:</strong> Do this operation when traffic is low, because the deployment will be temporarily unaccessible for several minutes. Each pod of the cluster will be restarted to apply the new setttings.</p>
-<p>Create a new configmap <code>new-ops-manager-connection</code> <strong>in the old cluster</strong>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl create configmap new-ops-manager-connection --from-literal&#x3D;&quot;baseUrl&#x3D;http:&#x2F;&#x2F;newopsmanager.com:8080&quot;  -n mongodb  
+<p><strong>Warning:</strong> Do this operation when traffic is low,
+because the deployment will be temporarily unaccessible for several
+minutes. Each pod of the cluster will be restarted to apply the new
+setttings.</p>
+<p>Create a new configmap <code>new-ops-manager-connection</code>
+<strong>in the old cluster</strong>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl create configmap new-ops-manager-connection --from-literal&#x3D;&quot;baseUrl&#x3D;http:&#x2F;&#x2F;newopsmanager.com:8080&quot;  -n mongodb  
 configmap&#x2F;new-ops-manager-connection created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
-<p>Create new Ops Manager admin secret <code>new-ops-manager-admin-secret</code> <strong>in the old cluster</strong>, the secret value should be the same as it in the new cluster:</p>
+<p>Create new Ops Manager admin secret
+<code>new-ops-manager-admin-secret</code> <strong>in the old
+cluster</strong>, the secret value should be the same as it in the new
+cluster:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl create secret generic new-ops-manager-admin-key --from-literal&#x3D;&quot;publicKey&#x3D;xxx&quot;  --from-literal&#x3D;&quot;privateKey&#x3D;xxx&quot; -n mongodb  
 secret&#x2F;new-ops-manager-admin-key created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>Finally modify the deployment <code>spec.opsManager</code> section from: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
+<p>Finally modify the deployment <code>spec.opsManager</code> section
+from: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">opsManager</span><span class="token punctuation">:</span>
   <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
     <span class="token key atrule">name</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
 <span class="token key atrule">credentials</span><span class="token punctuation">:</span> ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
@@ -392,14 +431,23 @@ secret&#x2F;new-ops-manager-admin-key created<span aria-hidden="true" class="lin
   <span class="token key atrule">configMapRef</span><span class="token punctuation">:</span>
     <span class="token key atrule">name</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>connection
 <span class="token key atrule">credentials</span><span class="token punctuation">:</span> new<span class="token punctuation">-</span>ops<span class="token punctuation">-</span>manager<span class="token punctuation">-</span>admin<span class="token punctuation">-</span>key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Apply the yaml and waiting for the cluster reconciling to running state. The new Ops Manager will automatically create a new project to manage the deployment.</p>
+<p>Apply the yaml and waiting for the cluster reconciling to running
+state. The new Ops Manager will automatically create a new project to
+manage the deployment.</p>
 <p><strong>Tips:</strong></p>
 <ul>
 <li>The project id will be changed after migration</li>
 <li>TLS will not be affected during the migration</li>
-<li>If the deployment enabled Auth, after migration the Ops Manager will show "AUTH" status as "Disabled". Don't worry, old users will be kept in the deployment (online traffic will not be affected). We need to make the new Ops Manager and the deployment status be consistent. Just import the users through "Security -&gt; MongoDB Users", enabled the AUTH from the UI then it's done. A short break might be happen during the AUTH status transition process.</li>
+<li>If the deployment enabled Auth, after migration the Ops Manager will
+show "AUTH" status as "Disabled". Don't worry, old users will be kept in
+the deployment (online traffic will not be affected). We need to make
+the new Ops Manager and the deployment status be consistent. Just import
+the users through "Security -&gt; MongoDB Users", enabled the AUTH from
+the UI then it's done. A short break might be happen during the AUTH
+status transition process.</li>
 </ul>
-<p>Example sharded cluster deployment yaml with resource configuration by podTemplate: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<p>Example sharded cluster deployment yaml with resource configuration
+by podTemplate: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb

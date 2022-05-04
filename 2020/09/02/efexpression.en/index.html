@@ -31,7 +31,7 @@
 <meta property="og:description" content="When we use entity framework to manipulate SQL database, we use where to query and include to load related entities (join operation). Sample database table schema: Employee: Id, Name, Age Salary: Id,">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-09-02T02:18:15.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="Entity Framework Core">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,31 +274,59 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When we use entity framework to manipulate SQL database, we use <code>where</code> to query and <code>include</code> to load related entities (join operation).</p>
-<p>Sample database table schema: Employee: Id, Name, Age Salary: Id, BasePay</p>
+        <p>When we use entity framework to manipulate SQL database, we use
+<code>where</code> to query and <code>include</code> to load related
+entities (join operation).</p>
+<p>Sample database table schema: Employee: Id, Name, Age Salary: Id,
+BasePay</p>
 <p>Typical query scenarios:</p>
 <ul>
 <li>Query employee 3's name =&gt; Employee.Where(x =&gt; x.Id == 3)</li>
-<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name == "Jack")</li>
-<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name == "Jack").Include(x =&gt; x.Salary) ...</li>
+<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name ==
+"Jack")</li>
+<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name ==
+"Jack").Include(x =&gt; x.Salary) ...</li>
 </ul>
-<p>To make the code clean and focus, the following examples will not include dbContext creation logic, we assume <code>db = DbContext()</code> which contains the Employee table.</p>
-<p>For code reuse purpose, we may extract a common method like this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+<p>To make the code clean and focus, the following examples will not
+include dbContext creation logic, we assume
+<code>db = DbContext()</code> which contains the Employee table.</p>
+<p>For code reuse purpose, we may extract a common method like this:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> navigationFunc <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token punctuation">?</span> <span class="token function">navigationFunc</span><span class="token punctuation">(</span>db<span class="token punctuation">.</span>Employee<span class="token punctuation">)</span> <span class="token punctuation">:</span> db<span class="token punctuation">.</span>Employee<span class="token punctuation">;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> <span class="token function">whereFunc</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The implmentation looks simple and straightfoward: just extract the where and navigation <code>Func&lt;&gt;</code> to a function.</p>
-<p>However, the above function has severe perfomance issue: when we execute the function, it retrieves all data from the table and locally applies <code>where</code> filter. Actually, the underlying mechanism is not that simple as entity framework will compile the expression and translated to SQL statements, though it looks like just a syntactic sugar.</p>
+<p>The implmentation looks simple and straightfoward: just extract the
+where and navigation <code>Func&lt;&gt;</code> to a function.</p>
+<p>However, the above function has severe perfomance issue: when we
+execute the function, it retrieves all data from the table and locally
+applies <code>where</code> filter. Actually, the underlying mechanism is
+not that simple as entity framework will compile the expression and
+translated to SQL statements, though it looks like just a syntactic
+sugar.</p>
 <span id="more"></span>
 <h1 id="problem-analysis">Problem Analysis</h1>
-<p>The reason is well explained in the following post: <a target="_blank" rel="noopener" href="https://coderethinked.com/don-t-use-func-delegate-on-the-ef-entities/"># Don’t use Func delegate on the Entity Framework entities</a></p>
-<p>The post said that <code>.Where</code> Linq method has two overloads. One is <code>IQueryable</code> while another is <code>IEnumerable</code>. When we use the above function, <code>IEnumerable</code> will be used so that all data will be retrieved to local.</p>
-<p>I agree with the conclusion. However, when I use <code>F12</code> to go to its definition, they are the same: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token return-type class-name">IQueryable<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span> <span class="token generic-method"><span class="token function">Where</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token keyword">this</span> <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span> source<span class="token punctuation">,</span> <span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> predicate<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Since <code>IQueryable</code> implements <code>IEnumerable</code>, it falls back to <code>IEnumerable</code>. Anyway, we need to pass <code>Expression&lt;Func&gt;</code> to the common function.</p>
-<p>Take <code>Employee.Where(x =&gt; x.Name == "Jack").Select(x =&gt; x.Name)</code> for example. If you print out the translated SQL, you will find that the where expression is missing: <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
-<span class="token keyword">FROM</span> <span class="token punctuation">`</span>XXX<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> And that's why we have severe performance issue. Next we discuss how to write correct <code>Expresssion&lt;Func&gt;</code> and its usage.</p>
+<p>The reason is well explained in the following post: <a
+target="_blank" rel="noopener" href="https://coderethinked.com/don-t-use-func-delegate-on-the-ef-entities/">#
+Don’t use Func delegate on the Entity Framework entities</a></p>
+<p>The post said that <code>.Where</code> Linq method has two overloads.
+One is <code>IQueryable</code> while another is
+<code>IEnumerable</code>. When we use the above function,
+<code>IEnumerable</code> will be used so that all data will be retrieved
+to local.</p>
+<p>I agree with the conclusion. However, when I use <code>F12</code> to
+go to its definition, they are the same: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token return-type class-name">IQueryable<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span> <span class="token generic-method"><span class="token function">Where</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token keyword">this</span> <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">></span></span> source<span class="token punctuation">,</span> <span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>TSource<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> predicate<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Since <code>IQueryable</code> implements <code>IEnumerable</code>, it
+falls back to <code>IEnumerable</code>. Anyway, we need to pass
+<code>Expression&lt;Func&gt;</code> to the common function.</p>
+<p>Take
+<code>Employee.Where(x =&gt; x.Name == "Jack").Select(x =&gt; x.Name)</code>
+for example. If you print out the translated SQL, you will find that the
+where expression is missing: <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
+<span class="token keyword">FROM</span> <span class="token punctuation">`</span>XXX<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> And that's why we have severe
+performance issue. Next we discuss how to write correct
+<code>Expresssion&lt;Func&gt;</code> and its usage.</p>
 <h1 id="where-expression">Where Expression</h1>
 <p>The original <code>Func&lt;&gt;</code> function: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -306,18 +334,27 @@
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The <code>Expression&lt;Func&gt;</code> way (just wrap the Func into Expression, pay attention to <code>Where</code> parameter): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> whereExpr<span class="token punctuation">)</span>
+<p>The <code>Expression&lt;Func&gt;</code> way (just wrap the Func into
+Expression, pay attention to <code>Where</code> parameter):
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> whereExpr<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> db<span class="token punctuation">.</span>Employee<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>whereExpr<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>From the caller's view, the usage are the same (the underlying mechanism are totally different): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>If you print out the translated SQL, the where clause comes back: <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
+<p>From the caller's view, the usage are the same (the underlying
+mechanism are totally different): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>If you print out the translated SQL, the where clause comes back:
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
 <span class="token keyword">FROM</span> <span class="token punctuation">`</span>XXX<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span>
 <span class="token keyword">WHERE</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span> <span class="token operator">=</span><span class="token operator">=</span> <span class="token string">'Jack'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="navigation-expression">Navigation Expression</h1>
-<p>I spent some time to investigate how to transform <code>Func&lt;DbSet&lt;Employee&gt;, IQueryable&lt;Employee&gt;&gt;</code> to Expression. The hardest part is the return vaule is not fixed: you may <code>.include(x =&gt; x.Salary)</code>, <code>.include(x =&gt; x.Assets)</code>, both or nothing. Finally I found a way to solve it: use <code>object</code> as return value.</p>
+<p>I spent some time to investigate how to transform
+<code>Func&lt;DbSet&lt;Employee&gt;, IQueryable&lt;Employee&gt;&gt;</code>
+to Expression. The hardest part is the return vaule is not fixed: you
+may <code>.include(x =&gt; x.Salary)</code>,
+<code>.include(x =&gt; x.Assets)</code>, both or nothing. Finally I
+found a way to solve it: use <code>object</code> as return value.</p>
 <p>The original version: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> <span class="token function">navigationFunc</span><span class="token punctuation">(</span>db<span class="token punctuation">.</span>Employee<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -334,12 +371,15 @@
     query <span class="token operator">=</span> query<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> The usage are different:</p>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> The usage
+are different:</p>
 <ul>
 <li><p>Original version <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span><span class="token function">Include</span><span class="token punctuation">(</span>y <span class="token operator">=></span> y<span class="token punctuation">.</span>Salary<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p></li>
 <li><p>Expression version <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Salary<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p></li>
 </ul>
-<p>Reference: <a target="_blank" rel="noopener" href="http://appetere.com/post/passing-include-statements-into-a-repository"># Passing multiple Include statements into a Repository</a></p>
+<p>Reference: <a
+target="_blank" rel="noopener" href="http://appetere.com/post/passing-include-statements-into-a-repository">#
+Passing multiple Include statements into a Repository</a></p>
 <h1 id="put-it-all-together">Put It All Together</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> whereExpr<span class="token punctuation">,</span> <span class="token keyword">params</span> Expression<span class="token operator">&lt;</span>Func<span class="token operator">&lt;</span>Employee<span class="token operator">></span><span class="token punctuation">,</span> <span class="token keyword">object</span><span class="token operator">>></span><span class="token punctuation">[</span><span class="token punctuation">]</span> navigationExprs<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -355,14 +395,16 @@
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="issues">Issues</h1>
-<p>It seems that the Expression as a parameter cannot be wrapped. If you have another function: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntityFunc</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">)</span>
+<p>It seems that the Expression as a parameter cannot be wrapped. If you
+have another function: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntityFunc</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">Expression<span class="token punctuation">&lt;</span>Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span><span class="token punctuation">></span></span> whereExpr <span class="token operator">=</span> x <span class="token operator">=></span> <span class="token function">whereFunc</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>whereExpr<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
 
 <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntityFunc</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>Although it's syntactically correct, it doesn't work in entity framework as the where clause is applied locally.</p>
+<p>Although it's syntactically correct, it doesn't work in entity
+framework as the where clause is applied locally.</p>
 
     </div>
 

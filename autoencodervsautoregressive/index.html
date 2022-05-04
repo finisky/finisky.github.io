@@ -31,7 +31,7 @@
 <meta property="og:description" content="读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个autoencoder，另一个是autoregressive自回归模型。它们是什么意思，又有什么区别？">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-07-18T04:07:32.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -151,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -234,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -279,35 +279,53 @@
     <div class="post-body" itemprop="articleBody">
         <p>读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个<code>autoencoder</code>，另一个是<code>autoregressive</code>自回归模型。它们是什么意思，又有什么区别？</p>
 <span id="more"></span>
-<p>Huggingface有个 <a target="_blank" rel="noopener" href="https://huggingface.co/transformers/summary.html"># 模型总结</a> 写得不错。</p>
+<p>Huggingface有个 <a
+target="_blank" rel="noopener" href="https://huggingface.co/transformers/summary.html"># 模型总结</a>
+写得不错。</p>
 <h1 id="language-model">Language Model</h1>
 <p>在解释模型类型前，先来看下语言模型的定义。</p>
 <blockquote>
-<p>A statistical language model is a probability distribution over sequences of words. Given such a sequence, say of length m, it assigns a probability <span class="math inline">\(P(w_{1},\ldots ,w_{m})\)</span> to the whole sequence.</p>
+<p>A statistical language model is a probability distribution over
+sequences of words. Given such a sequence, say of length m, it assigns a
+probability <span class="math inline">\(P(w_{1},\ldots ,w_{m})\)</span>
+to the whole sequence.</p>
 </blockquote>
-<p>统计语言模型就是根据给定语料，来估计概率分布<span class="math inline">\(P(w_{1},\ldots ,w_{m})\)</span>的一个模型。计算这个概率分布可以用贝叶斯公式和链式法则完成，通用表达式如下：</p>
-<p><span class="math display">\[P(w_{1},\ldots ,w_{m})=\prod_{i=1}^{m}P(w_i|w_1,w_2, \dots, w_{i-1})\]</span></p>
-<p>可以看出这个语言模型的计算是单向的，假设后面某token出现的概率仅与在此token之前出现的token概率相关。由此引出自回归模型Autoregressive Model。</p>
+<p>统计语言模型就是根据给定语料，来估计概率分布<span
+class="math inline">\(P(w_{1},\ldots
+,w_{m})\)</span>的一个模型。计算这个概率分布可以用贝叶斯公式和链式法则完成，通用表达式如下：</p>
+<p><span class="math display">\[P(w_{1},\ldots
+,w_{m})=\prod_{i=1}^{m}P(w_i|w_1,w_2, \dots, w_{i-1})\]</span></p>
+<p>可以看出这个语言模型的计算是单向的，假设后面某token出现的概率仅与在此token之前出现的token概率相关。由此引出自回归模型Autoregressive
+Model。</p>
 <p>上式的计算会存在语料稀疏和模型计算复杂度高的问题，如果我们考虑马尔可夫假设：当前token出现的概率仅与之前出现的n个token相关，那就是n-gram模型。</p>
 <p>再提句题外话，我印象中的语言模型一直都是n-gram类的统计模型，在最初接触深度神经网络的语言模型时很不理解神经网络是如何与概率分布联系起来的，一个神经网络为什么是一个语言模型？很长时间后才明白可以把神经网络语言模型当成一个黑盒，模型输入还是前n-1个token，在最后一层模型输出时用softmax函数将token预测的概率归一化即可。本质上是把整个概率分布用一个nn模型来表示而已。</p>
 <h1 id="autoregressive-model">Autoregressive Model</h1>
 <blockquote>
-<p>Autoregressive models are pretrained on the classic language modeling task: guess the next token having read all the previous ones.</p>
+<p>Autoregressive models are pretrained on the classic language modeling
+task: guess the next token having read all the previous ones.</p>
 </blockquote>
 <p>自回归模型即在传统的语言模型上训练，给定之前的所有token，猜想下一个token是什么，这也是一个自回归模型的训练任务。可以看出自回归模型是单向的语言模型，适合用于文本生成。典型的自回归模型：GPT。</p>
 <h1 id="autoencoding-model">Autoencoding Model</h1>
 <blockquote>
-<p>Autoencoding models are pretrained by corrupting the input tokens in some way and trying to reconstruct the original sentence.</p>
+<p>Autoencoding models are pretrained by corrupting the input tokens in
+some way and trying to reconstruct the original sentence.</p>
 </blockquote>
 <p>自编码模型是把输入token打乱，学习出一个中间表示，再用这个中间表示还原出原始的序列。为了让学习出的中间表示更通用，常常会在输入中引入一些噪声，增加重建输入的难度，这种模型也叫做<code>denoising autoencoder</code>。自编码模型往往会构建一个双向上下文的表示，因此天然适用于文本分类等任务。典型自编码模型：BERT。</p>
-<p>Masked Language Model (MLM)和Next Sentence Prediction (NSP)就是最典型的自编码预训练任务。BERT在MLM上的训练，就是通过把输入进行一定的掩盖，再重建恢复原始token序列的过程。</p>
+<p>Masked Language Model (MLM)和Next Sentence Prediction
+(NSP)就是最典型的自编码预训练任务。BERT在MLM上的训练，就是通过把输入进行一定的掩盖，再重建恢复原始token序列的过程。</p>
 <h1 id="模型区别与改进">模型区别与改进</h1>
 <blockquote>
-<p>Note that the only difference between autoregressive models and autoencoding models is in the way the model is pretrained. Therefore, the same architecture can be used for both autoregressive and autoencoding models.</p>
+<p>Note that the only difference between autoregressive models and
+autoencoding models is in the way the model is pretrained. Therefore,
+the same architecture can be used for both autoregressive and
+autoencoding models.</p>
 </blockquote>
 <p>自编码和自回归模型的主要区别是它们预训练的任务。同样的模型结构既可以是自编码模型也可以是自回归模型。</p>
-<p>基于这些，就可以看出之后的模型有了哪些改进。比如UniLM，基于BERT，把三种不同的预训练任务结合在一起训练了同一个模型，从而可以使模型既可以做文本预测 (NLU)，也可以做文本生成 (NLG)。</p>
-<p>再例如BART，是一个<code>denosing autoencoder</code>，使用bidirectional encoder与left-to-right autoregressive decoder构建模型。在预训练时，除了MLM，还用了多种不同corrupting输入文档的任务：如删除token，打乱token输入次序，文本旋转和文本填空等方式。BART也能同时用于NLU和NLG，但它天然更适合做NLG的任务，毕竟是个seq2seq的模型。</p>
+<p>基于这些，就可以看出之后的模型有了哪些改进。比如UniLM，基于BERT，把三种不同的预训练任务结合在一起训练了同一个模型，从而可以使模型既可以做文本预测
+(NLU)，也可以做文本生成 (NLG)。</p>
+<p>再例如BART，是一个<code>denosing autoencoder</code>，使用bidirectional
+encoder与left-to-right autoregressive
+decoder构建模型。在预训练时，除了MLM，还用了多种不同corrupting输入文档的任务：如删除token，打乱token输入次序，文本旋转和文本填空等方式。BART也能同时用于NLU和NLG，但它天然更适合做NLG的任务，毕竟是个seq2seq的模型。</p>
 <p>参考：</p>
 <ul>
 <li>https://www.machinecurve.com/index.php/2020/12/29/differences-between-autoregressive-autoencoding-and-sequence-to-sequence-models-in-machine-learning/</li>

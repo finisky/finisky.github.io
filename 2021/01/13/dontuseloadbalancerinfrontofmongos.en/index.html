@@ -31,7 +31,7 @@
 <meta property="og:description" content="When I execute MongoDB transactions in parallel, I encounter lots of MongoCommandException: code 251, codename NoSuchTransaction: Command find failed: cannot continue txnId 4 for session 38604515-2584">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-01-13T15:38:36.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content=".NET Core">
@@ -135,7 +135,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#problem-analysis"><span class="nav-number">1.</span> <span class="nav-text">Problem Analysis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#expose-each-mongos-as-a-dedicated-service"><span class="nav-number">2.</span> <span class="nav-text">Expose Each Mongos as a Dedicated Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#error-reproduce-code"><span class="nav-number">3.</span> <span class="nav-text">Error Reproduce Code</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#problem-analysis"><span class="nav-number">1.</span> <span class="nav-text">Problem Analysis</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#expose-each-mongos-as-a-dedicated-service"><span class="nav-number">2.</span> <span class="nav-text">Expose Each Mongos as
+a Dedicated Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#error-reproduce-code"><span class="nav-number">3.</span> <span class="nav-text">Error Reproduce Code</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -152,7 +153,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -235,7 +236,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,26 +279,60 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When I execute MongoDB transactions in parallel, I encounter lots of <code>MongoCommandException</code>: code 251, codename <code>NoSuchTransaction</code>:</p>
-<blockquote><p>Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5. Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6. Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.</p>
+        <p>When I execute MongoDB transactions in parallel, I encounter lots of
+<code>MongoCommandException</code>: code 251, codename
+<code>NoSuchTransaction</code>:</p>
+<blockquote><p>Command find failed: cannot continue txnId 4 for session
+38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5. Command find
+failed: cannot continue txnId 4 for session
+38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6. Command insert
+failed: cannot continue txnId 31 for session
+3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.</p>
 </blockquote>
 <span id="more"></span>
 <h1 id="problem-analysis">Problem Analysis</h1>
 <p>I performed some tests to pinpoint the issue:</p>
 <ul>
 <li>Use single thread to execute transaction, no error</li>
-<li>Use a dedicated MongoClient for each thread (each transaction), no error</li>
+<li>Use a dedicated MongoClient for each thread (each transaction), no
+error</li>
 </ul>
-<p>It seems that it's a MongoDB driver bug related to the MongoClient. Then I create a issue here: <a target="_blank" rel="noopener" href="https://jira.mongodb.org/browse/CSHARP-3301"># Multi-thread Transaction Failure for Sharded Cluster</a>.</p>
-<p>However, the culprit is <strong>the load balancer in front of mongos</strong>. <strong>A MongoDB transaction in sharded cluster must be executed in the same mongos instance.</strong> If you put a load balancer in front of mongos instances, the operations inside a transaction might be executed in different mongos then the above errors happen.</p>
-<p>Refer to: <a target="_blank" rel="noopener" href="https://github.com/zookzook/elixir-mongodb-driver/issues/61"># Transactions issue on sharded cluster</a></p>
-<p>Look at <a target="_blank" rel="noopener" href="https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#mongos-pinning">Mongos Pinning</a>:</p>
-<blockquote><p>Drivers MUST send all commands for a single transaction to the same mongos (excluding retries of commitTransaction and abortTransaction).</p>
-<p>After the driver selects a mongos for the first command within a transaction, the driver MUST pin the ClientSession to the selected mongos. Drivers MUST send all subsequent commands that are part of the same transaction (excluding certain retries of commitTransaction and abortTransaction) to the same mongos.</p>
+<p>It seems that it's a MongoDB driver bug related to the MongoClient.
+Then I create a issue here: <a
+target="_blank" rel="noopener" href="https://jira.mongodb.org/browse/CSHARP-3301"># Multi-thread
+Transaction Failure for Sharded Cluster</a>.</p>
+<p>However, the culprit is <strong>the load balancer in front of
+mongos</strong>. <strong>A MongoDB transaction in sharded cluster must
+be executed in the same mongos instance.</strong> If you put a load
+balancer in front of mongos instances, the operations inside a
+transaction might be executed in different mongos then the above errors
+happen.</p>
+<p>Refer to: <a
+target="_blank" rel="noopener" href="https://github.com/zookzook/elixir-mongodb-driver/issues/61">#
+Transactions issue on sharded cluster</a></p>
+<p>Look at <a
+target="_blank" rel="noopener" href="https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#mongos-pinning">Mongos
+Pinning</a>:</p>
+<blockquote><p>Drivers MUST send all commands for a single transaction to the same
+mongos (excluding retries of commitTransaction and
+abortTransaction).</p>
+<p>After the driver selects a mongos for the first command within a
+transaction, the driver MUST pin the ClientSession to the selected
+mongos. Drivers MUST send all subsequent commands that are part of the
+same transaction (excluding certain retries of commitTransaction and
+abortTransaction) to the same mongos.</p>
 </blockquote>
-<h1 id="expose-each-mongos-as-a-dedicated-service">Expose Each Mongos as a Dedicated Service</h1>
-<p>So we need to expose every mongos to public seperately. I finally understand why <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/v1.9/tutorial/connect-from-outside-k8s/">the official document</a> uses nodeport instead of kubernetes service to expose externally.</p>
-<p>Here is a sample <code>mongos-service.yaml</code> which creates a dedicated service for each mongos instance (e.g. 2 mongoses), the trick is to explicitly specify the pod name in the <code>spec.selector</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<h1 id="expose-each-mongos-as-a-dedicated-service">Expose Each Mongos as
+a Dedicated Service</h1>
+<p>So we need to expose every mongos to public seperately. I finally
+understand why <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/v1.9/tutorial/connect-from-outside-k8s/">the
+official document</a> uses nodeport instead of kubernetes service to
+expose externally.</p>
+<p>Here is a sample <code>mongos-service.yaml</code> which creates a
+dedicated service for each mongos instance (e.g. 2 mongoses), the trick
+is to explicitly specify the pod name in the <code>spec.selector</code>:
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> mongos<span class="token punctuation">-</span>svc<span class="token punctuation">-</span><span class="token number">0</span>
@@ -334,7 +369,9 @@
   <span class="token key atrule">selector</span><span class="token punctuation">:</span>
     <span class="token key atrule">app</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>svc
     <span class="token key atrule">controller</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>operator
-    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Refer to: <a href="/2020/12/26/mongodbomcreateshardedcluster.en/"># Deploy MongoDB Sharded Cluster by Ops Manager</a></p>
+    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Refer to: <a
+href="/2020/12/26/mongodbomcreateshardedcluster.en/"># Deploy MongoDB
+Sharded Cluster by Ops Manager</a></p>
 <h1 id="error-reproduce-code">Error Reproduce Code</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TransactionTest</span>
 <span class="token punctuation">&#123;</span>

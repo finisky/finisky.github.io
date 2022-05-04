@@ -31,7 +31,7 @@
 <meta property="og:description" content="生产环境有个SQL Server云数据库，花钱不少，性能却很差。最近发现跑一些并不太复杂的存储过程却需要好几分钟。其中一个常用的存储过程是将几张表通过一个键值关联并返回结果，这几张表都在千万级大小。分析了下执行计划，发现index seek花去了90%以上的时间，进而发现这些表的索引碎片化都极为严重。由于这个老DB几经易手，没人知道这些表和存储过程是做什么的，于是需要手动分析这些表的schema和">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-05-02T15:12:52.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="SQL Server">
 <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,7 +273,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>生产环境有个SQL Server云数据库，花钱不少，性能却很差。最近发现跑一些并不太复杂的存储过程却需要好几分钟。其中一个常用的存储过程是将几张表通过一个键值关联并返回结果，这几张表都在千万级大小。分析了下执行计划，发现index seek花去了90%以上的时间，进而发现这些表的索引碎片化都极为严重。由于这个老DB几经易手，没人知道这些表和存储过程是做什么的，于是需要手动分析这些表的schema和存储过程所依赖的表。基于这些结果再对索引重建提升性能。下面就是用来分析DB的一些重要Query。</p>
+        <p>生产环境有个SQL
+Server云数据库，花钱不少，性能却很差。最近发现跑一些并不太复杂的存储过程却需要好几分钟。其中一个常用的存储过程是将几张表通过一个键值关联并返回结果，这几张表都在千万级大小。分析了下执行计划，发现index
+seek花去了90%以上的时间，进而发现这些表的索引碎片化都极为严重。由于这个老DB几经易手，没人知道这些表和存储过程是做什么的，于是需要手动分析这些表的schema和存储过程所依赖的表。基于这些结果再对索引重建提升性能。下面就是用来分析DB的一些重要Query。</p>
 <span id="more"></span>
 <h1 id="获取各表的磁盘使用量">获取各表的磁盘使用量</h1>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> 
@@ -303,6 +305,14 @@
     UsedSpaceMB <span class="token keyword">DESC</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>结果示例:</p>
 <table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 14%" />
+<col style="width: 18%" />
+<col style="width: 17%" />
+<col style="width: 19%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>TableName</th>
@@ -415,6 +425,12 @@
 <span class="token keyword">order</span> <span class="token keyword">by</span> procname <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>结果示例:</p>
 <table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 29%" />
+<col style="width: 29%" />
+<col style="width: 20%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>procname</th>
@@ -474,7 +490,10 @@
 </tbody>
 </table>
 <h1 id="分析各表索引的碎片化程度">分析各表索引的碎片化程度</h1>
-<p>Refer to: <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sql/relational-databases/indexes/reorganize-and-rebuild-indexes?view=sql-server-ver15"># Resolve index fragmentation by reorganizing or rebuilding indexes</a> <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DECLARE</span> <span class="token variable">@dbname</span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
+<p>Refer to: <a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sql/relational-databases/indexes/reorganize-and-rebuild-indexes?view=sql-server-ver15">#
+Resolve index fragmentation by reorganizing or rebuilding indexes</a>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DECLARE</span> <span class="token variable">@dbname</span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
 <span class="token keyword">DECLARE</span> <span class="token variable">@tablename</span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
 
 <span class="token keyword">SELECT</span> a<span class="token punctuation">.</span>object_id<span class="token punctuation">,</span> object_name<span class="token punctuation">(</span>a<span class="token punctuation">.</span>object_id<span class="token punctuation">)</span> <span class="token keyword">AS</span> TableName<span class="token punctuation">,</span>
@@ -489,6 +508,13 @@
     <span class="token keyword">ON</span> a<span class="token punctuation">.</span>object_id <span class="token operator">=</span> b<span class="token punctuation">.</span>object_id
     <span class="token operator">AND</span> a<span class="token punctuation">.</span>index_id <span class="token operator">=</span> b<span class="token punctuation">.</span>index_id<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Sample result:</p>
 <table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 14%" />
+<col style="width: 13%" />
+<col style="width: 16%" />
+<col style="width: 40%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>object_id</th>

@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近从Hexo切到了Hugo博客生成引擎，主要原因是Hexo太慢，且在页面数量上千时会崩溃。 # Who Should Use Hugo?  Hugo is for people building a blog, a company site, a portfolio site, documentation, a single landing page, or a website with tho">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-06T17:03:00.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="Hexo">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,28 +276,41 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>最近从Hexo切到了Hugo博客生成引擎，主要原因是<strong>Hexo太慢，且在页面数量上千时会崩溃</strong>。</p>
-<p><a target="_blank" rel="noopener" href="https://gohugo.io/about/what-is-hugo/#who-should-use-hugo"># Who Should Use Hugo?</a></p>
+<p><a target="_blank" rel="noopener" href="https://gohugo.io/about/what-is-hugo/#who-should-use-hugo">#
+Who Should Use Hugo?</a></p>
 <blockquote>
-<p>Hugo is for people building a blog, a company site, a portfolio site, documentation, a single landing page, or a website with thousands of pages.</p>
+<p>Hugo is for people building a blog, a company site, a portfolio site,
+documentation, a single landing page, or a website with thousands of
+pages.</p>
 </blockquote>
 <p>使用任何引擎，必须要解决添加自定义css和javascript的问题，才能非常方便地定制化。</p>
-<p>可惜Hugo对于初学者不太友好，研究添加css和js费了不少功夫，需要通过读文档理解Hugo的设计思路。相比而言，Hexo的插件系统Hexo injector对新手更友好和容易理解。所以我们聊聊在Hugo中添加自定义css和js的正确方式。</p>
-<p><strong>不关心原理的急性子可以直接跳到<code>修改模板代码</code>节进行实操 :-)</strong></p>
+<p>可惜Hugo对于初学者不太友好，研究添加css和js费了不少功夫，需要通过读文档理解Hugo的设计思路。相比而言，Hexo的插件系统Hexo
+injector对新手更友好和容易理解。所以我们聊聊在Hugo中添加自定义css和js的正确方式。</p>
+<p><strong>不关心原理的急性子可以直接跳到<code>修改模板代码</code>节进行实操
+:-)</strong></p>
 <span id="more"></span>
 <h1 id="hexo添加自定义cssjs">Hexo添加自定义css/js</h1>
 <p>在Hexo中添加自定义js非常简单，只要在根目录的<code>scripts</code>目录增加一个新文件<code>custom.js</code>，这段js就会被自动添加到<code>&lt;head&gt;</code>的末尾(css类似):</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>injector<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'head_end'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
   <span class="token keyword">return</span> <span class="token string">'&lt;script data-ad-client="ca-pub-xxx" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">&lt;/script>'</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<h1 id="hugo添加自定义cssjs的正确方式">Hugo添加自定义css/js的正确方式</h1>
+<h1
+id="hugo添加自定义cssjs的正确方式">Hugo添加自定义css/js的正确方式</h1>
 <p>所谓正确方式，类似Python中的<code>pythonic</code>。在Hexo中添加css/js的<code>Hexoic</code>方案是injector。那么<code>Hugoic</code>的方案是什么？</p>
 <p>Hugo依赖主题模板运行，添加自定义css，需要修改所使用的主题的模板文件。而改它们之前，必须对Hugo中的很多概念有基本认识。</p>
 <h2 id="hugo模板查找顺序">Hugo模板查找顺序</h2>
-<p>首先理解Hugo的模板查找顺序：<a target="_blank" rel="noopener" href="https://gohugo.io/templates/lookup-order/#hugo-layouts-lookup-rules-with-theme"># Hugo Layouts Lookup Rules With Theme</a>:</p>
+<p>首先理解Hugo的模板查找顺序：<a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/lookup-order/#hugo-layouts-lookup-rules-with-theme">#
+Hugo Layouts Lookup Rules With Theme</a>:</p>
 <blockquote>
-<p>In Hugo, layouts can live in either the project’s or the themes' layout folders, and the most specific layout will be chosen. Hugo will interleave the lookups listed below, finding the most specific one either in the project or themes.</p>
+<p>In Hugo, layouts can live in either the project’s or the themes'
+layout folders, and the most specific layout will be chosen. Hugo will
+interleave the lookups listed below, finding the most specific one
+either in the project or themes.</p>
 </blockquote>
-<p>可惜这里没有明确表示project和theme layout哪个的优先级更高。参考 <a target="_blank" rel="noopener" href="https://bwaycer.github.io/hugo_tutorial.hugo/themes/customizing/"># Customizing a Theme</a>。</p>
+<p>可惜这里没有明确表示project和theme layout哪个的优先级更高。参考 <a
+target="_blank" rel="noopener" href="https://bwaycer.github.io/hugo_tutorial.hugo/themes/customizing/">#
+Customizing a Theme</a>。</p>
 <h2 id="定制模板方法">定制模板方法</h2>
 <p>基于Hugo模板查找顺序，得出定制模板步骤：</p>
 <ul>
@@ -305,19 +318,26 @@
 <li>修改<code>/layouts/partials/xxx.html</code>，添加插入css/js的代码段</li>
 </ul>
 <p>这样设计的好处在于主题repo作为submodule可以独立于项目repo升级，如果直接修改主题文件并提交，在升级主题时就会有诸多冲突，管理不便。</p>
-<p>初次看到这种做法时很费解，到底是在project layout还是theme layout新建模板文件<code>xxx.html</code>？为什么可以这么做？耐着性子读了不少文档后才明白，Hugo有不少隐式的规则，这里原因在于<strong>project layout文件夹中的模板文件会覆盖theme layout的模板</strong>。</p>
+<p>初次看到这种做法时很费解，到底是在project layout还是theme
+layout新建模板文件<code>xxx.html</code>？为什么可以这么做？耐着性子读了不少文档后才明白，Hugo有不少隐式的规则，这里原因在于<strong>project
+layout文件夹中的模板文件会覆盖theme layout的模板</strong>。</p>
 <p><code>layouts/_default/</code>中是一些主页、列表之类的默认模板，<code>layouts/partials</code>中是一些更小的模板块:</p>
 <blockquote>
-<p>Partials are smaller, context-aware components in your list and page templates that can be used economically to keep your templating DRY.</p>
+<p>Partials are smaller, context-aware components in your list and page
+templates that can be used economically to keep your templating DRY.</p>
 </blockquote>
-<p>Partial模板的 <a target="_blank" rel="noopener" href="https://gohugo.io/templates/partials/#partial-template-lookup-order"># 查找顺序</a>：</p>
+<p>Partial模板的 <a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/partials/#partial-template-lookup-order">#
+查找顺序</a>：</p>
 <blockquote>
-<p>However, partials are simpler in that Hugo will only check in two places:</p>
+<p>However, partials are simpler in that Hugo will only check in two
+places:</p>
 <ul>
 <li>layouts/partials/*&lt;PARTIALNAME&gt;.html</li>
 <li>themes/&lt;THEME&gt;/layouts/partials/*&lt;PARTIALNAME&gt;.html</li>
 </ul>
-<p>This allows a theme’s end user to copy a partial’s contents into a file of the same name for further customization.</p>
+<p>This allows a theme’s end user to copy a partial’s contents into a
+file of the same name for further customization.</p>
 </blockquote>
 <h2 id="修改模板代码">修改模板代码</h2>
 <p>终于可以开始操刀，这里以<code>PaperMod</code>模板为例，拷贝<code>/themes/PaperMod/layouts/partials/head.html</code>到<code>/layouts/partials/head.html</code>，并在文件末尾添加如下代码：</p>
@@ -333,8 +353,13 @@
 &#123;&#123; range $elem := .Site.Params.customjscssraw &#125;&#125;
     &#123;&#123; $elem | safeHTML &#125;&#125;
 &#123;&#123;- end &#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>看懂这段代码需要理解 <a target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/#the-dot"># Context</a> 的概念，和几个函数：<code>range</code>，<code>absURL</code>和<code>safeHTML</code>，<a target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/"># Introduction to Hugo Templating</a> 中有详细介绍，不再赘述。</p>
-<p>为什么有了<code>customcss</code>和<code>customjs</code>还要再加<code>customjscssraw</code>的支持？原因在于有时添加原始html更方便，比如css带有integrity属性，或js需要async关键字等等。<code>customjscssraw</code>最为灵活，与Hexo injector可以达到一样的效果。可参考下节中的示例。</p>
+<p>看懂这段代码需要理解 <a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/#the-dot"># Context</a>
+的概念，和几个函数：<code>range</code>，<code>absURL</code>和<code>safeHTML</code>，<a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/"># Introduction to Hugo
+Templating</a> 中有详细介绍，不再赘述。</p>
+<p>为什么有了<code>customcss</code>和<code>customjs</code>还要再加<code>customjscssraw</code>的支持？原因在于有时添加原始html更方便，比如css带有integrity属性，或js需要async关键字等等。<code>customjscssraw</code>最为灵活，与Hexo
+injector可以达到一样的效果。可参考下节中的示例。</p>
 <h2 id="使用方法">使用方法</h2>
 <p>使用很简单，在项目目录中的<code>config.yml</code>中按需添加如下字段即可（此处覆盖了多种应用场景，包括多行js的情况）：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">params</span><span class="token punctuation">:</span>
@@ -354,8 +379,10 @@
 
         gtag('config'<span class="token punctuation">,</span> 'G<span class="token punctuation">-</span>XXX');
       &lt;/script<span class="token punctuation">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>Tips</strong>: 如果插入的css/js是相对路径，别忘了在项目的<code>static/</code>目录中添加对应的静态文件。</p>
-<p>参考： <a target="_blank" rel="noopener" href="https://www.banjocode.com/post/hugo/custom-css/"># Add Custom CSS Or Javascript To Your Hugo Site</a></p>
+<p><strong>Tips</strong>:
+如果插入的css/js是相对路径，别忘了在项目的<code>static/</code>目录中添加对应的静态文件。</p>
+<p>参考： <a target="_blank" rel="noopener" href="https://www.banjocode.com/post/hugo/custom-css/">#
+Add Custom CSS Or Javascript To Your Hugo Site</a></p>
 
     </div>
 

@@ -31,7 +31,7 @@
 <meta property="og:description" content="LeetCode Top K Frequent Words 中会用到priority_queue，同时需要定义priority_queue的排序算法。 priority_queue的定义: template&lt;     class T,     class Container &#x3D; std::vector&lt;T&gt;,     class Compare &#x3D; std::less&lt;typen">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-04T16:45:40.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Coding Interview">
 <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,8 +273,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>LeetCode <a target="_blank" rel="noopener" href="https://leetcode.com/problems/top-k-frequent-words/">Top K Frequent Words</a> 中会用到priority_queue，同时需要定义priority_queue的排序算法。</p>
-<p><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/container/priority_queue">priority_queue的定义</a>:</p>
+        <p>LeetCode <a
+target="_blank" rel="noopener" href="https://leetcode.com/problems/top-k-frequent-words/">Top K
+Frequent Words</a>
+中会用到priority_queue，同时需要定义priority_queue的排序算法。</p>
+<p><a
+target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/container/priority_queue">priority_queue的定义</a>:</p>
 <pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span>
     <span class="token keyword">class</span> <span class="token class-name">T</span><span class="token punctuation">,</span>
     <span class="token keyword">class</span> <span class="token class-name">Container</span> <span class="token operator">=</span> std<span class="token double-colon punctuation">::</span>vector<span class="token operator">&lt;</span>T<span class="token operator">></span><span class="token punctuation">,</span>
@@ -301,9 +305,74 @@ priority_queue<span class="token operator">&lt;</span>pair<span class="token ope
     <span class="token keyword">return</span> a<span class="token punctuation">.</span>second <span class="token operator">></span> b<span class="token punctuation">.</span>second<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
 priority_queue<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span><span class="token punctuation">,</span> vector<span class="token operator">&lt;</span>pair<span class="token operator">&lt;</span>string<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">>></span><span class="token punctuation">,</span> <span class="token keyword">decltype</span><span class="token punctuation">(</span>cmp<span class="token punctuation">)</span><span class="token operator">></span> <span class="token function">pq</span><span class="token punctuation">(</span>cmp<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>注意: 此处与重载算符的初始化方法不同，<strong>一定要把比较函数<code>cmp</code>也传入构造函数</strong>。否则会出现编译错误：</p>
+<p>注意:
+此处与重载算符的初始化方法不同，<strong>一定要把比较函数<code>cmp</code>也传入构造函数</strong>。否则会出现编译错误：</p>
 <blockquote>
-<p>Line 16: Char 85: error: no matching constructor for initialization of 'priority_queue&lt;pair&lt;std::string, int&gt;, vector&lt;pair&lt;std::string, int&gt;&gt;, decltype(cmp)&gt;' (aka 'priority_queue&lt;pair&lt;basic_string<char>, int&gt;, vector&lt;pair&lt;basic_string<char>, int&gt;&gt;, (lambda at solution.cpp:20:20)&gt;') priority_queue&lt;pair&lt;string, int&gt;, vector&lt;pair&lt;string, int&gt;&gt;, decltype(cmp)&gt; pq; ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:501:2: note: candidate template ignored: requirement '__and_&lt;std::is_default_constructible&lt;(lambda at prog_joined.cpp:20:20)&gt;, std::is_default_constructible&lt;std::vector&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>&gt;, int&gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>&gt;, int&gt;&gt;&gt;&gt;&gt;::value' was not satisfied [with _Seq = std::vector&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&gt;&gt;&gt;] priority_queue() ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:516:2: note: candidate constructor template not viable: requires single argument '__a', but no arguments were provided priority_queue(const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 0 were provided class priority_queue ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 0 were provided /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:505:7: note: candidate constructor not viable: requires 2 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Sequence&amp; __s) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:510:7: note: candidate constructor not viable: requires at least argument '__x', but no arguments were provided priority_queue(const _Compare&amp; __x, _Sequence&amp;&amp; __s = _Sequence()) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:520:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:537:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(const priority_queue&amp; __q, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:541:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided priority_queue(priority_queue&amp;&amp; __q, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:526:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, const _Sequence&amp; __c, ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:532:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided priority_queue(const _Compare&amp; __x, _Sequence&amp;&amp; __c, const _Alloc&amp; __a) ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:573:2: note: candidate constructor template not viable: requires 4 arguments, but 0 were provided priority_queue(_InputIterator __first, _InputIterator __last, ^ /usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:584:2: note: candidate constructor template not viable: requires at least 2 arguments, but 0 were provided priority_queue(_InputIterator __first, _InputIterator __last, ^ 1 error generated.</p>
+<p>Line 16: Char 85: error: no matching constructor for initialization
+of 'priority_queue&lt;pair&lt;std::string, int&gt;,
+vector&lt;pair&lt;std::string, int&gt;&gt;, decltype(cmp)&gt;' (aka
+'priority_queue&lt;pair&lt;basic_string<char>, int&gt;,
+vector&lt;pair&lt;basic_string<char>, int&gt;&gt;, (lambda at
+solution.cpp:20:20)&gt;') priority_queue&lt;pair&lt;string, int&gt;,
+vector&lt;pair&lt;string, int&gt;&gt;, decltype(cmp)&gt; pq; ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:501:2:
+note: candidate template ignored: requirement
+'__and_&lt;std::is_default_constructible&lt;(lambda at
+prog_joined.cpp:20:20)&gt;,
+std::is_default_constructible&lt;std::vector&lt;std::pair&lt;std::__cxx11::basic_string&lt;char,
+std::char_traits<char>, std::allocator<char>&gt;, int&gt;,
+std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char,
+std::char_traits<char>, std::allocator<char>&gt;,
+int&gt;&gt;&gt;&gt;&gt;::value' was not satisfied [with _Seq =
+std::vector&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&gt;,
+std::allocator&lt;std::pair&lt;std::__cxx11::basic_string<char>,
+int&gt;&gt;&gt;] priority_queue() ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:516:2:
+note: candidate constructor template not viable: requires single
+argument '__a', but no arguments were provided priority_queue(const
+_Alloc&amp; __a) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11:
+note: candidate constructor (the implicit copy constructor) not viable:
+requires 1 argument, but 0 were provided class priority_queue ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11:
+note: candidate constructor (the implicit move constructor) not viable:
+requires 1 argument, but 0 were provided
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:505:7:
+note: candidate constructor not viable: requires 2 arguments, but 0 were
+provided priority_queue(const _Compare&amp; __x, const _Sequence&amp;
+__s) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:510:7:
+note: candidate constructor not viable: requires at least argument
+'__x', but no arguments were provided priority_queue(const _Compare&amp;
+__x, _Sequence&amp;&amp; __s = _Sequence()) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:520:2:
+note: candidate constructor template not viable: requires 2 arguments,
+but 0 were provided priority_queue(const _Compare&amp; __x, const
+_Alloc&amp; __a) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:537:2:
+note: candidate constructor template not viable: requires 2 arguments,
+but 0 were provided priority_queue(const priority_queue&amp; __q, const
+_Alloc&amp; __a) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:541:2:
+note: candidate constructor template not viable: requires 2 arguments,
+but 0 were provided priority_queue(priority_queue&amp;&amp; __q, const
+_Alloc&amp; __a) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:526:2:
+note: candidate constructor template not viable: requires 3 arguments,
+but 0 were provided priority_queue(const _Compare&amp; __x, const
+_Sequence&amp; __c, ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:532:2:
+note: candidate constructor template not viable: requires 3 arguments,
+but 0 were provided priority_queue(const _Compare&amp; __x,
+_Sequence&amp;&amp; __c, const _Alloc&amp; __a) ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:573:2:
+note: candidate constructor template not viable: requires 4 arguments,
+but 0 were provided priority_queue(_InputIterator __first,
+_InputIterator __last, ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:584:2:
+note: candidate constructor template not viable: requires at least 2
+arguments, but 0 were provided priority_queue(_InputIterator __first,
+_InputIterator __last, ^ 1 error generated.</p>
 </blockquote>
 
     </div>

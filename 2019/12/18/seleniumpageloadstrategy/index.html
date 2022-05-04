@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近爬取几个页面总是失败，遇到如下错误： # The HTTP request to the remote WebDriver server for URL http:&#x2F;&#x2F;localhost:xxx&#x2F; session timed out after 60 seconds. 后来发现原因是页面加载缓慢，debug发现页面其实已经在浏览器中成功渲染，只是还在等待一些后台j">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-12-18T15:58:15.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="crawler">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,32 +278,56 @@
         <p>最近爬取几个页面总是失败，遇到如下错误： <pre class="line-numbers language-none"><code class="language-none"># The HTTP request to the remote WebDriver server for URL http:&#x2F;&#x2F;localhost:xxx&#x2F; session timed out after 60 seconds.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>后来发现原因是页面加载缓慢，debug发现页面其实已经在浏览器中成功渲染，只是还在等待一些后台javascript加载完毕，然后超时报错。</p>
 <p>考虑到许多javascript都是广告、统计等一些附加内容，用selenium爬取页面时仅需要其中的html，无须等待所有javascript加载完毕。因此，想看看如何禁止ChromeDriver加载javascript，仅下载html。</p>
-<p>搜了下"Selenium Disable JavaScript in ChromeDriver"，发现了几种方案，最终用Page load strategy解决问题，小结一下各种方案的坑。</p>
+<p>搜了下"Selenium Disable JavaScript in
+ChromeDriver"，发现了几种方案，最终用Page load
+strategy解决问题，小结一下各种方案的坑。</p>
 <span id="more"></span>
 <h1 id="禁用javascript不好使">禁用JavaScript(不好使)</h1>
-<p>让Chrome禁用javascript应该是最直接的想法，搜了一堆文章，如： <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38301993/how-to-disable-java-script-in-chrome-driver-selenium-python">How to disable java script in Chrome Driver Selenium Python</a> <a target="_blank" rel="noopener" href="https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/6672">Disable JavaScript ChromeDriver #6672</a></p>
+<p>让Chrome禁用javascript应该是最直接的想法，搜了一堆文章，如： <a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38301993/how-to-disable-java-script-in-chrome-driver-selenium-python">How
+to disable java script in Chrome Driver Selenium Python</a> <a
+target="_blank" rel="noopener" href="https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/6672">Disable
+JavaScript ChromeDriver #6672</a></p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChromeOptions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 options<span class="token punctuation">.</span><span class="token function">AddArgument</span><span class="token punctuation">(</span><span class="token string">"disable-javascript"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>事实证明，没有一个方案可以真正禁用js，<strong>不好使</strong>。而且这里AddArgument()中使用的是string，而如何找到可用的string列表本身就是个问题。</p>
 <h1 id="设置页面加载超时不好使">设置页面加载超时(不好使)</h1>
-<p>另一个想法是当页面加载缓慢时让它超时，然后继续执行后续的代码解析已下载的html。 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10606703/selenium-webdriver-how-to-set-page-load-timeout-using-c-sharp">Selenium WebDriver - How to set Page Load Timeout using C#</a></p>
-<p>设置页面加载超时的语法找了半天，因为许多文章都是过时的，找到目前可用的语法如下： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">driver<span class="token punctuation">.</span><span class="token function">Manage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Timeouts</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>PageLoad <span class="token operator">=</span> TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>另一个想法是当页面加载缓慢时让它超时，然后继续执行后续的代码解析已下载的html。
+<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10606703/selenium-webdriver-how-to-set-page-load-timeout-using-c-sharp">Selenium
+WebDriver - How to set Page Load Timeout using C#</a></p>
+<p>设置页面加载超时的语法找了半天，因为许多文章都是过时的，找到目前可用的语法如下：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">driver<span class="token punctuation">.</span><span class="token function">Manage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Timeouts</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>PageLoad <span class="token operator">=</span> TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>但页面超时之后并不像想像当中那样继续执行后续代码，而是抛出了异常进入了catch块，所以并不能解析已加载的html。</p>
 <h1 id="用executescript不好使">用ExecuteScript(不好使)</h1>
-<p>于是又找到了 <a target="_blank" rel="noopener" href="https://allinonescript.com/index.php/questions/9731291/questions/9731291/how-do-i-set-the-selenium-webdriver-get-timeout">How do I set the selenium webdriver get timeout?</a></p>
-<p>本来使用用driver.Navigate().GoToUrl(url)来加载页面，这里提示可以用ExecuteScript()替代它解决问题： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token comment">//driver.Navigate().GoToUrl(url);</span>
+<p>于是又找到了 <a
+target="_blank" rel="noopener" href="https://allinonescript.com/index.php/questions/9731291/questions/9731291/how-do-i-set-the-selenium-webdriver-get-timeout">How
+do I set the selenium webdriver get timeout?</a></p>
+<p>本来使用用driver.Navigate().GoToUrl(url)来加载页面，这里提示可以用ExecuteScript()替代它解决问题：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token comment">//driver.Navigate().GoToUrl(url);</span>
 
 driver<span class="token punctuation">.</span><span class="token function">ExecuteScript</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"window.location.href='</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">url</span><span class="token punctuation">&#125;</span></span><span class="token string">'"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <p>试验后发现失败率少了一些，不过执行ExecuteScript并不像描述的那样马上返回，依然会出现加载失败的情况。感觉二者在本质上没有区别，没能get到此方案的优越性。</p>
 <h1 id="设置页面加载策略">设置页面加载策略</h1>
-<p>参考如下两篇文章： <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43734797/page-load-strategy-for-chrome-driver-updated-till-selenium-v3-12-0">Page load strategy for Chrome driver (Updated till Selenium v3.12.0)</a></p>
-<p><a target="_blank" rel="noopener" href="https://w3c.github.io/webdriver/#dfn-page-load-strategy">WebDriver W3C - Page load strategy</a></p>
-<p>Page load strategy有三种：默认是normal，即等着全部页面加载完毕；none的话是把html下载完毕；eager模式则中庸一些，html下载并解析完毕。原文参考：</p>
+<p>参考如下两篇文章： <a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43734797/page-load-strategy-for-chrome-driver-updated-till-selenium-v3-12-0">Page
+load strategy for Chrome driver (Updated till Selenium v3.12.0)</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://w3c.github.io/webdriver/#dfn-page-load-strategy">WebDriver
+W3C - Page load strategy</a></p>
+<p>Page load
+strategy有三种：默认是normal，即等着全部页面加载完毕；none的话是把html下载完毕；eager模式则中庸一些，html下载并解析完毕。原文参考：</p>
 <hr />
 <ol type="1">
-<li><p><strong><code>normal</code></strong> This stategy causes Selenium to wait for the full page loading (html content and subresources downloaded and parsed).</p></li>
-<li><p><strong><code>eager</code></strong> This stategy causes Selenium to wait for the DOMContentLoaded event (html content downloaded and parsed only).</p></li>
-<li><p><strong><code>none</code></strong> This strategy causes Selenium to return immediately after the initial page content is fully received (html content downloaded). ---</p></li>
+<li><p><strong><code>normal</code></strong> This stategy causes Selenium
+to wait for the full page loading (html content and subresources
+downloaded and parsed).</p></li>
+<li><p><strong><code>eager</code></strong> This stategy causes Selenium
+to wait for the DOMContentLoaded event (html content downloaded and
+parsed only).</p></li>
+<li><p><strong><code>none</code></strong> This strategy causes Selenium
+to return immediately after the initial page content is fully received
+(html content downloaded). ---</p></li>
 </ol>
 <p>为达到“禁用javascript”，经尝试<strong>eager</strong>策略最为合适。none的话，使用FindElementByXXX()方法常常定位不到需要查找的内容，有些过于激进。eager策略完美解决禁用js的问题。代码如下：</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChromeOptions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>

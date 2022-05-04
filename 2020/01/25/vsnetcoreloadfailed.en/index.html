@@ -31,7 +31,7 @@
 <meta property="og:description" content="If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear: The current .NET SDK does not support targeting .NET Standard 2.0. Either target .NET">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-25T04:29:58.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content=".NET Core">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,11 +274,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear:</p>
-<blockquote><p>The current .NET SDK does not support targeting .NET Standard 2.0. Either target .NET Standard 1.6 or lower, or use a version of the .NET SDK that supports .NET Standard 2.0. XXXProject C:Files (x86)Visual Studio\2017.NET.Sdk.NET.TargetFrameworkInference.targets</p>
+        <p>If you use Visual Studio 2017 and create an .NET Core projects the
+first time, the following errors might appear:</p>
+<blockquote><p>The current .NET SDK does not support targeting .NET Standard 2.0.
+Either target .NET Standard 1.6 or lower, or use a version of the .NET
+SDK that supports .NET Standard 2.0. XXXProject C:Files (x86)Visual
+Studio\2017.NET.Sdk.NET.TargetFrameworkInference.targets</p>
 </blockquote>
-<p>Another related issue is .NET Core project load failed. Both errors point out that the corresponding .NET SDK is missing.</p>
-<p>If you follow the instructions to install .NET Core SDK with a random version from here: https://aka.ms/dotnet-download . Most likely that the issue cannot be resolved.</p>
+<p>Another related issue is .NET Core project load failed. Both errors
+point out that the corresponding .NET SDK is missing.</p>
+<p>If you follow the instructions to install .NET Core SDK with a random
+version from here: https://aka.ms/dotnet-download . Most likely that the
+issue cannot be resolved.</p>
 <span id="more"></span>
 <h1 id="check-installed-sdks">Check Installed SDKs</h1>
 <p>Use <code>dotnet --info</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ dotnet --info
@@ -321,18 +328,35 @@ Host (useful for support):
 
 To install additional .NET Core runtimes or SDKs:
   https:&#x2F;&#x2F;aka.ms&#x2F;dotnet-download<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>It seems that there are many existing .NET Core 2.2.x SDKs. Why it still doesn't work?</p>
+<p>It seems that there are many existing .NET Core 2.2.x SDKs. Why it
+still doesn't work?</p>
 <h1 id="solution">Solution</h1>
 <h2 id="short-answer">Short Answer</h2>
 <ul>
-<li><p>Go to the following link to install SDK: <a target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/visual-studio-sdks"># Download .NET SDKs for Visual Studio</a></p></li>
+<li><p>Go to the following link to install SDK: <a
+target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/visual-studio-sdks">#
+Download .NET SDKs for Visual Studio</a></p></li>
 <li><p>Restart Visual Studio and rebuild the project</p></li>
 </ul>
 <h2 id="long-answer">Long Answer</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45732236/the-current-net-sdk-does-not-support-targeting-net-standard-2-0-error-in-visua"># The current .NET SDK does not support targeting .NET Standard 2.0 error in Visual Studio 2017 update 15.3</a></p>
-<p>The above stackoverflow url has an answer which suggests to install .NET SDK from the following link (resolve the issue but don't know why): <a target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/visual-studio-sdks"># Download .NET SDKs for Visual Studio</a></p>
-<p>Compare the SDK download url with the offical .NET Core SDK site: <a target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/dotnet-core/2.2"># Download .NET Core 2.2</a>, you will find that they are the same: <pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;dotnet.microsoft.com&#x2F;download&#x2F;dotnet-core&#x2F;thank-you&#x2F;sdk-2.2.110-windows-x64-installer<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Looks magic, right? So I guess the reason is that <strong>Visual Studio 2017 is only compatible with a specific version of .NET Core SDK, regardless which version your project actually used</strong>. Fortunately the first site provides a compatible SDK version list for different VS versions, install from that site would resolve the problem.</p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45732236/the-current-net-sdk-does-not-support-targeting-net-standard-2-0-error-in-visua">#
+The current .NET SDK does not support targeting .NET Standard 2.0 error
+in Visual Studio 2017 update 15.3</a></p>
+<p>The above stackoverflow url has an answer which suggests to install
+.NET SDK from the following link (resolve the issue but don't know why):
+<a target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/visual-studio-sdks">#
+Download .NET SDKs for Visual Studio</a></p>
+<p>Compare the SDK download url with the offical .NET Core SDK site: <a
+target="_blank" rel="noopener" href="https://dotnet.microsoft.com/download/dotnet-core/2.2"># Download
+.NET Core 2.2</a>, you will find that they are the same:
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;dotnet.microsoft.com&#x2F;download&#x2F;dotnet-core&#x2F;thank-you&#x2F;sdk-2.2.110-windows-x64-installer<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Looks magic, right? So I guess the reason is that <strong>Visual
+Studio 2017 is only compatible with a specific version of .NET Core SDK,
+regardless which version your project actually used</strong>.
+Fortunately the first site provides a compatible SDK version list for
+different VS versions, install from that site would resolve the
+problem.</p>
 
     </div>
 

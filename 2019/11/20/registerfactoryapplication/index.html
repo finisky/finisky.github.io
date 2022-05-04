@@ -31,7 +31,7 @@
 <meta property="og:description" content="Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register：  Instance registration Type registration Factory registration  那这三种方式分别用于什么场景呢？简单来说，Instance registration和T">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-11-20T10:35:31.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="Software Engineering">
@@ -133,7 +133,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#registertype%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">RegisterType示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#registerfactory%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">RegisterFactory示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%A7%A3%E6%9E%90%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BBcollection"><span class="nav-number">2.1.</span> <span class="nav-text">直接解析自定义类Collection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#registerfactory-vs-registertype"><span class="nav-number">3.</span> <span class="nav-text">RegisterFactory vs RegisterType</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#registertype%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">RegisterType示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#registerfactory%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">RegisterFactory示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%A7%A3%E6%9E%90%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BBcollection"><span class="nav-number">2.1.</span> <span class="nav-text">直接解析自定义类Collection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#registerfactory-vs-registertype"><span class="nav-number">3.</span> <span class="nav-text">RegisterFactory vs
+RegisterType</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -150,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,16 +277,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register：</p>
+        <p>Unity是一个.NET
+Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register,
+Resolve和Dispose。Unity支持三种方式的Register：</p>
 <ul>
 <li>Instance registration</li>
 <li>Type registration</li>
 <li>Factory registration</li>
 </ul>
-<p>那这三种方式分别用于什么场景呢？简单来说，Instance registration和Type registration较为常见，直接通过ResolvedParameter解析依赖的对象，Factory registration更灵活，可以通过调用方法创建对象。举个例子，如果注入对象所依赖的参数是一个<code>List&lt;T&gt;</code>或<code>Dictionary&lt;T1, T2&gt;</code>，而T又是自定义的类，那么就必须使用Factory registration。本文主要介绍的就是如何解析一个自定义类的List或Dictionary。</p>
+<p>那这三种方式分别用于什么场景呢？简单来说，Instance registration和Type
+registration较为常见，直接通过ResolvedParameter解析依赖的对象，Factory
+registration更灵活，可以通过调用方法创建对象。举个例子，如果注入对象所依赖的参数是一个<code>List&lt;T&gt;</code>或<code>Dictionary&lt;T1, T2&gt;</code>，而T又是自定义的类，那么就必须使用Factory
+registration。本文主要介绍的就是如何解析一个自定义类的List或Dictionary。</p>
 <span id="more"></span>
 <h1 id="registertype示例">RegisterType示例</h1>
-<p>从例子切入，定义IAnimal Interface，并有Tiger和Deer两个实现，还有一个Zoo类，聚合了Tiger和Deer: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IAnimal</span>
+<p>从例子切入，定义IAnimal
+Interface，并有Tiger和Deer两个实现，还有一个Zoo类，聚合了Tiger和Deer:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IAnimal</span>
 <span class="token punctuation">&#123;</span>
     <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
@@ -345,8 +353,10 @@
 <p>运行结果： <pre class="line-numbers language-none"><code class="language-none">Tiger runs away
 Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h1 id="registerfactory示例">RegisterFactory示例</h1>
-<p>RegisterFactory (已淘汰的InjectionFactory)可以用Unity创建的Factory创建对象，这是它与RegisterInstance和RegisterType的主要区别。</p>
-<p>继续上面的例子，为了更灵活，考虑让Zoo类接受animal list作为参数： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Zoo</span>
+<p>RegisterFactory
+(已淘汰的InjectionFactory)可以用Unity创建的Factory创建对象，这是它与RegisterInstance和RegisterType的主要区别。</p>
+<p>继续上面的例子，为了更灵活，考虑让Zoo类接受animal list作为参数：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Zoo</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">private</span> <span class="token keyword">readonly</span> <span class="token class-name">List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span> _animals<span class="token punctuation">;</span>
 
@@ -363,7 +373,8 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>那么如何注入List<IAnimal>？比较直观的想法是这样(错误代码): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span><span class="token punctuation">></span></span></span><span class="token punctuation">(</span>
+<p>那么如何注入List<IAnimal>？比较直观的想法是这样(错误代码):
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span><span class="token punctuation">></span></span></span><span class="token punctuation">(</span>
     <span class="token string">"AnimalList"</span><span class="token punctuation">,</span>
     <span class="token keyword">new</span> <span class="token constructor-invocation class-name">InjectionConstructor</span><span class="token punctuation">(</span>
         <span class="token keyword">new</span> <span class="token constructor-invocation class-name">List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span>
@@ -374,7 +385,8 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
 <span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>遇到编译错误： <pre class="line-numbers language-none"><code class="language-none">Argument 1: cannot convert from &#39;Unity.Injection.ResolvedParameter&lt;ConsoleApp1.IAnimal&gt;&#39; to &#39;ConsoleApp1.IAnimal&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>报错原因在于List中是IAnimal类型，而ResolvedParameter<IAnimal>是Unity.Injection.ResolvedParameter<IAnimal>类型，二者不匹配，编译错误。在List内部ResolveParameter是运行时在List的构造函数中创建对象，而InjectionConstructor()中只能静态Resolve对象。所以RegisterType并不能达到在List中Resolve对象的目的。</p>
-<p>RegisterFactory可以用Factory通过执行一段代码解决问题： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterFactory</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span><span class="token punctuation">></span></span></span><span class="token punctuation">(</span>
+<p>RegisterFactory可以用Factory通过执行一段代码解决问题：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterFactory</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span><span class="token punctuation">></span></span></span><span class="token punctuation">(</span>
     <span class="token string">"AnimalList"</span><span class="token punctuation">,</span>
     m <span class="token operator">=></span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span>
     <span class="token punctuation">&#123;</span>
@@ -386,10 +398,12 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
 <h2 id="直接解析自定义类collection">直接解析自定义类Collection</h2>
 <p>不用RegisterFactory也可直接解析自定义类Collection，但有两个条件：</p>
 <ul>
-<li>待解析的Collection必须是array []或<code>IEnumerable&lt;T&gt;</code></li>
+<li>待解析的Collection必须是array
+[]或<code>IEnumerable&lt;T&gt;</code></li>
 <li>所有被注册为该自定义类的类型都会被加入Collection中，不能解析出所有自定义类的一个子集。听起来很绕，可以看下面实例。</li>
 </ul>
-<p>先修改Zoo的参数，由<code>List&lt;IAnimal&gt;</code>变为<code>IEnumerable&lt;IAnimal&gt;</code> <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Zoo</span>
+<p>先修改Zoo的参数，由<code>List&lt;IAnimal&gt;</code>变为<code>IEnumerable&lt;IAnimal&gt;</code>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Zoo</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">private</span> <span class="token keyword">readonly</span> <span class="token class-name">IEnumerable<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span> _animals<span class="token punctuation">;</span>
 
@@ -411,8 +425,10 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
         <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ResolvedParameter<span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span>
     <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>但这种注册方式会把所有已注册的IAnimal都加入<code>List&lt;IAnimal&gt;</code>，如果只想把Tiger加入其中则不行，必须使用RegisterFactory的方式。</p>
-<h1 id="registerfactory-vs-registertype">RegisterFactory vs RegisterType</h1>
-<p>考虑Zoo(IAnimal tiger, IAnimal deer)的两种不同注入方式： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>Zoo<span class="token punctuation">,</span> Zoo<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token string">"Zoo"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">InjectionConstructor</span><span class="token punctuation">(</span>
+<h1 id="registerfactory-vs-registertype">RegisterFactory vs
+RegisterType</h1>
+<p>考虑Zoo(IAnimal tiger, IAnimal deer)的两种不同注入方式：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterType</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>Zoo<span class="token punctuation">,</span> Zoo<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token string">"Zoo"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">InjectionConstructor</span><span class="token punctuation">(</span>
     <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ResolvedParameter<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Tiger"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
     <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ResolvedParameter<span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Deer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">container<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">RegisterFactory</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>Zoo<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token string">"Zoo"</span><span class="token punctuation">,</span>
@@ -420,7 +436,9 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
         m<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">Resolve</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token string">"Tiger"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
         m<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">Resolve</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>IAnimal<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token string">"Deer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在container.Resolve<Zoo>("Zoo")时，RegisterType直接通过container创建对象，而RegisterFactory是通过Zoo Factory调用委托new Zoo()的方式创建对象(在“m =&gt; new Zoo(”处可设置断点查看)。</p>
+<p>在container.Resolve<Zoo>("Zoo")时，RegisterType直接通过container创建对象，而RegisterFactory是通过Zoo
+Factory调用委托new Zoo()的方式创建对象(在“m =&gt; new
+Zoo(”处可设置断点查看)。</p>
 <p>简而言之，RegisterFactory是一种比RegisterType更为灵活的注入方式，可以通过注入一个Factory的委托执行代码进行对象创建，但RegisterFactory用起来更为复杂。</p>
 <h1 id="完整代码">完整代码</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
@@ -527,10 +545,19 @@ Deer runs away<span aria-hidden="true" class="line-numbers-rows"><span></span><s
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="reference">Reference</h1>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45752218/c-sharp-unity-register-a-list-of-registered-types-and-resolve-by-adding-n-instan">C# Unity register a list of registered types and resolve by adding N instances</a></p>
-<p><a target="_blank" rel="noopener" href="https://unitycontainer.github.io/articles/introduction.html#registering-types-and-object-instances">Registering Types and Object Instances</a></p>
-<p><a target="_blank" rel="noopener" href="https://download.microsoft.com/download/4/d/b/4dbc771d-9e24-4211-adc5-65812115e52d/dependencyinjectionwithunity.pdf">Dependency Injection with Unity</a></p>
-<p><a target="_blank" rel="noopener" href="http://unitycontainer.org/tutorials/resolution/collections.html">Resolving collections of Objects of a Particular Type</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45752218/c-sharp-unity-register-a-list-of-registered-types-and-resolve-by-adding-n-instan">C#
+Unity register a list of registered types and resolve by adding N
+instances</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://unitycontainer.github.io/articles/introduction.html#registering-types-and-object-instances">Registering
+Types and Object Instances</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://download.microsoft.com/download/4/d/b/4dbc771d-9e24-4211-adc5-65812115e52d/dependencyinjectionwithunity.pdf">Dependency
+Injection with Unity</a></p>
+<p><a
+target="_blank" rel="noopener" href="http://unitycontainer.org/tutorials/resolution/collections.html">Resolving
+collections of Objects of a Particular Type</a></p>
 
     </div>
 

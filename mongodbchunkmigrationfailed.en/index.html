@@ -31,7 +31,7 @@
 <meta property="og:description" content="After adding new shards to our production MongoDB cluster (v4.4.6-ent with 5 shards, 3 replicas for each shard), we found that the balancer is not working. sh.status() displays many chunk migration er">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-01T04:00:01.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -133,7 +133,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#increase-maxtransactionlockrequesttimeoutmillis"><span class="nav-number">1.</span> <span class="nav-text">Increase maxTransactionLockRequestTimeoutMillis?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jumbo-chunks"><span class="nav-number">2.</span> <span class="nav-text">Jumbo Chunks?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#restart-the-source-mongod"><span class="nav-number">3.</span> <span class="nav-text">Restart the Source Mongod</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#increase-maxtransactionlockrequesttimeoutmillis"><span class="nav-number">1.</span> <span class="nav-text">Increase
+maxTransactionLockRequestTimeoutMillis?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jumbo-chunks"><span class="nav-number">2.</span> <span class="nav-text">Jumbo Chunks?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#restart-the-source-mongod"><span class="nav-number">3.</span> <span class="nav-text">Restart the Source Mongod</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -150,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,7 +277,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>After adding new shards to our production MongoDB cluster (v4.4.6-ent with 5 shards, 3 replicas for each shard), we found that the balancer is not working. <code>sh.status()</code> displays many chunk migration errors:</p>
+        <p>After adding new shards to our production MongoDB cluster (v4.4.6-ent
+with 5 shards, 3 replicas for each shard), we found that the balancer is
+not working. <code>sh.status()</code> displays many chunk migration
+errors:</p>
 <pre class="line-numbers language-none"><code class="language-none">...
   balancer:
         Currently enabled:  yes
@@ -298,7 +302,10 @@
                                 mongo-3       208
 ...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <span id="more"></span>
-<p>Obviously, the chunks is unbalanced accross shards (327 vs 208). Since the balancer is enabled, we try to debug the issue through <code>mongodb.log</code> on the config server. There are many migration failed logs (sensitive infomation masked):</p>
+<p>Obviously, the chunks is unbalanced accross shards (327 vs 208).
+Since the balancer is enabled, we try to debug the issue through
+<code>mongodb.log</code> on the config server. There are many migration
+failed logs (sensitive infomation masked):</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
     <span class="token property">"t"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
         <span class="token property">"$date"</span><span class="token operator">:</span> <span class="token string">"2021-09-27T05:05:46.090+00:00"</span>
@@ -313,8 +320,14 @@
         <span class="token property">"error"</span><span class="token operator">:</span> <span class="token string">"LockTimeout: Unable to acquire X lock on '&#123;13328793763114131834: Collection, 1799578717045662184, X.A&#125;' within 500ms. opId: 669456657, op: MoveChunk, connId: 0."</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Because the above error happens for the first chunk to be migrated, the whole balancing process is blocked by this error which makes shard <code>mongo-1</code> holds much more data than other shards. It seems that the error is caused by <code>Unable to acquire X lock on collection</code>.</p>
-<p>Try to manually movechunk according to <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/method/sh.moveChunk/">this</a>, but got the same error: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">MongoDB Enterprise mongos&gt; sh.moveChunk(&quot;X.A&quot;, &#123;&quot;Uuid&quot;: &quot;XX&quot;&#125;, &quot;mongo-3&quot; )
+<p>Because the above error happens for the first chunk to be migrated,
+the whole balancing process is blocked by this error which makes shard
+<code>mongo-1</code> holds much more data than other shards. It seems
+that the error is caused by
+<code>Unable to acquire X lock on collection</code>.</p>
+<p>Try to manually movechunk according to <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/method/sh.moveChunk/">this</a>,
+but got the same error: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">MongoDB Enterprise mongos&gt; sh.moveChunk(&quot;X.A&quot;, &#123;&quot;Uuid&quot;: &quot;XX&quot;&#125;, &quot;mongo-3&quot; )
 &#123;
         &quot;ok&quot; : 0,
         &quot;errmsg&quot; : &quot;Unable to acquire X lock on &#39;&#123;13328793763114131834: Collection, 1799578717045662184, X.A&#125;&#39; within 500ms. opId: 719103624, op: MoveChunk, connId: 0.&quot;,
@@ -329,13 +342,27 @@
                 &#125;
         &#125;
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<h1 id="increase-maxtransactionlockrequesttimeoutmillis">Increase <code>maxTransactionLockRequestTimeoutMillis</code>?</h1>
-<p>Google a similar discussion <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/54327147/mongoerror-unable-to-acquire-lock">here</a>, which suggests to set <code>maxTransactionLockRequestTimeoutMillis</code> longer. However, I think 500ms is long enough to acquire the lock, change the parameter may have side effect on the production environment, so we don't test whether it works.</p>
+<h1 id="increase-maxtransactionlockrequesttimeoutmillis">Increase
+<code>maxTransactionLockRequestTimeoutMillis</code>?</h1>
+<p>Google a similar discussion <a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/54327147/mongoerror-unable-to-acquire-lock">here</a>,
+which suggests to set
+<code>maxTransactionLockRequestTimeoutMillis</code> longer. However, I
+think 500ms is long enough to acquire the lock, change the parameter may
+have side effect on the production environment, so we don't test whether
+it works.</p>
 <h1 id="jumbo-chunks">Jumbo Chunks?</h1>
-<p>According to <a target="_blank" rel="noopener" href="https://www.percona.com/blog/2020/06/11/dealing-with-jumbo-chunks-in-mongodb/">this post</a>, jumbo chunks might lead to migration failure. So we checked the collection chunks by <code>sh.status(true)</code>, NO jumbo chunks found.</p>
+<p>According to <a
+target="_blank" rel="noopener" href="https://www.percona.com/blog/2020/06/11/dealing-with-jumbo-chunks-in-mongodb/">this
+post</a>, jumbo chunks might lead to migration failure. So we checked
+the collection chunks by <code>sh.status(true)</code>, NO jumbo chunks
+found.</p>
 <h1 id="restart-the-source-mongod">Restart the Source Mongod</h1>
-<p>We also try to check the current operations and locks via <code>db.currentOp()</code> , but not have a clue.</p>
-<p>Finally, we restart the source mongod process through MongoDB Ops Manager to change the primary in the shard. Surprisingly, it works! A few miniutes later, chunks are evenly distributed accross shards:</p>
+<p>We also try to check the current operations and locks via
+<code>db.currentOp()</code> , but not have a clue.</p>
+<p>Finally, we restart the source mongod process through MongoDB Ops
+Manager to change the primary in the shard. Surprisingly, it works! A
+few miniutes later, chunks are evenly distributed accross shards:</p>
 <pre class="line-numbers language-none"><code class="language-none">...
   balancer:
         Currently enabled:  yes
@@ -358,7 +385,10 @@
                                 mongo-3       207
                                 mongo-4       208
 ...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>We guess that the root cause is that the original mongod process has inconsistent states. Restart is just a simple way to force another member to become primary, which bypass the inconsistent states issue of the original mongod.</p>
+<p>We guess that the root cause is that the original mongod process has
+inconsistent states. Restart is just a simple way to force another
+member to become primary, which bypass the inconsistent states issue of
+the original mongod.</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
     <span class="token property">"t"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
         <span class="token property">"$date"</span><span class="token operator">:</span> <span class="token string">"2021-09-29T02:43:35.602+00:00"</span>
@@ -373,7 +403,9 @@
         <span class="token property">"error"</span><span class="token operator">:</span> <span class="token string">"Overflow: Invalid advance (1) past end of buffer[0] at offset: 0"</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>The error <code>Overflow: Invalid advance past end of buffer at offset</code> can be resolved by manually restart the source monogd as well.</p>
+<p>The error
+<code>Overflow: Invalid advance past end of buffer at offset</code> can
+be resolved by manually restart the source monogd as well.</p>
 
     </div>
 

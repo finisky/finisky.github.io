@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近一直想简化每篇博客的永久链接，现在的永久链接大概长这样： &#x2F;2021&#x2F;03&#x2F;21&#x2F;migrateopsmanager.en&#x2F; 希望能把中间的日期去掉，变成这样： &#x2F;migrateopsmanager.en&#x2F; 原因在于短链接更作为标识更为合理，而URL上带有日期字符串并没有实际的用处，除非重名的博客太多。但这不可能发生，因为所有博客都写在source&#x2F;_post文件夹，博客重名会引起文件名冲突。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-06-14T16:33:28.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="SEO">
 <meta property="article:tag" content="Hexo">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -281,26 +281,40 @@
 <p>原因在于短链接更作为标识更为合理，而URL上带有日期字符串并没有实际的用处，除非重名的博客太多。但这不可能发生，因为所有博客都写在<code>source/_post</code>文件夹，博客重名会引起文件名冲突。</p>
 <span id="more"></span>
 <h1 id="修改永久链接的问题">修改永久链接的问题</h1>
-<p>修改永久链接格式是很容易的，参考<a target="_blank" rel="noopener" href="https://hexo.io/docs/permalinks.html">官方文档</a>，只需要修改<code>_config.yml</code>，默认格式是<code>:year/:month/:day/:title/</code>，改成<code>:title/</code>即可。但修改格式会导致所有博客的永久链接变化，老格式的链接会失效，那么就会引起网站排名下滑，造成不必要的损失。</p>
-<p>Hexo不像WordPress，做一个301跳转很容易，之前就踩过这样的坑: <a href="/2019/12/11/migrategithubpages/"># 迁移Hexo博客到GitHub Pages</a>。于是想到几种方案：</p>
+<p>修改永久链接格式是很容易的，参考<a
+target="_blank" rel="noopener" href="https://hexo.io/docs/permalinks.html">官方文档</a>，只需要修改<code>_config.yml</code>，默认格式是<code>:year/:month/:day/:title/</code>，改成<code>:title/</code>即可。但修改格式会导致所有博客的永久链接变化，老格式的链接会失效，那么就会引起网站排名下滑，造成不必要的损失。</p>
+<p>Hexo不像WordPress，做一个301跳转很容易，之前就踩过这样的坑: <a
+href="/2019/12/11/migrategithubpages/"># 迁移Hexo博客到GitHub
+Pages</a>。于是想到几种方案：</p>
 <ul>
-<li>在<code>&lt;head&gt;</code>中增加一个canonical link标签，但并不是在http层的跳转，还是有可能影响排名</li>
+<li>在<code>&lt;head&gt;</code>中增加一个canonical
+link标签，但并不是在http层的跳转，还是有可能影响排名</li>
 <li>生成两个永久链接，让老的链接格式采用第一种方案跳转到新链接</li>
 <li>不动老链接，新写的博客使用新链接格式</li>
 </ul>
 <p>思考再三，决定采用最后一种方案，比较保险。那如何实现对于新写的博客生成不同格式的永久链接？</p>
 <h1 id="实现新博客新链接格式">实现新博客，新链接格式</h1>
-<p>实现思路很简单，以某个时间点为界，在这个时间点之后的博客在生成永久链接时都采用新格式。之前 <a href="/2019/02/24/customizedcategory/"># Hexo添加自定义分类菜单项并定制页面布局</a>的实现就不大好，直接修改了Hexo源代码，导致每次升级Hexo非常痛苦。对于这么个小需求，可以通过扩展Hexo的方式实现: 写一个特殊的filter。</p>
+<p>实现思路很简单，以某个时间点为界，在这个时间点之后的博客在生成永久链接时都采用新格式。之前
+<a href="/2019/02/24/customizedcategory/">#
+Hexo添加自定义分类菜单项并定制页面布局</a>的实现就不大好，直接修改了Hexo源代码，导致每次升级Hexo非常痛苦。对于这么个小需求，可以通过扩展Hexo的方式实现:
+写一个特殊的filter。</p>
 <p>此前我也从来没有写过Hexo扩展，简单看了下文档，Hexo扩展就是插入一段自己的代码来修改特定的数据。对于我们的需求，filter可以完美解决这个问题：https://hexo.io/api/filter。</p>
 <p>所谓filter，有点pipeline的意思：</p>
-<blockquote><p>Hexo passes data to filters in sequence and the filters then modify the data one after the other.</p>
-<p>The first argument passed into each filter is <code>data</code>. The <code>data</code> passed into the next filter can be modified by returning a new value. If nothing is returned, the data remains unmodified.</p>
+<blockquote><p>Hexo passes data to filters in sequence and the filters then modify
+the data one after the other.</p>
+<p>The first argument passed into each filter is <code>data</code>. The
+<code>data</code> passed into the next filter can be modified by
+returning a new value. If nothing is returned, the data remains
+unmodified.</p>
 </blockquote>
-<p>读读文档发现众多filter中，有一个叫做 <a target="_blank" rel="noopener" href="https://hexo.io/api/filter#post-permalink"># post-permalink</a>，是用来决定博客的永久链接的： <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>filter<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'post_permalink'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">data</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>  
+<p>读读文档发现众多filter中，有一个叫做 <a
+target="_blank" rel="noopener" href="https://hexo.io/api/filter#post-permalink">#
+post-permalink</a>，是用来决定博客的永久链接的： <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>filter<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'post_permalink'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">data</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>  
  <span class="token comment">// ...  </span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <p>文档中有一点解释的不太清楚，就是不同的filter的输入参数是不同的，而对于不同filter的输入参数并没有详细的解释，可能需要看一下源码才能比较清楚。针对这个函数，<code>data</code>就是永久链接string本身，如：<code>2021/03/21/migrateopsmanager.en/</code>。</p>
-<p>扩展Hexo有两种方式，要么在根目录直接建一个<code>scripts/</code>文件夹，直接放js文件；要么写plugin。后者实现起来更麻烦一些，我们这里就采用比较简单的方式，在博客目录建<code>scripts/</code>文件夹，并实现一个<code>refinepermalink.js</code>: <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">var</span> new_format_date <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token string">'2021-05-01'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<p>扩展Hexo有两种方式，要么在根目录直接建一个<code>scripts/</code>文件夹，直接放js文件；要么写plugin。后者实现起来更麻烦一些，我们这里就采用比较简单的方式，在博客目录建<code>scripts/</code>文件夹，并实现一个<code>refinepermalink.js</code>:
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">var</span> new_format_date <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token string">'2021-05-01'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>filter<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'post_permalink'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">original_link</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
     <span class="token keyword">var</span> pivot <span class="token operator">=</span> original_link<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">lastIndexOf</span><span class="token punctuation">(</span><span class="token string">"/"</span><span class="token punctuation">)</span>
@@ -316,7 +330,8 @@ hexo<span class="token punctuation">.</span>extend<span class="token punctuation
     <span class="token punctuation">&#125;</span>
     <span class="token keyword">return</span> result<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>代码非常简单，不再解释。实现后执行<code>hexo g</code>即可看到效果： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo g
+<p>代码非常简单，不再解释。实现后执行<code>hexo g</code>即可看到效果：
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo g
 INFO  Start processing
   2021-06-14T16:00:00.000Z ### Change permalink: 2021&#x2F;06&#x2F;15&#x2F;changepermalinkformat&#x2F; --&gt; changepermalinkformat&#x2F;
   2021-05-01T16:00:00.000Z ### Change permalink: 2021&#x2F;05&#x2F;02&#x2F;sqlservercleanupqueries&#x2F; --&gt; sqlservercleanupqueries&#x2F;
@@ -324,7 +339,13 @@ INFO  Start processing
 INFO  Files loaded in 1.99 s
 ...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="references">References</h1>
-<p><a target="_blank" rel="noopener" href="https://blog.hvnobug.com/post/hexo-script#%E4%BB%80%E4%B9%88%E6%98%AFscripts"># 玩转Hexo的Scripts</a> <a target="_blank" rel="noopener" href="https://dustinpfister.github.io/2018/01/03/hexo-plugins/"># Getting started with Hexo Plug-ins, and scripts</a> <a target="_blank" rel="noopener" href="https://improve.dk/redirecting-old-permalinks-on-statically-generated-blogs/"># Redirecting Old Permalinks on Statically Generated Blogs</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.hvnobug.com/post/hexo-script#%E4%BB%80%E4%B9%88%E6%98%AFscripts">#
+玩转Hexo的Scripts</a> <a
+target="_blank" rel="noopener" href="https://dustinpfister.github.io/2018/01/03/hexo-plugins/">#
+Getting started with Hexo Plug-ins, and scripts</a> <a
+target="_blank" rel="noopener" href="https://improve.dk/redirecting-old-permalinks-on-statically-generated-blogs/">#
+Redirecting Old Permalinks on Statically Generated Blogs</a></p>
 
     </div>
 

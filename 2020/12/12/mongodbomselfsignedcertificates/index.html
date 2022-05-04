@@ -30,9 +30,8 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。 整个系列：  安装MongoDB Ops Manager 创建用户数据库(replicaset) 用户数据库服务配置公网访问 openssl生成自签名CA证书和server证书 打开用户数据库TLS通信加密和Auth授权  自签名证书不推荐在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
 <meta property="article:published_time" content="2020-12-12T15:30:39.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -40,7 +39,6 @@
 <meta property="article:tag" content="TLS">
 <meta property="article:tag" content="openssl">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
 
 
 <link rel="canonical" href="https://finisky.github.io/2020/12/12/mongodbomselfsignedcertificates/">
@@ -136,7 +134,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">实例设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%87%AA%E7%AD%BE%E5%90%8Dca%E8%AF%81%E4%B9%A6"><span class="nav-number">2.</span> <span class="nav-text">生成自签名CA证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90ca-key"><span class="nav-number">2.1.</span> <span class="nav-text">生成CA key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AErootca.cnf"><span class="nav-number">2.2.</span> <span class="nav-text">配置rootca.cnf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90ca%E8%AF%81%E4%B9%A6"><span class="nav-number">2.3.</span> <span class="nav-text">生成CA证书</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90ia%E8%AF%81%E4%B9%A6intermediate-certificate"><span class="nav-number">3.</span> <span class="nav-text">生成IA证书Intermediate Certificate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90server%E8%AF%81%E4%B9%A6"><span class="nav-number">4.</span> <span class="nav-text">生成Server证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEuserdb0.cnf"><span class="nav-number">4.1.</span> <span class="nav-text">配置userdb0.cnf</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E8%AF%81%E4%B9%A6"><span class="nav-number">5.</span> <span class="nav-text">验证证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81server%E8%AF%81%E4%B9%A6"><span class="nav-number">5.1.</span> <span class="nav-text">验证Server证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bserver%E8%AF%81%E4%B9%A6%E7%9A%84altnames"><span class="nav-number">5.2.</span> <span class="nav-text">查看server证书的altnames</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">实例设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%87%AA%E7%AD%BE%E5%90%8Dca%E8%AF%81%E4%B9%A6"><span class="nav-number">2.</span> <span class="nav-text">生成自签名CA证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90ca-key"><span class="nav-number">2.1.</span> <span class="nav-text">生成CA key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AErootca.cnf"><span class="nav-number">2.2.</span> <span class="nav-text">配置rootca.cnf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90ca%E8%AF%81%E4%B9%A6"><span class="nav-number">2.3.</span> <span class="nav-text">生成CA证书</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90ia%E8%AF%81%E4%B9%A6intermediate-certificate"><span class="nav-number">3.</span> <span class="nav-text">生成IA证书Intermediate
+Certificate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90server%E8%AF%81%E4%B9%A6"><span class="nav-number">4.</span> <span class="nav-text">生成Server证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEuserdb0.cnf"><span class="nav-number">4.1.</span> <span class="nav-text">配置userdb0.cnf</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E8%AF%81%E4%B9%A6"><span class="nav-number">5.</span> <span class="nav-text">验证证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81server%E8%AF%81%E4%B9%A6"><span class="nav-number">5.1.</span> <span class="nav-text">验证Server证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bserver%E8%AF%81%E4%B9%A6%E7%9A%84altnames"><span class="nav-number">5.2.</span> <span class="nav-text">查看server证书的altnames</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -153,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -236,7 +235,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,23 +281,34 @@
         <p>本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。</p>
 <p>整个系列：</p>
 <ol type="1">
-<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops Manager</a></li>
-<li><a href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
-<li><a href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
-<li><a href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
-<li><a href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
+<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops
+Manager</a></li>
+<li><a
+href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
+<li><a
+href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
+<li><a
+href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
+<li><a
+href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
 </ol>
-<p>自签名证书<strong>不推荐</strong>在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。<strong>Public Key Infrastructure</strong> (PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。</p>
+<p>自签名证书<strong>不推荐</strong>在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。<strong>Public
+Key Infrastructure</strong>
+(PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。</p>
 <span id="more"></span>
 <h1 id="实例设置">实例设置</h1>
-<p>首先回顾一下已有的userdb servers: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png" alt="UserDB Servers" /></p>
-<p>构成userdb ReplicaSet有三个server, 在kubernetes中的内部通信使用<code>私网域名</code>：</p>
+<p>首先回顾一下已有的userdb servers: <img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png"
+alt="UserDB Servers" /></p>
+<p>构成userdb ReplicaSet有三个server,
+在kubernetes中的内部通信使用<code>私网域名</code>：</p>
 <ul>
 <li>userdb-0.userdb-svc.mongodb.svc.cluster.local</li>
 <li>userdb-1.userdb-svc.mongodb.svc.cluster.local</li>
 <li>userdb-2.userdb-svc.mongodb.svc.cluster.local</li>
 </ul>
-<p>在 <a href="/2020/12/12/mongodbomexposeservices/">第三部分</a> 也已配置了公网IP。现在我们已经可以从公网通过IP访问到这三个server，但更常见的情况是我们为这三个IP绑定了域名，这里假设三个<code>公网域名</code>：</p>
+<p>在 <a href="/2020/12/12/mongodbomexposeservices/">第三部分</a>
+也已配置了公网IP。现在我们已经可以从公网通过IP访问到这三个server，但更常见的情况是我们为这三个IP绑定了域名，这里假设三个<code>公网域名</code>：</p>
 <ul>
 <li>userdb0.com</li>
 <li>userdb1.com</li>
@@ -306,13 +316,16 @@
 </ul>
 <p>于是我们在kubernetes集群内部可以用<code>xxx.svc.cluster.local</code>地址访问server，在集群外部可以用<code>userdb&lt;X&gt;.com</code>访问server。</p>
 <p>注意MongoDB的server与server之间是需要通信的，用于数据同步、Primary节点选择等，而打开TLS之后，server与server之间也需要互相通过证书验证，因此每个server的证书需要<strong>同时包含公网域名和私网域名</strong>。</p>
-<p>server和server之间如何相信对方是合法的证书呢？那就需要大家都相信同一个root certificate authority (CA)签名的证书。所以一共需要4个证书：</p>
+<p>server和server之间如何相信对方是合法的证书呢？那就需要大家都相信同一个root
+certificate authority (CA)签名的证书。所以一共需要4个证书：</p>
 <ul>
 <li><code>rootca.crt</code></li>
 <li><code>userdb&lt;X&gt;.pem</code>，X=0,1,2</li>
 </ul>
 <h1 id="生成自签名ca证书">生成自签名CA证书</h1>
-<p>参考官方文档： <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/appendix/security/appendixA-openssl-ca/"># Appendix A - OpenSSL CA Certificate for Testing</a></p>
+<p>参考官方文档： <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/appendix/security/appendixA-openssl-ca/">#
+Appendix A - OpenSSL CA Certificate for Testing</a></p>
 <h2 id="生成ca-key">生成CA key</h2>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out rootca.key 4096
 Generating RSA private key, 4096 bit long modulus (2 primes)
@@ -321,7 +334,8 @@ Generating RSA private key, 4096 bit long modulus (2 primes)
 e is 65537 (0x010001)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><code>rootca.key</code>是私钥，妥善保管。</p>
 <h2 id="配置rootca.cnf">配置rootca.cnf</h2>
-<p>这个文件很重要，用来生成CA证书的配置文件，不用改动，可在下一步openssl生成证书时修改其中State/Organization等信息。 <pre class="line-numbers language-none"><code class="language-none"># For the CA policy
+<p>这个文件很重要，用来生成CA证书的配置文件，不用改动，可在下一步openssl生成证书时修改其中State/Organization等信息。
+<pre class="line-numbers language-none"><code class="language-none"># For the CA policy
 [ policy_match ]
 countryName &#x3D; match
 stateOrProvinceName &#x3D; match
@@ -393,13 +407,22 @@ Organization Name (eg, company) [TestComp]:
 Organizational Unit Name (eg, section) [TestComp]:
 Common Name (eg, YOUR name) []:<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>执行完此命令，会生成一个有效期为100年（不推荐这么长时间）的rootca证书<code>rootca.crt</code>。</p>
-<h1 id="生成ia证书intermediate-certificate">生成IA证书Intermediate Certificate</h1>
-<p>自签名证书不要用这个，增加不必要的麻烦。 <a target="_blank" rel="noopener" href="https://www.thesslstore.com/blog/root-certificates-intermediate/"># The Difference Between Root Certificates and Intermediate Certificates</a></p>
-<p>证书的信任基于证书链，一般而言是： <pre class="line-numbers language-none"><code class="language-none">CA -&gt; IA -&gt; Server Certificate<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 但对于本文这种规模的cluster这么几台机器，IA是没有必要的，直接用rootca为server certificate签名即可： <pre class="line-numbers language-none"><code class="language-none">CA -&gt; Server Certificate<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h1 id="生成ia证书intermediate-certificate">生成IA证书Intermediate
+Certificate</h1>
+<p>自签名证书不要用这个，增加不必要的麻烦。 <a
+target="_blank" rel="noopener" href="https://www.thesslstore.com/blog/root-certificates-intermediate/">#
+The Difference Between Root Certificates and Intermediate
+Certificates</a></p>
+<p>证书的信任基于证书链，一般而言是： <pre class="line-numbers language-none"><code class="language-none">CA -&gt; IA -&gt; Server Certificate<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+但对于本文这种规模的cluster这么几台机器，IA是没有必要的，直接用rootca为server
+certificate签名即可： <pre class="line-numbers language-none"><code class="language-none">CA -&gt; Server Certificate<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <h1 id="生成server证书">生成Server证书</h1>
-<p>参考官方文档： <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/appendix/security/appendixB-openssl-server/"># Appendix B - OpenSSL Server Certificates for Testing</a></p>
+<p>参考官方文档： <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/appendix/security/appendixB-openssl-server/">#
+Appendix B - OpenSSL Server Certificates for Testing</a></p>
 <h2 id="配置userdb0.cnf">配置userdb0.cnf</h2>
-<p>这个文件最重要的部分就是<code>[ alt_names ]</code>，如前所述，里面的DNS要同时写入公网和私网域名： <pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
+<p>这个文件最重要的部分就是<code>[ alt_names ]</code>，如前所述，里面的DNS要同时写入公网和私网域名：
+<pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
 DNS.1 &#x3D; userdb0.com
 DNS.2 &#x3D; userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre> 如有必要，也可以加入固定IP。</p>
 <p>userdb0.cnf: <pre class="line-numbers language-none"><code class="language-none">[ req ]
@@ -446,7 +469,8 @@ organizationalUnitName_default &#x3D; TestComp
 organizationalUnitName_max &#x3D; 64
 
 commonName &#x3D; Common Name (eg, YOUR name)
-commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ## 生成server私钥和证书 以userdb0为例： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out userdb0.key 4096
+commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ## 生成server私钥和证书 以userdb0为例：
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out userdb0.key 4096
 $ openssl req -new -key userdb0.key -out userdb0.csr -config userdb0.cnf
 $ openssl x509 -sha256 -req -days 3650 -in userdb0.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out userdb0.crt -extfile userdb0.cnf -extensions v3_req
 $ cat userdb0.crt userdb0.key &gt; userdb0.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
@@ -476,10 +500,13 @@ Signature ok
 subject&#x3D;C &#x3D; CN, ST &#x3D; Beijing, L &#x3D; Beijing, O &#x3D; TestComp, OU &#x3D; TestComp
 Getting CA Private Key
 
-$ cat userdb0.crt userdb0.key &gt; userdb0.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 替换以上四个命令的userdb0为userdb1和userdb2，重复以上步骤，生成三个不同的server证书userdb0.pem, userdb1.pem和userdb2.pem。</p>
+$ cat userdb0.crt userdb0.key &gt; userdb0.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+替换以上四个命令的userdb0为userdb1和userdb2，重复以上步骤，生成三个不同的server证书userdb0.pem,
+userdb1.pem和userdb2.pem。</p>
 <h1 id="验证证书">验证证书</h1>
 <h2 id="验证server证书">验证Server证书</h2>
-<p>下面命令可以用来验证生成的server证书是有效的，指定CA文件为rootca.crt <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl verify -CAfile rootca.crt userdb0.pem
+<p>下面命令可以用来验证生成的server证书是有效的，指定CA文件为rootca.crt
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl verify -CAfile rootca.crt userdb0.pem
 userdb0.pem: OK<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> 当然也可以验证CA本身： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">openssl verify -CAfile rootca.crt rootca.crt
 rootca.crt: OK<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h2 id="查看server证书的altnames">查看server证书的altnames</h2>
@@ -489,7 +516,8 @@ rootca.crt: OK<span aria-hidden="true" class="line-numbers-rows"><span></span><s
                 DNS:userdb0.com, DNS:userdb-0.userdb-svc.mongodb.svc.cluster.local, IP Address:xxx.xxx.xxx.xxx
 ...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>至此，我们已经生成了一个根证书root.crt和三个server证书<code>userdb&lt;X&gt;.pem</code>。</p>
-<p>可以开始最后的操作：<a href="/2020/12/12/mongodbomtlsauth/">Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a>。</p>
+<p>可以开始最后的操作：<a
+href="/2020/12/12/mongodbomtlsauth/">Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a>。</p>
 
     </div>
 

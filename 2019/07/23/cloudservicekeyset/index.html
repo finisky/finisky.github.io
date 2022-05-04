@@ -31,7 +31,7 @@
 <meta property="og:description" content="Deploy Azure cloudservice failed, and Microsoft Azure Activity Log shows the following message： 15:45:39 - Checking for Remote Desktop certificate...   15:45:40 - Applying Diagnostics extension.   15:">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-07-23T10:05:43.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta name="twitter:card" content="summary">
 
@@ -145,7 +145,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -228,7 +228,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -271,19 +271,26 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Deploy Azure cloudservice failed, and Microsoft Azure Activity Log shows the following message： <pre class="line-numbers language-none"><code class="language-none">15:45:39 - Checking for Remote Desktop certificate...  
+        <p>Deploy Azure cloudservice failed, and Microsoft Azure Activity Log
+shows the following message： <pre class="line-numbers language-none"><code class="language-none">15:45:39 - Checking for Remote Desktop certificate...  
 15:45:40 - Applying Diagnostics extension.  
 15:46:03 - Applying remote desktop protocol (RDP) extension.  
 15:46:03 - Keyset does not exist.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <span id="more"></span>
-<p>It seems that the problem is caused by the certificate which is used to encrypt the user credentials of RDP.</p>
-<p>First, I found the corresponding certificate in ServiceConfiguration.Cloud.cscfg (hiding the thumbprint): <pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Certificate</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption<span class="token punctuation">"</span></span> <span class="token attr-name">thumbprint</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>XXXXX<span class="token punctuation">"</span></span> <span class="token attr-name">thumbprintAlgorithm</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>sha1<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>If the certificate is not installed, the error message should be: <pre class="line-numbers language-none"><code class="language-none">16:59:15 - Applying Diagnostics extension.
+<p>It seems that the problem is caused by the certificate which is used
+to encrypt the user credentials of RDP.</p>
+<p>First, I found the corresponding certificate in
+ServiceConfiguration.Cloud.cscfg (hiding the thumbprint):
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Certificate</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption<span class="token punctuation">"</span></span> <span class="token attr-name">thumbprint</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>XXXXX<span class="token punctuation">"</span></span> <span class="token attr-name">thumbprintAlgorithm</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>sha1<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>If the certificate is not installed, the error message should be:
+<pre class="line-numbers language-none"><code class="language-none">16:59:15 - Applying Diagnostics extension.
 16:59:40 - Applying remote desktop protocol (RDP) extension.
 16:59:40 - Certificate with thumbprint XXXX doesn&#39;t exist.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
-<p>However, I checked the certificate by certmgr.msc and found it in personalfolder.</p>
+<p>However, I checked the certificate by certmgr.msc and found it in
+personalfolder.</p>
 <p>Looks weird.</p>
-<p>Just have a try, delete it, re-import the certificate, and redeploy the cloudservice, it works!</p>
+<p>Just have a try, delete it, re-import the certificate, and redeploy
+the cloudservice, it works!</p>
 
     </div>
 

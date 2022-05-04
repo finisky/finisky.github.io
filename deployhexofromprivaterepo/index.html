@@ -30,13 +30,11 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="之前我们谈到如何 从私有代码库自动部署Hugo站到GitHub Pages 。以为将之前的workflow yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub Action容易不少。 花了好多时间并且尝试不了下20次，才将Hexo的action">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
 <meta property="article:published_time" content="2022-05-02T08:29:28.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==">
 
 
 <link rel="canonical" href="https://finisky.github.io/deployhexofromprivaterepo/">
@@ -132,7 +130,9 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E7%A7%81%E6%9C%89%E5%BA%93%E4%B8%AD%E5%88%9B%E5%BB%BAaction-workflow-yaml"><span class="nav-number">1.</span> <span class="nav-text">在私有库中创建Action Workflow Yaml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98submodule"><span class="nav-number">2.</span> <span class="nav-text">配置主题Submodule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BApersonal-access-token"><span class="nav-number">3.</span> <span class="nav-text">创建Personal Access Token</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E7%A7%81%E6%9C%89%E5%BA%93%E4%B8%AD%E8%AE%BE%E7%BD%AEsecret"><span class="nav-number">4.</span> <span class="nav-text">在私有库中设置Secret</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdeploy-key"><span class="nav-number">5.</span> <span class="nav-text">创建Deploy Key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pandoc%E5%8F%AF%E9%80%89"><span class="nav-number">6.</span> <span class="nav-text">安装Pandoc(可选)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#github-actions%E4%B8%AD%E6%8B%89%E5%8F%96submodule"><span class="nav-number">7.</span> <span class="nav-text">GitHub Actions中拉取Submodule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo%E7%BD%91%E7%AB%99%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%8F%91%E5%B8%83%E6%96%B9%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">Hexo网站的两种发布方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E7%A7%81%E6%9C%89%E5%BA%93%E4%B8%AD%E5%88%9B%E5%BB%BAaction-workflow-yaml"><span class="nav-number">1.</span> <span class="nav-text">在私有库中创建Action
+Workflow Yaml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98submodule"><span class="nav-number">2.</span> <span class="nav-text">配置主题Submodule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BApersonal-access-token"><span class="nav-number">3.</span> <span class="nav-text">创建Personal Access Token</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E7%A7%81%E6%9C%89%E5%BA%93%E4%B8%AD%E8%AE%BE%E7%BD%AEsecret"><span class="nav-number">4.</span> <span class="nav-text">在私有库中设置Secret</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdeploy-key"><span class="nav-number">5.</span> <span class="nav-text">创建Deploy Key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pandoc%E5%8F%AF%E9%80%89"><span class="nav-number">6.</span> <span class="nav-text">安装Pandoc(可选)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#github-actions%E4%B8%AD%E6%8B%89%E5%8F%96submodule"><span class="nav-number">7.</span> <span class="nav-text">GitHub
+Actions中拉取Submodule</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo%E7%BD%91%E7%AB%99%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%8F%91%E5%B8%83%E6%96%B9%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">Hexo网站的两种发布方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,8 +275,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>之前我们谈到如何 <a href="https://finisky.github.io/deployhugofromprivaterepo/">从私有代码库自动部署Hugo站到GitHub Pages</a> 。以为将之前的workflow yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub Action容易不少。</p>
-<p>花了好多时间并且尝试不了下20次，才将Hexo的action workflow最终调通 :-) ，记录下踩过的坑和解决文案。</p>
+        <p>之前我们谈到如何 <a
+href="https://finisky.github.io/deployhugofromprivaterepo/">从私有代码库自动部署Hugo站到GitHub
+Pages</a> 。以为将之前的workflow
+yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub
+Action容易不少。</p>
+<p>花了好多时间并且尝试不了下20次，才将Hexo的action workflow最终调通 :-)
+，记录下踩过的坑和解决文案。</p>
 <p>与Hugo的workflow相比，需要解决如下几个问题：</p>
 <ul>
 <li>主题目录的submodule配置</li>
@@ -291,9 +296,12 @@
 <li>主题库（private）: 存放被修改过的主题的源码</li>
 <li>目标库（public）: GitHub Pages (xxx.github.io)</li>
 </ul>
-<p>需要做的是在目标库创建一个Personal Access Token (PAT)，并将其配置在私有库的secret中，再创建一个工作流的yaml，大功告成。</p>
-<h1 id="在私有库中创建action-workflow-yaml">在私有库中创建Action Workflow Yaml</h1>
-<p>为方便理解，在这个tutorial里使用自上而下的组织方式。先来看看最终的workflow yaml，然后后面小节用来填空和解决问题：</p>
+<p>需要做的是在目标库创建一个Personal Access Token
+(PAT)，并将其配置在私有库的secret中，再创建一个工作流的yaml，大功告成。</p>
+<h1 id="在私有库中创建action-workflow-yaml">在私有库中创建Action
+Workflow Yaml</h1>
+<p>为方便理解，在这个tutorial里使用自上而下的组织方式。先来看看最终的workflow
+yaml，然后后面小节用来填空和解决问题：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo Build &amp; Deploy <span class="token punctuation">-</span> Private to Public
 
 <span class="token key atrule">on</span><span class="token punctuation">:</span>
@@ -305,7 +313,6 @@
     <span class="token key atrule">runs-on</span><span class="token punctuation">:</span> ubuntu<span class="token punctuation">-</span>latest
 
     <span class="token key atrule">steps</span><span class="token punctuation">:</span>
-    <span class="token comment"># Checkout</span>
     <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Checkout
       <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v3.0.0
       <span class="token key atrule">with</span><span class="token punctuation">:</span>
@@ -313,20 +320,17 @@
         <span class="token key atrule">submodules</span><span class="token punctuation">:</span> <span class="token string">'true'</span>
         <span class="token key atrule">persist-credentials</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
 
-    <span class="token comment"># Setup Node Env</span>
     <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Prepare Node env
       <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/setup<span class="token punctuation">-</span>node@v3
       <span class="token key atrule">with</span><span class="token punctuation">:</span>
         <span class="token key atrule">node-version</span><span class="token punctuation">:</span> <span class="token number">16</span>
 
-    <span class="token comment"># Install pandoc for mathjax (Optional)</span>
     <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Install pandoc
       <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
         cd /tmp
         wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
         sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span>
 
-    <span class="token comment"># Setup and Run Hexo to build the Static Site</span>
     <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
       <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
         pandoc --version
@@ -334,7 +338,6 @@
         npm i
         hexo clean &amp;&amp; hexo g</span>
 
-    <span class="token comment"># Deploy the Static Site to Public Repo (GitHub Pages)</span>
     <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
       <span class="token key atrule">uses</span><span class="token punctuation">:</span> JamesIves/github<span class="token punctuation">-</span>pages<span class="token punctuation">-</span>deploy<span class="token punctuation">-</span>action@v4.3.3
       <span class="token key atrule">with</span><span class="token punctuation">:</span>
@@ -343,65 +346,115 @@
         <span class="token key atrule">branch</span><span class="token punctuation">:</span> master <span class="token comment"># The branch the action should deploy to.</span>
         <span class="token key atrule">folder</span><span class="token punctuation">:</span> public <span class="token comment"># The folder the action should deploy.</span>
         <span class="token key atrule">single-commit</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-        <span class="token key atrule">commit-message</span><span class="token punctuation">:</span> <span class="token string">"Deploy by source"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+        <span class="token key atrule">commit-message</span><span class="token punctuation">:</span> <span class="token string">"Deploy by source"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>此workflow yaml包括如下几个部分：</p>
 <ul>
 <li>Checkout: 拉取源码及主题submodule的源码</li>
 <li>Setup Node Env: 安装配置node环境</li>
-<li>Install pandoc for mathjax (可选): 使用pandoc和mathjax渲染公式的话，需要此部分</li>
+<li>Install pandoc for mathjax (可选):
+使用pandoc和mathjax渲染公式的话，需要此部分</li>
 <li>Setup and Run Hexo: 安装hexo-cli并且构建网站</li>
-<li>Deploy: 用 <a target="_blank" rel="noopener" href="https://github.com/JamesIves/github-pages-deploy-action"># GitHub Pages Deploy Action</a> 将网站发布到目标库</li>
+<li>Deploy: 用 <a
+target="_blank" rel="noopener" href="https://github.com/JamesIves/github-pages-deploy-action"># GitHub
+Pages Deploy Action</a> 将网站发布到目标库</li>
 </ul>
-<p>此workflow是基于 <a target="_blank" rel="noopener" href="https://blog.euc-rt.me/post/github-actions-publish-private-hugo-repo-to-public-pages-site/"># Using GitHub Actions to Publish Hugo Site From Private to Public Repo</a> 。在私有库如下路径创建 <code>.github/workflows/main.yml</code></p>
+<p>此workflow是基于 <a
+target="_blank" rel="noopener" href="https://blog.euc-rt.me/post/github-actions-publish-private-hugo-repo-to-public-pages-site/">#
+Using GitHub Actions to Publish Hugo Site From Private to Public
+Repo</a> 。在私有库如下路径创建
+<code>.github/workflows/main.yml</code></p>
 <p>下面要做的几件事：</p>
 <ul>
 <li>配置主题Submodule</li>
 </ul>
 <p>给上面的yaml填空：</p>
 <ul>
-<li><code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code>: 创建PAT <code>MYPAT</code></li>
-<li><code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code>: 创建 <code>DEPLOY_KEY</code> 从私有库发布到目标库</li>
-<li><code>repository-name: xxx/xxx.github.io</code>: 目标库的地址，即GitHub Page库的地址</li>
+<li><code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code>: 创建PAT
+<code>MYPAT</code></li>
+<li><code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code>: 创建
+<code>DEPLOY_KEY</code> 从私有库发布到目标库</li>
+<li><code>repository-name: xxx/xxx.github.io</code>:
+目标库的地址，即GitHub Page库的地址</li>
 </ul>
 <h1 id="配置主题submodule">配置主题Submodule</h1>
-<p>官方推荐的Hexo主题管理方法是用git submodule，同时将配置尽量写在主库中。具体要选用什么方案，有几个要考虑的因素：</p>
+<p>官方推荐的Hexo主题管理方法是用git
+submodule，同时将配置尽量写在主库中。具体要选用什么方案，有几个要考虑的因素：</p>
 <ul>
 <li>主题的配置文件需要保存，修改过的主题文件也需要保存</li>
-<li>主题的更新是个大坑，NexT主题更新频繁，且有很多breaking change，merge和解决冲突挺麻烦</li>
+<li>主题的更新是个大坑，NexT主题更新频繁，且有很多breaking
+change，merge和解决冲突挺麻烦</li>
 </ul>
 <p>最简单的方式就是直接不用submodule，将主题目录的<code>.git</code>删除，并把整个文件夹也checkin到主库中。但问题在于将来的更新很难处理。</p>
-<p>我们最终选择将<code>theme/next</code> fork到自己的github账户中，创建另一个私有主题库<code>mythemenext</code>。同时用两个分支来解决主题的升级问题：<code>master</code> 分支与官方库保持一致，可以fast-forward。<code>v8.5</code>分支存放修改之后的主题文件与配置。如需更新，则在<code>v8.5</code>分支<code>merge</code>或<code>rebase master</code> 。</p>
+<p>我们最终选择将<code>theme/next</code>
+fork到自己的github账户中，创建另一个私有主题库<code>mythemenext</code>。同时用两个分支来解决主题的升级问题：<code>master</code>
+分支与官方库保持一致，可以fast-forward。<code>v8.5</code>分支存放修改之后的主题文件与配置。如需更新，则在<code>v8.5</code>分支<code>merge</code>或<code>rebase master</code>
+。</p>
 <p>增加submodule的命令长这样，它的意思是创建一个submodule并且track它的<code>master</code>分支。这个被track的分支可以按需修改。</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">git submodule add -b master &lt;git@github.com:MYSUBMODULE.git&gt; &lt;path&#x2F;to&#x2F;MYSUBMODULE&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>我们可以在私有库创建主题库了：</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">git remote add mythemenext git@github.com:finisky&#x2F;mythemenext
 git submodule add -b v8.5 https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;mythemenext themes&#x2F;next&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>如果遇到这个错误: <code>'themes/next' already exists in the index</code> . 在 <code>git submodule add</code> 命令中加入 <code>--force</code> 选项即可.</p>
+<p>如果遇到这个错误:
+<code>'themes/next' already exists in the index</code> . 在
+<code>git submodule add</code> 命令中加入 <code>--force</code>
+选项即可.</p>
 <p>本节参考了文章:</p>
-<p><a target="_blank" rel="noopener" href="https://blog.singee.me/2020/02/15/deploy-hexo-with-github-action/">利用 Github Action 部署 Hexo</a> <a target="_blank" rel="noopener" href="https://achillessatan.github.io/posts/54991/">How to Setup Blog with Hexo and NexT on GitHub Pages</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.singee.me/2020/02/15/deploy-hexo-with-github-action/">利用
+Github Action 部署 Hexo</a> <a
+target="_blank" rel="noopener" href="https://achillessatan.github.io/posts/54991/">How to Setup Blog
+with Hexo and NexT on GitHub Pages</a></p>
 <h1 id="创建personal-access-token">创建Personal Access Token</h1>
 <blockquote>
-<p>Personal access tokens (PATs) are an alternative to using passwords for authentication to GitHub Enterprise Server when using the GitHub API or the command line.</p>
+<p>Personal access tokens (PATs) are an alternative to using passwords
+for authentication to GitHub Enterprise Server when using the GitHub API
+or the command line.</p>
 </blockquote>
 <p>创建PAT的主要目的是给私有库访问目标库的权限，可以让私有库的actions推送构建好的代码到目标库中去。</p>
-<p>参照 <a target="_blank" rel="noopener" href="https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">这里</a> 来生成PAT:</p>
+<p>参照 <a
+target="_blank" rel="noopener" href="https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">这里</a>
+来生成PAT:</p>
 <blockquote>
-<p>Profile Photo -&gt; Settings -&gt; Developer settings -&gt; Personal access tokens -&gt; Generate new token</p>
+<p>Profile Photo -&gt; Settings -&gt; Developer settings -&gt; Personal
+access tokens -&gt; Generate new token</p>
 </blockquote>
-<p>记得要勾选下面两个scope: <code>workflow</code> and <code>write:packages</code>.</p>
+<p>记得要勾选下面两个scope: <code>workflow</code> and
+<code>write:packages</code>.</p>
 <p>PAT生成好之后，复制下来，妥善保管留待后用，为方便指代，不妨设它为<code>TOKENXXX</code>。</p>
-<p>注意PAT是一个账户级的token，而且是代开发者使用的，更好的方式是使用deploy key，它是代码库级的token。本文这里只能使用PAT，原因在于我们需要用账户级的token来同时拉取私有库和submodule的代码，后文有详解。</p>
+<p>注意PAT是一个账户级的token，而且是代开发者使用的，更好的方式是使用deploy
+key，它是代码库级的token。本文这里只能使用PAT，原因在于我们需要用账户级的token来同时拉取私有库和submodule的代码，后文有详解。</p>
 <h1 id="在私有库中设置secret">在私有库中设置Secret</h1>
-<p>在私有库中: &gt; Settings -&gt; Secrets -&gt; Actions -&gt; New repository secret</p>
-<p>粘贴刚才生成的PAT <code>TOKENXXX</code> 到value框中，并命名这个secret为<code>MYPAT</code>。</p>
+<p>在私有库中: &gt; Settings -&gt; Secrets -&gt; Actions -&gt; New
+repository secret</p>
+<p>粘贴刚才生成的PAT <code>TOKENXXX</code>
+到value框中，并命名这个secret为<code>MYPAT</code>。</p>
 <h1 id="创建deploy-key">创建Deploy Key</h1>
-<p>这里的Deploy Key用来将生成好的HTML文件从私有库上传到目标库中。而之前的PAT是用于拉取私有库和submodule的代码。实际上，PAT也可以用来完成Deploy Key的功能。</p>
-<p><strong>Tips</strong>: 如果你选择使用PAT进行部署，本节可以<strong>略去</strong>，只要将yaml中 <code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code> 替换为 <code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code> 即可。但<strong>建议</strong>使用Deploy Key。</p>
-<p>参考 <a target="_blank" rel="noopener" href="https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys">这篇</a> 和 <a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key">这篇文章</a> 创建 deploy key:</p>
+<p>这里的Deploy
+Key用来将生成好的HTML文件从私有库上传到目标库中。而之前的PAT是用于拉取私有库和submodule的代码。实际上，PAT也可以用来完成Deploy
+Key的功能。</p>
+<p><strong>Tips</strong>:
+如果你选择使用PAT进行部署，本节可以<strong>略去</strong>，只要将yaml中
+<code>ssh-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</code> 替换为
+<code>token: $&#123;&#123; secrets.MYPAT &#125;&#125;</code>
+即可。但<strong>建议</strong>使用Deploy Key。</p>
+<p>参考 <a
+target="_blank" rel="noopener" href="https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys">这篇</a>
+和 <a
+target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key">这篇文章</a>
+创建 deploy key:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>参考 <a target="_blank" rel="noopener" href="https://cyfeng.science/2020/12/02/use-github-action-to-automatically-deploy-hexo/">这篇</a> 将生成的deploy key添加到私有库:</p>
+<p>参考 <a
+target="_blank" rel="noopener" href="https://cyfeng.science/2020/12/02/use-github-action-to-automatically-deploy-hexo/">这篇</a>
+将生成的deploy key添加到私有库:</p>
 <blockquote>
-<p>Once you've generated the key pair you must add the contents of the public key within your repository's <a target="_blank" rel="noopener" href="https://developer.github.com/v3/guides/managing-deploy-keys/">deploy keys menu</a>. You can find this option by going to <code>Settings &gt; Deploy Keys</code>, you can name the public key whatever you want, but you <strong>do</strong> need to give it write access. Afterwards, add the contents of the private key to the <code>Settings &gt; Secrets</code> menu as <code>DEPLOY_KEY</code>.</p>
+<p>Once you've generated the key pair you must add the contents of the
+public key within your repository's <a
+target="_blank" rel="noopener" href="https://developer.github.com/v3/guides/managing-deploy-keys/">deploy
+keys menu</a>. You can find this option by going to
+<code>Settings &gt; Deploy Keys</code>, you can name the public key
+whatever you want, but you <strong>do</strong> need to give it write
+access. Afterwards, add the contents of the private key to the
+<code>Settings &gt; Secrets</code> menu as <code>DEPLOY_KEY</code>.</p>
 </blockquote>
 <h1 id="安装pandoc可选">安装Pandoc(可选)</h1>
 <p>运行GitHub Actions时可能遇到错误：</p>
@@ -409,35 +462,56 @@ git submodule add -b v8.5 https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;mytheme
 <p>Error: R][hexo-renderer-pandoc] pandoc exited with code null.</p>
 </blockquote>
 <p>如果你用pandoc和mathjax来渲染公式，下面这部分就必不可少；否则，可以略过此步，并删除下面代码及下面那步的<code>pandoc --version</code>：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Install pandoc for mathjax (Optional)</span>
-<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Install pandoc
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Install pandoc
   <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
     cd /tmp
     wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
-    sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>如果遇到如下错误</p>
 <blockquote>
-<p>Error: R][hexo-renderer-pandoc] pandoc exited with code 64: YAML parse exception at line 4, column 0, while scanning a simple key: could not find expected ':'</p>
+<p>Error: R][hexo-renderer-pandoc] pandoc exited with code 64: YAML
+parse exception at line 4, column 0, while scanning a simple key: could
+not find expected ':'</p>
 </blockquote>
-<p>是pandoc的兼容性问题，可以通过修改上面<code>wget</code> pandoc的版本解决，使用与你本地编译的版本一模一样的版本号为妙，pandoc的兼容性问题太坑爹。</p>
+<p>是pandoc的兼容性问题，可以通过修改上面<code>wget</code>
+pandoc的版本解决，使用与你本地编译的版本一模一样的版本号为妙，pandoc的兼容性问题太坑爹。</p>
 <hr />
-<p>使用<code>dpkg</code>来安装pandoc的原因在于官方文档使用docker image的方案 <a target="_blank" rel="noopener" href="https://github.com/pandoc/pandoc-action-example"># Using pandoc with GitHub Actions</a> 不适用于我们的情况:</p>
+<p>使用<code>dpkg</code>来安装pandoc的原因在于官方文档使用docker
+image的方案 <a target="_blank" rel="noopener" href="https://github.com/pandoc/pandoc-action-example">#
+Using pandoc with GitHub Actions</a> 不适用于我们的情况:</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">steps</span><span class="token punctuation">:</span>
   <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> docker<span class="token punctuation">:</span>//pandoc/core<span class="token punctuation">:</span><span class="token number">2.9</span>
     <span class="token key atrule">with</span><span class="token punctuation">:</span>
       <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token string">"--help"</span> <span class="token comment"># gets appended to pandoc command</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在Action的下一步 <code>Setup and Run Hexo to build the Static Site</code> 会使用全局的 <code>pandoc</code> 命令进行页面渲染。因此参考了 <a target="_blank" rel="noopener" href="https://pxxyyz.com/posts/hexo-problem/">Hexo之问题集合</a> 方案，并加以修改，使用<code>wget</code>与<code>dpkg</code>来安装pandoc。</p>
-<h1 id="github-actions中拉取submodule">GitHub Actions中拉取Submodule</h1>
+<p>在Action的下一步
+<code>Setup and Run Hexo to build the Static Site</code> 会使用全局的
+<code>pandoc</code> 命令进行页面渲染。因此参考了 <a
+target="_blank" rel="noopener" href="https://pxxyyz.com/posts/hexo-problem/">Hexo之问题集合</a>
+方案，并加以修改，使用<code>wget</code>与<code>dpkg</code>来安装pandoc。</p>
+<h1 id="github-actions中拉取submodule">GitHub
+Actions中拉取Submodule</h1>
 <p>如果在构建网站时发现如下警告:</p>
 <blockquote>
-<p>WARN No layout: tags/index.html WARN No layout: nlpadapters/index.html WARN No layout: deployhugofromprivaterepo/index.html</p>
+<p>WARN No layout: tags/index.html WARN No layout:
+nlpadapters/index.html WARN No layout:
+deployhugofromprivaterepo/index.html</p>
 </blockquote>
-<p>大概率是主题库submodule没有拉取成功。默认的checkout是不拉取submodule的，需要在checkout部分添加 <code>submodules: 'true'</code> 。</p>
-<p>尝试使用 <a target="_blank" rel="noopener" href="https://samuelsson.dev/access-private-submodules-in-github-actions/"># Access private submodules in GitHub Actions</a> 的方案来拉取submodule代码。但后来发现有另一个错误：</p>
+<p>大概率是主题库submodule没有拉取成功。默认的checkout是不拉取submodule的，需要在checkout部分添加
+<code>submodules: 'true'</code> 。</p>
+<p>尝试使用 <a
+target="_blank" rel="noopener" href="https://samuelsson.dev/access-private-submodules-in-github-actions/">#
+Access private submodules in GitHub Actions</a>
+的方案来拉取submodule代码。但后来发现有另一个错误：</p>
 <blockquote>
-<p>Run actions/checkout@v2.3.4 Syncing repository: finisky/finiskyblogsource ... Fetching the repository Removing auth Error: The process '/usr/bin/git' failed with exit code 128</p>
+<p>Run actions/checkout@v2.3.4 Syncing repository:
+finisky/finiskyblogsource ... Fetching the repository Removing auth
+Error: The process '/usr/bin/git' failed with exit code 128</p>
 </blockquote>
-<p>看起来是主库的代码 <code>finisky/finiskyblogsource</code> 都拉不下来了。因为 <code>actions/checkout</code> 需要使用同一个 deploy key 来拉取主库和submodule的代码。也尝试在主库添加一样的deploy key，但github提示这个key已被使用，看起来它不允许在同一个账户中使用同一个deploy key读写不同的repo。</p>
+<p>看起来是主库的代码 <code>finisky/finiskyblogsource</code>
+都拉不下来了。因为 <code>actions/checkout</code> 需要使用同一个 deploy
+key 来拉取主库和submodule的代码。也尝试在主库添加一样的deploy
+key，但github提示这个key已被使用，看起来它不允许在同一个账户中使用同一个deploy
+key读写不同的repo。</p>
 <p>所以，我们要使用账户级的PAT来同时拉取私有库和主题库的代码，将<code>Checkout</code>部分的代码稍加修改：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Checkout</span>
 <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Checkout
@@ -448,28 +522,31 @@ git submodule add -b v8.5 https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;mytheme
     <span class="token key atrule">persist-credentials</span><span class="token punctuation">:</span> <span class="token boolean important">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="hexo网站的两种发布方式">Hexo网站的两种发布方式</h1>
 <p>看下这两步：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Setup and Run Hexo to build the Static Site</span>
-<span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
   <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
     pandoc --version
     npm i -g hexo-cli
     npm i
     hexo clean &amp;&amp; hexo g</span>
 
-<span class="token comment"># Deploy the Static Site to Public Repo (GitHub Pages)</span>
 <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
   <span class="token key atrule">uses</span><span class="token punctuation">:</span> JamesIves/github<span class="token punctuation">-</span>pages<span class="token punctuation">-</span>deploy<span class="token punctuation">-</span>action@v4.3.3
-  <span class="token punctuation">...</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+  <span class="token punctuation">...</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>显然，我们有两种方式可以发布Hexo站：</p>
 <ul>
 <li>在<code>Setup and Run Hexo to build the Static Site</code>中使用<code>hexo deploy</code></li>
 <li>用<code>github-pages-deploy-action</code></li>
 </ul>
-<p>我们选用了后者来让这个脚本与Hugo的部署脚本保持一致。所以在 <code>Hexo</code> 步骤中，只使用了 <code>hexo clean &amp;&amp; hexo generate</code>。</p>
+<p>我们选用了后者来让这个脚本与Hugo的部署脚本保持一致。所以在
+<code>Hexo</code> 步骤中，只使用了
+<code>hexo clean &amp;&amp; hexo generate</code>。</p>
 <h1 id="总结">总结</h1>
 <p>恭喜你！</p>
-<p>将此yaml checkin，然后，就可以实现向私有库push完之后触发自动构建及部署了：</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/hexodeployaction.png" alt="Hexo Deployment Action" /></p>
+<p>将此yaml
+checkin，然后，就可以实现向私有库push完之后触发自动构建及部署了：</p>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/hexodeployaction.png"
+alt="Hexo Deployment Action" /></p>
 
     </div>
 
@@ -511,6 +588,9 @@ git submodule add -b v8.5 https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;mytheme
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/pandoccode64bug.en/" rel="next" title="'pandoc exited with code 64' Solution">
+                  'pandoc exited with code 64' Solution <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

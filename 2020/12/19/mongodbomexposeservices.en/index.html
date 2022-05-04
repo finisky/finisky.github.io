@@ -31,7 +31,7 @@
 <meta property="og:description" content="This is part3, we will expose the user database pods to the public so that Mongo client is able to access it. MongoDB Ops Manager Series:  Install MongoDB Ops Manager Create a UserDB ReplicaSet Expose">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-19T15:45:28.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -133,7 +133,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#create-loadbalancer-service"><span class="nav-number">1.</span> <span class="nav-text">Create LoadBalancer Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mongoclient-connection-test-getaddrinfo-enotfound-error"><span class="nav-number">2.</span> <span class="nav-text">MongoClient Connection Test, getaddrinfo ENOTFOUND Error</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#create-loadbalancer-service"><span class="nav-number">1.</span> <span class="nav-text">Create LoadBalancer Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mongoclient-connection-test-getaddrinfo-enotfound-error"><span class="nav-number">2.</span> <span class="nav-text">MongoClient
+Connection Test, getaddrinfo ENOTFOUND Error</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -150,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,17 +277,29 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>This is part3, we will expose the user database pods to the public so that Mongo client is able to access it.</p>
+        <p>This is part3, we will expose the user database pods to the public so
+that Mongo client is able to access it.</p>
 <p>MongoDB Ops Manager Series:</p>
 <ol type="1">
-<li><a href="/2020/12/19/mongodbopsmanager.en/">Install MongoDB Ops Manager</a></li>
-<li><a href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB ReplicaSet</a></li>
-<li><a href="/2020/12/19/mongodbomexposeservices.en/">Expose UserDB to Public</a></li>
-<li><a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a></li>
-<li><a href="/2020/12/19/mongodbomtlsauth.en/">Enable UserDB TLS and Auth</a></li>
+<li><a href="/2020/12/19/mongodbopsmanager.en/">Install MongoDB Ops
+Manager</a></li>
+<li><a href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB
+ReplicaSet</a></li>
+<li><a href="/2020/12/19/mongodbomexposeservices.en/">Expose UserDB to
+Public</a></li>
+<li><a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl
+Generates Self-signed Certificates</a></li>
+<li><a href="/2020/12/19/mongodbomtlsauth.en/">Enable UserDB TLS and
+Auth</a></li>
 </ol>
-<p>So far, the user database can be accessed only inside the kubernetes cluster. The official blog's approach is to expose the pods by NodePort: <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/"># Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
-<p>I don't know why the official blog recommend NodePort. Obviously, LoadBalancer is a better way to expose MongoDB. We will use LoadBalancer to expose userdb pods.</p>
+<p>So far, the user database can be accessed only inside the kubernetes
+cluster. The official blog's approach is to expose the pods by NodePort:
+<a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/">#
+Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
+<p>I don't know why the official blog recommend NodePort. Obviously,
+LoadBalancer is a better way to expose MongoDB. We will use LoadBalancer
+to expose userdb pods.</p>
 <span id="more"></span>
 <h1 id="create-loadbalancer-service">Create LoadBalancer Service</h1>
 <p>Configure <code>userdb0service.yaml</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
@@ -311,10 +324,18 @@
     <span class="token key atrule">pod-anti-affinity</span><span class="token punctuation">:</span> userdb
     <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span><span class="token number">0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>Apply it: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl apply -f userdb0service.yaml
-service&#x2F;userdb-0-svc-ext created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> After a while, the service <code>userdb-0-svc-ext</code> will be assigned a public IP. Then we can bind a domain name to the IP (optional). Suppose the domain name is <code>userdb0.com</code>.</p>
-<p>Modify the above yaml and create another two services <code>userdb-1-svc-ext</code> and <code>userdb-2-svc-ext</code> to expose the two remaining pods.</p>
-<h1 id="mongoclient-connection-test-getaddrinfo-enotfound-error">MongoClient Connection Test, <code>getaddrinfo ENOTFOUND</code> Error</h1>
-<p>Now we can use mongo shell to access <code>userdb</code>: <pre class="line-numbers language-none"><code class="language-none">$ mongo &quot;mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;&quot;
+service&#x2F;userdb-0-svc-ext created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> After a while, the service
+<code>userdb-0-svc-ext</code> will be assigned a public IP. Then we can
+bind a domain name to the IP (optional). Suppose the domain name is
+<code>userdb0.com</code>.</p>
+<p>Modify the above yaml and create another two services
+<code>userdb-1-svc-ext</code> and <code>userdb-2-svc-ext</code> to
+expose the two remaining pods.</p>
+<h1
+id="mongoclient-connection-test-getaddrinfo-enotfound-error">MongoClient
+Connection Test, <code>getaddrinfo ENOTFOUND</code> Error</h1>
+<p>Now we can use mongo shell to access <code>userdb</code>:
+<pre class="line-numbers language-none"><code class="language-none">$ mongo &quot;mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;&quot;
 MongoDB shell version v4.4.2
 connecting to: mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
 Implicit session: session &#123; &quot;id&quot; : UUID(&quot;6b780874-6ecb-4510-b7e9-61bff04a4711&quot;) &#125;
@@ -330,19 +351,40 @@ The server generated these startup warnings when booting:
 2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
 2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
 ---
-MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Looks something wrong. Why the prompt shows that we connect to a <code>SECONDARY</code> node? The default mongo readPreference is <code>PRIMARY</code>.</p>
-<p>If you connect the DB through <code>MongoDB Compass</code>, the following error appears: <pre class="line-numbers language-none"><code class="language-none">getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>After investigation, this article <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with"># Connecting from external sources to MongoDB replica set in Kubernetes fails with getaddrinfo ENOTFOUND error but standalone works</a> answered my question:</p>
-<blockquote><p>When connecting to a replica set, the host:port pairs in the connection string are a seedlist.</p>
-<p>The driver/client will attempt to connect to each host in the seedlist in turn until it gets a connection.</p>
-<p>It runs the isMaster command to determine which node is primary, and to get a list of all replica set members.</p>
-<p>Then is drops the original seedlist connection, and attempts to connect to each replica set member using the host and port information retrieved.</p>
-<p>The host information returned by the isMaster usually matches the entry in rs.conf(), which are the hostnames used to initiate the replica set.</p>
-<p>In your Kubernetes cluster, the nodes have internal hostnames that are used to initiate the replica set, but that your external clients can't resolve.</p>
-<p>In order to get this to work, you will need to have the mongod nodes isMaster command return a different set of hostnames depending on where the client request is coming from. This is similar to split-horizon DNS.</p>
-<p>Look over the Deploy a Replica Set documentation for mongodb/kubernetes, and the replicaSetHorizons setting.</p>
+MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Looks something wrong. Why the prompt shows that we
+connect to a <code>SECONDARY</code> node? The default mongo
+readPreference is <code>PRIMARY</code>.</p>
+<p>If you connect the DB through <code>MongoDB Compass</code>, the
+following error appears: <pre class="line-numbers language-none"><code class="language-none">getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>After investigation, this article <a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with">#
+Connecting from external sources to MongoDB replica set in Kubernetes
+fails with getaddrinfo ENOTFOUND error but standalone works</a> answered
+my question:</p>
+<blockquote><p>When connecting to a replica set, the host:port pairs in the
+connection string are a seedlist.</p>
+<p>The driver/client will attempt to connect to each host in the
+seedlist in turn until it gets a connection.</p>
+<p>It runs the isMaster command to determine which node is primary, and
+to get a list of all replica set members.</p>
+<p>Then is drops the original seedlist connection, and attempts to
+connect to each replica set member using the host and port information
+retrieved.</p>
+<p>The host information returned by the isMaster usually matches the
+entry in rs.conf(), which are the hostnames used to initiate the replica
+set.</p>
+<p>In your Kubernetes cluster, the nodes have internal hostnames that
+are used to initiate the replica set, but that your external clients
+can't resolve.</p>
+<p>In order to get this to work, you will need to have the mongod nodes
+isMaster command return a different set of hostnames depending on where
+the client request is coming from. This is similar to split-horizon
+DNS.</p>
+<p>Look over the Deploy a Replica Set documentation for
+mongodb/kubernetes, and the replicaSetHorizons setting.</p>
 </blockquote>
-<p>Verify by running <code>rs.conf()</code> in the mongo shell: <pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
+<p>Verify by running <code>rs.conf()</code> in the mongo shell:
+<pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
 &#123;
         &quot;_id&quot; : &quot;userdb&quot;,
         &quot;version&quot; : 1,
@@ -370,12 +412,18 @@ MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numb
         &#125;
 &#125;
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>Besides, mongo shell and <code>MongoDB Compass</code> have different behaviors when connecting to multiple hosts:</p>
+<p>Besides, mongo shell and <code>MongoDB Compass</code> have different
+behaviors when connecting to multiple hosts:</p>
 <ul>
-<li>mongo shell: show connect success but it might not be true: only one node is connected</li>
-<li>MongoDB Compass: connect failed The behavior is caused by different connection policies.</li>
+<li>mongo shell: show connect success but it might not be true: only one
+node is connected</li>
+<li>MongoDB Compass: connect failed The behavior is caused by different
+connection policies.</li>
 </ul>
-<p>To solve the problem, we need to use <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a> to specify the public address. However, to use this setting, <code>spec.security.tls</code> must be enabled first: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
+<p>To solve the problem, we need to use <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a>
+to specify the public address. However, to use this setting,
+<code>spec.security.tls</code> must be enabled first: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
   <span class="token key atrule">connectivity</span><span class="token punctuation">:</span>
@@ -383,8 +431,13 @@ MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numb
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb0.com:27017"</span>
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb1.com:27017"</span>
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb2.com:27017"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The bad news is that enable TLS is more complicated than I thought before. Here we use self-signed certificates to encrypt the transport layer communication. Four certificates are required: 1 CA certificate and 3 server certificates.</p>
-<p>Let's create the certificates step by step: <a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates Self-signed Certificates</a></p>
+<p>The bad news is that enable TLS is more complicated than I thought
+before. Here we use self-signed certificates to encrypt the transport
+layer communication. Four certificates are required: 1 CA certificate
+and 3 server certificates.</p>
+<p>Let's create the certificates step by step: <a
+href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates
+Self-signed Certificates</a></p>
 
     </div>
 

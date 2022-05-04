@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：  Disqus: 好用好配置，但国内访问不了（弃用原因） Valine: 好用好配置，但存在 # 安全性问题 Github issue: 应该可用，没有亲自尝试 Remark42: 自行部署，但对于htt">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-06-28T16:22:59.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Hexo">
 <meta property="article:tag" content="NexT">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,7 +278,8 @@
         <p>最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：</p>
 <ul>
 <li>Disqus: 好用好配置，但国内访问不了（弃用原因）</li>
-<li>Valine: 好用好配置，但存在 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985"># 安全性问题</a></li>
+<li>Valine: 好用好配置，但存在 <a
+target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985"># 安全性问题</a></li>
 <li>Github issue: 应该可用，没有亲自尝试</li>
 <li>Remark42: 自行部署，但对于https网站需要一个可用域名</li>
 </ul>
@@ -289,16 +290,37 @@
 <li>不要求独立域名</li>
 <li>无安全问题</li>
 </ul>
-<p>这几条限制加上之后，可选项也就不多了，最终选择了Waline。<strong>本文所用版本：Hexo v5.4.0，NexT v8.5.0。</strong></p>
+<p>这几条限制加上之后，可选项也就不多了，最终选择了Waline。<strong>本文所用版本：Hexo
+v5.4.0，NexT v8.5.0。</strong></p>
 <span id="more"></span>
 <h1 id="配置waline">配置Waline</h1>
-<p>上文提到了Valine有 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985"># 安全性问题</a>，简单说就是serverless架构导致前端直接访问存储，从而存在数据暴露风险。而Waline解决问题的方法是加了一层，使用<code>Vercel</code>部署了一个 webapp 从而隔离了前端和存储，避免了安全问题。但部署也略复杂一些，server和client都要部署。</p>
-<p>服务端的配置不再多说，按照 <a target="_blank" rel="noopener" href="https://waline.js.org/en/guide/get-started.html"># 官方文档</a> 步骤一步步来即可。如果没用过Vercel的话，在这一步可能会有一点卡壳。不过也是通过这次配置发现了这么个有趣的免费serve webapp的网站 :-)，这暂不展开。</p>
+<p>上文提到了Valine有 <a
+target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038175985">#
+安全性问题</a>，简单说就是serverless架构导致前端直接访问存储，从而存在数据暴露风险。而Waline解决问题的方法是加了一层，使用<code>Vercel</code>部署了一个
+webapp
+从而隔离了前端和存储，避免了安全问题。但部署也略复杂一些，server和client都要部署。</p>
+<p>服务端的配置不再多说，按照 <a
+target="_blank" rel="noopener" href="https://waline.js.org/en/guide/get-started.html"># 官方文档</a>
+步骤一步步来即可。如果没用过Vercel的话，在这一步可能会有一点卡壳。不过也是通过这次配置发现了这么个有趣的免费serve
+webapp的网站 :-)，这暂不展开。</p>
 <p>客户端的配置说起来简单，就是需要把一段js嵌入到需要评论的页面中去。第一反应是看Hexo的NexT主题是否天然支持Waline，答案是否定的。搜了一下发现Waline的作者给NexT提过PR，但并未被采纳：</p>
 <p>https://github.com/next-theme/hexo-theme-next/pull/147</p>
-<blockquote><p>Thanks for your contribution. Unfortunately, we cannot accept any comment systems related to Leancloud or Valine until we have thoroughly investigated the attack against Valine that occurred a few days ago. Ensuring user data security and privacy protection is our consistent pursuit, and we are planning to remove Valine in the next version. Maybe you can make your comment system into a third-party plug-in like this: <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-next-valine">https://github.com/next-theme/hexo-next-valine</a> And submit a pull request here: <a target="_blank" rel="noopener" href="https://github.com/next-theme/awesome-next#comment">https://github.com/next-theme/awesome-next#comment</a></p>
+<blockquote><p>Thanks for your contribution. Unfortunately, we cannot accept any
+comment systems related to Leancloud or Valine until we have thoroughly
+investigated the attack against Valine that occurred a few days ago.
+Ensuring user data security and privacy protection is our consistent
+pursuit, and we are planning to remove Valine in the next version. Maybe
+you can make your comment system into a third-party plug-in like this:
+<a
+target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-next-valine">https://github.com/next-theme/hexo-next-valine</a>
+And submit a pull request here: <a
+target="_blank" rel="noopener" href="https://github.com/next-theme/awesome-next#comment">https://github.com/next-theme/awesome-next#comment</a></p>
 </blockquote>
-<p>好了，那就用第三方的插件, <span class="citation" data-cites="waline/hexo-next">[@waline/hexo-next]</span>(https://www.npmjs.com/package/<span class="citation" data-cites="waline/hexo-next">@waline/hexo-next</span>) 。结果使用<code>npm install</code>在Hexo目录安装后发现并不生效，运行<code>hexo s</code>出现如下错误：</p>
+<p>好了，那就用第三方的插件, <a
+target="_blank" rel="noopener" href="https://www.npmjs.com/package/@waline/hexo-next"><span
+class="citation"
+data-cites="waline/hexo-next">@waline/hexo-next</span></a>
+。结果使用<code>npm install</code>在Hexo目录安装后发现并不生效，运行<code>hexo s</code>出现如下错误：</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ hexo s
 INFO  Validating config
 INFO  Start processing
@@ -341,22 +363,34 @@ Unhandled rejection Template render error: (&#x2F;home&#x2F;finisky&#x2F;themes&
     at RouteStream.Readable.read (node:internal&#x2F;streams&#x2F;readable:483:10)
     at resume_ (node:internal&#x2F;streams&#x2F;readable:981:12)
     at processTicksAndRejections (node:internal&#x2F;process&#x2F;task_queues:83:21)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>看起来是找不到swig模板文件，感觉有点莫名其妙。后来想自己用Hexo扩展写个 script注入这些代码，但发现如果不改模板文件还不太容易实现。</p>
+<p>看起来是找不到swig模板文件，感觉有点莫名其妙。后来想自己用Hexo扩展写个
+script注入这些代码，但发现如果不改模板文件还不太容易实现。</p>
 <h1 id="更新next到v8.5.0">更新NexT到v8.5.0</h1>
-<p>最后找到了问题的根源，我用的是 NexT v7.8.0。<code>git log</code>看了下最新的代码已经是去年的了。再搜索发现了个更匪夷所思的事情，我发现了两个repo: https://github.com/theme-next/hexo-theme-next 和 https://github.com/next-theme/hexo-theme-next</p>
-<p>而且前者在Google中的排名更高，Star更多。但再一看二者的最新版本，下面的居然是 v8.5.0。研究了半天终于在这找到了区别：</p>
+<p>最后找到了问题的根源，我用的是 NexT
+v7.8.0。<code>git log</code>看了下最新的代码已经是去年的了。再搜索发现了个更匪夷所思的事情，我发现了两个repo:
+https://github.com/theme-next/hexo-theme-next 和
+https://github.com/next-theme/hexo-theme-next</p>
+<p>而且前者在Google中的排名更高，Star更多。但再一看二者的最新版本，下面的居然是
+v8.5.0。研究了半天终于在这找到了区别：</p>
 <p>https://github.com/next-theme/hexo-theme-next/issues/36</p>
 <p>https://github.com/next-theme/hexo-theme-next/issues/4#issuecomment-626205848</p>
 <blockquote><ol type="1">
-<li><p>简单来说，问题就是 theme-next 团队的 owner 始终拒绝向其它任何团队成员提供足够的权限，且 owner 本人自 2019 年 10 月起已连续半年不在线，导致其它活跃的团队成员无法管理仓库，也无法邀请新的成员。<br />
-由于对 theme-next 团队的未来不抱有期望，我作为 theme-next 的主要贡献者，自 2020 年 4 月起停止为旧的仓库贡献代码，并创建了新的组织，以确保维护工作正常进行。</p></li>
-<li><p>只要能够收到足够多的 Bugfix / Feature Request，每月更新肯定不是问题。</p></li>
-<li><p>目前已经发布的版本在这里： <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next/releases">https://github.com/next-theme/hexo-theme-next/releases</a><br />
+<li><p>简单来说，问题就是 theme-next 团队的 owner
+始终拒绝向其它任何团队成员提供足够的权限，且 owner 本人自 2019 年 10
+月起已连续半年不在线，导致其它活跃的团队成员无法管理仓库，也无法邀请新的成员。<br />
+由于对 theme-next 团队的未来不抱有期望，我作为 theme-next
+的主要贡献者，自 2020 年 4
+月起停止为旧的仓库贡献代码，并创建了新的组织，以确保维护工作正常进行。</p></li>
+<li><p>只要能够收到足够多的 Bugfix / Feature
+Request，每月更新肯定不是问题。</p></li>
+<li><p>目前已经发布的版本在这里： <a
+target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next/releases">https://github.com/next-theme/hexo-theme-next/releases</a><br />
 v8.0.0 版本计划在 Hexo 5.0 版本后发布。</p></li>
 </ol>
 </blockquote>
 <p>好了，问题变成了要把v7.8.0的NexT更新到v8.5.0，但由于两个repo是独立的，只能手动更新<code>_config.yml</code>。而且更大的麻烦在于如果之前直接修改过模板源码，升级版本就更是费劲。</p>
-<p>按照官方推荐的方式更新到v8.5.0： https://theme-next.js.org/docs/getting-started/upgrade.html</p>
+<p>按照官方推荐的方式更新到v8.5.0：
+https://theme-next.js.org/docs/getting-started/upgrade.html</p>
 <p>然后一切就简单了，再在Hexo目录安装<code>@waline/hexo-next</code>，<code>hexo clean &amp; hexo g</code>一次通过，效果直接看评论区。</p>
 
     </div>

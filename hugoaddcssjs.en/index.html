@@ -31,7 +31,7 @@
 <meta property="og:description" content="Recently I switched the static website generator from Hexo to Hugo. The main reason is that Hexo is too slow, cannot generate websites with thousands of pages. Then I found this: # Who Should Use Hugo">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-07T02:22:22.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="Hexo">
@@ -132,7 +132,10 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo-add-customized-cssjs"><span class="nav-number">1.</span> <span class="nav-text">Hexo Add Customized css&#x2F;js</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#add-customized-cssjs-in-hugoic-way"><span class="nav-number">2.</span> <span class="nav-text">Add Customized css&#x2F;js In Hugoic Way</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hugo-layouts-lookup-rules-with-theme"><span class="nav-number">2.1.</span> <span class="nav-text">Hugo Layouts Lookup Rules With Theme</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#customize-the-templates"><span class="nav-number">2.2.</span> <span class="nav-text">Customize the Templates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modify-templates"><span class="nav-number">2.3.</span> <span class="nav-text">Modify Templates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-css-or-js-in-the-config.yml"><span class="nav-number">2.4.</span> <span class="nav-text">Add CSS or Js in the config.yml</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hexo-add-customized-cssjs"><span class="nav-number">1.</span> <span class="nav-text">Hexo Add Customized css&#x2F;js</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#add-customized-cssjs-in-hugoic-way"><span class="nav-number">2.</span> <span class="nav-text">Add Customized css&#x2F;js In
+Hugoic Way</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hugo-layouts-lookup-rules-with-theme"><span class="nav-number">2.1.</span> <span class="nav-text">Hugo Layouts Lookup Rules
+With Theme</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#customize-the-templates"><span class="nav-number">2.2.</span> <span class="nav-text">Customize the Templates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modify-templates"><span class="nav-number">2.3.</span> <span class="nav-text">Modify Templates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-css-or-js-in-the-config.yml"><span class="nav-number">2.4.</span> <span class="nav-text">Add CSS or Js in the
+config.yml</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +235,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,53 +278,102 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Recently I switched the static website generator from Hexo to Hugo. The main reason is that <strong>Hexo is too slow, cannot generate websites with thousands of pages.</strong></p>
-<p>Then I found this: <a target="_blank" rel="noopener" href="https://gohugo.io/about/what-is-hugo/#who-should-use-hugo"># Who Should Use Hugo?</a></p>
+        <p>Recently I switched the static website generator from Hexo to Hugo.
+The main reason is that <strong>Hexo is too slow, cannot generate
+websites with thousands of pages.</strong></p>
+<p>Then I found this: <a
+target="_blank" rel="noopener" href="https://gohugo.io/about/what-is-hugo/#who-should-use-hugo"># Who
+Should Use Hugo?</a></p>
 <blockquote>
-<p>Hugo is for people building a blog, a company site, a portfolio site, documentation, a single landing page, or a website with thousands of pages.</p>
+<p>Hugo is for people building a blog, a company site, a portfolio site,
+documentation, a single landing page, or a website with thousands of
+pages.</p>
 </blockquote>
-<p>No pain no gain. To use Hugo smoothly, the first problem is how to add customized css or js to the site.</p>
-<p>The bad news is that Hugo is not that friendly to a freshman. I spent hours to read documents and understood how it works. Comparatively, Hexo's plugin system and injector is more friendly to a freshman (maybe I forgot how long to learn it haha :-D).</p>
-<p>In this post, we will go through how to add customized css or js to Hugo sites in <code>Hugoic</code> way.</p>
-<p><strong>If you don't want to understand how it works, just go to <code>Modify Templates</code> section would be fine. :-)</strong></p>
+<p>No pain no gain. To use Hugo smoothly, the first problem is how to
+add customized css or js to the site.</p>
+<p>The bad news is that Hugo is not that friendly to a freshman. I spent
+hours to read documents and understood how it works. Comparatively,
+Hexo's plugin system and injector is more friendly to a freshman (maybe
+I forgot how long to learn it haha :-D).</p>
+<p>In this post, we will go through how to add customized css or js to
+Hugo sites in <code>Hugoic</code> way.</p>
+<p><strong>If you don't want to understand how it works, just go to
+<code>Modify Templates</code> section would be fine. :-)</strong></p>
 <span id="more"></span>
 <h1 id="hexo-add-customized-cssjs">Hexo Add Customized css/js</h1>
-<p>Add Customized css/js in Hexo is easy, just add a new file <code>custom.js</code> in the <code>scripts</code> folder of project root directory, then the js would be appended to the end of <code>&lt;head&gt;</code>:</p>
+<p>Add Customized css/js in Hexo is easy, just add a new file
+<code>custom.js</code> in the <code>scripts</code> folder of project
+root directory, then the js would be appended to the end of
+<code>&lt;head&gt;</code>:</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>injector<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'head_end'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
   <span class="token keyword">return</span> <span class="token string">'&lt;script data-ad-client="ca-pub-xxx" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">&lt;/script>'</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token string">'default'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<h1 id="add-customized-cssjs-in-hugoic-way">Add Customized css/js In Hugoic Way</h1>
-<p>Simliar to <code>pythonnic</code>, what's the Hugoic way to inject customized css/js?</p>
-<p>Hugo runs on top of theme templates, so we need to modify the templates to inject css/js. Before that, we should get some understanding of Hugo basics.</p>
-<h2 id="hugo-layouts-lookup-rules-with-theme">Hugo Layouts Lookup Rules With Theme</h2>
-<p>The first lesson：<a target="_blank" rel="noopener" href="https://gohugo.io/templates/lookup-order/#hugo-layouts-lookup-rules-with-theme"># Hugo Layouts Lookup Rules With Theme</a>:</p>
+<h1 id="add-customized-cssjs-in-hugoic-way">Add Customized css/js In
+Hugoic Way</h1>
+<p>Simliar to <code>pythonnic</code>, what's the Hugoic way to inject
+customized css/js?</p>
+<p>Hugo runs on top of theme templates, so we need to modify the
+templates to inject css/js. Before that, we should get some
+understanding of Hugo basics.</p>
+<h2 id="hugo-layouts-lookup-rules-with-theme">Hugo Layouts Lookup Rules
+With Theme</h2>
+<p>The first lesson：<a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/lookup-order/#hugo-layouts-lookup-rules-with-theme">#
+Hugo Layouts Lookup Rules With Theme</a>:</p>
 <blockquote>
-<p>In Hugo, layouts can live in either the project’s or the themes' layout folders, and the most specific layout will be chosen. Hugo will interleave the lookups listed below, finding the most specific one either in the project or themes.</p>
+<p>In Hugo, layouts can live in either the project’s or the themes'
+layout folders, and the most specific layout will be chosen. Hugo will
+interleave the lookups listed below, finding the most specific one
+either in the project or themes.</p>
 </blockquote>
-<p>Unfortunately, I don't find the priority of project layout and theme layout explicitly. Here is an unofficial explanation: <a target="_blank" rel="noopener" href="https://bwaycer.github.io/hugo_tutorial.hugo/themes/customizing/"># Customizing a Theme</a>。</p>
+<p>Unfortunately, I don't find the priority of project layout and theme
+layout explicitly. Here is an unofficial explanation: <a
+target="_blank" rel="noopener" href="https://bwaycer.github.io/hugo_tutorial.hugo/themes/customizing/">#
+Customizing a Theme</a>。</p>
 <h2 id="customize-the-templates">Customize the Templates</h2>
-<p>Based on Hugo layouts lookup rules, we should customize the templates by two steps:</p>
+<p>Based on Hugo layouts lookup rules, we should customize the templates
+by two steps:</p>
 <ul>
-<li>Copy <code>/themes/&lt;yourtheme&gt;/layouts/partials/xxx.html</code> to the project root <code>/layouts/partials/xxx.html</code>, aka created a new file with the same folder structure of theme folder in the project root</li>
-<li>Modify the new file <code>/layouts/partials/xxx.html</code> and add css/js code</li>
+<li>Copy
+<code>/themes/&lt;yourtheme&gt;/layouts/partials/xxx.html</code> to the
+project root <code>/layouts/partials/xxx.html</code>, aka created a new
+file with the same folder structure of theme folder in the project
+root</li>
+<li>Modify the new file <code>/layouts/partials/xxx.html</code> and add
+css/js code</li>
 </ul>
-<p>The main advantages of the solution is the theme can be upgraded independent of the project repo. If we modify the theme files directly, there might be many conflicts when upgrade the theme.</p>
-<p>The first time I read the above solution, I don't understand why it works. I spent hours to read documents and found that Hugo has many implicit rules. Here the rule would be <strong>the templates in the project layout will overwrite the templates in the theme layout</strong>.</p>
-<p><code>layouts/_default/</code> holds many default templates, while <code>layouts/partials</code> holds partial templates:</p>
+<p>The main advantages of the solution is the theme can be upgraded
+independent of the project repo. If we modify the theme files directly,
+there might be many conflicts when upgrade the theme.</p>
+<p>The first time I read the above solution, I don't understand why it
+works. I spent hours to read documents and found that Hugo has many
+implicit rules. Here the rule would be <strong>the templates in the
+project layout will overwrite the templates in the theme
+layout</strong>.</p>
+<p><code>layouts/_default/</code> holds many default templates, while
+<code>layouts/partials</code> holds partial templates:</p>
 <blockquote>
-<p>Partials are smaller, context-aware components in your list and page templates that can be used economically to keep your templating DRY.</p>
+<p>Partials are smaller, context-aware components in your list and page
+templates that can be used economically to keep your templating DRY.</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://gohugo.io/templates/partials/#partial-template-lookup-order"># Partial Template Lookup Order</a>：</p>
+<p><a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/partials/#partial-template-lookup-order">#
+Partial Template Lookup Order</a>：</p>
 <blockquote>
-<p>However, partials are simpler in that Hugo will only check in two places:</p>
+<p>However, partials are simpler in that Hugo will only check in two
+places:</p>
 <ul>
 <li>layouts/partials/*&lt;PARTIALNAME&gt;.html</li>
 <li>themes/&lt;THEME&gt;/layouts/partials/*&lt;PARTIALNAME&gt;.html</li>
 </ul>
-<p>This allows a theme’s end user to copy a partial’s contents into a file of the same name for further customization.</p>
+<p>This allows a theme’s end user to copy a partial’s contents into a
+file of the same name for further customization.</p>
 </blockquote>
 <h2 id="modify-templates">Modify Templates</h2>
-<p>Here we take theme <code>PaperMod</code> as example, copy <code>/themes/PaperMod/layouts/partials/head.html</code> to <code>/layouts/partials/head.html</code> and append the following code to the file end:</p>
+<p>Here we take theme <code>PaperMod</code> as example, copy
+<code>/themes/PaperMod/layouts/partials/head.html</code> to
+<code>/layouts/partials/head.html</code> and append the following code
+to the file end:</p>
 <pre class="line-numbers language-html" data-language="html"><code class="language-html">...
 &#123;&#123; range .Site.Params.customcss &#125;&#125;
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>&#123;&#123; . | absURL &#125;&#125;<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
@@ -334,10 +386,21 @@
 &#123;&#123; range $elem := .Site.Params.customjscssraw &#125;&#125;
     &#123;&#123; $elem | safeHTML &#125;&#125;
 &#123;&#123;- end &#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>To fully understand the code, we need to read <a target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/#the-dot"># Context</a> and function usage of <code>range</code>, <code>absURL</code> and <code>safeHTML</code> in <a target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/"># Introduction to Hugo Templating</a>.</p>
-<p>Why do we need <code>customjscssraw</code> since we alreadly have <code>customcss</code> and <code>customjs</code>? Because sometimes add raw html is more flexible: add css integrity property, or add async keywords to js. This feature is comparable to Hexo injector. See the examples in the next section.</p>
-<h2 id="add-css-or-js-in-the-config.yml">Add CSS or Js in the <code>config.yml</code></h2>
-<p>The usage is pretty easy, just add the configuration like this (support muliti-line js as well):</p>
+<p>To fully understand the code, we need to read <a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/#the-dot"># Context</a>
+and function usage of <code>range</code>, <code>absURL</code> and
+<code>safeHTML</code> in <a
+target="_blank" rel="noopener" href="https://gohugo.io/templates/introduction/"># Introduction to Hugo
+Templating</a>.</p>
+<p>Why do we need <code>customjscssraw</code> since we alreadly have
+<code>customcss</code> and <code>customjs</code>? Because sometimes add
+raw html is more flexible: add css integrity property, or add async
+keywords to js. This feature is comparable to Hexo injector. See the
+examples in the next section.</p>
+<h2 id="add-css-or-js-in-the-config.yml">Add CSS or Js in the
+<code>config.yml</code></h2>
+<p>The usage is pretty easy, just add the configuration like this
+(support muliti-line js as well):</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">params</span><span class="token punctuation">:</span>
   <span class="token punctuation">...</span>
   <span class="token key atrule">customcss</span><span class="token punctuation">:</span>
@@ -355,8 +418,11 @@
 
         gtag('config'<span class="token punctuation">,</span> 'G<span class="token punctuation">-</span>XXX');
       &lt;/script<span class="token punctuation">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>Tips</strong>: Don't forget to add your css/js files to the <code>static/</code> folder if their path are relative.</p>
-<p>Reference: <a target="_blank" rel="noopener" href="https://www.banjocode.com/post/hugo/custom-css/"># Add Custom CSS Or Javascript To Your Hugo Site</a></p>
+<p><strong>Tips</strong>: Don't forget to add your css/js files to the
+<code>static/</code> folder if their path are relative.</p>
+<p>Reference: <a
+target="_blank" rel="noopener" href="https://www.banjocode.com/post/hugo/custom-css/"># Add Custom CSS
+Or Javascript To Your Hugo Site</a></p>
 
     </div>
 

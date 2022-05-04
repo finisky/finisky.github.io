@@ -31,7 +31,7 @@
 <meta property="og:description" content="MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:  Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: t">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-20T12:36:59.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -132,7 +132,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E7%8E%B0writeconflict%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">重现WriteConflict错误</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A7%E7%89%88transactions-api"><span class="nav-number">1.1.</span> <span class="nav-text">旧版Transactions API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#writeconflict%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">WriteConflict示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E6%89%8B%E5%8A%A8%E9%87%8D%E8%AF%95"><span class="nav-number">2.1.</span> <span class="nav-text">应用层手动重试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E7%89%88transactions-api-recommended"><span class="nav-number">2.2.</span> <span class="nav-text">新版Transactions API (recommended)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E7%8E%B0writeconflict%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">重现WriteConflict错误</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A7%E7%89%88transactions-api"><span class="nav-number">1.1.</span> <span class="nav-text">旧版Transactions API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#writeconflict%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">WriteConflict示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E6%89%8B%E5%8A%A8%E9%87%8D%E8%AF%95"><span class="nav-number">2.1.</span> <span class="nav-text">应用层手动重试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E7%89%88transactions-api-recommended"><span class="nav-number">2.2.</span> <span class="nav-text">新版Transactions API
+(recommended)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +150,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +233,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,26 +278,39 @@
     <div class="post-body" itemprop="articleBody">
         <p>MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:</p>
 <blockquote>
-<p>Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..</p>
+<p>Exception: Command update failed: Encountered error from
+mongodb.svc.cluster.local:27017 during a transaction :: caused by ::
+WriteConflict error: this operation conflicted with another operation.
+Please retry your operation or multi-document transaction..</p>
 </blockquote>
 <p>那么如何正确实现事务的重试？</p>
 <span id="more"></span>
-<p>最直接的想法就是在应用层进行手动重试，一旦发现有异常，就开始重试。但是重试的实现并没有那么简单，要考虑的问题很多：这个异常是什么类型的？它是<a target="_blank" rel="noopener" href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">瞬时异常还是持续异常</a>? 要重试多少次? 如何实现重试机制的同时保证代码的简洁？</p>
-<p>好消息是新的MongoDB driver已经帮我们解决了重试的问题。它内置了重试机制：https://docs.mongodb.com/manual/core/transactions/#transactions-api</p>
+<p>最直接的想法就是在应用层进行手动重试，一旦发现有异常，就开始重试。但是重试的实现并没有那么简单，要考虑的问题很多：这个异常是什么类型的？它是<a
+target="_blank" rel="noopener" href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">瞬时异常还是持续异常</a>?
+要重试多少次? 如何实现重试机制的同时保证代码的简洁？</p>
+<p>好消息是新的MongoDB
+driver已经帮我们解决了重试的问题。它内置了重试机制：https://docs.mongodb.com/manual/core/transactions/#transactions-api</p>
 <blockquote>
-<p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p>
+<p>The new callback API also incorporates retry logic for
+<code>TransientTransactionError</code> or
+<code>UnknownTransactionCommitResult</code> commit errors.</p>
 </blockquote>
-<p>我们需要做的就是使用新的transaction API来实现事务。但我不太理解的是即使是在官方C# MongoDB driver文档上依然使用的是旧的API，也就是不带重试的版本。所以本文比较了新老API的差异，并给出了使用实例。</p>
+<p>我们需要做的就是使用新的transaction
+API来实现事务。但我不太理解的是即使是在官方C# MongoDB
+driver文档上依然使用的是旧的API，也就是不带重试的版本。所以本文比较了新老API的差异，并给出了使用实例。</p>
 <h1 id="重现writeconflict错误">重现WriteConflict错误</h1>
 <h2 id="旧版transactions-api">旧版Transactions API</h2>
-<p>来自官方文档 <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.11/reference/driver/crud/sessions_and_transactions/#starttransaction">C# MongoDB driver documentation</a>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> client<span class="token punctuation">.</span><span class="token function">StartSession</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<p>来自官方文档 <a
+target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.11/reference/driver/crud/sessions_and_transactions/#starttransaction">C#
+MongoDB driver documentation</a>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> client<span class="token punctuation">.</span><span class="token function">StartSession</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     session<span class="token punctuation">.</span><span class="token function">StartTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token comment">// execute operations using the session</span>
     session<span class="token punctuation">.</span><span class="token function">CommitTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// if an exception is thrown before reaching here the transaction will be implicitly aborted</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="writeconflict示例">WriteConflict示例</h2>
-<p>我们用旧版API实现一个写冲突的例子。创建两个task更新同一个文档，为了让它稳定复现，刻意让第一个task在commit之前等上两秒： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
+<p>我们用旧版API实现一个写冲突的例子。创建两个task更新同一个文档，为了让它稳定复现，刻意让第一个task在commit之前等上两秒：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">System</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">System<span class="token punctuation">.</span>Threading<span class="token punctuation">.</span>Tasks</span><span class="token punctuation">;</span>
@@ -355,16 +369,29 @@
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>WriteConflictAsync() 执行结果:</p>
 <blockquote>
-<p>[2021/2/19 13:35:51] Done [init] ------ Bare Replace ------ [2021/2/19 13:35:51] Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction.. [2021/2/19 13:35:53] Done [slow]</p>
+<p>[2021/2/19 13:35:51] Done [init] ------ Bare Replace ------
+[2021/2/19 13:35:51] Exception: Command update failed: Encountered error
+from mongodb.svc.cluster.local:27017 during a transaction :: caused by
+:: WriteConflict error: this operation conflicted with another
+operation. Please retry your operation or multi-document transaction..
+[2021/2/19 13:35:53] Done [slow]</p>
 </blockquote>
-<p>显然，第二个更新task因为写冲突失败了。如果我们看看抛出的 <code>MongoDBCommandException</code>, 会发现在这个异常的ErrorLabel里有个<code>TransientTransactionError</code>。也就是说异常本身就告诉我们这是个瞬时错误，可以通过重试解决。</p>
+<p>显然，第二个更新task因为写冲突失败了。如果我们看看抛出的
+<code>MongoDBCommandException</code>,
+会发现在这个异常的ErrorLabel里有个<code>TransientTransactionError</code>。也就是说异常本身就告诉我们这是个瞬时错误，可以通过重试解决。</p>
 <h1 id="解决方案">解决方案</h1>
 <h2 id="应用层手动重试">应用层手动重试</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/53202345/how-does-mongodb-deal-with-transactional-conflicts">这篇文章</a>给了一个对<code>TransientTransactionError</code>手动重试的实现方法。但这种方法并不推荐使用，更优雅的做法是用MongoDB driver的重试机制。需要升级driver到最新版本，并且保证server的版本&gt;=4.2（不太确定）?</p>
-<h2 id="新版transactions-api-recommended">新版Transactions API (recommended)</h2>
-<p>新的Driver天然集成了重试机制： <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/transactions/#transactions-api">https://docs.mongodb.com/manual/core/transactions/#transactions-api</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/53202345/how-does-mongodb-deal-with-transactional-conflicts">这篇文章</a>给了一个对<code>TransientTransactionError</code>手动重试的实现方法。但这种方法并不推荐使用，更优雅的做法是用MongoDB
+driver的重试机制。需要升级driver到最新版本，并且保证server的版本&gt;=4.2（不太确定）?</p>
+<h2 id="新版transactions-api-recommended">新版Transactions API
+(recommended)</h2>
+<p>新的Driver天然集成了重试机制： <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/transactions/#transactions-api">https://docs.mongodb.com/manual/core/transactions/#transactions-api</a></p>
 <blockquote>
-<p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p>
+<p>The new callback API also incorporates retry logic for
+<code>TransientTransactionError</code> or
+<code>UnknownTransactionCommitResult</code> commit errors.</p>
 </blockquote>
 <p><code>WithTransactionAsync</code> 定义: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token comment">//</span>
 <span class="token comment">// Summary:</span>
@@ -386,7 +413,10 @@
 <span class="token comment">//</span>
 <span class="token comment">// Returns:</span>
 <span class="token comment">//     The callback result.</span>
-<span class="token return-type class-name">Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span> <span class="token generic-method"><span class="token function">WithTransactionAsync</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>IClientSessionHandle<span class="token punctuation">,</span> CancellationToken<span class="token punctuation">,</span> Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span><span class="token punctuation">></span></span> callbackAsync<span class="token punctuation">,</span> <span class="token class-name">TransactionOptions</span> transactionOptions <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token class-name">CancellationToken</span> cancellationToken <span class="token operator">=</span> <span class="token keyword">default</span><span class="token punctuation">(</span><span class="token type-expression class-name">CancellationToken</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 注意<code>WithTransactionAsync</code> 是个<code>Func</code>而不是<code>Action</code>, 也没有<code>Action</code>的重载，必须在callback中返回一个值(这里是string.Empty)。</p>
+<span class="token return-type class-name">Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span> <span class="token generic-method"><span class="token function">WithTransactionAsync</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span></span></span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>IClientSessionHandle<span class="token punctuation">,</span> CancellationToken<span class="token punctuation">,</span> Task<span class="token punctuation">&lt;</span>TResult<span class="token punctuation">></span><span class="token punctuation">></span></span> callbackAsync<span class="token punctuation">,</span> <span class="token class-name">TransactionOptions</span> transactionOptions <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token class-name">CancellationToken</span> cancellationToken <span class="token operator">=</span> <span class="token keyword">default</span><span class="token punctuation">(</span><span class="token type-expression class-name">CancellationToken</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+注意<code>WithTransactionAsync</code>
+是个<code>Func</code>而不是<code>Action</code>,
+也没有<code>Action</code>的重载，必须在callback中返回一个值(这里是string.Empty)。</p>
 <p>示例用法： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> session <span class="token operator">=</span> <span class="token keyword">await</span> mongoClient<span class="token punctuation">.</span><span class="token function">StartSessionAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
 	<span class="token keyword">await</span> session<span class="token punctuation">.</span><span class="token function">WithTransactionAsync</span><span class="token punctuation">(</span>
@@ -402,7 +432,8 @@
     <span class="token comment">// execute operations using the session</span>
     session<span class="token punctuation">.</span><span class="token function">CommitTransaction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>现在可以写一个<code>RetryReplaceAsync</code> (相对于<code>BareReplaceAsync</code>): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
+<p>现在可以写一个<code>RetryReplaceAsync</code>
+(相对于<code>BareReplaceAsync</code>): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
 	<span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -420,7 +451,9 @@
 
 	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"[</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">DateTime<span class="token punctuation">.</span>Now</span><span class="token punctuation">&#125;</span></span><span class="token string">] Done [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp"><span class="token keyword">value</span></span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>在<code>WriteConflictAsync</code> try block中，用<code>RetryReplaceAsync</code>替换<code>BareReplaceAsync</code>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">WriteConflictAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<p>在<code>WriteConflictAsync</code> try
+block中，用<code>RetryReplaceAsync</code>替换<code>BareReplaceAsync</code>:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">WriteConflictAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
 	<span class="token class-name"><span class="token keyword">var</span></span> mongoClient <span class="token operator">=</span> <span class="token function">GetMongoClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -446,12 +479,16 @@
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>执行结果:</p>
 <blockquote>
-<p>[2021/2/19 17:55:00] Done [init] ------ Retry Replace ------ [2021/2/19 17:55:02] Done [slow] [2021/2/19 17:55:03] Done [fast]</p>
+<p>[2021/2/19 17:55:00] Done [init] ------ Retry Replace ------
+[2021/2/19 17:55:02] Done [slow] [2021/2/19 17:55:03] Done [fast]</p>
 <p>[2021/2/19 17:55:03] Completed...</p>
 </blockquote>
-<p>没有异常抛出，第二个task在两秒后执行成功，可见重试逻辑已经生效。经过测试发现即使第一个task拖了很长时间(20秒)，上面代码总是可以执行成功。但在实际应用中应该通过传入cancellation token实现超时机制，此处不再赘述。</p>
-<p>实际上，即使不加超时机制，写冲突也很少发生。在生产环境中，写冲突的错误率在 0.00001% 以下。加上重试机制之后，这错误基本没再出现过。</p>
-<p>一些其他事务实现的建议，可参考：<a href="/mongodbendlessretry/"># MongoDB BulkWrite无限重试问题解决</a></p>
+<p>没有异常抛出，第二个task在两秒后执行成功，可见重试逻辑已经生效。经过测试发现即使第一个task拖了很长时间(20秒)，上面代码总是可以执行成功。但在实际应用中应该通过传入cancellation
+token实现超时机制，此处不再赘述。</p>
+<p>实际上，即使不加超时机制，写冲突也很少发生。在生产环境中，写冲突的错误率在
+0.00001% 以下。加上重试机制之后，这错误基本没再出现过。</p>
+<p>一些其他事务实现的建议，可参考：<a href="/mongodbendlessretry/">#
+MongoDB BulkWrite无限重试问题解决</a></p>
 <h1 id="完整代码">完整代码</h1>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>

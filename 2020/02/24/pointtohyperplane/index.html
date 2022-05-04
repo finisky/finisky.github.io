@@ -31,7 +31,7 @@
 <meta property="og:description" content="SVM的函数间隔定义中会用到点到超平面距离的推导，《统计学习方法》中对此没有详细的解释，当然这个问题有许多解法，找到了一种比较直观的解法如下。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-02-24T15:38:26.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta name="twitter:card" content="summary">
@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,13 +274,34 @@
     <div class="post-body" itemprop="articleBody">
         <p>SVM的函数间隔定义中会用到点到超平面距离的推导，《统计学习方法》中对此没有详细的解释，当然这个问题有许多解法，找到了一种比较直观的解法如下。</p>
 <span id="more"></span>
-<p>给定超平面<span class="math inline">\((\vec w, b)\)</span>，<span class="math inline">\(\vec w \cdot \vec x + b = 0\)</span>, 其中<span class="math inline">\(\vec w \in R^n\)</span>， <span class="math inline">\(b \in R\)</span>，<span class="math inline">\(\vec x \in R^n\)</span>，则空间中任意一点<span class="math inline">\(\vec {x_0} \in R^n\)</span>到超平面的距离为： <span class="math display">\[d = \frac{1}{\|w\|}|\vec w \cdot \vec {x_0} + b|\]</span></p>
-<p>首先推导<span class="math inline">\(\vec w\)</span>是超平面的法向量。假设有两个点<span class="math inline">\(\vec {x_1}\)</span>, <span class="math inline">\(\vec {x_2}\)</span>在该超平面上，则有： <span class="math display">\[\vec w \cdot \vec {x_1} + b = 0\]</span> <span class="math display">\[\vec w \cdot \vec {x_2} + b = 0\]</span></p>
-<p>易得 <span class="math display">\[\vec w \cdot (\vec {x_1} - \vec {x_2})= 0\]</span></p>
-<p>则，<span class="math inline">\(\vec w\)</span>是该超平面的法向量。</p>
-<p>点<span class="math inline">\(\vec {x_0}\)</span>到该超平面的距离即为它到超平面上的任意一点的向量与单位法向量的点积，不妨设该点为<span class="math inline">\(\vec {x_1}\)</span>: <span class="math display">\[d = |\frac{\vec w}{\|w\|} \cdot (\vec {x_0} - \vec {x_1})| = |\frac{\vec w \cdot \vec {x_0} - \vec w \cdot \vec {x_1}}{\|w\|}|\]</span></p>
-<p>由于<span class="math inline">\(\vec {x_1}\)</span>在该超平面上，有： <span class="math display">\[\vec w \cdot \vec {x_1} + b = 0\]</span></p>
-<p>因此： <span class="math display">\[d = \frac{|\vec w \cdot \vec {x_0} + b|}{\|w\|}\]</span></p>
+<p>给定超平面<span class="math inline">\((\vec w, b)\)</span>，<span
+class="math inline">\(\vec w \cdot \vec x + b = 0\)</span>, 其中<span
+class="math inline">\(\vec w \in R^n\)</span>， <span
+class="math inline">\(b \in R\)</span>，<span class="math inline">\(\vec
+x \in R^n\)</span>，则空间中任意一点<span class="math inline">\(\vec
+{x_0} \in R^n\)</span>到超平面的距离为： <span class="math display">\[d
+= \frac{1}{\|w\|}|\vec w \cdot \vec {x_0} + b|\]</span></p>
+<p>首先推导<span class="math inline">\(\vec
+w\)</span>是超平面的法向量。假设有两个点<span class="math inline">\(\vec
+{x_1}\)</span>, <span class="math inline">\(\vec
+{x_2}\)</span>在该超平面上，则有： <span class="math display">\[\vec w
+\cdot \vec {x_1} + b = 0\]</span> <span class="math display">\[\vec w
+\cdot \vec {x_2} + b = 0\]</span></p>
+<p>易得 <span class="math display">\[\vec w \cdot (\vec {x_1} - \vec
+{x_2})= 0\]</span></p>
+<p>则，<span class="math inline">\(\vec
+w\)</span>是该超平面的法向量。</p>
+<p>点<span class="math inline">\(\vec
+{x_0}\)</span>到该超平面的距离即为它到超平面上的任意一点的向量与单位法向量的点积，不妨设该点为<span
+class="math inline">\(\vec {x_1}\)</span>: <span
+class="math display">\[d = |\frac{\vec w}{\|w\|} \cdot (\vec {x_0} -
+\vec {x_1})| = |\frac{\vec w \cdot \vec {x_0} - \vec w \cdot \vec
+{x_1}}{\|w\|}|\]</span></p>
+<p>由于<span class="math inline">\(\vec {x_1}\)</span>在该超平面上，有：
+<span class="math display">\[\vec w \cdot \vec {x_1} + b =
+0\]</span></p>
+<p>因此： <span class="math display">\[d = \frac{|\vec w \cdot \vec
+{x_0} + b|}{\|w\|}\]</span></p>
 
     </div>
 

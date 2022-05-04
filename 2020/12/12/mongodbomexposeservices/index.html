@@ -31,7 +31,7 @@
 <meta property="og:description" content="本文为系列第三部分，使用第二部分创建好的userdb可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。 整个系列：  安装MongoDB Ops Manager 创建用户数据库(replicaset) 用户数据库服务配置公网访问 openssl生成自签名CA证书和server证书 打开用户数据库TLS通信加密和Auth授权  官方文档是通过NodePo">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-12T15:30:38.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -133,7 +133,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%9B%E5%BB%BAloadbalancer-service"><span class="nav-number">1.</span> <span class="nav-text">命令行创建LoadBalancer Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%9A%E8%BF%87yaml%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.</span> <span class="nav-text">通过yaml创建Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BF%E9%97%AE%E5%92%8Cgetaddrinfo-enotfound%E9%94%99%E8%AF%AF"><span class="nav-number">3.</span> <span class="nav-text">客户端访问和getaddrinfo ENOTFOUND错误</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%9B%E5%BB%BAloadbalancer-service"><span class="nav-number">1.</span> <span class="nav-text">命令行创建LoadBalancer
+Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%9A%E8%BF%87yaml%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.</span> <span class="nav-text">通过yaml创建Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BF%E9%97%AE%E5%92%8Cgetaddrinfo-enotfound%E9%94%99%E8%AF%AF"><span class="nav-number">3.</span> <span class="nav-text">客户端访问和getaddrinfo ENOTFOUND错误</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -150,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,27 +277,39 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>本文为系列第三部分，使用第二部分创建好的<code>userdb</code>可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。</p>
+        <p>本文为系列第三部分，使用第二部分创建好的<code>userdb</code>可以从公网访问，方法是通过Kubernetes
+Service暴露userdb pod到公网上。</p>
 <p>整个系列：</p>
 <ol type="1">
-<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops Manager</a></li>
-<li><a href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
-<li><a href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
-<li><a href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
-<li><a href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
+<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops
+Manager</a></li>
+<li><a
+href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
+<li><a
+href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
+<li><a
+href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
+<li><a
+href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
 </ol>
-<p>官方文档是通过NodePort的方式暴露给公网，而我们这里是通过创建service的方式完成，好处是这种方式不必管理pod和node之间的端口映射，也不必担心pod被调度到不同node上之后IP的改变。不知道官方使用NodePort进行服务暴露是基于怎样的考虑。 <a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/"># Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
+<p>官方文档是通过NodePort的方式暴露给公网，而我们这里是通过创建service的方式完成，好处是这种方式不必管理pod和node之间的端口映射，也不必担心pod被调度到不同node上之后IP的改变。不知道官方使用NodePort进行服务暴露是基于怎样的考虑。
+<a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/">#
+Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
 <span id="more"></span>
 <p>在此之前，先保证replicaset中<code>spec.security.tls.enabled</code>为false，否则各server之间的auth可能会让配置变得复杂。</p>
-<h1 id="命令行创建loadbalancer-service">命令行创建LoadBalancer Service</h1>
+<h1 id="命令行创建loadbalancer-service">命令行创建LoadBalancer
+Service</h1>
 <pre class="line-numbers language-none"><code class="language-none">$ kubectl expose pod&#x2F;userdb-0 --type&#x3D;&quot;LoadBalancer&quot; --port 27017 -n mongodb
 service&#x2F;userdb-0 exposed
 $ kubectl expose pod&#x2F;userdb-1 --type&#x3D;&quot;LoadBalancer&quot; --port 27017 -n mongodb
 service&#x2F;userdb-1 exposed
 $ kubectl expose pod&#x2F;userdb-2 --type&#x3D;&quot;LoadBalancer&quot; --port 27017 -n mongodb
 service&#x2F;userdb-2 exposed<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>可以在kubernetes dashboard看到我们创建了三个service: userdb-0, userdb-1, userdb-2，同时有三个公网IP。</p>
-<p>这种暴露方式在pod更新之后可能会出现service匹配不到pod的情况，因为statefulset是用<code>controller-revision-hash</code>来标记pod的版本。所以要编辑一下这几个service中spec.selector部分，把<code>controller-revision-hash</code>一行去掉： <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">...</span>
+<p>可以在kubernetes dashboard看到我们创建了三个service: userdb-0,
+userdb-1, userdb-2，同时有三个公网IP。</p>
+<p>这种暴露方式在pod更新之后可能会出现service匹配不到pod的情况，因为statefulset是用<code>controller-revision-hash</code>来标记pod的版本。所以要编辑一下这几个service中spec.selector部分，把<code>controller-revision-hash</code>一行去掉：
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">...</span>
 <span class="token key atrule">spec</span><span class="token punctuation">:</span>
   <span class="token key atrule">ports</span><span class="token punctuation">:</span>
     <span class="token punctuation">-</span> <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
@@ -332,9 +345,14 @@ service&#x2F;userdb-2 exposed<span aria-hidden="true" class="line-numbers-rows">
     <span class="token key atrule">pod-anti-affinity</span><span class="token punctuation">:</span> userdb
     <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> userdb<span class="token punctuation">-</span><span class="token number">0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>直接apply: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl apply -f userdb0service.yaml
-service&#x2F;userdb-0-svc-ext created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> 过一会儿，<code>userdb-0-svc-ext</code>就会被分配一个公网IP，然后可以在域名服务商那里将此IP绑定到域名。此处假设域名为<code>userdb&lt;X&gt;.com</code>。同理，我们将另外两个pod <code>userdb1</code>和<code>userdb2</code>也通过LoadBalancer暴露给公网。</p>
-<h1 id="客户端访问和getaddrinfo-enotfound错误">客户端访问和<code>getaddrinfo ENOTFOUND</code>错误</h1>
-<p>至此，我们可以通过mongo shell来访问<code>userdb</code>了，查看下三个service的IP（以<code>&lt;ip0&gt;``&lt;ip1&gt;``&lt;ip2&gt;</code>代替）： <pre class="line-numbers language-none"><code class="language-none">$ mongo &quot;mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;&quot;
+service&#x2F;userdb-0-svc-ext created<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+过一会儿，<code>userdb-0-svc-ext</code>就会被分配一个公网IP，然后可以在域名服务商那里将此IP绑定到域名。此处假设域名为<code>userdb&lt;X&gt;.com</code>。同理，我们将另外两个pod
+<code>userdb1</code>和<code>userdb2</code>也通过LoadBalancer暴露给公网。</p>
+<h1
+id="客户端访问和getaddrinfo-enotfound错误">客户端访问和<code>getaddrinfo ENOTFOUND</code>错误</h1>
+<p>至此，我们可以通过mongo
+shell来访问<code>userdb</code>了，查看下三个service的IP（以<code>&lt;ip0&gt;``&lt;ip1&gt;``&lt;ip2&gt;</code>代替）：
+<pre class="line-numbers language-none"><code class="language-none">$ mongo &quot;mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;&quot;
 MongoDB shell version v4.4.2
 connecting to: mongodb:&#x2F;&#x2F;&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
 Implicit session: session &#123; &quot;id&quot; : UUID(&quot;6b780874-6ecb-4510-b7e9-61bff04a4711&quot;) &#125;
@@ -350,9 +368,17 @@ The server generated these startup warnings when booting:
 2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
 2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
 ---
-MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 似乎有些问题，为什么connect的是SECONDARY节点？mongo默认的readPreference是primary。如果用MongoDB Compass连接，则会出现连接失败的问题，错误是： <pre class="line-numbers language-none"><code class="language-none">getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>搜索了很久，这篇文章 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with"># Connecting from external sources to MongoDB replica set in Kubernetes fails with getaddrinfo ENOTFOUND error but standalone works</a>解释了这种现象。</p>
-<p>client会逐个连接connectionstring指定的这三个<code>ip:port</code>地址（种子列表）直到成功，然后使用<code>isMaster</code>确定这个节点他是否是master，并且得到replica set的成员列表。然后，client会弃用connectionstring中的种子列表，而使用获取的成员列表连接到每个成员。这个成员列表一般来说与<code>rs.conf()</code>命令获取的列表一致。而在Kubernetes集群中，获取的地址都是内网地址（<code>xxx.svc.cluster.local</code>），因此client连接不成功，会报错<code>getaddrinfo ENOTFOUND</code>。在登入的shell中运行<code>rs.conf()</code>印证了这一点： <pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
+MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+似乎有些问题，为什么connect的是SECONDARY节点？mongo默认的readPreference是primary。如果用MongoDB
+Compass连接，则会出现连接失败的问题，错误是： <pre class="line-numbers language-none"><code class="language-none">getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>搜索了很久，这篇文章 <a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with">#
+Connecting from external sources to MongoDB replica set in Kubernetes
+fails with getaddrinfo ENOTFOUND error but standalone
+works</a>解释了这种现象。</p>
+<p>client会逐个连接connectionstring指定的这三个<code>ip:port</code>地址（种子列表）直到成功，然后使用<code>isMaster</code>确定这个节点他是否是master，并且得到replica
+set的成员列表。然后，client会弃用connectionstring中的种子列表，而使用获取的成员列表连接到每个成员。这个成员列表一般来说与<code>rs.conf()</code>命令获取的列表一致。而在Kubernetes集群中，获取的地址都是内网地址（<code>xxx.svc.cluster.local</code>），因此client连接不成功，会报错<code>getaddrinfo ENOTFOUND</code>。在登入的shell中运行<code>rs.conf()</code>印证了这一点：
+<pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
 &#123;
         &quot;_id&quot; : &quot;userdb&quot;,
         &quot;version&quot; : 1,
@@ -380,8 +406,14 @@ MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numb
         &#125;
 &#125;
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>此外，从client的行为分析，Linux下的mongo shell和MongoDB Compass的实现行为不一致：mongo shell可以连接MongoDB成功，但可能显示为<code>SECONDARY</code>；而MongoDB Compass会报错，连接失败。</p>
-<p>解决这个问题，需要在userdb.yaml中使用<a target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a> 指定公网访问的地址。而使用此选项又必须打开<code>spec.security.tls</code>： <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
+<p>此外，从client的行为分析，Linux下的mongo shell和MongoDB
+Compass的实现行为不一致：mongo
+shell可以连接MongoDB成功，但可能显示为<code>SECONDARY</code>；而MongoDB
+Compass会报错，连接失败。</p>
+<p>解决这个问题，需要在userdb.yaml中使用<a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons"><code>spec.connectivity.replicaSetHorizons</code></a>
+指定公网访问的地址。而使用此选项又必须打开<code>spec.security.tls</code>：
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">security</span><span class="token punctuation">:</span>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
   <span class="token key atrule">connectivity</span><span class="token punctuation">:</span>
@@ -389,8 +421,10 @@ MongoDB Enterprise userdb:SECONDARY&gt;<span aria-hidden="true" class="line-numb
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb0.com:27017"</span>
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb1.com:27017"</span>
       <span class="token punctuation">-</span> <span class="token key atrule">"userdb"</span><span class="token punctuation">:</span> <span class="token string">"userdb2.com:27017"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>打开<code>spec.security.tls</code>比较麻烦，需要先生成每个server的证书，证书上绑定了自己的域名或IP，然后才能再更新userdb replicaset的yaml文件打开TLS。</p>
-<p>我们先来生成MongoDB所需要的证书： <a href="/2020/12/12/mongodbomselfsignedcertificates/">Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></p>
+<p>打开<code>spec.security.tls</code>比较麻烦，需要先生成每个server的证书，证书上绑定了自己的域名或IP，然后才能再更新userdb
+replicaset的yaml文件打开TLS。</p>
+<p>我们先来生成MongoDB所需要的证书： <a
+href="/2020/12/12/mongodbomselfsignedcertificates/">Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></p>
 
     </div>
 

@@ -31,7 +31,7 @@
 <meta property="og:description" content="By the official manual:  Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to al">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-07-22T12:27:32.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -133,7 +133,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-construct-startatoperationtime"><span class="nav-number">1.</span> <span class="nav-text">How to construct startAtOperationTime</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-replay-the-change"><span class="nav-number">2.</span> <span class="nav-text">How to replay the change</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">3.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-construct-startatoperationtime"><span class="nav-number">1.</span> <span class="nav-text">How to construct
+startAtOperationTime</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how-to-replay-the-change"><span class="nav-number">2.</span> <span class="nav-text">How to replay the change</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-code"><span class="nav-number">3.</span> <span class="nav-text">Full Code</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -150,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +234,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,27 +277,54 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>By the <a target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">official manual</a>:</p>
+        <p>By the <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">official
+manual</a>:</p>
 <blockquote>
-<p>Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.</p>
+<p>Change streams allow applications to access real-time data changes
+without the complexity and risk of tailing the oplog. Applications can
+use change streams to subscribe to all data changes on a single
+collection, a database, or an entire deployment, and immediately react
+to them. Because change streams use the aggregation framework,
+applications can also filter for specific changes or transform the
+notifications at will.</p>
 </blockquote>
-<p>Here we leverage change stream to replicate data from one MongoDB to another <strong>in realtime</strong>.</p>
-<p>There is some existing tools such as <a target="_blank" rel="noopener" href="https://github.com/alibaba/MongoShake">MongoShake</a> do the same thing. However, MongoShake is a little bit complicated to use. We encoutered two issues:</p>
+<p>Here we leverage change stream to replicate data from one MongoDB to
+another <strong>in realtime</strong>.</p>
+<p>There is some existing tools such as <a
+target="_blank" rel="noopener" href="https://github.com/alibaba/MongoShake">MongoShake</a> do the same
+thing. However, MongoShake is a little bit complicated to use. We
+encoutered two issues:</p>
 <ul>
 <li>Modify the source code to use TLS authentication</li>
 <li>Cannot perform increment sync in <code>all</code> sync_mode</li>
 </ul>
-<p>Since our goal is realtime replication, we choose a more straightforward and controllable way: MongoDB Ops Manager cluster restore and change stream to apply realtime changes.</p>
+<p>Since our goal is realtime replication, we choose a more
+straightforward and controllable way: MongoDB Ops Manager cluster
+restore and change stream to apply realtime changes.</p>
 <span id="more"></span>
-<p><strong>Notes</strong>: we use <code>master</code> and <code>slave</code> to represent the source and the target MongoDB for simplicity. They are not formal MongoDB concepts. They are also different from <code>primary</code> and <code>secondary</code> ( <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/replication/">Replication</a> ).</p>
-<p>Our replication method can be applied to any MongoDB architectures (including both source and target): standalone, replica set and sharded cluster.</p>
+<p><strong>Notes</strong>: we use <code>master</code> and
+<code>slave</code> to represent the source and the target MongoDB for
+simplicity. They are not formal MongoDB concepts. They are also
+different from <code>primary</code> and <code>secondary</code> ( <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/replication/">Replication</a>
+).</p>
+<p>Our replication method can be applied to any MongoDB architectures
+(including both source and target): standalone, replica set and sharded
+cluster.</p>
 <p>The replication process:</p>
 <ul>
 <li>Restore a recent source snapshot to the target cluster</li>
-<li>Set the start point before the snapshot timestamp and start the realtime replication program</li>
-<li>Wait the target to keep up with the source (small replication lag)</li>
+<li>Set the start point before the snapshot timestamp and start the
+realtime replication program</li>
+<li>Wait the target to keep up with the source (small replication
+lag)</li>
 </ul>
-<p>The change stream interface is pretty simple. For instance, use the following code to watch changes in all collections in all databases (refer to <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.9/reference/driver/change_streams/#watching-changes-in-all-collections-in-all-databases">this</a> ):</p>
+<p>The change stream interface is pretty simple. For instance, use the
+following code to watch changes in all collections in all databases
+(refer to <a
+target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.9/reference/driver/change_streams/#watching-changes-in-all-collections-in-all-databases">this</a>
+):</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cursor <span class="token operator">=</span> <span class="token keyword">await</span> client<span class="token punctuation">.</span><span class="token function">WatchAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">await</span> cursor<span class="token punctuation">.</span><span class="token function">ForEachAsync</span><span class="token punctuation">(</span>change <span class="token operator">=></span>
@@ -304,30 +332,48 @@
         <span class="token comment">// process change event</span>
     <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>So the realtime replication needs to solve the following problems:</p>
+<p>So the realtime replication needs to solve the following
+problems:</p>
 <ul>
-<li>How to setup the change stream start point on the source cluster</li>
+<li>How to setup the change stream start point on the source
+cluster</li>
 <li>How to replay the change to the target cluster</li>
 </ul>
-<h1 id="how-to-construct-startatoperationtime">How to construct startAtOperationTime</h1>
-<p>According to the <a target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">manual</a>:</p>
+<h1 id="how-to-construct-startatoperationtime">How to construct
+startAtOperationTime</h1>
+<p>According to the <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">manual</a>:</p>
 <blockquote>
-<p>Change streams are resumable by specifying a resume token to either resumeAfter or startAfter when opening the cursor.</p>
+<p>Change streams are resumable by specifying a resume token to either
+resumeAfter or startAfter when opening the cursor.</p>
 </blockquote>
-<p>However, the <code>resumeAfter</code> or <code>startAfter</code> must be retrieved from the last change stream. So how to set the start point before now?</p>
-<p>We finally found the solution: use <code>StartAtOperationTime</code> in the <code>ChangeStreamOptions</code> to specify the start time like this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChangeStreamOptions</span>
+<p>However, the <code>resumeAfter</code> or <code>startAfter</code> must
+be retrieved from the last change stream. So how to set the start point
+before now?</p>
+<p>We finally found the solution: use <code>StartAtOperationTime</code>
+in the <code>ChangeStreamOptions</code> to specify the start time like
+this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> options <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ChangeStreamOptions</span>
 <span class="token punctuation">&#123;</span>
 	BatchSize <span class="token operator">=</span> <span class="token number">2000</span><span class="token punctuation">,</span>
 	StartAtOperationTime <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BsonTimestamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>startPoint<span class="token punctuation">.</span><span class="token function">ToUnixTimeSeconds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
 	FullDocument <span class="token operator">=</span> ChangeStreamFullDocumentOption<span class="token punctuation">.</span>UpdateLookup
 <span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p><code>BsonTimestamp</code> <a target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.5/apidocs/html/M_MongoDB_Bson_BsonTimestamp__ctor.htm">definition</a>: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token function">BsonTimestamp</span><span class="token punctuation">(</span>
+<p><code>BsonTimestamp</code> <a
+target="_blank" rel="noopener" href="https://mongodb.github.io/mongo-csharp-driver/2.5/apidocs/html/M_MongoDB_Bson_BsonTimestamp__ctor.htm">definition</a>:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token function">BsonTimestamp</span><span class="token punctuation">(</span>
 	<span class="token class-name"><span class="token keyword">int</span></span> timestamp<span class="token punctuation">,</span>
 	<span class="token class-name"><span class="token keyword">int</span></span> increment
 <span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="how-to-replay-the-change">How to replay the change</h1>
-<p>Note that another <code>ChangeStreamOptions</code> <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> means the change's <code>FullDocument</code> property will contains the full updated documents for update operations. We use this property to replay the update change to the target.</p>
-<p>Replay the change needs to handle different change types, our implementation refer to <a target="_blank" rel="noopener" href="https://github.com/Lailaimonkey/mongo-sync/blob/master/mongo/sync.go">this</a> .</p>
+<p>Note that another <code>ChangeStreamOptions</code>
+<code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code>
+means the change's <code>FullDocument</code> property will contains the
+full updated documents for update operations. We use this property to
+replay the update change to the target.</p>
+<p>Replay the change needs to handle different change types, our
+implementation refer to <a
+target="_blank" rel="noopener" href="https://github.com/Lailaimonkey/mongo-sync/blob/master/mongo/sync.go">this</a>
+.</p>
 <p><code>ChangeStreamOperationType</code> definition: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">ChangeStreamOperationType</span>
 <span class="token punctuation">&#123;</span>
 	Insert <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
@@ -358,15 +404,23 @@
 <span class="token punctuation">&#123;</span>
 	Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"Unknown type: [</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">change<span class="token punctuation">.</span>OperationType</span><span class="token punctuation">&#125;</span></span><span class="token string">]"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>Actually, we only process insert, delete, replace and update operations. Moreover, replace and update operations are handled by the same logic as we leverage the <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> option.</p>
-<p>Sometimes the <code>FullDocument</code> is null for the update operation. This is caused by document deletion. Refer to <a target="_blank" rel="noopener" href="https://developer.mongodb.com/community/forums/t/how-can-change-stream-update-operations-come-with-null-fulldocument-when-changestreamfulldocumentoption-updatelookup-was-used/2537">this</a>.</p>
+<p>Actually, we only process insert, delete, replace and update
+operations. Moreover, replace and update operations are handled by the
+same logic as we leverage the
+<code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code>
+option.</p>
+<p>Sometimes the <code>FullDocument</code> is null for the update
+operation. This is caused by document deletion. Refer to <a
+target="_blank" rel="noopener" href="https://developer.mongodb.com/community/forums/t/how-can-change-stream-update-operations-come-with-null-fulldocument-when-changestreamfulldocumentoption-updatelookup-was-used/2537">this</a>.</p>
 <h1 id="full-code">Full Code</h1>
 <p>See this repo: https://github.com/finisky/MongoDBSync</p>
 <p>Implementation notes:</p>
 <ul>
 <li>Use transaction to guarantee replay operation success</li>
 <li>NOT use bulkwrite for simplicity</li>
-<li>Make sure your source MongoDB version &gt;= v4.4.4, see also: <a href="https://finisky.github.io/changestreamcauseserverrestart.en/"># MongoDB Change Stream Makes the Cluster Down</a></li>
+<li>Make sure your source MongoDB version &gt;= v4.4.4, see also: <a
+href="https://finisky.github.io/changestreamcauseserverrestart.en/">#
+MongoDB Change Stream Makes the Cluster Down</a></li>
 </ul>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson</span><span class="token punctuation">;</span>
 <span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>

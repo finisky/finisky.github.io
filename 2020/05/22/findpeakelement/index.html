@@ -31,7 +31,7 @@
 <meta property="og:description" content="Find Peak Element 给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index i，使得n[i - 1] &lt; n[i] &gt; n[i + 1]。保证峰值一定存在，如果有多个峰值，可返回任意一个。 乍看此题不难，O(n)的算法很容易想到，直接遍历数组即可。但题目要求给出O(log(n))的算法。显然，直观上应该用二分查找，否则复杂度要求不能满足。可数组是无序的">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-05-22T06:31:43.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Coding Interview">
 <meta property="article:tag" content="BinarySearch">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,17 +273,24 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/find-peak-element/">Find Peak Element</a> 给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index i，使得<code>n[i - 1] &lt; n[i] &gt; n[i + 1]</code>。保证峰值一定存在，如果有多个峰值，可返回任意一个。</p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/find-peak-element/">Find Peak
+Element</a>
+给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index
+i，使得<code>n[i - 1] &lt; n[i] &gt; n[i + 1]</code>。保证峰值一定存在，如果有多个峰值，可返回任意一个。</p>
 <p>乍看此题不难，O(n)的算法很容易想到，直接遍历数组即可。但题目要求给出O(log(n))的算法。显然，直观上应该用二分查找，否则复杂度要求不能满足。可数组是无序的，无法直接应用二分查找。</p>
 <span id="more"></span>
-<p>开始的想法是分情况讨论n[m]与n[l]和n[r]的关系，但发现三者之间的关系与峰值是否存在联系不起来。这里就引入了第一个tricky的点：考虑n[m]与n[m - 1]的关系。</p>
+<p>开始的想法是分情况讨论n[m]与n[l]和n[r]的关系，但发现三者之间的关系与峰值是否存在联系不起来。这里就引入了第一个tricky的点：考虑n[m]与n[m
+- 1]的关系。</p>
 <ul>
-<li>n[m] &gt; n[m - 1]: 峰值必出现在右边，<code>l = m</code>。反证法，若右边的数组单调递增，则最右的元素是峰值（这是第二个tricky的点，最初没想到单调递增的数组中也必存在峰值）；若右边的数组在某处开始递减，则峰值就在拐点。</li>
-<li>n[m] &lt; n[m - 1]: 峰值必出现在左边，<code>r = m - 1</code>。同理可证。</li>
+<li>n[m] &gt; n[m - 1]:
+峰值必出现在右边，<code>l = m</code>。反证法，若右边的数组单调递增，则最右的元素是峰值（这是第二个tricky的点，最初没想到单调递增的数组中也必存在峰值）；若右边的数组在某处开始递减，则峰值就在拐点。</li>
+<li>n[m] &lt; n[m - 1]:
+峰值必出现在左边，<code>r = m - 1</code>。同理可证。</li>
 </ul>
 <p>算法有了，代码就有了？未尽然，还要考虑如下边界条件：</p>
 <ul>
-<li>计算中点index <code>int m = l + (r - l) / 2;</code> 可能出现<code>l=m</code>的情况，处理不当导致死循环或下标越界。考虑到上述公式是倾向于选中点偏左的位置，那么使用n[m]与n[m+1]的关系可以让代码更简捷，在二分查找只剩下2个元素时，不会下标越界。</li>
+<li>计算中点index <code>int m = l + (r - l) / 2;</code>
+可能出现<code>l=m</code>的情况，处理不当导致死循环或下标越界。考虑到上述公式是倾向于选中点偏左的位置，那么使用n[m]与n[m+1]的关系可以让代码更简捷，在二分查找只剩下2个元素时，不会下标越界。</li>
 <li>数组只有一个元素。在数组仅有一个元素时不必再计算中点，直接返回，因此循环停止条件为<code>l &lt; r</code>而非<code>l &lt;= r</code>。</li>
 </ul>
 <p>综合上述分析，代码如下，非常简捷： <pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">class</span> <span class="token class-name">Solution</span> <span class="token punctuation">&#123;</span>
@@ -320,6 +327,9 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/priorityqueueexample/" rel="bookmark">C++ priority_queue使用示例</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/pandoccode64bug.en/" rel="bookmark">'pandoc exited with code 64' Solution</a></div>
     </li>
   </ul>
 

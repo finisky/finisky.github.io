@@ -31,7 +31,7 @@
 <meta property="og:description" content="Yesterday, when I login to my VM I found that the disk is full. Even a tab command completion cannot be done. I immediately delete some unused files and the system works. However, when I reboot the sy">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-29T05:01:16.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -273,7 +273,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Yesterday, when I login to my VM I found that the disk is full. Even a tab command completion cannot be done. I immediately delete some unused files and the system works. However, when I reboot the system, it stucked at <code>A start job is running for Create Volatile Files and Directories...</code>:</p>
+        <p>Yesterday, when I login to my VM I found that the disk is full. Even
+a tab command completion cannot be done. I immediately delete some
+unused files and the system works. However, when I reboot the system, it
+stucked at
+<code>A start job is running for Create Volatile Files and Directories...</code>:</p>
 <span id="more"></span>
 <pre class="line-numbers language-none"><code class="language-none">...
 [  OK  ] Started File System Check on &#x2F;dev&#x2F;disk&#x2F;cloud&#x2F;azure_resource-part1.
@@ -293,19 +297,32 @@
          Starting Create Volatile Files and Directories...
 [  OK  ] Started AppArmor initialization.
 [    **] A start job is running for Create V… Directories (13min 46s &#x2F; no limit)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>I searched and found a similar discussion: <a target="_blank" rel="noopener" href="https://serverfault.com/questions/987488/boot-stuck-at-a-start-job-is-running-for-create-volatile-files-and-directories"># Boot stuck at “A start job is running for Create Volatile Files and Directories”</a></p>
-<p>I used an Azure VM with an extra disk. However, it always failed to boot into recovery mode. Then I removed the extra disk from the portal and the system mount the disk failed and went to the single user mode so that I can execute commands:</p>
+<p>I searched and found a similar discussion: <a
+target="_blank" rel="noopener" href="https://serverfault.com/questions/987488/boot-stuck-at-a-start-job-is-running-for-create-volatile-files-and-directories">#
+Boot stuck at “A start job is running for Create Volatile Files and
+Directories”</a></p>
+<p>I used an Azure VM with an extra disk. However, it always failed to
+boot into recovery mode. Then I removed the extra disk from the portal
+and the system mount the disk failed and went to the single user mode so
+that I can execute commands:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;tmp# ls &#x2F;tmp
 bash: &#x2F;bin&#x2F;ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>Then occasionally I found that there are HUGE amount of something like this <code>.com.google.Chrome.nFbq9T</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;tmp# ls .com.google.Chrome.*
+<p>Then occasionally I found that there are HUGE amount of something
+like this <code>.com.google.Chrome.nFbq9T</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;tmp# ls .com.google.Chrome.*
 bash: &#x2F;bin&#x2F;ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
-<p>Since I have a web crawler in the system, it seems that there are something wrong but it doesn't matter. I also cannot execute <code>rm -f .com.google.Chrome.*</code> due to <code>Argument list too long</code>. First list them:</p>
+<p>Since I have a web crawler in the system, it seems that there are
+something wrong but it doesn't matter. I also cannot execute
+<code>rm -f .com.google.Chrome.*</code> due to
+<code>Argument list too long</code>. First list them:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;home# find &#x2F;tmp -type f -iname &quot;.com.google.Chrome*&quot; -ls | head
 find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.nFbq9T’: No such file or directory
 find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.WKCRCU’: No such file or directory
 find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.62cCbn’: No such file or directory
 find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.RR1E3L’: No such file or directory<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>The command cannot quickly return, but I got above error messages. Seems that the OS is cleaning the <code>/tmp</code> folder but I cannot verify this. Through <code>df -lh</code> I found that the available disk space is increasing. To speed up the process, execute:</p>
+<p>The command cannot quickly return, but I got above error messages.
+Seems that the OS is cleaning the <code>/tmp</code> folder but I cannot
+verify this. Through <code>df -lh</code> I found that the available disk
+space is increasing. To speed up the process, execute:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;home# find &#x2F;tmp -iname &quot;.com.google.Chrome*&quot; -delete &gt; &#x2F;dev&#x2F;null 2&gt;&amp;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>After nearly an hour it finished: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$ df -lh
 Filesystem      Size  Used Avail Use% Mounted on
@@ -313,8 +330,12 @@ udev            1.9G     0  1.9G   0% &#x2F;dev
 tmpfs           393M  1.1M  392M   1% &#x2F;run
 &#x2F;dev&#x2F;sda1        29G   13G   16G  46% &#x2F;
 ...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>It looks like there were 16G <code>.com.google.Chrome.</code> files... And because of this, the system is stuck at boot. Unfortunately, the root cause of this problem is not found yet.</p>
-<p>By the way, directly move <code>/tmp</code> to <code>/tmp.bak</code> and recreate <code>/tmp</code> might be more efficient as suggested in the above post...</p>
+<p>It looks like there were 16G <code>.com.google.Chrome.</code>
+files... And because of this, the system is stuck at boot.
+Unfortunately, the root cause of this problem is not found yet.</p>
+<p>By the way, directly move <code>/tmp</code> to <code>/tmp.bak</code>
+and recreate <code>/tmp</code> might be more efficient as suggested in
+the above post...</p>
 
     </div>
 

@@ -31,7 +31,7 @@
 <meta property="og:description" content="硬盘虽然并不值钱，但对于一个强迫症来说，看到莫名其妙地内容占据了好些空间也非常不爽。记录下在Linux中如何发现空间占用大户，以及可以删除什么以缩减使用空间。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-22T10:35:26.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,7 +277,8 @@
         <p>硬盘虽然并不值钱，但对于一个强迫症来说，看到莫名其妙地内容占据了好些空间也非常不爽。记录下在Linux中如何发现空间占用大户，以及可以删除什么以缩减使用空间。</p>
 <span id="more"></span>
 <h1 id="aptitude">aptitude</h1>
-<p><code>sudo apt autoremove</code>可以自动清理不再需要的文件，不过作用有限。aptitude是个好工具，可以在文本界面下方便地浏览已安装的包，删除不需要的内容。aptitude将包进行了分类，可以按类查找，甚至可以将某类包整个都删除。比如对server来说，desktop和GUI并不是必须的，可以将gnome相关的包都删除以节省空间。 <pre class="line-numbers language-none"><code class="language-none"> Actions  Undo  Package  Resolver  Search  Options  Views  Help
+<p><code>sudo apt autoremove</code>可以自动清理不再需要的文件，不过作用有限。aptitude是个好工具，可以在文本界面下方便地浏览已安装的包，删除不需要的内容。aptitude将包进行了分类，可以按类查找，甚至可以将某类包整个都删除。比如对server来说，desktop和GUI并不是必须的，可以将gnome相关的包都删除以节省空间。
+<pre class="line-numbers language-none"><code class="language-none"> Actions  Undo  Package  Resolver  Search  Options  Views  Help
 C-T: Menu  ?: Help  q: Quit  u: Update  g: Preview&#x2F;Download&#x2F;Install&#x2F;Remove Pkgs
 aptitude 0.8.10 @ DEAN
 --- Upgradable Packages (1)
@@ -300,7 +301,8 @@ Packages in the &#39;editors&#39; section allow you to edit plain ASCII text. Th
 processors may be found in this section.                                                                                         
 This group contains 14 packages. <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="ncdu">ncdu</h1>
-<p>ncdu是个好东西，可以快速分析出磁盘中的大文件所在位置，以便于有针对性地清理。可以先用<code>sudo ncdu /</code>来分析全盘的使用情况，如果磁盘比较大，扫描可能会比较慢： <pre class="line-numbers language-none"><code class="language-none">ncdu 1.12 ~ Use the arrow keys to navigate, press ? for help
+<p>ncdu是个好东西，可以快速分析出磁盘中的大文件所在位置，以便于有针对性地清理。可以先用<code>sudo ncdu /</code>来分析全盘的使用情况，如果磁盘比较大，扫描可能会比较慢：
+<pre class="line-numbers language-none"><code class="language-none">ncdu 1.12 ~ Use the arrow keys to navigate, press ? for help
 --- &#x2F; ------------------------------------------------------------------------------------------------------------------------
     7.7 GiB [##########] &#x2F;var
     5.8 GiB [#######   ] &#x2F;data
@@ -327,14 +329,18 @@ This group contains 14 packages. <span aria-hidden="true" class="line-numbers-ro
    26.4 MiB [          ]  libzmq.a
    20.5 MiB [          ]  libbitcoin-protocol.a
     9.3 MiB [          ]  libbitcoin-client.a
-...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 就本机为例，里面有许多libbitcoin相关的lib，而实际上它们已经不再使用了。不幸的是，并没有一个好工具清理<code>/usr/local/lib</code>，因为此处就是放许多库文件的文件夹，如果不用apt/yum之类的包管理软件，系统很难知道哪些库文件是不再使用的，这是用户层面的逻辑。</p>
+...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+就本机为例，里面有许多libbitcoin相关的lib，而实际上它们已经不再使用了。不幸的是，并没有一个好工具清理<code>/usr/local/lib</code>，因为此处就是放许多库文件的文件夹，如果不用apt/yum之类的包管理软件，系统很难知道哪些库文件是不再使用的，这是用户层面的逻辑。</p>
 <h2 id="清理varlogjournal">清理<code>/var/log/journal</code></h2>
 <p>先查看journal log有多大： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ journalctl --disk-usage
-Archived and active journals take up 5.8G in the file system.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> 用如下命令手动清理只保留最近10天的log: <pre class="line-numbers language-none"><code class="language-none">$ journalctl --vacuum-time&#x3D;10d
+Archived and active journals take up 5.8G in the file system.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+用如下命令手动清理只保留最近10天的log: <pre class="line-numbers language-none"><code class="language-none">$ journalctl --vacuum-time&#x3D;10d
 Vacuuming done, freed 5.1G of archived journals from &#x2F;var&#x2F;log&#x2F;journal.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
-<p>最后可以编辑<code>/etc/systemd/journald.conf</code>，设置最大jounal log占用空间为1000M： <pre class="line-numbers language-none"><code class="language-none">SystemMaxUse&#x3D;1000M<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>最后可以编辑<code>/etc/systemd/journald.conf</code>，设置最大jounal
+log占用空间为1000M： <pre class="line-numbers language-none"><code class="language-none">SystemMaxUse&#x3D;1000M<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <h2 id="清理conda">清理conda</h2>
-<p><code>conda clean -a</code>是个好东西，按提示来即可，说明如下： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ conda clean --help
+<p><code>conda clean -a</code>是个好东西，按提示来即可，说明如下：
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ conda clean --help
 usage: conda clean [-h] [-a] [-i] [-p] [-t] [-f]
                    [-c TEMPFILES [TEMPFILES ...]] [-d] [--json] [-q] [-v] [-y]
 Remove unused packages and caches.
@@ -346,8 +352,11 @@ Removal Targets:
   -a, --all             Remove index cache, lock files, unused cache packages,
                         and tarballs.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="清理varlogazure">清理<code>/var/log/azure/</code></h2>
-<p><code>/var/log/azure/Microsoft.OSTCExtensions.LinuxDiagnostic</code>这目录里的日志文件还挺大，有不少讨论这个的： <a target="_blank" rel="noopener" href="https://github.com/Azure/azure-linux-extensions/issues/618">https://github.com/Azure/azure-linux-extensions/issues/618</a></p>
-<p>没什么好方法，用logrotate解决，在<code>/etc/logrotate.d/</code>中增加个azurediagnostic文件： <pre class="line-numbers language-json" data-language="json"><code class="language-json">/var/log/azure/Microsoft.OSTCExtensions.LinuxDiagnostic<span class="token comment">/*.log &#123;
+<p><code>/var/log/azure/Microsoft.OSTCExtensions.LinuxDiagnostic</code>这目录里的日志文件还挺大，有不少讨论这个的：
+<a
+target="_blank" rel="noopener" href="https://github.com/Azure/azure-linux-extensions/issues/618">https://github.com/Azure/azure-linux-extensions/issues/618</a></p>
+<p>没什么好方法，用logrotate解决，在<code>/etc/logrotate.d/</code>中增加个azurediagnostic文件：
+<pre class="line-numbers language-json" data-language="json"><code class="language-json">/var/log/azure/Microsoft.OSTCExtensions.LinuxDiagnostic<span class="token comment">/*.log &#123;
      daily
      rotate 3
      size 100M

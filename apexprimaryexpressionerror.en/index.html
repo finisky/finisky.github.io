@@ -31,7 +31,7 @@
 <meta property="og:description" content="Apex Compile Error The environment (cuda10.0): $ conda install pytorch&#x3D;&#x3D;1.1.0 torchvision&#x3D;&#x3D;0.3.0 cudatoolkit&#x3D;10.0 -c pytorch The apex repo master HEAD: commit 0c2c6eea6556b208">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-08-20T11:18:23.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="cuda">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -289,8 +289,10 @@ pip install -v --disable-pip-version-check --no-cache-dir --global-option&#x3D;&
        w_ptr.push_back(inputs[i + 1].data_ptr&lt;scalar_t&gt;());
                                                       ^<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="solution">Solution</h1>
-<p>Similar discussions: https://github.com/NVIDIA/apex/issues/802 https://github.com/NVIDIA/apex/issues/1139</p>
-<p>Rollback to an earlier version is not a good solution. Actually, the issue is caused by pytorch/gcc/cuda mismatch.</p>
+<p>Similar discussions: https://github.com/NVIDIA/apex/issues/802
+https://github.com/NVIDIA/apex/issues/1139</p>
+<p>Rollback to an earlier version is not a good solution. Actually, the
+issue is caused by pytorch/gcc/cuda mismatch.</p>
 <p>Therefore, make sure:</p>
 <ul>
 <li>gcc version is &gt;= 7 (<code>gcc --version</code>)</li>
@@ -298,62 +300,480 @@ pip install -v --disable-pip-version-check --no-cache-dir --global-option&#x3D;&
 </ul>
 <p>If not, upgrade them.</p>
 <h1 id="full-error-message">Full error message</h1>
-<blockquote><p>... csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del> /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression before ‘&gt;’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression before ‘)’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del> /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression before ‘&gt;’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression before ‘)’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del> /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt; inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression before ‘&gt;’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of ‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’ i nside { } [-Wnarrowing] auto work_space = at::empty({work_size / sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression before ‘)’ token work_space.data_ptr<scalar_t>(), ^ /home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12: note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return <strong>VA_ARGS</strong>();<br />
-^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro ‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’ AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward", [&amp;] { ^ error: command 'gcc' failed with exit status 1 Running setup.py install for apex ... error</p>
-<p>ERROR: Command errored out with exit status 1: /home/user/miniconda3/envs/test/bin/python -u -c 'import sys, setuptools, tokeni ze; sys.argv[0] = '"'"'/tmp/pip-req-build-z3p6osd_/setup.py'"'"'; <strong>file</strong>='"'"'/tmp/pip-req-build-z3p6osd_/setup.py'"'"';f=getattr( tokenize, '"'"'open'"'"', open)(<strong>file</strong>);code=f.read().replace('"'"''"'"', '"'"''"'"');f.close();exec(compile(code, <strong>file</strong>, '"'"'exec'"'"'))' --cpp_ext --cuda_ext install --record /tmp/pip-record-p3loelp4/install-record.txt --single-version-externally-man aged --compile --install-headers /home/user/miniconda3/envs/test/include/python3.7m/apex Check the logs for full command output ...</p>
+<blockquote><p>... csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23: warning:
+comparison between signed and unsigned integer expressions
+[-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del>
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression
+before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression
+before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and
+unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt;
+inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression
+before ‘&gt;’ token
+outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression
+before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression
+before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression
+before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression
+before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression
+before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression
+before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression
+before ‘)’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23:
+warning: comparison between signed and unsigned integer expressions
+[-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del>
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression
+before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression
+before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and
+unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt;
+inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression
+before ‘&gt;’ token
+outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression
+before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression
+before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression
+before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression
+before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression
+before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression
+before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression
+before ‘)’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp: In lambda function: csrc/mlp.cpp:126:23:
+warning: comparison between signed and unsigned integer expressions
+[-Wsign-compare] for (int i = 0; i &lt; num_layers; i++) { <del>^</del>
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:54: error: expected primary-expression
+before ‘&gt;’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:127:56: error: expected primary-expression
+before ‘)’ token w_ptr.push_back(inputs[i + 1].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:130:23: warning: comparison between signed and
+unsigned integer expressions [-Wsign-compare] for (int i = 0; i &lt;
+inputs.size(); i++) { <del>^</del>~~~~~~~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:57: error: expected primary-expression
+before ‘&gt;’ token
+outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>()); ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:131:59: error: expected primary-expression
+before ‘)’ token outputs_ptr.push_back(outputs[i].data_ptr<scalar_t>());
+^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:138:44: warning: narrowing conversion of
+‘(work_size / sizeof (scalar_t))’ from ‘long unsigned int’ to ‘long int’
+i nside { } [-Wnarrowing] auto work_space = at::empty({work_size /
+sizeof(scalar_t)}, inputs[0].type()); ~~~~~~~~<del>^</del>~~~~~~
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:36: error: expected primary-expression
+before ‘&gt;’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:141:38: error: expected primary-expression
+before ‘)’ token inputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:142:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[0].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:46: error: expected primary-expression
+before ‘&gt;’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:148:48: error: expected primary-expression
+before ‘)’ token grad_o.contiguous().data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:43: error: expected primary-expression
+before ‘&gt;’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:149:45: error: expected primary-expression
+before ‘)’ token fprop_outputs[1].data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:37: error: expected primary-expression
+before ‘&gt;’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ csrc/mlp.cpp:150:39: error: expected primary-expression
+before ‘)’ token work_space.data_ptr<scalar_t>(), ^
+/home/user/miniconda3/envs/test/lib/python3.7/site-packages/torch/include/ATen/Dispatch.h:11:12:
+note: in definition of mac ro ‘AT_PRIVATE_CASE_TYPE’ return
+<strong>VA_ARGS</strong>();<br />
+^~~~~~~~~~~ csrc/mlp.cpp:124:3: note: in expansion of macro
+‘AT_DISPATCH_FLOATING_TYPES_AND_HALF’
+AT_DISPATCH_FLOATING_TYPES_AND_HALF(inputs[0].type(), "mlp_backward",
+[&amp;] { ^ error: command 'gcc' failed with exit status 1 Running
+setup.py install for apex ... error</p>
+<p>ERROR: Command errored out with exit status 1:
+/home/user/miniconda3/envs/test/bin/python -u -c 'import sys,
+setuptools, tokeni ze; sys.argv[0] =
+'"'"'/tmp/pip-req-build-z3p6osd_/setup.py'"'"';
+<strong>file</strong>='"'"'/tmp/pip-req-build-z3p6osd_/setup.py'"'"';f=getattr(
+tokenize, '"'"'open'"'"',
+open)(<strong>file</strong>);code=f.read().replace('"'"''"'"',
+'"'"''"'"');f.close();exec(compile(code, <strong>file</strong>,
+'"'"'exec'"'"'))' --cpp_ext --cuda_ext install --record
+/tmp/pip-record-p3loelp4/install-record.txt
+--single-version-externally-man aged --compile --install-headers
+/home/user/miniconda3/envs/test/include/python3.7m/apex Check the logs
+for full command output ...</p>
 </blockquote>
 
     </div>

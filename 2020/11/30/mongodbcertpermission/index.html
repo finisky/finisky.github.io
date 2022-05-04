@@ -31,7 +31,7 @@
 <meta property="og:description" content="如果你按官方文档 Configure mongod and mongos for TLS&#x2F;SSL 配置MongoDB证书，可能会遇到如下问题： &amp;#123;&quot;t&quot;:&amp;#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&amp;#125;,&quot;s&quot;:&quot;E&quot;,  &quot;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-30T15:37:32.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="TLS">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,7 +274,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>如果你按官方文档 <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure mongod and mongos for TLS/SSL</a> 配置MongoDB证书，可能会遇到如下问题：</p>
+        <p>如果你按官方文档 <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>
+配置MongoDB证书，可能会遇到如下问题：</p>
 <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
 &#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
@@ -286,8 +289,10 @@
 <li><code>chown mongodb:mongodb [xxx.pem]</code></li>
 <li><code>chmod 400 [xxx.pem]</code></li>
 </ul>
-<p>如果证书文件不能被用户<code>mongodb</code>读 (比如文件所有者是 <code>root</code>，权限是600)，出错 <code>Permission denied</code>.</p>
-<p>如果文件属于<code>mongodb</code> 但有超过400的权限, 出错<code>permissions on / are too open</code>.</p>
+<p>如果证书文件不能被用户<code>mongodb</code>读 (比如文件所有者是
+<code>root</code>，权限是600)，出错 <code>Permission denied</code>.</p>
+<p>如果文件属于<code>mongodb</code> 但有超过400的权限,
+出错<code>permissions on / are too open</code>.</p>
 <p>修改之后的证书文件长这样： <pre class="line-numbers language-none"><code class="language-none">-r-------- 1 mongodb mongodb 4.4K Nov 30 18:11 test-ca.pem
 -r-------- 1 mongodb mongodb 5.4K Nov 30 17:19 test-server1.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h1 id="方案2">方案2</h1>

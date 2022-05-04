@@ -143,7 +143,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -194,6 +194,128 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/08/31/perlcgi.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/31/perlcgi.en/" class="post-title-link" itemprop="url">Can't locate CGI.pm in @INC</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-09-01 00:58:20" itemprop="dateCreated datePublished" datetime="2020-09-01T00:58:20+08:00">2020-09-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/08/31/perlcgi.en/" class="post-meta-item leancloud_visitors" data-flag-title="Can't locate CGI.pm in @INC" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/08/31/perlcgi.en/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/08/31/perlcgi.en/" data-xid="/2020/08/31/perlcgi.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Install an old library <a
+target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu
+20.04. When visit the cgi, internal server error pops up.</p>
+<p>Debug the cgi by directly run it in
+<code>/var/www/lightsquid</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
+Can&#39;t locate CGI.pm in @INC (you may need to install the CGI module) (@INC contains: &#x2F;etc&#x2F;perl &#x2F;usr&#x2F;local&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;local&#x2F;share&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl5&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl5 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;local&#x2F;lib&#x2F;site_perl &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl-base) at index.cgi line 19.
+BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>Seems that some modules are missing, after several search: <a
+target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
+<p>Combined with the error message: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ apt install libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Then it works: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
+&#96;&#96;&#96;html
+&lt;!DOCTYPE html PUBLIC &quot;-&#x2F;&#x2F;W3C&#x2F;&#x2F;DTD HTML 4.01 Transitional&#x2F;&#x2F;EN&quot;&gt;
+
+&lt;HTML&gt;
+&lt;HEAD&gt;
+  &lt;META name&#x3D;&quot;robots&quot; content&#x3D;&quot;noindex,nofollow&quot;&gt;
+  &lt;META name&#x3D;&quot;generator&quot; content&#x3D;&quot;LightSquid - http:&#x2F;&#x2F;lightsquid.sf.net&quot;&gt;
+  &lt;META http-equiv&#x3D;&quot;Content-Type&quot; content&#x3D;&quot;text&#x2F;html; charset&#x3D;US-ASCII&quot;&gt;
+  &lt;META HTTP-EQUIV&#x3D;&quot;REFRESH&quot; CONTENT&#x3D;&quot;600&quot;&gt;
+...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/08/29/googlebbr/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -225,7 +347,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -268,7 +390,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/gcp/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster">BBR</a> 是Google 2016年提出的TCP 拥塞控制算法，可以显著地提升Server的吞吐率并降低延迟。在VPS上实测效果非常明显，将VPS的下载速度由10Mbps左右提升至约50Mbps，自动视频质量也由240p升至1080p。</p>
+          <p><a
+target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/gcp/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster">BBR</a>
+是Google 2016年提出的TCP
+拥塞控制算法，可以显著地提升Server的吞吐率并降低延迟。在VPS上实测效果非常明显，将VPS的下载速度由10Mbps左右提升至约50Mbps，自动视频质量也由240p升至1080p。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/08/29/googlebbr/#more" rel="contents">
@@ -333,7 +458,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -376,8 +501,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>View the generated SQL query by entity framework is important. The translated SQL query may not what you expected. Sometimes it leads to significant performance issue.</p>
-<p>Print the generated query for an <code>IQueryable&lt;T&gt;</code> in EF Core is different with EF. Finally I found a worked solution which is listed below.</p>
+          <p>View the generated SQL query by entity framework is important. The
+translated SQL query may not what you expected. Sometimes it leads to
+significant performance issue.</p>
+<p>Print the generated query for an <code>IQueryable&lt;T&gt;</code> in
+EF Core is different with EF. Finally I found a worked solution which is
+listed below.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/08/26/efcoregetsqlquery.en/#more" rel="contents">
@@ -442,7 +571,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,7 +614,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><strong>2020-11-28更新：</strong> 经过四个多月的肌肉练习（引体向上，核心肌群训练，跑步，羽毛球），肩颈疼痛症状显著缓解，坚持锻炼两个月后，落枕、脖子活动受限的情况基本就没再发生过，现在的情况就更好了。全身性的肌肉训练效果还是很好的，亲测推荐！</p>
+          <p><strong>2020-11-28更新：</strong>
+经过四个多月的肌肉练习（引体向上，核心肌群训练，跑步，羽毛球），肩颈疼痛症状显著缓解，坚持锻炼两个月后，落枕、脖子活动受限的情况基本就没再发生过，现在的情况就更好了。全身性的肌肉训练效果还是很好的，亲测推荐！</p>
 <p>值得一提的是病来如山倒，病去如抽丝。在急性疼痛期时不建议进行肌肉训练，在慢性期时进行训练也须坚持，就我个人而言，开始练习的一个多月基本感觉不到症状缓解的现象，但再坚持一段时间后（一口气正手引体向上5次以上），效果开始显现，还得让子弹飞一会儿。肌肉力量的增长需要时间，肌肉强健之后，筋膜炎的症状才能缓解。</p>
 <hr />
 <p>现代人不论什么工作，都是每天长时间对着电脑工作，不良姿势的久坐导致的问题颇多，以颈椎病和腰椎病最为常见。笔者最近受疫情长时间在家办公影响，肩颈部位酸痛，且几个月都没有缓解。关于肩颈疼痛的缓解方案网上有很多，经过问医、研究和亲身试验，总结下有效和无效的方案。</p>
@@ -553,7 +683,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -661,7 +791,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -704,7 +834,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>为了精简hexo安装的npm modules，用<code>rm -rf node_modules/</code>删除了已安装的包，再<code>npm install</code>把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，<code>hexo g</code>时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。</p>
+          <p>为了精简hexo安装的npm
+modules，用<code>rm -rf node_modules/</code>删除了已安装的包，再<code>npm install</code>把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，<code>hexo g</code>时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/07/18/updatehexoplugin/#more" rel="contents">
@@ -769,7 +900,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -812,8 +943,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>自从有了 <a target="_blank" rel="noopener" href="https://996.icu/">996.icu</a> 和马云的“996福报”理论之后，关于996工作制的讨论就从未停止。我有不少同学同事加入或离开了996公司，我想说的是，福报不福报都是自己的选择，自己选的路，跪着也要走完。都希望挣更多的钱，抵制996并不是抵制高收入，本质上是希望用955的工作制挣到996开的工资。但理性思考后会发现它并不合理，单位时间的工资高低是由市场决定的，在一个充分竞争的市场上，同样性质不同公司的时薪差别不会太大。一家公司的package远高于另一家，工作强度和时长增加情理之中。</p>
-<p>看下这个回答：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/405666834/answer/1326000094"># 如何看待996工作制度?</a></p>
+          <p>自从有了 <a target="_blank" rel="noopener" href="https://996.icu/">996.icu</a>
+和马云的“996福报”理论之后，关于996工作制的讨论就从未停止。我有不少同学同事加入或离开了996公司，我想说的是，福报不福报都是自己的选择，自己选的路，跪着也要走完。都希望挣更多的钱，抵制996并不是抵制高收入，本质上是希望用955的工作制挣到996开的工资。但理性思考后会发现它并不合理，单位时间的工资高低是由市场决定的，在一个充分竞争的市场上，同样性质不同公司的时薪差别不会太大。一家公司的package远高于另一家，工作强度和时长增加情理之中。</p>
+<p>看下这个回答：<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/question/405666834/answer/1326000094">#
+如何看待996工作制度?</a></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/07/12/nineninesix/#more" rel="contents">
@@ -878,7 +1012,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -921,7 +1055,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。</p>
+          <p>交叉熵(Cross Entropy)和KL散度(Kullback–Leibler
+Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss
+Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/07/09/crossentropyloss/#more" rel="contents">
@@ -986,7 +1122,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1029,9 +1165,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1408.5882">TextCNN</a> 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。</p>
-<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/finisky/TextCNN">https://github.com/finisky/TextCNN</a></p>
-<p>这里的实现基于： <a target="_blank" rel="noopener" href="https://github.com/Shawn1993/cnn-text-classification-pytorch">https://github.com/Shawn1993/cnn-text-classification-pytorch</a></p>
+          <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1408.5882">TextCNN</a>
+是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。</p>
+<p>项目地址：<a
+target="_blank" rel="noopener" href="https://github.com/finisky/TextCNN">https://github.com/finisky/TextCNN</a></p>
+<p>这里的实现基于： <a
+target="_blank" rel="noopener" href="https://github.com/Shawn1993/cnn-text-classification-pytorch">https://github.com/Shawn1993/cnn-text-classification-pytorch</a></p>
 <p>主要改动：</p>
 <ul>
 <li>简化了参数配置，希望呈现一个最简版本</li>
@@ -1105,7 +1244,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1148,7 +1287,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper “Attention is All you Need”中对attention提出了通用的query/key/value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本文仅就其中的核心，MultiHeadAttention的实现进行源码剖析。</p>
+          <p>Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper
+“Attention is All you
+Need”中对attention提出了通用的query/key/value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本文仅就其中的核心，MultiHeadAttention的实现进行源码剖析。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/05/25/multiheadattention/#more" rel="contents">
@@ -1174,117 +1315,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/22/findpeakelement/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/22/findpeakelement/" class="post-title-link" itemprop="url">Find Peak Element 寻找峰值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-05-22 14:31:43" itemprop="dateCreated datePublished" datetime="2020-05-22T14:31:43+08:00">2020-05-22</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Coding-Interview/" itemprop="url" rel="index"><span itemprop="name">Coding Interview</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/2020/05/22/findpeakelement/" class="post-meta-item leancloud_visitors" data-flag-title="Find Peak Element 寻找峰值" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline: </span>
-  
-    <a title="waline" href="/2020/05/22/findpeakelement/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2020/05/22/findpeakelement/" data-xid="/2020/05/22/findpeakelement/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/find-peak-element/">Find Peak Element</a> 给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index i，使得<code>n[i - 1] &lt; n[i] &gt; n[i + 1]</code>。保证峰值一定存在，如果有多个峰值，可返回任意一个。</p>
-<p>乍看此题不难，O(n)的算法很容易想到，直接遍历数组即可。但题目要求给出O(log(n))的算法。显然，直观上应该用二分查找，否则复杂度要求不能满足。可数组是无序的，无法直接应用二分查找。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/22/findpeakelement/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 </div>

@@ -31,7 +31,7 @@
 <meta property="og:description" content="RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work. Ac">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-03T09:05:21.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="cuda">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,11 +276,15 @@
     
     <div class="post-body" itemprop="articleBody">
         <pre class="line-numbers language-none"><code class="language-none">RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work.</p>
-<p>Actually, the root cause is <strong>pytorch/cuda/python compatibility issue</strong>.</p>
+<p>When you encountered the above issue and Google it, you will find
+lots of discussions. Unfortunately, very rare of them are useful and
+work.</p>
+<p>Actually, the root cause is <strong>pytorch/cuda/python compatibility
+issue</strong>.</p>
 <span id="more"></span>
 <h1 id="solution">Solution</h1>
-<p>The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine.</p>
+<p>The solution is straightforward. Simply downgrade pytorch and install
+a different version of cuda or python would be fine.</p>
 <p>My environment:</p>
 <ol type="1">
 <li>Ubuntu 18.04 LTS</li>
@@ -288,9 +292,13 @@
 <li>PyTorch 1.3.0</li>
 <li>cuda 10.1</li>
 </ol>
-<p>This command resolved my issue (PyTorch version really matters! from 1.3.0 to 1.2.0):</p>
+<p>This command resolved my issue (PyTorch version really matters! from
+1.3.0 to 1.2.0):</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda install pytorch&#x3D;&#x3D;1.2.0 torchvision&#x3D;&#x3D;0.4.0 cudatoolkit&#x3D;10.0 -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>If you use conda, you can refer to this page to find a working combination (downgrade might be better than upgrade...): <a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING PREVIOUS VERSIONS OF PYTORCH</a></p>
+<p>If you use conda, you can refer to this page to find a working
+combination (downgrade might be better than upgrade...): <a
+target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING
+PREVIOUS VERSIONS OF PYTORCH</a></p>
 <h2 id="detailed-error-message">Detailed Error Message</h2>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ python seq2seq.py
 Traceback (most recent call last):
@@ -316,7 +324,8 @@ Traceback (most recent call last):
     self.dropout, self.training, self.bidirectional, self.batch_first)
 RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="do-not-upgrade-ubuntu">DO NOT Upgrade Ubuntu</h2>
-<p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded Ubuntu from 14.04 to 16.04 and then to 18.04, nothing happened.</p>
+<p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded
+Ubuntu from 14.04 to 16.04 and then to 18.04, nothing happened.</p>
 
     </div>
 

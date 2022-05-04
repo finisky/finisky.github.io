@@ -31,7 +31,7 @@
 <meta property="og:description" content="This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading spee">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-20T11:43:59.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="Hexo">
@@ -150,7 +150,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +233,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,7 +276,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading speed by jsdelivr CDN.</p>
+        <p>This blog uses github as image hosting service after migration.
+However, sometimes the image loading speed is slow. After some
+investigation, we found that we can easily improve the image loading
+speed by jsdelivr CDN.</p>
 <span id="more"></span>
 <h1 id="jsdelivr-image-url-format">Jsdelivr Image Url Format</h1>
 <p>Assume the original github image url is:</p>
@@ -289,15 +292,20 @@
 --&gt;
 
 https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>For example, for image <code>p.png</code> in github user <code>user</code>'s repository <code>repo</code>, folder <code>a/</code>:</p>
+<p>For example, for image <code>p.png</code> in github user
+<code>user</code>'s repository <code>repo</code>, folder
+<code>a/</code>:</p>
 <pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;user&#x2F;repo&#x2F;master&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>The CDN url should be:</p>
 <pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;user&#x2F;repo&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>If you encounter the following error:</p>
 <blockquote>
-<p>Package size exceeded the configured limit of 50 MB. Try https://github.com/user/repo/tree/master/master/a/xxx.jpg instead.</p>
+<p>Package size exceeded the configured limit of 50 MB. Try
+https://github.com/user/repo/tree/master/master/a/xxx.jpg instead.</p>
 </blockquote>
-<p>Probably the image url is wrong. For this case, there is a duplicate <code>master</code> and the url should be: <code>https://cdn.jsdelivr.net/gh/user/repo/a/xxx.jpg</code></p>
+<p>Probably the image url is wrong. For this case, there is a duplicate
+<code>master</code> and the url should be:
+<code>https://cdn.jsdelivr.net/gh/user/repo/a/xxx.jpg</code></p>
 <h1 id="script-to-replace-image-url">Script to Replace Image Url</h1>
 <p>Use the following script to replace the image url:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">#!&#x2F;bin&#x2F;bash

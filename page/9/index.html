@@ -143,7 +143,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -194,6 +194,122 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/11/30/mongodbcertpermission/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/11/30/mongodbcertpermission/" class="post-title-link" itemprop="url">MongoDB证书所有者和文件权限</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-11-30 23:37:32" itemprop="dateCreated datePublished" datetime="2020-11-30T23:37:32+08:00">2020-11-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/11/30/mongodbcertpermission/" class="post-meta-item leancloud_visitors" data-flag-title="MongoDB证书所有者和文件权限" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/11/30/mongodbcertpermission/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/11/30/mongodbcertpermission/" data-xid="/2020/11/30/mongodbcertpermission/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>如果你按官方文档 <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>
+配置MongoDB证书，可能会遇到如下问题：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
+&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>真难伺候，一会儿没权限读证书，一会儿权限太开放了，到底证书要什么权限？官方文档没加个tips解释这些细节，可能假设用户对PKI和证书这套东西非常熟悉。</p>
+<p>运行mongod的用户是<code>mongodb</code>，所以看起来证书权限需要是：<strong>能让用户<code>mongodb</code>读此证书但不能修改</strong>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/30/mongodbcertpermission/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/11/30/mongodbcertpermission.en/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -225,7 +341,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -268,11 +384,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>When you setup TLS/SSL for MongoDB <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure mongod and mongos for TLS/SSL</a>, you might encounter the following errors:</p>
+          <p>When you setup TLS/SSL for MongoDB <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>, you might encounter the following
+errors:</p>
 <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
 &#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>So what's the right ownership and permission for the certificate pem file? The answer is: <strong>the pem file should have read access but no write access for the user <code>mongodb</code></strong>.</p>
+<p>So what's the right ownership and permission for the certificate pem
+file? The answer is: <strong>the pem file should have read access but no
+write access for the user <code>mongodb</code></strong>.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/11/30/mongodbcertpermission.en/#more" rel="contents">
@@ -337,7 +458,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -381,7 +502,8 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>最近遇到个数据库表设计的问题，一张账号表，业务逻辑存在一列唯一accountId，是否还要在数据库表中加一列自增int作为主键？这应该是实践中普遍存在的问题，于是研究了下推荐做法。</p>
-<p>简单回答：这个问题没有明确答案，<strong>看情况决定</strong>。stackoverflow的相关问题已经被标记为<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63090/surrogate-vs-natural-business-keys">带有观点的回答</a>。没有答案的原因在于是否需要自增主键主要取决于应用场景。不过我倾向于<strong>在绝大部分情况下，使用自增int主键</strong>，如有必要，增加额外的唯一键（如这里的accountId）进行索引和查询。</p>
+<p>简单回答：这个问题没有明确答案，<strong>看情况决定</strong>。stackoverflow的相关问题已经被标记为<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63090/surrogate-vs-natural-business-keys">带有观点的回答</a>。没有答案的原因在于是否需要自增主键主要取决于应用场景。不过我倾向于<strong>在绝大部分情况下，使用自增int主键</strong>，如有必要，增加额外的唯一键（如这里的accountId）进行索引和查询。</p>
 <p>如下讨论都基于InnoDB引擎。</p>
           <!--noindex-->
             <div class="post-button">
@@ -447,7 +569,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -490,8 +612,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>对一个DBA来说监控mysql服务器的性能指标是非常重要的。我们可以通过mysqlbench中的Server Status来轻松监测服务器最近一段时间的状态。但是这些指标具体代表了什么含义？比如，<code>Selects per second</code> 和<code>Innodb reads per second</code>的区别是什么？如何评估服务器当前写入的性能？</p>
-<p>下图展示了一个运行中的服务器性能状态： <img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mysqlmetrics.png" alt="mysqlbench server status" /></p>
+          <p>对一个DBA来说监控mysql服务器的性能指标是非常重要的。我们可以通过mysqlbench中的Server
+Status来轻松监测服务器最近一段时间的状态。但是这些指标具体代表了什么含义？比如，<code>Selects per second</code>
+和<code>Innodb reads per second</code>的区别是什么？如何评估服务器当前写入的性能？</p>
+<p>下图展示了一个运行中的服务器性能状态： <img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mysqlmetrics.png"
+alt="mysqlbench server status" /></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/11/15/mysqlserverstatusmetrics/#more" rel="contents">
@@ -556,7 +682,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -599,8 +725,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Monitoring mysql server metrics is crucial for a DBA. Typically, we can simply monitor the recent server status summary through mysqlbench. But what's the meaning for these metrics? Some of them are self-explained such as <code>connections</code> and <code>traffic</code> while others are not. For example, what's the difference between <code>Selects per second</code> and <code>Innodb reads per second</code>? How to measure the write performance?</p>
-<p>The following figure illustrates the serve status: <img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mysqlmetrics.png" alt="mysqlbench server status" /></p>
+          <p>Monitoring mysql server metrics is crucial for a DBA. Typically, we
+can simply monitor the recent server status summary through mysqlbench.
+But what's the meaning for these metrics? Some of them are
+self-explained such as <code>connections</code> and <code>traffic</code>
+while others are not. For example, what's the difference between
+<code>Selects per second</code> and
+<code>Innodb reads per second</code>? How to measure the write
+performance?</p>
+<p>The following figure illustrates the serve status: <img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mysqlmetrics.png"
+alt="mysqlbench server status" /></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/11/15/mysqlserverstatusmetrics.en/#more" rel="contents">
@@ -665,7 +800,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -708,7 +843,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Master-slave replication is widely used in production. Monitoring the replication lag is a common and critical task. Typically, we are able to get the real-time difference between the master and the slave by periodically checking the <code>Seconds_Behind_Master</code> variable.</p>
+          <p>Master-slave replication is widely used in production. Monitoring the
+replication lag is a common and critical task. Typically, we are able to
+get the real-time difference between the master and the slave by
+periodically checking the <code>Seconds_Behind_Master</code>
+variable.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/11/11/monitormysqlreplicationlag.en/#more" rel="contents">
@@ -773,7 +912,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -816,9 +955,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>博客越写越多，将markdown源文件备份到github变得非常重要。github pages要求免费账户的username.github.io必须是public repository。网上主要有两种方案，一个是用hexo-git-backup插件，另一个是在username.github.io上创建另一个分支进行备份。</p>
+          <p>博客越写越多，将markdown源文件备份到github变得非常重要。github
+pages要求免费账户的username.github.io必须是public
+repository。网上主要有两种方案，一个是用hexo-git-backup插件，另一个是在username.github.io上创建另一个分支进行备份。</p>
 <p>这两个方案都偏复杂，第一个引入了额外的依赖，而且看起来和使用的hexo版本还有点关系，第二个用一个branch进行备份略奇怪。</p>
-<p>考虑到hexo-deployer-git使用的是.deploy_git目录，与源文件所在目录无关。那么最简单的方案是新开一个repository (public/private均可)，让本地博客文件夹直接track这个新的repository即可。同时注意把不必要的文件和目录用.gitignore去除。</p>
+<p>考虑到hexo-deployer-git使用的是.deploy_git目录，与源文件所在目录无关。那么最简单的方案是新开一个repository
+(public/private均可)，让本地博客文件夹直接track这个新的repository即可。同时注意把不必要的文件和目录用.gitignore去除。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/09/06/hexobackuptogithub/#more" rel="contents">
@@ -883,7 +1025,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -926,8 +1068,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>We developed a REST API long time ago and recently found that the released client has a flaw: the HttpRequestMessage is missing content-type <code>application/json</code>. In earlier version we manually deserialize the request json by reading the request body but now we leverage AspNetCore framework to automatically get the request structure from the API parameter. However, the legacy client will not work: HTTP 415 "Unsupported Media Type" error happens.</p>
-<p>Therefore, for backward compatibility, we need to make the server treat all coming requests as <code>application/json</code> even it is a plain text (by default).</p>
+          <p>We developed a REST API long time ago and recently found that the
+released client has a flaw: the HttpRequestMessage is missing
+content-type <code>application/json</code>. In earlier version we
+manually deserialize the request json by reading the request body but
+now we leverage AspNetCore framework to automatically get the request
+structure from the API parameter. However, the legacy client will not
+work: HTTP 415 "Unsupported Media Type" error happens.</p>
+<p>Therefore, for backward compatibility, we need to make the server
+treat all coming requests as <code>application/json</code> even it is a
+plain text (by default).</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/09/06/aspnetcoresupporttextplain.en/#more" rel="contents">
@@ -992,7 +1142,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1035,7 +1185,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Someone may argue that there is no reason to disable ipv6 on Linux. For me, the reason is that in some ipv6-enabled website, I frequently be classified as a bot who need to solve captcha which is really annoying :-( . Consider the ipv6 address is never change (assigned by service provider), disable ipv6 is the simplest solution.</p>
+          <p>Someone may argue that there is no reason to disable ipv6 on Linux.
+For me, the reason is that in some ipv6-enabled website, I frequently be
+classified as a bot who need to solve captcha which is really annoying
+:-( . Consider the ipv6 address is never change (assigned by service
+provider), disable ipv6 is the simplest solution.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/09/06/ubuntudisableipv6.en/#more" rel="contents">
@@ -1100,7 +1254,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1143,23 +1297,37 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>When we use entity framework to manipulate SQL database, we use <code>where</code> to query and <code>include</code> to load related entities (join operation).</p>
-<p>Sample database table schema: Employee: Id, Name, Age Salary: Id, BasePay</p>
+          <p>When we use entity framework to manipulate SQL database, we use
+<code>where</code> to query and <code>include</code> to load related
+entities (join operation).</p>
+<p>Sample database table schema: Employee: Id, Name, Age Salary: Id,
+BasePay</p>
 <p>Typical query scenarios:</p>
 <ul>
 <li>Query employee 3's name =&gt; Employee.Where(x =&gt; x.Id == 3)</li>
-<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name == "Jack")</li>
-<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name == "Jack").Include(x =&gt; x.Salary) ...</li>
+<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name ==
+"Jack")</li>
+<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name ==
+"Jack").Include(x =&gt; x.Salary) ...</li>
 </ul>
-<p>To make the code clean and focus, the following examples will not include dbContext creation logic, we assume <code>db = DbContext()</code> which contains the Employee table.</p>
-<p>For code reuse purpose, we may extract a common method like this: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+<p>To make the code clean and focus, the following examples will not
+include dbContext creation logic, we assume
+<code>db = DbContext()</code> which contains the Employee table.</p>
+<p>For code reuse purpose, we may extract a common method like this:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> navigationFunc <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token punctuation">?</span> <span class="token function">navigationFunc</span><span class="token punctuation">(</span>db<span class="token punctuation">.</span>Employee<span class="token punctuation">)</span> <span class="token punctuation">:</span> db<span class="token punctuation">.</span>Employee<span class="token punctuation">;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> <span class="token function">whereFunc</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The implmentation looks simple and straightfoward: just extract the where and navigation <code>Func&lt;&gt;</code> to a function.</p>
-<p>However, the above function has severe perfomance issue: when we execute the function, it retrieves all data from the table and locally applies <code>where</code> filter. Actually, the underlying mechanism is not that simple as entity framework will compile the expression and translated to SQL statements, though it looks like just a syntactic sugar.</p>
+<p>The implmentation looks simple and straightfoward: just extract the
+where and navigation <code>Func&lt;&gt;</code> to a function.</p>
+<p>However, the above function has severe perfomance issue: when we
+execute the function, it retrieves all data from the table and locally
+applies <code>where</code> filter. Actually, the underlying mechanism is
+not that simple as entity framework will compile the expression and
+translated to SQL statements, though it looks like just a syntactic
+sugar.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/09/02/efexpression.en/#more" rel="contents">
@@ -1185,126 +1353,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/08/31/perlcgi.en/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/31/perlcgi.en/" class="post-title-link" itemprop="url">Can't locate CGI.pm in @INC</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-09-01 00:58:20" itemprop="dateCreated datePublished" datetime="2020-09-01T00:58:20+08:00">2020-09-01</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/2020/08/31/perlcgi.en/" class="post-meta-item leancloud_visitors" data-flag-title="Can't locate CGI.pm in @INC" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline: </span>
-  
-    <a title="waline" href="/2020/08/31/perlcgi.en/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2020/08/31/perlcgi.en/" data-xid="/2020/08/31/perlcgi.en/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Install an old library <a target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu 20.04. When visit the cgi, internal server error pops up.</p>
-<p>Debug the cgi by directly run it in <code>/var/www/lightsquid</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
-Can&#39;t locate CGI.pm in @INC (you may need to install the CGI module) (@INC contains: &#x2F;etc&#x2F;perl &#x2F;usr&#x2F;local&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;local&#x2F;share&#x2F;perl&#x2F;5.30.0 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl5&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl5 &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;share&#x2F;perl&#x2F;5.30 &#x2F;usr&#x2F;local&#x2F;lib&#x2F;site_perl &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;perl-base) at index.cgi line 19.
-BEGIN failed--compilation aborted at index.cgi line 19.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>Seems that some modules are missing, after several search: <a target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
-<p>Combined with the error message: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ apt install libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Then it works: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;var&#x2F;www&#x2F;lightsquid$ perl index.cgi
-&#96;&#96;&#96;html
-&lt;!DOCTYPE html PUBLIC &quot;-&#x2F;&#x2F;W3C&#x2F;&#x2F;DTD HTML 4.01 Transitional&#x2F;&#x2F;EN&quot;&gt;
-
-&lt;HTML&gt;
-&lt;HEAD&gt;
-  &lt;META name&#x3D;&quot;robots&quot; content&#x3D;&quot;noindex,nofollow&quot;&gt;
-  &lt;META name&#x3D;&quot;generator&quot; content&#x3D;&quot;LightSquid - http:&#x2F;&#x2F;lightsquid.sf.net&quot;&gt;
-  &lt;META http-equiv&#x3D;&quot;Content-Type&quot; content&#x3D;&quot;text&#x2F;html; charset&#x3D;US-ASCII&quot;&gt;
-  &lt;META HTTP-EQUIV&#x3D;&quot;REFRESH&quot; CONTENT&#x3D;&quot;600&quot;&gt;
-...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 </div>

@@ -31,7 +31,7 @@
 <meta property="og:description" content="如果一个Pod在错误状态启动不了 (crashloopbackoff)，那么Kubernetes就会自动重启该Pod。这就给调试这个Pod带来了麻烦，无法exec到这个Pod上查看问题，也不容易看到这个Pod的日志，因为此时这个Pod已经被Kubernetes杀掉了： unable to upgrade connection: container not found (&quot;&quot;)">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-11-21T02:16:27.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -272,11 +272,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>如果一个Pod在错误状态启动不了 (crashloopbackoff)，那么Kubernetes就会自动重启该Pod。这就给调试这个Pod带来了麻烦，无法exec到这个Pod上查看问题，也不容易看到这个Pod的日志，因为此时这个Pod已经被Kubernetes杀掉了：</p>
+        <p>如果一个Pod在错误状态启动不了
+(crashloopbackoff)，那么Kubernetes就会自动重启该Pod。这就给调试这个Pod带来了麻烦，无法exec到这个Pod上查看问题，也不容易看到这个Pod的日志，因为此时这个Pod已经被Kubernetes杀掉了：</p>
 <pre class="line-numbers language-none"><code class="language-none">unable to upgrade connection: container not found (&quot;&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>那如何防止有错误的Pod无限重启或反复重启？</p>
 <span id="more"></span>
-<p>只需要在deployment的yaml中加两行命令即可。Kubernetes杀掉Pod的原因是由于出错而程序执行完毕，那么再加条命令让Pod永远不能执行完毕就可以避免被杀掉从而可以exec到Pod中进行调试。这两行命令可以是 <code>sleep infinity</code> 或 <code>tail -f /dev/null</code> :</p>
+<p>只需要在deployment的yaml中加两行命令即可。Kubernetes杀掉Pod的原因是由于出错而程序执行完毕，那么再加条命令让Pod永远不能执行完毕就可以避免被杀掉从而可以exec到Pod中进行调试。这两行命令可以是
+<code>sleep infinity</code> 或 <code>tail -f /dev/null</code> :</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"sleep"</span><span class="token punctuation">]</span>
 <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"infinity"</span><span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>or</p>
@@ -292,7 +294,8 @@
         <span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"sleep"</span><span class="token punctuation">]</span>
         <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"infinity"</span><span class="token punctuation">]</span>
 <span class="token punctuation">...</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>（可选）如果希望Pod状态显示成绿色，可以把liveness/readiness部分从deployment yaml中去掉。</p>
+<p>（可选）如果希望Pod状态显示成绿色，可以把liveness/readiness部分从deployment
+yaml中去掉。</p>
 <p>然后可以在deployment重新创建后exec进去进行调试了。</p>
 <p>参考:</p>
 <ul>

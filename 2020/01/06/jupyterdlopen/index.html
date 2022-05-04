@@ -31,7 +31,7 @@
 <meta property="og:description" content="A weird problem that execute &quot;import torch&quot; in bash works but when you run it in Jupyter notebook: ImportError Traceback (most recent call last) &lt;ipython-input-4-8ba1970b60ce&gt; in &lt;module&gt;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-06T02:49:23.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="cuda">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,7 +275,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>A weird problem that execute "import torch" in bash works but when you run it in Jupyter notebook:</p>
+        <p>A weird problem that execute "import torch" in bash works but when
+you run it in Jupyter notebook:</p>
 <pre class="line-numbers language-none"><code class="language-none">ImportError Traceback (most recent call last)
 &lt;ipython-input-4-8ba1970b60ce&gt; in &lt;module&gt;
  6 import random
@@ -293,9 +294,15 @@
 
 ImportError: dlopen: cannot load any more object with static TLS<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <span id="more"></span>
-<p>Seems that it's a compatibility issue. Even though there are a large volume of discussions but none of them works. Ironically, I accidently fixed the issue by resolving another: <a href="/2020/01/03/cudnnstatusexecutionfailed/"># RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution</a></p>
+<p>Seems that it's a compatibility issue. Even though there are a large
+volume of discussions but none of them works. Ironically, I accidently
+fixed the issue by resolving another: <a
+href="/2020/01/03/cudnnstatusexecutionfailed/"># RuntimeError cuDNN
+error CUDNN_STATUS_EXECUTION_FAILED Solution</a></p>
 <h1 id="potential-solution">Potential Solution</h1>
-<p>I marked these solutions as "potential" because I didn't make a strict control variable experiment. I tried all of them and it worked. :-)</p>
+<p>I marked these solutions as "potential" because I didn't make a
+strict control variable experiment. I tried all of them and it worked.
+:-)</p>
 <p>My environment: <pre class="line-numbers language-none"><code class="language-none">
 1. Ubuntu 14.04 LTS
 2. Python 3.6.9
@@ -303,14 +310,20 @@ ImportError: dlopen: cannot load any more object with static TLS<span aria-hidde
 4. cuda 10.1 (Tesla K40m)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p><strong>The order of following solutions matters.</strong></p>
 <h2 id="upgradedowngrade-cuda">Upgrade/Downgrade Cuda</h2>
-<p>To the best of my understanding, this operation does the trick (but didn't verified). Downgrade cuda from 10.x to 9.0.</p>
+<p>To the best of my understanding, this operation does the trick (but
+didn't verified). Downgrade cuda from 10.x to 9.0.</p>
 <h1 id="upgradedowngrade-pytorch">Upgrade/Downgrade PyTorch</h1>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda install pytorch&#x3D;&#x3D;1.2.0 torchvision&#x3D;&#x3D;0.4.0 cudatoolkit&#x3D;10.0 -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>If you use conda, you can refer to this page to find a working combination: <a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING PREVIOUS VERSIONS OF PYTORCH</a></p>
+<p>If you use conda, you can refer to this page to find a working
+combination: <a
+target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING
+PREVIOUS VERSIONS OF PYTORCH</a></p>
 <h2 id="upgrade-jupyter">Upgrade Jupyter</h2>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ conda update jupyter<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h2 id="upgrade-ubuntu">Upgrade Ubuntu</h2>
-<p>I <code>do-release-upgrade</code> from 14.04 to 16.04 and finally 18.04 LTS. <a target="_blank" rel="noopener" href="https://help.ubuntu.com/community/Upgrades">Ubuntu Upgrades</a></p>
+<p>I <code>do-release-upgrade</code> from 14.04 to 16.04 and finally
+18.04 LTS. <a target="_blank" rel="noopener" href="https://help.ubuntu.com/community/Upgrades">Ubuntu
+Upgrades</a></p>
 
     </div>
 

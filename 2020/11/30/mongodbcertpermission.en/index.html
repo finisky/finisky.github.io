@@ -31,7 +31,7 @@
 <meta property="og:description" content="When you setup TLS&#x2F;SSL for MongoDB Configure mongod and mongos for TLS&#x2F;SSL, you might encounter the following errors: &amp;#123;&quot;t&quot;:&amp;#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&amp;qu">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-30T15:30:42.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="TLS">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,11 +274,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When you setup TLS/SSL for MongoDB <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure mongod and mongos for TLS/SSL</a>, you might encounter the following errors:</p>
+        <p>When you setup TLS/SSL for MongoDB <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>, you might encounter the following
+errors:</p>
 <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
 &#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>So what's the right ownership and permission for the certificate pem file? The answer is: <strong>the pem file should have read access but no write access for the user <code>mongodb</code></strong>.</p>
+<p>So what's the right ownership and permission for the certificate pem
+file? The answer is: <strong>the pem file should have read access but no
+write access for the user <code>mongodb</code></strong>.</p>
 <span id="more"></span>
 <h1 id="solution-1">Solution 1</h1>
 <ul>
@@ -288,13 +293,17 @@
 <p>Finally, the pem files look like this: <pre class="line-numbers language-none"><code class="language-none">-r-------- 1 mongodb mongodb 4.4K Nov 30 18:11 test-ca.pem
 -r-------- 1 mongodb mongodb 5.4K Nov 30 17:19 test-server1.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <p>Then everything works fine.</p>
-<p>If the pem file cannot be read by user <code>mongodb</code> (e.g. file owner is <code>root</code> with 600 permission), then <code>Permission denied</code>.</p>
-<p>If the pem file belongs to <code>mongodb</code> but with more permission, then <code>permissions on / are too open</code>.</p>
+<p>If the pem file cannot be read by user <code>mongodb</code> (e.g.
+file owner is <code>root</code> with 600 permission), then
+<code>Permission denied</code>.</p>
+<p>If the pem file belongs to <code>mongodb</code> but with more
+permission, then <code>permissions on / are too open</code>.</p>
 <h1 id="solution-2">Solution 2</h1>
 <ul>
 <li><code>chmod 644 [xxx.pem]</code></li>
 </ul>
-<p>Unfortunately, the official documentation doesn't provide tips for this, hope these explanation helps.</p>
+<p>Unfortunately, the official documentation doesn't provide tips for
+this, hope these explanation helps.</p>
 
     </div>
 

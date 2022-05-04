@@ -31,7 +31,7 @@
 <meta property="og:description" content="When a pod in error state (crashloopbackoff), kubernetes would restart the pod. If you try to exec into the pod to check the log or debug, the following error message appears: unable to upgrade connec">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-09-18T04:53:46.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -272,10 +272,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When a pod in error state (crashloopbackoff), kubernetes would restart the pod. If you try to exec into the pod to check the log or debug, the following error message appears: <pre class="line-numbers language-none"><code class="language-none">unable to upgrade connection: container not found (&quot;&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Because the old pod has been killed and you cannot exec into it anymore. So how can we prevent the pod from endless restart?</p>
+        <p>When a pod in error state (crashloopbackoff), kubernetes would
+restart the pod. If you try to exec into the pod to check the log or
+debug, the following error message appears: <pre class="line-numbers language-none"><code class="language-none">unable to upgrade connection: container not found (&quot;&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Because the old pod has been killed and you cannot exec into it
+anymore. So how can we prevent the pod from endless restart?</p>
 <span id="more"></span>
-<p>Just add a command to the deployment yaml to override the default command by the container image. Make the pod never finished by <code>sleep infinity</code> or <code>tail -f /dev/null</code>:</p>
+<p>Just add a command to the deployment yaml to override the default
+command by the container image. Make the pod never finished by
+<code>sleep infinity</code> or <code>tail -f /dev/null</code>:</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"sleep"</span><span class="token punctuation">]</span>
 <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"infinity"</span><span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>or</p>
@@ -291,7 +296,8 @@
         <span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"sleep"</span><span class="token punctuation">]</span>
         <span class="token key atrule">args</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">"infinity"</span><span class="token punctuation">]</span>
 <span class="token punctuation">...</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Remove the liveness/readiness section from the yaml to make the deployment status green if necessary.</p>
+<p>Remove the liveness/readiness section from the yaml to make the
+deployment status green if necessary.</p>
 <p>You can exec into the pod to debug as you want.</p>
 <p>Reference:</p>
 <ul>

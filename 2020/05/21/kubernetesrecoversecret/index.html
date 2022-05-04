@@ -31,7 +31,7 @@
 <meta property="og:description" content="Today I found that some pods in kubernetes cluster are failed, the status is Waiting: ContainerCreating. The pod events: MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&amp;quot">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-05-21T09:05:20.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -229,7 +229,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -272,15 +272,24 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Today I found that some pods in kubernetes cluster are failed, the status is <code>Waiting: ContainerCreating</code>. The pod events: <pre class="line-numbers language-none"><code class="language-none">MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&quot; not found
+        <p>Today I found that some pods in kubernetes cluster are failed, the
+status is <code>Waiting: ContainerCreating</code>. The pod events:
+<pre class="line-numbers language-none"><code class="language-none">MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&quot; not found
 kubelet aks-agentpool-xxx-vmss000001
 
 Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached volumes&#x3D;[xxxxx]: timed out waiting for the condition<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <span id="more"></span>
-<p>I remember that about one week ago I delete some secretes in this cluster. Therefore, the problem becomes how to recover the deleted secret "xxxxx"?</p>
-<p>Refer the following documents: <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#to-create-additional-api-tokens"># To create additional API tokens</a></p>
-<p>According to <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#service-account-admission-controller"># Service Account Admission Controller</a>: <pre class="line-numbers language-none"><code class="language-none">if the pod does not have a ServiceAccount set, it sets the ServiceAccount to default.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Since the missing secret format is "default-token-xxxxx", the <code>ServiceAccount</code> must be <code>default</code>.</p>
+<p>I remember that about one week ago I delete some secretes in this
+cluster. Therefore, the problem becomes how to recover the deleted
+secret "xxxxx"?</p>
+<p>Refer the following documents: <a
+target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#to-create-additional-api-tokens">#
+To create additional API tokens</a></p>
+<p>According to <a
+target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#service-account-admission-controller">#
+Service Account Admission Controller</a>: <pre class="line-numbers language-none"><code class="language-none">if the pod does not have a ServiceAccount set, it sets the ServiceAccount to default.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Since the missing secret format is "default-token-xxxxx", the
+<code>ServiceAccount</code> must be <code>default</code>.</p>
 <p>Then we create a service.json file: <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
     <span class="token property">"kind"</span><span class="token operator">:</span> <span class="token string">"Secret"</span><span class="token punctuation">,</span>
     <span class="token property">"apiVersion"</span><span class="token operator">:</span> <span class="token string">"v1"</span><span class="token punctuation">,</span>
@@ -291,15 +300,18 @@ Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached vo
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
     <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"kubernetes.io/service-account-token"</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> There are two fields in metadata need to be modified:</p>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> There are two
+fields in metadata need to be modified:</p>
 <ul>
-<li>name: change to your missing secret name which is included in the warning message</li>
+<li>name: change to your missing secret name which is included in the
+warning message</li>
 <li>kubernetes.io/service-account.name: <code>default</code></li>
 </ul>
 <p>Execute the following command: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl create -f .&#x2F;secret.json<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>Check if the secret is there: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl get secrets<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>Done. Waiting for the pod to start!</p>
-<p>If you deleted the default kubernetes secret by mistake, hope this artible helps. :-)</p>
+<p>If you deleted the default kubernetes secret by mistake, hope this
+artible helps. :-)</p>
 
     </div>
 

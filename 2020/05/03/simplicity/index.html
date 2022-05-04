@@ -31,7 +31,7 @@
 <meta property="og:description" content="维护过中型以上系统的工程师，一定都有看到某处代码或设计后脱口而出&quot;What the fuck&quot;,&quot;这TMD是谁设计的系统&quot;,&quot;写这代码的人脑子有坑吧?&quot;的经历。 想到上学时一个工作几年的师兄聊天时说，实际系统里讲究“够用就好”，不要搞一些奇技淫巧，当年听起来觉得很有道理，但却没有切身体会。随着经验的积累，慢慢明白什么叫“够用就好”，什么叫过度设计，以及简单比复杂需要更高技巧和更多思考的道理。 Th">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-05-03T04:12:16.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.660Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Software Engineering">
 <meta property="article:tag" content="Thoughts">
@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +231,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,22 +274,33 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>维护过中型以上系统的工程师，一定都有看到某处代码或设计后脱口而出"What the fuck","这TMD是谁设计的系统","写这代码的人脑子有坑吧?"的经历。</p>
+        <p>维护过中型以上系统的工程师，一定都有看到某处代码或设计后脱口而出"What
+the fuck","这TMD是谁设计的系统","写这代码的人脑子有坑吧?"的经历。</p>
 <p>想到上学时一个工作几年的师兄聊天时说，实际系统里讲究“够用就好”，不要搞一些奇技淫巧，当年听起来觉得很有道理，但却没有切身体会。随着经验的积累，慢慢明白什么叫“够用就好”，什么叫过度设计，以及简单比复杂需要更高技巧和更多思考的道理。</p>
-<blockquote><p>There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies. The first method is far more difficult.</p>
+<blockquote><p>There are two ways of constructing a software design: One way is to
+make it so simple that there are obviously no deficiencies, and the
+other way is to make it so complicated that there are no obvious
+deficiencies. The first method is far more difficult.</p>
 <footer><strong>C. A. R. Hoare</strong></footer></blockquote>
 <span id="more"></span>
 <h1 id="奥卡姆剃刀原则">奥卡姆剃刀原则</h1>
-<p><strong>奥卡姆剃刀</strong>（Occam's Razor, Ockham's Razor），意思是简约之法则，是由14世纪逻辑学家、圣方济各会修士奥卡姆的威廉提出的一个解决问题的法则，他在《箴言书注》2卷15题说“切勿浪费较多东西，去做‘用较少的东西，同样可以做好的事情’。”</p>
+<p><strong>奥卡姆剃刀</strong>（Occam's Razor, Ockham's
+Razor），意思是简约之法则，是由14世纪逻辑学家、圣方济各会修士奥卡姆的威廉提出的一个解决问题的法则，他在《箴言书注》2卷15题说“切勿浪费较多东西，去做‘用较少的东西，同样可以做好的事情’。”</p>
 <p>干说比较费解，来看几个具体例子。</p>
 <h2 id="引入不必要的额外依赖">引入不必要的额外依赖？</h2>
-<p>如API Rate Limiter设计，这里不涉及具体的实现算法，仅讨论是否需要引入Redis进行全局throttling。本地throttling指每个实例在内存中存储计算速率，全局throttling则是在redis中记录访问日志并计算速率。</p>
-<p>在绝大多数刚起步的产品中，rate limter都可以使用已有的库做本地throttling。本地throttling的优点是没有额外依赖，速度快，无时钟同步问题，但缺点是无法满足分布式多实例的同步速率限制。</p>
-<p>考虑到产品处于初期阶段，主要目的是为了防止恶意攻击，且rate limiter本身并不需要（也很难做到）太精准，那么本地throttling已经足够。没有必要引入redis，增加访问延时（每次调用都需要先访问redis）和系统复杂度，降低了稳定性。试想，如果redis挂掉怎么办？所有API调用都需要等到redis访问超时才继续执行？</p>
-<p>如果真的有一天产品用户众多，rate limiter作为一个可插拔组件，进行技术升级即可，但初期就使用redis，属于过度设计。</p>
+<p>如API Rate
+Limiter设计，这里不涉及具体的实现算法，仅讨论是否需要引入Redis进行全局throttling。本地throttling指每个实例在内存中存储计算速率，全局throttling则是在redis中记录访问日志并计算速率。</p>
+<p>在绝大多数刚起步的产品中，rate
+limter都可以使用已有的库做本地throttling。本地throttling的优点是没有额外依赖，速度快，无时钟同步问题，但缺点是无法满足分布式多实例的同步速率限制。</p>
+<p>考虑到产品处于初期阶段，主要目的是为了防止恶意攻击，且rate
+limiter本身并不需要（也很难做到）太精准，那么本地throttling已经足够。没有必要引入redis，增加访问延时（每次调用都需要先访问redis）和系统复杂度，降低了稳定性。试想，如果redis挂掉怎么办？所有API调用都需要等到redis访问超时才继续执行？</p>
+<p>如果真的有一天产品用户众多，rate
+limiter作为一个可插拔组件，进行技术升级即可，但初期就使用redis，属于过度设计。</p>
 <h2 id="请神容易送神难">请神容易送神难</h2>
-<p>经历过这样的事情，有一段代码是从别处copy过来的，作用是从一批带有匹配分数的字符串里选择差异比较大的一个子集，里面充满了各种根据分数选择的magic number和诡异的if/else逻辑，但由于项目着急上线，e2e看起来代码也并无什么特别的负作用，于是就作为黑盒逻辑带上了线。其实它的作用非常简单，是根据匹配分数有多样性地选择不同的字符串，那么其实有更好的非黑盒替代方案，比如计算字符串间的编辑距离。</p>
-<p>后来上线一段时间后，大家发现有时e2e会出现一些莫名其妙的不能触发等问题，由于系统本身较为复杂，debug之后发现是这里的几个magic number导致结果提前被剪枝了。但正因为这段代码已经上线，而大家又都不完全清楚它本来的用意，所以迟迟不能将这段黑盒逻辑下线，因为对e2e没有增益，倒是可能牵出一定的风险。后来反复争取了多次，终于下线替换掉该黑盒算法。</p>
+<p>经历过这样的事情，有一段代码是从别处copy过来的，作用是从一批带有匹配分数的字符串里选择差异比较大的一个子集，里面充满了各种根据分数选择的magic
+number和诡异的if/else逻辑，但由于项目着急上线，e2e看起来代码也并无什么特别的负作用，于是就作为黑盒逻辑带上了线。其实它的作用非常简单，是根据匹配分数有多样性地选择不同的字符串，那么其实有更好的非黑盒替代方案，比如计算字符串间的编辑距离。</p>
+<p>后来上线一段时间后，大家发现有时e2e会出现一些莫名其妙的不能触发等问题，由于系统本身较为复杂，debug之后发现是这里的几个magic
+number导致结果提前被剪枝了。但正因为这段代码已经上线，而大家又都不完全清楚它本来的用意，所以迟迟不能将这段黑盒逻辑下线，因为对e2e没有增益，倒是可能牵出一定的风险。后来反复争取了多次，终于下线替换掉该黑盒算法。</p>
 <p>产品上更是如此，如果一个feature只在某种特殊场景有些许效果，但增加了系统复杂度，上线后就很难说服老板和产品经理将其下线，因为它在这些特殊场景中有那么点用。实际上，大部分情况下是得不偿失的，因为它影响了系统进一步的演化，甚至影响系统稳定性。</p>
 <h1 id="简单比复杂更难">简单比复杂更难</h1>
 <p>“简单比复杂更难”，乍一听这话会很诧异，实际通过上面的例子可见一斑。因为复杂的东西往往是做加法，而简单的东西是做减法，需要考虑更多的取舍和折衷。看起来简单的东西往往是因为抓住了事物的本质，而复杂的设计可能只是一堆无序的堆砌。听人说话也是同样道理，有见地的人说话往往一针见血直达本质，而如果一个人说了半天，前三皇后五帝抓不住重点，难免令人唏嘘。</p>
@@ -305,7 +316,8 @@
 </ul>
 <p>所谓过度优化指的是竭泽而渔，初衷是认为模型A仅做粗分类，而模型B在A的基础之上做细分类，但实际的实现往往存在过拟合。可以考虑简单的做法：如果把B的标注数据与A混合之后重训练A，是否可以达到差不多的效果？</p>
 <h2 id="通用与具体的折衷">通用与具体的折衷</h2>
-<p>假设一个模型在开放领域的效果已经达到80分，来了新需求需要在旅游领域进一步提升效果到90分。于是针对该垂直领域开发了一堆规则和补丁，一定程度上提升了该垂类的效果，同时引入了系统复杂度： <pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">if</span> <span class="token punctuation">(</span>TravelDomain<span class="token punctuation">)</span>
+<p>假设一个模型在开放领域的效果已经达到80分，来了新需求需要在旅游领域进一步提升效果到90分。于是针对该垂直领域开发了一堆规则和补丁，一定程度上提升了该垂类的效果，同时引入了系统复杂度：
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">if</span> <span class="token punctuation">(</span>TravelDomain<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">return</span> TravelProcessor<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>

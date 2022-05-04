@@ -31,7 +31,7 @@
 <meta property="og:description" content="Intro to NDCG Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality. Typically, it is used to measure the performance of a ranker and widely adopted in information retrieval. Ou">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-04-24T02:49:10.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="NDCG">
 <meta name="twitter:card" content="summary">
@@ -130,7 +130,9 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro-to-ndcg"><span class="nav-number">1.</span> <span class="nav-text">Intro to NDCG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cumulative-gain-cg"><span class="nav-number">1.1.</span> <span class="nav-text">Cumulative Gain (CG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discounted-cumulative-gain-dcg"><span class="nav-number">1.2.</span> <span class="nav-text">Discounted Cumulative Gain (DCG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#normalized-discounted-cumulative-gain-ndcg"><span class="nav-number">1.3.</span> <span class="nav-text">Normalized Discounted Cumulative Gain (NDCG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ndcg-for-dataset"><span class="nav-number">1.4.</span> <span class="nav-text">NDCG for Dataset</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ndcg-implementations"><span class="nav-number">2.</span> <span class="nav-text">NDCG Implementations</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#c-implemenation"><span class="nav-number">2.1.</span> <span class="nav-text">C# Implemenation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-implementation"><span class="nav-number">2.2.</span> <span class="nav-text">Python Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#output"><span class="nav-number">2.3.</span> <span class="nav-text">Output</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro-to-ndcg"><span class="nav-number">1.</span> <span class="nav-text">Intro to NDCG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cumulative-gain-cg"><span class="nav-number">1.1.</span> <span class="nav-text">Cumulative Gain (CG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discounted-cumulative-gain-dcg"><span class="nav-number">1.2.</span> <span class="nav-text">Discounted Cumulative Gain
+(DCG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#normalized-discounted-cumulative-gain-ndcg"><span class="nav-number">1.3.</span> <span class="nav-text">Normalized
+Discounted Cumulative Gain (NDCG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ndcg-for-dataset"><span class="nav-number">1.4.</span> <span class="nav-text">NDCG for Dataset</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ndcg-implementations"><span class="nav-number">2.</span> <span class="nav-text">NDCG Implementations</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#c-implemenation"><span class="nav-number">2.1.</span> <span class="nav-text">C# Implemenation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-implementation"><span class="nav-number">2.2.</span> <span class="nav-text">Python Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#output"><span class="nav-number">2.3.</span> <span class="nav-text">Output</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -147,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,21 +276,59 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="intro-to-ndcg">Intro to NDCG</h1>
-<p>Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality. Typically, it is used to measure the performance of a ranker and widely adopted in information retrieval. Our goal is to rank relevant documents higher than irrelavant documents. Here comes the problem, given a list of documents with corresponding grades, how to model the ranking quality?</p>
-<p>Concretely, assume we want to rank a list of 5 documents with grades: <span class="math display">\[G = [3, 1, 2, 0, 2]\]</span></p>
+<p>Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking
+quality. Typically, it is used to measure the performance of a ranker
+and widely adopted in information retrieval. Our goal is to rank
+relevant documents higher than irrelavant documents. Here comes the
+problem, given a list of documents with corresponding grades, how to
+model the ranking quality?</p>
+<p>Concretely, assume we want to rank a list of 5 documents with grades:
+<span class="math display">\[G = [3, 1, 2, 0, 2]\]</span></p>
 <span id="more"></span>
 <h2 id="cumulative-gain-cg">Cumulative Gain (CG)</h2>
-<p>In practice, we only care about top <span class="math inline">\(k\)</span> ranked results. Assume <span class="math inline">\(k = p\)</span>, then we represent it as <span class="math inline">\(CG@p\)</span>. We define cumulative gain as: <span class="math display">\[CG@p = \sum_{i=1}^{p}G(i)\]</span></p>
-<p>CG is too simple to model the ranking quality. Consider it does not penalize the ranked document position, given a fixed number <span class="math inline">\(p\)</span>, <span class="math inline">\(CG@p\)</span> keeps unchanged even if the order changed.</p>
-<h2 id="discounted-cumulative-gain-dcg">Discounted Cumulative Gain (DCG)</h2>
-<p>Discount gain goes one step further which takes document position into account: <span class="math display">\[DCG@p = \sum_{i=1}^{p}\frac{2^{G(i)} - 1}{\log_2(i+1)}\]</span></p>
-<p>However, DCG is unnormalized, which means that different ranking groups are hard to compare. When we optimize the ranking performance, we would like to know where we are. Therefore, we normalize DCG to [0, 1] so that it is comparable among different queries.</p>
-<h2 id="normalized-discounted-cumulative-gain-ndcg">Normalized Discounted Cumulative Gain (NDCG)</h2>
-<p>Given a list and <span class="math inline">\(p\)</span>, it is pretty easy to compute the optimal ranking order: sorting the list by grades in descending order. For instance, the optimal ranking order for <span class="math inline">\(G = [3, 1, 2, 0, 2]\)</span> is <span class="math inline">\(|G| = [3, 2, 2, 1, 0]\)</span>. Define <span class="math display">\[NDCG@p = \frac{DCG@p}{IDCG@p}\]</span> where Ideal Discounted Cumulative Gain (IDCG) is defined as: <span class="math display">\[IDCG@p = \sum_{i=1}^{p}\frac{2^{|G|(i)}-1}{\log_2(i+1)}\]</span> where <span class="math inline">\(|G|\)</span> means the optimal order of <span class="math inline">\(G\)</span>.</p>
+<p>In practice, we only care about top <span
+class="math inline">\(k\)</span> ranked results. Assume <span
+class="math inline">\(k = p\)</span>, then we represent it as <span
+class="math inline">\(CG@p\)</span>. We define cumulative gain as: <span
+class="math display">\[CG@p = \sum_{i=1}^{p}G(i)\]</span></p>
+<p>CG is too simple to model the ranking quality. Consider it does not
+penalize the ranked document position, given a fixed number <span
+class="math inline">\(p\)</span>, <span
+class="math inline">\(CG@p\)</span> keeps unchanged even if the order
+changed.</p>
+<h2 id="discounted-cumulative-gain-dcg">Discounted Cumulative Gain
+(DCG)</h2>
+<p>Discount gain goes one step further which takes document position
+into account: <span class="math display">\[DCG@p =
+\sum_{i=1}^{p}\frac{2^{G(i)} - 1}{\log_2(i+1)}\]</span></p>
+<p>However, DCG is unnormalized, which means that different ranking
+groups are hard to compare. When we optimize the ranking performance, we
+would like to know where we are. Therefore, we normalize DCG to [0, 1]
+so that it is comparable among different queries.</p>
+<h2 id="normalized-discounted-cumulative-gain-ndcg">Normalized
+Discounted Cumulative Gain (NDCG)</h2>
+<p>Given a list and <span class="math inline">\(p\)</span>, it is pretty
+easy to compute the optimal ranking order: sorting the list by grades in
+descending order. For instance, the optimal ranking order for <span
+class="math inline">\(G = [3, 1, 2, 0, 2]\)</span> is <span
+class="math inline">\(|G| = [3, 2, 2, 1, 0]\)</span>. Define <span
+class="math display">\[NDCG@p = \frac{DCG@p}{IDCG@p}\]</span> where
+Ideal Discounted Cumulative Gain (IDCG) is defined as: <span
+class="math display">\[IDCG@p =
+\sum_{i=1}^{p}\frac{2^{|G|(i)}-1}{\log_2(i+1)}\]</span> where <span
+class="math inline">\(|G|\)</span> means the optimal order of <span
+class="math inline">\(G\)</span>.</p>
 <h2 id="ndcg-for-dataset">NDCG for Dataset</h2>
-<p>Given a dataset <span class="math inline">\(D\)</span> with <span class="math inline">\(n\)</span> ranking groups, there are two ways to compute the dataset's NDCG: <span class="math display">\[NDCG_{D} = \frac{\sum_{i=1}^{n}DCG_{i}}{\sum_{i=1}^{n}IDCG_{i}}\]</span></p>
-<p><span class="math display">\[NDCG_{D} = \frac{1}{n}\sum_{i=1}^{n}NDCG_{i}\]</span></p>
-<p>To the best of my knowledge, we usually use the latter formula. Although both definitions range [0, 1], the latter definition makes more sense as it represents the averge NDCG across all queries in the dataset.</p>
+<p>Given a dataset <span class="math inline">\(D\)</span> with <span
+class="math inline">\(n\)</span> ranking groups, there are two ways to
+compute the dataset's NDCG: <span class="math display">\[NDCG_{D} =
+\frac{\sum_{i=1}^{n}DCG_{i}}{\sum_{i=1}^{n}IDCG_{i}}\]</span></p>
+<p><span class="math display">\[NDCG_{D} =
+\frac{1}{n}\sum_{i=1}^{n}NDCG_{i}\]</span></p>
+<p>To the best of my knowledge, we usually use the latter formula.
+Although both definitions range [0, 1], the latter definition makes more
+sense as it represents the averge NDCG across all queries in the
+dataset.</p>
 <h1 id="ndcg-implementations">NDCG Implementations</h1>
 <h2 id="c-implemenation">C# Implemenation</h2>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">namespace</span> <span class="token namespace">ConsoleApp1</span>

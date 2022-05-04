@@ -31,7 +31,7 @@
 <meta property="og:description" content="正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-30T04:38:58.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Software Engineering">
 <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -230,7 +230,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,12 +276,16 @@
         <p>正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。</p>
 <span id="more"></span>
 <h1 id="何时用exception">何时用Exception?</h1>
-<p>《The Pragmatic Programmer》第24节探讨了这个问题：When to Use Exceptions? 在程序中常常要检查各种可能存在的错误，但检查可能存在于比较深层的嵌套或多层函数调用之中，于是代码会变得非常难看。问题主要存在于两个方面：</p>
+<p>《The Pragmatic Programmer》第24节探讨了这个问题：When to Use
+Exceptions?
+在程序中常常要检查各种可能存在的错误，但检查可能存在于比较深层的嵌套或多层函数调用之中，于是代码会变得非常难看。问题主要存在于两个方面：</p>
 <ul>
 <li>如何将底层调用的错误处理传回顶层？</li>
 <li>是否要对下层调用的返回值进行检查并处理？</li>
 </ul>
-<p>笔者在code review中见过不少蹩脚的Exception使用，根本原因在于没有理解上面两个问题。Exception使用不当不仅不能使代码变得简洁，反而会隐藏底层的问题，并且掩盖了主逻辑想要做什么。笔者将这种异常使用方法叫做“满篇的try-catch-check-null”(切克闹切克闹) :-)，生怕你看懂代码真正想要做什么。</p>
+<p>笔者在code
+review中见过不少蹩脚的Exception使用，根本原因在于没有理解上面两个问题。Exception使用不当不仅不能使代码变得简洁，反而会隐藏底层的问题，并且掩盖了主逻辑想要做什么。笔者将这种异常使用方法叫做“满篇的try-catch-check-null”(切克闹切克闹)
+:-)，生怕你看懂代码真正想要做什么。</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">try</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name"><span class="token keyword">var</span></span> book <span class="token operator">=</span> <span class="token function">GetBook</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -296,7 +300,9 @@
     Logger<span class="token punctuation">.</span><span class="token function">Error</span><span class="token punctuation">(</span>ex<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">throw</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这段“切克闹”其实有用的就一行代码<code>var book = GetBook(id);</code>，但却写了十几行。更恶心之处在于catch Exception之后又re-throw，只为输出一行错误日志。但这还算好的，至少catch的是GetBook()里的Exception。还见过更奇葩的用法，把try-catch当goto用: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">try</span>
+<p>这段“切克闹”其实有用的就一行代码<code>var book = GetBook(id);</code>，但却写了十几行。更恶心之处在于catch
+Exception之后又re-throw，只为输出一行错误日志。但这还算好的，至少catch的是GetBook()里的Exception。还见过更奇葩的用法，把try-catch当goto用:
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">try</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span>condition<span class="token punctuation">)</span>
     <span class="token punctuation">&#123;</span>
@@ -307,7 +313,8 @@
 <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> ex<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     Logger<span class="token punctuation">.</span><span class="token function">Error</span><span class="token punctuation">(</span>ex<span class="token punctuation">.</span>Message<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 这样的用法自产自销除了增加开销，与goto有什么区别？把catch中的处理异常语句直接放在if字段中即可。</p>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+这样的用法自产自销除了增加开销，与goto有什么区别？把catch中的处理异常语句直接放在if字段中即可。</p>
 <p>再引用《The Pragmatic Programmer》中的例子: <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">retcode <span class="token operator">=</span> OK<span class="token punctuation">;</span>
 <span class="token keyword">if</span> <span class="token punctuation">(</span>socket<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span> <span class="token operator">!=</span> OK<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -356,15 +363,46 @@
 <p>但Exception其实是一种类似goto的语句，如果不当使用，反而会降低程序的可维护性和效率。因此，作者给出建议：</p>
 <blockquote><p>Tips: Use Exceptions for Exceptional Problems</p>
 </blockquote>
-<p>而对于什么是<code>exceptional</code>，要根据情况而定。比如一个变量为null，那么抛异常好还是return null好？判断标准是要看null的出现有多么频繁，以及它是否影响了主流程的继续。如果null在80%的时候都会出现，则它不是exceptional的， 而变成了normal。抛异常的目的是警示，这种情况下如果遇到null就抛异常，起不到警示的作用，反倒由于频繁处理异常导致性能降低。因此，此时使用return null进行处理更为妥当。</p>
+<p>而对于什么是<code>exceptional</code>，要根据情况而定。比如一个变量为null，那么抛异常好还是return
+null好？判断标准是要看null的出现有多么频繁，以及它是否影响了主流程的继续。如果null在80%的时候都会出现，则它不是exceptional的，
+而变成了normal。抛异常的目的是警示，这种情况下如果遇到null就抛异常，起不到警示的作用，反倒由于频繁处理异常导致性能降低。因此，此时使用return
+null进行处理更为妥当。</p>
 <h1 id="用exception时不要做什么">用Exception时不要做什么</h1>
-<p>这里的建议就与C#语言相关了，本段摘自：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/exceptions/creating-and-throwing-exceptions#things-to-avoid-when-throwing-exceptions">Things to Avoid When Throwing Exceptions</a></p>
-<p>The following list identifies practices to avoid when throwing exceptions: - Exceptions should not be used to change the flow of a program as part of ordinary execution. Exceptions should only be used to report and handle error conditions. - Exceptions should not be returned as a return value or parameter instead of being thrown. - Do not throw <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.exception">System.Exception</a>, <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.systemexception">System.SystemException</a>, <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.nullreferenceexception">System.NullReferenceException</a>, or <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.indexoutofrangeexception">System.IndexOutOfRangeException</a> intentionally from your own source code. - Do not create exceptions that can be thrown in debug mode but not release mode. To identify run-time errors during the development phase, use Debug Assert instead.</p>
-<p>这里特别说下第三条：throw new Exception("xxx")。在上面Programming Guide上只说不要这么做，却没解释是为什么。原因在这个帖子中有讨论：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/22453650/why-are-we-not-to-throw-these-exceptions"># Why are we not to throw these exceptions?</a></p>
-<p>总结起来，如果直接new Exception()的话，第一Exception太宽泛，相当于啥也没说，Exception的定义讲究尽量详细和具体，以便给调用者提供明确的错误信息。第二外面的try block中就必须catch (Exception)，即catch所有的异常，这也是不好的做法。同理，MSDN上也不建议抛ApplicationException。其实与其这样告诉大家Guideline，还不如直接将Exception声明为abstract，这样就无法创建实例了，也就从根本上避免了这种做法。个人猜想可能因为兼容性的问题才没有改成这样。。</p>
-<p>至于NullReferenceException和IndexOutOfRangeException，它们是由系统在运行时自动抛出的异常，属于“reserved exception”，手动抛这样的异常出去就很不合理。<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2201?view=vs-2019"># Exception Handling (C# Programming Guide)</a></p>
+<p>这里的建议就与C#语言相关了，本段摘自：<a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/exceptions/creating-and-throwing-exceptions#things-to-avoid-when-throwing-exceptions">Things
+to Avoid When Throwing Exceptions</a></p>
+<p>The following list identifies practices to avoid when throwing
+exceptions: - Exceptions should not be used to change the flow of a
+program as part of ordinary execution. Exceptions should only be used to
+report and handle error conditions. - Exceptions should not be returned
+as a return value or parameter instead of being thrown. - Do not throw
+<a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.exception">System.Exception</a>,
+<a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.systemexception">System.SystemException</a>,
+<a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.nullreferenceexception">System.NullReferenceException</a>,
+or <a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/api/system.indexoutofrangeexception">System.IndexOutOfRangeException</a>
+intentionally from your own source code. - Do not create exceptions that
+can be thrown in debug mode but not release mode. To identify run-time
+errors during the development phase, use Debug Assert instead.</p>
+<p>这里特别说下第三条：throw new Exception("xxx")。在上面Programming
+Guide上只说不要这么做，却没解释是为什么。原因在这个帖子中有讨论：<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/22453650/why-are-we-not-to-throw-these-exceptions">#
+Why are we not to throw these exceptions?</a></p>
+<p>总结起来，如果直接new
+Exception()的话，第一Exception太宽泛，相当于啥也没说，Exception的定义讲究尽量详细和具体，以便给调用者提供明确的错误信息。第二外面的try
+block中就必须catch
+(Exception)，即catch所有的异常，这也是不好的做法。同理，MSDN上也不建议抛ApplicationException。其实与其这样告诉大家Guideline，还不如直接将Exception声明为abstract，这样就无法创建实例了，也就从根本上避免了这种做法。个人猜想可能因为兼容性的问题才没有改成这样。。</p>
+<p>至于NullReferenceException和IndexOutOfRangeException，它们是由系统在运行时自动抛出的异常，属于“reserved
+exception”，手动抛这样的异常出去就很不合理。<a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2201?view=vs-2019">#
+Exception Handling (C# Programming Guide)</a></p>
 <h1 id="推荐阅读">推荐阅读</h1>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions"># Best practices for exceptions</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions">#
+Best practices for exceptions</a></p>
 
     </div>
 

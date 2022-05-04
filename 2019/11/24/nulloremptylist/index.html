@@ -31,7 +31,7 @@
 <meta property="og:description" content="有这样的一个interface: public interface Filter &amp;#123;     IList&lt;string&gt; Filter(IList&lt;string&gt; responses) &amp;#125; 在实现它时，如果过滤后没有结果，返回null还是new List()?">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-11-24T04:52:57.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.369Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="Software Engineering">
@@ -149,7 +149,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +232,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +282,8 @@
 <p>在实现它时，如果过滤后没有结果，返回null还是new List<string>()?</p>
 <span id="more"></span>
 <h1 id="一段流水线处理代码">一段流水线处理代码</h1>
-<p>先看下面一段流水线处理的<strong>内部方法</strong>，即GenerateCandidates(), FilterA()和FilterB()都没有用户输入等边界： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> <span class="token function">GenerateResponses</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<p>先看下面一段流水线处理的<strong>内部方法</strong>，即GenerateCandidates(),
+FilterA()和FilterB()都没有用户输入等边界： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> <span class="token function">GenerateResponses</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token class-name">List<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> candidates <span class="token operator">=</span> <span class="token function">GenerateCandidates</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span>candidates <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">||</span> <span class="token operator">!</span>candidates<span class="token punctuation">.</span><span class="token function">Any</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -316,14 +317,25 @@
 <blockquote><p>Don't Return Null</p>
 <footer><strong>Clean Code: A Handbook of Agile Software Craftsmanship Chapter 7 Error Handling</strong></footer></blockquote>
 <hr />
-<blockquote><p>DO NOT return null values from collection properties or from methods returning collections. Return an empty collection or an empty array instead. Users of collection properties often assume that the following code will always work: IEnumerable<string> list = GetList(); foreach (string name in list) { ... }</p>
+<blockquote><p>DO NOT return null values from collection properties or from methods
+returning collections. Return an empty collection or an empty array
+instead. Users of collection properties often assume that the following
+code will always work: IEnumerable<string> list = GetList(); foreach
+(string name in list) { ... }</p>
 <footer><strong>Framework Design Guidelines 2nd Edition</strong><cite>Page. 256</cite></footer></blockquote>
 <h1 id="几种边界情况">几种边界情况</h1>
-<p>关于返回null还是empty list是有许多争议的，stackoverflow上甚至有一些讨论因为争议过大而被关闭了。但我倾向于返回empty list因为nothing to lose。 ## 性能问题？ 分两种情况讨论: ### new List<string>()的开销 return null或new List<string>()的开销差异在99.99%以上的场景都可以直接忽略，如果真的在意性能，反倒是在每处检查是否为null或Any()对效率的影响更多。 如果返回值是IEnumberable，则可返回Enumerable.Empty<T>()提升些效率。</p>
-<h3 id="短路返回以提升性能不必做后续处理">短路返回以提升性能，不必做后续处理</h3>
+<p>关于返回null还是empty
+list是有许多争议的，stackoverflow上甚至有一些讨论因为争议过大而被关闭了。但我倾向于返回empty
+list因为nothing to lose。 ## 性能问题？ 分两种情况讨论: ### new
+List<string>()的开销 return null或new
+List<string>()的开销差异在99.99%以上的场景都可以直接忽略，如果真的在意性能，反倒是在每处检查是否为null或Any()对效率的影响更多。
+如果返回值是IEnumberable，则可返回Enumerable.Empty<T>()提升些效率。</p>
+<h3
+id="短路返回以提升性能不必做后续处理">短路返回以提升性能，不必做后续处理</h3>
 <p>就上例而言，假设FilterA()的实现开销较大比如是远程调用，那么是否可以在调用FilterA()之前判断它若为空则提前返回？</p>
 <ol type="1">
-<li><p>如果在意处理的性能，那么更好的做法应该是在FilterA()内部判断输入是否为空，若为空则直接返回而不进行后续处理，在FilterA()中判断是由抽象层次所决定的更干净的做法： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> <span class="token function">FilterA</span><span class="token punctuation">(</span><span class="token class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> responses<span class="token punctuation">)</span>
+<li><p>如果在意处理的性能，那么更好的做法应该是在FilterA()内部判断输入是否为空，若为空则直接返回而不进行后续处理，在FilterA()中判断是由抽象层次所决定的更干净的做法：
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> <span class="token function">FilterA</span><span class="token punctuation">(</span><span class="token class-name">IList<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span> responses<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>responses<span class="token punctuation">.</span><span class="token function">Any</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token punctuation">&#123;</span>
@@ -334,18 +346,22 @@
 <li><p>正常流程中即使response只有一个元素，那么它也会走完整个流程，所以可以认为走完GenerateResponses()的流程是可以接受的，那么既然正常流程的处理效率可以接受，处理一个空列表的效率更可接受</p></li>
 </ol>
 <h2 id="防御编程">防御编程？</h2>
-<p>防御编程(Defensive programming)是一个非常好的概念，但在这里的防御是多此一举，或者说是过度防御。此处有隐含假设：</p>
+<p>防御编程(Defensive
+programming)是一个非常好的概念，但在这里的防御是多此一举，或者说是过度防御。此处有隐含假设：</p>
 <ol type="1">
 <li>GenerateResponses()仅由内部使用，而非外部API。若是后者，那么应当在输入边界进行条件判断</li>
 <li>“写让机器懂的代码容易，写让人懂的代码难”，易读性和可维护性是代码需要首要考虑的因素</li>
 </ol>
-<p>Tech lead应该在coding convention中强制这种情况下返回Collection，code review时也应将此问题抛出。</p>
+<p>Tech lead应该在coding convention中强制这种情况下返回Collection，code
+review时也应将此问题抛出。</p>
 <h2 id="错误处理">错误处理？</h2>
 <p>任何时候都不返回null吗？话虽不能说绝，但在绝大多数情况下，如果输入或中间结果出现了null，则应该按exception来处理，直接抛异常是更为干净和自然的做法，远胜于在整个调用栈中返回null并一直检查的做法。</p>
 <h1 id="结论">结论</h1>
 <p>在返回值是Collection时，尽量返回空容器而不是null。</p>
 <h1 id="reference">Reference</h1>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1969993/is-it-better-to-return-null-or-empty-collection">Is it better to return null or empty collection?</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1969993/is-it-better-to-return-null-or-empty-collection">Is
+it better to return null or empty collection?</a></p>
 
     </div>
 

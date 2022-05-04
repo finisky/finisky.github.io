@@ -31,7 +31,7 @@
 <meta property="og:description" content="Previously we talked about # How to Retry MongoDB Transaction. However, if you use BulkWrite() and one of the operation is retryable (e.g. duplicated key error), the new transactions API will retry th">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-15T16:07:00.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.656Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.365Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -132,7 +132,10 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#limit-max-transaction-execution-time"><span class="nav-number">1.</span> <span class="nav-text">Limit Max Transaction Execution Time</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#limit-max-transaction-retry-count"><span class="nav-number">2.</span> <span class="nav-text">Limit Max Transaction Retry Count</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#execute-bulkwrite-operations-in-order"><span class="nav-number">3.</span> <span class="nav-text">Execute BulkWrite Operations In Order</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#limit-max-transaction-execution-time"><span class="nav-number">1.</span> <span class="nav-text">Limit Max Transaction
+Execution Time</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#limit-max-transaction-retry-count"><span class="nav-number">2.</span> <span class="nav-text">Limit Max Transaction Retry
+Count</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#execute-bulkwrite-operations-in-order"><span class="nav-number">3.</span> <span class="nav-text">Execute BulkWrite
+Operations In Order</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -232,7 +235,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,17 +278,27 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Previously we talked about <a href="/2021/02/20/mongodbretrytransaction.en/"># How to Retry MongoDB Transaction</a>. However, if you use BulkWrite() and one of the operation is retryable (e.g. duplicated key error), the new transactions API will <strong>retry the bulk write endlessly which might lead to server CPU 100%</strong>. (MongoDB Server v4.4.6-ent, MongoDB Driver v2.12.2)</p>
+        <p>Previously we talked about <a
+href="/2021/02/20/mongodbretrytransaction.en/"># How to Retry MongoDB
+Transaction</a>. However, if you use BulkWrite() and one of the
+operation is retryable (e.g. duplicated key error), the new transactions
+API will <strong>retry the bulk write endlessly which might lead to
+server CPU 100%</strong>. (MongoDB Server v4.4.6-ent, MongoDB Driver
+v2.12.2)</p>
 <p>To avoid such issue, we have three suggestions:</p>
 <ul>
 <li>Add a cancellation token to limit the max retry time</li>
 <li>Break the transaction after max retry count</li>
 <li>Set BulkWriteOptions { IsOrdered = true }</li>
 </ul>
-<p>The first two suggestions are also applicable to transactions which don't use BulkWrite().</p>
+<p>The first two suggestions are also applicable to transactions which
+don't use BulkWrite().</p>
 <span id="more"></span>
-<h1 id="limit-max-transaction-execution-time">Limit Max Transaction Execution Time</h1>
-<p>First, let's refine the RetryReplaceAsync() by adding CancellationToken, which limits the max execution time of the transaction:</p>
+<h1 id="limit-max-transaction-execution-time">Limit Max Transaction
+Execution Time</h1>
+<p>First, let's refine the RetryReplaceAsync() by adding
+CancellationToken, which limits the max execution time of the
+transaction:</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
 	<span class="token class-name"><span class="token keyword">var</span></span> collection <span class="token operator">=</span> mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>BsonDocument<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -303,7 +316,8 @@
 			<span class="token punctuation">&#125;</span><span class="token punctuation">,</span>  <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
 	<span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h1 id="limit-max-transaction-retry-count">Limit Max Transaction Retry Count</h1>
+<h1 id="limit-max-transaction-retry-count">Limit Max Transaction Retry
+Count</h1>
 <p>Just add 3 lines:</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">private</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RetryReplaceAsync</span><span class="token punctuation">(</span><span class="token class-name">IMongoClient</span> mongoClient<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> <span class="token keyword">value</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -327,9 +341,14 @@
             <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>  <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h1 id="execute-bulkwrite-operations-in-order">Execute BulkWrite Operations In Order</h1>
-<p>The bulk write operation can be executed ordered or unordered. To improve performance, it seems that unordered execution is better. However, the unordered execution might eat some exceptions for a single operation, which leads to endless transaction retry.</p>
-<p>As a result, we suggest to execute the operations in order. The code looks like this:</p>
+<h1 id="execute-bulkwrite-operations-in-order">Execute BulkWrite
+Operations In Order</h1>
+<p>The bulk write operation can be executed ordered or unordered. To
+improve performance, it seems that unordered execution is better.
+However, the unordered execution might eat some exceptions for a single
+operation, which leads to endless transaction retry.</p>
+<p>As a result, we suggest to execute the operations in order. The code
+looks like this:</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">await</span> collection<span class="token punctuation">.</span><span class="token function">BulkWriteAsync</span><span class="token punctuation">(</span>session<span class="token punctuation">,</span> listWrites<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">BulkWriteOptions</span> <span class="token punctuation">&#123;</span> IsOrdered <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> ct<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h1 id="reference">Reference</h1>
 <p>https://developer.mongodb.com/community/forums/t/handling-duplicated-key-error-in-bulk-insert-retry-scenarios/2869</p>

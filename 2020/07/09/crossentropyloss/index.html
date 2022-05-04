@@ -31,7 +31,7 @@
 <meta property="og:description" content="交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-09T08:49:42.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:13:37.652Z">
+<meta property="article:modified_time" content="2022-05-04T04:41:50.361Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="python">
@@ -150,7 +150,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -233,7 +233,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:13:37" itemprop="dateModified" datetime="2022-05-03T00:13:37+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-04 12:41:50" itemprop="dateModified" datetime="2022-05-04T12:41:50+08:00">2022-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,11 +276,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。</p>
+        <p>交叉熵(Cross Entropy)和KL散度(Kullback–Leibler
+Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss
+Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。</p>
 <span id="more"></span>
 <h1 id="熵entropy">熵(Entropy)</h1>
 <p>此处为方便讨论及与后续实例呼应，所有随机变量均为离散随机变量。</p>
-<p>定义随机变量x在概率分布p的熵： <span class="math display">\[H(p)=-\sum_{x}p(x) \log p(x)\]</span></p>
+<p>定义随机变量x在概率分布p的熵： <span
+class="math display">\[H(p)=-\sum_{x}p(x) \log p(x)\]</span></p>
 <h2 id="代码与实例">代码与实例</h2>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
 <span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
@@ -296,11 +299,16 @@ dist_p <span class="token operator">=</span> Categorical<span class="token punct
 <p>结果： <pre class="line-numbers language-none"><code class="language-none">H(p) &#x3D; 1.2798542258336676
 Torch H(p) &#x3D; 1.2798542976379395<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h1 id="相对熵relative-entropy">相对熵(Relative Entropy)</h1>
-<p>相对熵(Relative Entropy)，也称KL散度 (Kullback–Leibler divergence)。</p>
-<p>p(x)，q(x)为随机变量x的两个概率分布，定义p对q的相对熵(KL散度)为： <span class="math display">\[D(p||q)=\sum_{x}p(x) \log \frac{p(x)}{q(x)}\]</span></p>
+<p>相对熵(Relative Entropy)，也称KL散度 (Kullback–Leibler
+divergence)。</p>
+<p>p(x)，q(x)为随机变量x的两个概率分布，定义p对q的相对熵(KL散度)为：
+<span class="math display">\[D(p||q)=\sum_{x}p(x) \log
+\frac{p(x)}{q(x)}\]</span></p>
 <p>KL散度在p(x)和q(x)相同时取到最小值0，两个概率分布越相似，则KL散度越小。</p>
-<p>注意，<span class="math inline">\(D(p||q) != D(q||p)\)</span>，也不满足三角不等式。</p>
-<p>假设p(x)是随机变量的真实分布，q(x)是模型预测的分布，则可以用KL散度作为分类问题的Loss Function，通过训练使预测分布接近于真实分布。</p>
+<p>注意，<span class="math inline">\(D(p||q) !=
+D(q||p)\)</span>，也不满足三角不等式。</p>
+<p>假设p(x)是随机变量的真实分布，q(x)是模型预测的分布，则可以用KL散度作为分类问题的Loss
+Function，通过训练使预测分布接近于真实分布。</p>
 <h2 id="代码与实例-1">代码与实例</h2>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
 <span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
@@ -318,9 +326,14 @@ dist_q <span class="token operator">=</span> Categorical<span class="token punct
 <p>结果： <pre class="line-numbers language-none"><code class="language-none">D(p, q) &#x3D; 0.43895782244378423
 Torch D(p, q) &#x3D; 0.4389578104019165<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h1 id="交叉熵cross-entropy">交叉熵(Cross Entropy)</h1>
-<p>对KL散度进行变形： <span class="math display">\[D(p||q)=\sum_{x}p(x) \log p(x) - \sum_{x}p(x) \log q(x)\]</span> <span class="math display">\[D(p||q)=-H(p) - \sum_{x}p(x) \log q(x)\]</span></p>
-<p>定义p对q的交叉熵为： <span class="math display">\[H(p, q)=-\sum_{x}p(x) \log q(x)\]</span></p>
-<p>于是KL散度变为： <span class="math display">\[D(p||q)=H(p, q) - H(p)\]</span></p>
+<p>对KL散度进行变形： <span class="math display">\[D(p||q)=\sum_{x}p(x)
+\log p(x) - \sum_{x}p(x) \log q(x)\]</span> <span
+class="math display">\[D(p||q)=-H(p) - \sum_{x}p(x) \log
+q(x)\]</span></p>
+<p>定义p对q的交叉熵为： <span class="math display">\[H(p,
+q)=-\sum_{x}p(x) \log q(x)\]</span></p>
+<p>于是KL散度变为： <span class="math display">\[D(p||q)=H(p, q) -
+H(p)\]</span></p>
 <p>在分类问题中，随机变量的真实分布p(x)是确定的，于是H(p)也是确定的，相当于一个常数。因此，优化KL散度与优化交叉熵等价，这也是为什么用交叉熵作为分类问题损失函数的原因。</p>
 <h2 id="代码与实例-2">代码与实例</h2>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
@@ -333,12 +346,18 @@ q <span class="token operator">=</span> <span class="token punctuation">[</span>
 
 Hpq <span class="token operator">=</span> <span class="token operator">-</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">[</span>p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>log<span class="token punctuation">(</span>q<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"H(p, q) = </span><span class="token interpolation"><span class="token punctuation">&#123;</span>Hpq<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>结果： <pre class="line-numbers language-none"><code class="language-none">H(p, q) &#x3D; 1.7188120482774516<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 验证了上面的公式 <span class="math inline">\(D(p||q)=H(p, q) - H(p)\)</span>。</p>
+<p>结果： <pre class="line-numbers language-none"><code class="language-none">H(p, q) &#x3D; 1.7188120482774516<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 验证了上面的公式 <span
+class="math inline">\(D(p||q)=H(p, q) - H(p)\)</span>。</p>
 <h1 id="交叉熵损失函数">交叉熵损失函数</h1>
-<p>具体地来看下交叉熵作为分类问题的损失函数是如何工作的。 参考pytorch的文档：<a target="_blank" rel="noopener" href="https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html">https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html</a></p>
+<p>具体地来看下交叉熵作为分类问题的损失函数是如何工作的。
+参考pytorch的文档：<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html">https://pytorch.org/docs/master/generated/torch.nn.CrossEntropyLoss.html</a></p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python">torch<span class="token punctuation">.</span>nn<span class="token punctuation">.</span>CrossEntropyLoss<span class="token punctuation">(</span>weight<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span> size_average<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> ignore_index<span class="token punctuation">:</span> <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">100</span><span class="token punctuation">,</span> <span class="token builtin">reduce</span><span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span> reduction<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token string">'mean'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>输入为两部分Input和Target，其中Input的Shape是(batch_size, C)，CrossEntropyLoss是softmax和NLLLoss的结合体，Matrix每行的值是模型输出的各分类的概率值，无须经过softmax；Target的Shape是(batch_size)，取值是true label对应的类的index。 输出是一个tensor。</p>
-<p>听起来复杂，举个例子： 一个4分类问题，假设模型输出的结果是p = [1,2,3,4]，true label是1，即第二类： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
+<p>输入为两部分Input和Target，其中Input的Shape是(batch_size,
+C)，CrossEntropyLoss是softmax和NLLLoss的结合体，Matrix每行的值是模型输出的各分类的概率值，无须经过softmax；Target的Shape是(batch_size)，取值是true
+label对应的类的index。 输出是一个tensor。</p>
+<p>听起来复杂，举个例子： 一个4分类问题，假设模型输出的结果是p =
+[1,2,3,4]，true label是1，即第二类： <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
 <span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
 <span class="token keyword">from</span> torch<span class="token punctuation">.</span>distributions <span class="token keyword">import</span> Categorical<span class="token punctuation">,</span> kl
 <span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> CrossEntropyLoss
@@ -357,13 +376,20 @@ output <span class="token operator">=</span> loss<span class="token punctuation"
 <span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Torch Cross Entropy Loss: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>output<span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>结果： <pre class="line-numbers language-none"><code class="language-none">Cross Entropy Loss: 2.4401896985611957
 Torch Cross Entropy Loss: 2.4401895999908447<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
-<p>解释一下(其中tl是true label，上例取值1)，参考softmax函数的定义，把q变成one-hot encoding后为[0, 1, 0, 0]，计算p与q的交叉熵： <span class="math display">\[loss(p, tl) = -\log \frac{exp(x[tl])}{\sum_{i} exp(x[i])}\]</span></p>
+<p>解释一下(其中tl是true
+label，上例取值1)，参考softmax函数的定义，把q变成one-hot encoding后为[0,
+1, 0, 0]，计算p与q的交叉熵： <span class="math display">\[loss(p, tl) =
+-\log \frac{exp(x[tl])}{\sum_{i} exp(x[i])}\]</span></p>
 <p>即：</p>
-<p><span class="math display">\[loss(p, tl) = -x[tl] + \log {\sum_{i} exp(x[i])}\]</span></p>
+<p><span class="math display">\[loss(p, tl) = -x[tl] + \log {\sum_{i}
+exp(x[i])}\]</span></p>
 <p>简洁起见，本文仅从公式和实例的角度直观地解释了熵，KL散度和交叉熵的几个概念，如果对几个定义的原理和在信息论中的解释有兴趣，可以参考如下几篇文章：</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35379531"># 详解机器学习中的熵、条件熵、相对熵和交叉熵</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/41252833"># 如何通俗的解释交叉熵与相对熵？</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.itread01.com/content/1544701150.html"># KL散度(相對熵)、交叉熵的解析</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35379531">#
+详解机器学习中的熵、条件熵、相对熵和交叉熵</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/41252833">#
+如何通俗的解释交叉熵与相对熵？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.itread01.com/content/1544701150.html">#
+KL散度(相對熵)、交叉熵的解析</a></p>
 <h1 id="完整代码">完整代码</h1>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> torch
 <span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
