@@ -143,7 +143,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">162</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -194,6 +194,133 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/12/12/mongodbopsmanager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/12/12/mongodbopsmanager/" class="post-title-link" itemprop="url">Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-12 23:30:36" itemprop="dateCreated datePublished" datetime="2020-12-12T23:30:36+08:00">2020-12-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/12/12/mongodbopsmanager/" class="post-meta-item leancloud_visitors" data-flag-title="Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/2020/12/12/mongodbopsmanager/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/2020/12/12/mongodbopsmanager/" data-xid="/2020/12/12/mongodbopsmanager/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>MongoDB的入门配置门槛（单机）很低，但如果想达到生产环境的要求则有些技术含量。生产环境的配置要求包括Replica
+Set、Sharding、Scale
+up/down、数据备份、通信加密TLS和指标实时监控等。配置这些功能比较繁琐，有不少坑要踩。那么有没有好用的工具帮我们配置和管理呢？</p>
+<p>MongoDB是个分布式系统，且需要动态的增加或删除节点，那么与kubernetes结合使用则是珠联璧合。结合之后就需要一套kubernetes工具对其进行管理，它就是<code>MongoDB Enterprise Kubernetes Operator</code>，更进一步，可以使用<code>MongoDB Ops Manager</code>完成上面所有生产环境的配置需求。</p>
+<p>整个配置流程比较繁杂，为不使一篇万字长文吓到读者，写成了系列教程，力求每一块简明内聚：</p>
+<ol type="1">
+<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops
+Manager</a></li>
+<li><a
+href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
+<li><a
+href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
+<li><a
+href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
+<li><a
+href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
+</ol>
+<p><strong>阅读教程前提</strong>：有Kubernetes集群，了解deployment/service/statefulset含义，熟悉kubectl基本操作。</p>
+<p>本文为系列第一部分，简介MongoDB Ops Manager
+Kubernetes的构成，以及如何安装MongoDB Ops Manager。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/12/mongodbopsmanager/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/11/30/mongodbcertpermission/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -225,7 +352,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -341,7 +468,7 @@ mongod and mongos for TLS/SSL</a>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -458,7 +585,7 @@ write access for the user <code>mongodb</code></strong>.</p>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -569,7 +696,7 @@ target="_blank" rel="noopener" href="https://stackoverflow.com/questions/63090/s
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -682,7 +809,7 @@ alt="mysqlbench server status" /></p>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -800,7 +927,7 @@ alt="mysqlbench server status" /></p>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -912,7 +1039,7 @@ variable.</p>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1025,7 +1152,7 @@ repository。网上主要有两种方案，一个是用hexo-git-backup插件，�
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1142,7 +1269,7 @@ plain text (by default).</p>
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
+        <time title="Modified: 2022-05-13 18:49:29" itemprop="dateModified" datetime="2022-05-13T18:49:29+08:00">2022-05-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1193,144 +1320,6 @@ provider), disable ipv6 is the simplest solution.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/09/06/ubuntudisableipv6.en/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/09/02/efexpression.en/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/09/02/efexpression.en/" class="post-title-link" itemprop="url">Entity Framework use Expression instead of Func Delegate</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-09-02 10:18:15" itemprop="dateCreated datePublished" datetime="2020-09-02T10:18:15+08:00">2020-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-04 18:42:55" itemprop="dateModified" datetime="2022-05-04T18:42:55+08:00">2022-05-04</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/2020/09/02/efexpression.en/" class="post-meta-item leancloud_visitors" data-flag-title="Entity Framework use Expression instead of Func Delegate" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline: </span>
-  
-    <a title="waline" href="/2020/09/02/efexpression.en/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2020/09/02/efexpression.en/" data-xid="/2020/09/02/efexpression.en/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>When we use entity framework to manipulate SQL database, we use
-<code>where</code> to query and <code>include</code> to load related
-entities (join operation).</p>
-<p>Sample database table schema: Employee: Id, Name, Age Salary: Id,
-BasePay</p>
-<p>Typical query scenarios:</p>
-<ul>
-<li>Query employee 3's name =&gt; Employee.Where(x =&gt; x.Id == 3)</li>
-<li>Query employee Jack's age =&gt; Employee.Where(x =&gt; x.Name ==
-"Jack")</li>
-<li>Query employee Jack's basepay =&gt; Employee.Where(x =&gt; x.Name ==
-"Jack").Include(x =&gt; x.Salary) ...</li>
-</ul>
-<p>To make the code clean and focus, the following examples will not
-include dbContext creation logic, we assume
-<code>db = DbContext()</code> which contains the Employee table.</p>
-<p>For code reuse purpose, we may extract a common method like this:
-<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token return-type class-name">Employee</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">,</span> <span class="token keyword">bool</span><span class="token punctuation">></span></span> whereFunc<span class="token punctuation">,</span> <span class="token class-name">Func<span class="token punctuation">&lt;</span>DbSet<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">,</span> IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span><span class="token punctuation">></span></span> navigationFunc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token class-name">IQueryable<span class="token punctuation">&lt;</span>Employee<span class="token punctuation">></span></span> query <span class="token operator">=</span> navigationFunc <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token punctuation">?</span> <span class="token function">navigationFunc</span><span class="token punctuation">(</span>db<span class="token punctuation">.</span>Employee<span class="token punctuation">)</span> <span class="token punctuation">:</span> db<span class="token punctuation">.</span>Employee<span class="token punctuation">;</span>
-    <span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token keyword">await</span> query<span class="token punctuation">.</span><span class="token function">Where</span><span class="token punctuation">(</span>x <span class="token operator">=></span> <span class="token function">whereFunc</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> employee<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>The implmentation looks simple and straightfoward: just extract the
-where and navigation <code>Func&lt;&gt;</code> to a function.</p>
-<p>However, the above function has severe perfomance issue: when we
-execute the function, it retrieves all data from the table and locally
-applies <code>where</code> filter. Actually, the underlying mechanism is
-not that simple as entity framework will compile the expression and
-translated to SQL statements, though it looks like just a syntactic
-sugar.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/02/efexpression.en/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
