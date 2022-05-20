@@ -31,7 +31,7 @@
 <meta property="og:description" content="Prompt是当下最热的NLP技术之一，本文通过 what, why 和 how 三个问题对它进行介绍。力求简明扼要，不是完整综述，更多细节，可参考更多论文原文。 Prompt是什么 首先来看什么是Prompt，没有找到权威定义，引用一些论文中的描述来说明什么是Prompt。  Users prepend a natural language task instruction and a few">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-14T02:00:45.000Z">
-<meta property="article:modified_time" content="2021-12-29T11:10:28.000Z">
+<meta property="article:modified_time" content="2022-05-20T09:32:41.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -138,6 +138,7 @@
             <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#prompt%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">Prompt是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8prompt"><span class="nav-number">2.</span> <span class="nav-text">为什么用Prompt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E7%94%A8prompt"><span class="nav-number">3.</span> <span class="nav-text">怎么用Prompt</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E5%BC%8F%E6%A8%A1%E6%9D%BF"><span class="nav-number">3.1.</span> <span class="nav-text">离散式模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pet"><span class="nav-number">3.1.1.</span> <span class="nav-text">PET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#autoprompt"><span class="nav-number">3.1.2.</span> <span class="nav-text">AutoPrompt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E5%90%91%E9%87%8F%E6%A8%A1%E6%9D%BF"><span class="nav-number">3.2.</span> <span class="nav-text">连续向量模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prefix-tuning"><span class="nav-number">3.2.1.</span> <span class="nav-text">Prefix-Tuning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#p-tuning"><span class="nav-number">3.2.2.</span> <span class="nav-text">P-Tuning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#prompt-tuning"><span class="nav-number">3.2.3.</span> <span class="nav-text">Prompt Tuning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%9D%E5%A7%8B%E5%8C%96prompt-vector"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">如何初始化prompt vector?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#prompt%E7%9A%84%E9%95%BF%E5%BA%A6%E9%80%89%E6%8B%A9"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">prompt的长度选择？</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.png" />
+              <p class="site-author-name">扫码关注公众号</p>
             </div>
         </div>
         <!--/noindex-->
@@ -147,6 +148,7 @@
             <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="finisky"
       src="/images/qrcode.png">
+  <p class="site-author-name">扫码关注公众号</p>
   <p class="site-author-name" itemprop="name">finisky</p>
   <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
 </div>
@@ -238,7 +240,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-12-29 19:10:28" itemprop="dateModified" datetime="2021-12-29T19:10:28+08:00">2021-12-29</time>
+        <time title="Modified: 2022-05-20 17:32:41" itemprop="dateModified" datetime="2022-05-20T17:32:41+08:00">2022-05-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,7 +317,7 @@ explanation that helps us understand what the task is about.</p>
 <p>将这种做法做到极致就是Prompt，比如GPT3可以不经过finetune而完成多种下游任务。也就是说，Prompt是一种很好的Few-shot
 learning甚至Zero-shot learning的方法。</p>
 <p>Prompt重在挖掘预训练模型本身的潜力，甚至在某些情况下可以超越之前finetune的SOTA。</p>
-<p>此外，因为Prompt对原模型的改动较小甚至不改，可以比较轻量地实现个性化而无须每用户一个大模型，serving开销显著变小。</p>
+<p>此外，因为Prompt对原模型的改动较小甚至不改，可以比较轻量地实现个性化而无需每用户一个大模型，serving开销显著变小。</p>
 <h1 id="怎么用prompt">怎么用Prompt</h1>
 <p>那下面的问题就在于，如何找到合适的Prompt?</p>
 <p>此处将不同方案使用的模板列出，保持与原文一致的符号标记。</p>
@@ -400,7 +402,7 @@ the discreteness and association problems.</p>
 Parameter-Efficient Prompt Tuning</a></p>
 <p>本文发表在EMNLP
 2021，是对之前一些工作的总结和改进。与Prefix-Tuning的主要区别在于，前者对模型的每层都加入了prefix
-vector，而本文提出的方案，仅仅在输入层这一层加入一些额外的embedding，因而更加parameter-efficient。虽然进行tuning的参数更少，但模型效果并文中有一些有意思的insights:</p>
+vector，而本文提出的方案，仅仅在输入层这一层加入一些额外的embedding，因而更加parameter-efficient。虽然进行tuning的参数更少，但模型效果不错，并且文中有一些有意思的insights:</p>
 <h4 id="如何初始化prompt-vector">如何初始化prompt vector?</h4>
 <blockquote>
 <p>Conceptually, our soft-prompt modulates the frozen network’s behavior
@@ -427,7 +429,7 @@ tuning就够了。</p>
 <p><strong>本质上，连续prompt模板就是在原有LM上增加了少量参数，并通过小样本仅学习这些参数调优取得更好性能的方法。</strong>
 与直接添加参数相比，这些参数具有模板的形式（虽然不是自然语言形式），所以取得了更好的效果。</p>
 <h1 id="总结">总结</h1>
-<p>Prompt无疑是当下最火的NLP技术之一，大家通过各种不同的Prompt方式来挖掘预训练模型本身的潜能。通过构造或查找合适的模板，prompt已经在在各种不同的NLP任务上大放异彩。</p>
+<p>Prompt无疑是当下最火的NLP技术之一，大家通过各种不同的Prompt方式来挖掘预训练模型本身的潜能。通过构造或查找合适的模板，prompt已经在各种不同的NLP任务上大放异彩。</p>
 <p>同时，Prompt也存在一些问题，比如最优模板的构建和查找，模板的稳定性等：</p>
 <blockquote>
 <p>Most of the work takes manually-designed prompts—prompt engineering
