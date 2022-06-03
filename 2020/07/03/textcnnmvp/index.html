@@ -31,7 +31,7 @@
 <meta property="og:description" content="TextCNN 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。 项目地址：https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;TextCNN 这里的实现基于： https:&#x2F;&#x2F;github.com&#x2F;Shawn1993&#x2F;cnn-text-classificatio">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-03T11:49:43.000Z">
-<meta property="article:modified_time" content="2022-05-02T16:04:49.000Z">
+<meta property="article:modified_time" content="2022-05-29T08:51:56.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="python">
@@ -156,7 +156,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">164</span>
+          <span class="site-state-item-count">165</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -239,7 +239,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-05-03 00:04:49" itemprop="dateModified" datetime="2022-05-03T00:04:49+08:00">2022-05-03</time>
+        <time title="Modified: 2022-05-29 16:51:56" itemprop="dateModified" datetime="2022-05-29T16:51:56+08:00">2022-05-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -308,7 +308,7 @@ glove,
 BERT等)或rephrase等方法将输入变成多个Channel。而Filter的目的是对于同一个输入用不同的kernel做卷积，从而提取出不同的Feature。用一个不是非常严谨的表述，Channel像是输入本身的一个天然存在的性质，而Filter是人为增加不同维度来提取Feature。</p>
 <h1 id="textcnn模型">TextCNN模型</h1>
 <p>模型的细节参考下图（wildml盗图），无须赘述： <img
-src="http://www.wildml.com/wp-content/uploads/2015/11/Screen-Shot-2015-11-06-at-12.05.40-PM-1024x937.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/textcnn.jpg"
 alt="TextCNN Model Illustration" /></p>
 <p>值得一提的是NLP的卷积操作和CV中有所不同，CV中的图像为二维输入，卷积会在横纵两个方向上进行，而NLP中的输入虽然看起来是二维的(token_num,
 embedding_dim)，但卷积只在第一维方向进行，即每个滑动窗口都包括了整个embedding
@@ -503,7 +503,7 @@ train_iter<span class="token punctuation">,</span> test_iter <span class="token 
 0 | 内牛满面~[泪]
 &gt;&gt;啧啧啧，好幸福好幸福
 1 | 啧啧啧，好幸福好幸福<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>虽然测试的准确率很高，但实际测试的效果一般，原因在于weibo_senti_100k的文本分类任务比较简单，这个数据集比较脏，大概率是按文本中的emoji写了规则进行的正负向标注。</p>
+<p>虽然测试的准确率很高，但实际测试的效果一般，原因在于weibo_senti_100k的文本分类任务比较简单，这个数据集比较脏，大概率是按文本中的emoji写规则进行的正负向标注。</p>
 
     </div>
 
