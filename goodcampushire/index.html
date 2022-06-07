@@ -23,31 +23,28 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="I have a sharded cluster (2 shards, each 3 mongods; 3 config server, 2 mongoses) which is deployed by MongoDB Ops Manager. Last week, one of the shard host status was shown as a grey diamond (Hover: &quot;">
+<meta name="description" content="作为面试官面试过数百候选人，深知招人难，招合适的人更难。同时，所谓“良禽择木而栖”，找一份自己满意的工作也并非易事。社招由于岗位职责的不同，与校招的标准有较大区别，下回分解。今天我们从面试官的角度来聊聊，对于技术研发岗，什么是一个优秀的校招候选人。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MongoDB Agent Host Discovery Issue">
-<meta property="og:url" content="https://finisky.github.io/2021/01/19/mongodbhostdiscoveryissue.en/index.html">
+<meta property="og:title" content="什么是一个优秀的校招候选人">
+<meta property="og:url" content="https://finisky.github.io/goodcampushire/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="I have a sharded cluster (2 shards, each 3 mongods; 3 config server, 2 mongoses) which is deployed by MongoDB Ops Manager. Last week, one of the shard host status was shown as a grey diamond (Hover: &quot;">
+<meta property="og:description" content="作为面试官面试过数百候选人，深知招人难，招合适的人更难。同时，所谓“良禽择木而栖”，找一份自己满意的工作也并非易事。社招由于岗位职责的不同，与校招的标准有较大区别，下回分解。今天我们从面试官的角度来聊聊，对于技术研发岗，什么是一个优秀的校招候选人。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-01-19T14:25:25.000Z">
-<meta property="article:modified_time" content="2021-12-19T04:04:03.000Z">
+<meta property="article:published_time" content="2022-06-06T15:30:35.000Z">
+<meta property="article:modified_time" content="2022-06-07T03:31:19.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="MongoDB">
-<meta property="article:tag" content="MongoDB Ops Manager">
-<meta property="article:tag" content="Kubernetes">
-<meta property="article:tag" content="MongoDB Agent">
+<meta property="article:tag" content="Coding Interview">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/2021/01/19/mongodbhostdiscoveryissue.en/">
+<link rel="canonical" href="https://finisky.github.io/goodcampushire/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2021/01/19/mongodbhostdiscoveryissue.en/","path":"2021/01/19/mongodbhostdiscoveryissue.en/","title":"MongoDB Agent Host Discovery Issue"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/goodcampushire/","path":"goodcampushire/","title":"什么是一个优秀的校招候选人"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>MongoDB Agent Host Discovery Issue | Finisky Garden</title>
+<title>什么是一个优秀的校招候选人 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -133,7 +130,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#problem-analysis"><span class="nav-number">1.</span> <span class="nav-text">Problem Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#monitoring-logs"><span class="nav-number">1.1.</span> <span class="nav-text">Monitoring Logs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#system-warnings"><span class="nav-number">1.2.</span> <span class="nav-text">System Warnings</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#solution"><span class="nav-number">2.</span> <span class="nav-text">Solution</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E7%BB%B4%E6%95%8F%E6%8D%B7%E5%9F%BA%E6%9C%AC%E5%8A%9F%E6%89%8E%E5%AE%9E"><span class="nav-number">1.</span> <span class="nav-text">思维敏捷，基本功扎实</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B2%9F%E9%80%9A%E9%A1%BA%E7%95%85%E9%80%BB%E8%BE%91%E6%B8%85%E6%99%B0"><span class="nav-number">2.</span> <span class="nav-text">沟通顺畅，逻辑清晰</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%81%E5%BA%A6%E7%AB%AF%E6%AD%A3"><span class="nav-number">3.</span> <span class="nav-text">态度端正</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E9%9D%A2%E4%B8%B0%E5%AF%8C%E5%87%86%E5%A4%87%E5%85%85%E5%88%86"><span class="nav-number">4.</span> <span class="nav-text">知识面丰富，准备充分</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.png" />
               <p class="site-author-name">扫码关注公众号</p>
@@ -207,7 +204,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2021/01/19/mongodbhostdiscoveryissue.en/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/goodcampushire/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.png">
@@ -220,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MongoDB Agent Host Discovery Issue
+          什么是一个优秀的校招候选人
         </h1>
 
         <div class="post-meta-container">
@@ -231,14 +228,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2021-01-19 22:25:25" itemprop="dateCreated datePublished" datetime="2021-01-19T22:25:25+08:00">2021-01-19</time>
+      <time title="Created: 2022-06-06 23:30:35" itemprop="dateCreated datePublished" datetime="2022-06-06T23:30:35+08:00">2022-06-06</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-12-19 12:04:03" itemprop="dateModified" datetime="2021-12-19T12:04:03+08:00">2021-12-19</time>
+        <time title="Modified: 2022-06-07 11:31:19" itemprop="dateModified" datetime="2022-06-07T11:31:19+08:00">2022-06-07</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -246,12 +243,12 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+          <a href="/categories/Coding-Interview/" itemprop="url" rel="index"><span itemprop="name">Coding Interview</span></a>
         </span>
     </span>
 
   
-    <span id="/2021/01/19/mongodbhostdiscoveryissue.en/" class="post-meta-item leancloud_visitors" data-flag-title="MongoDB Agent Host Discovery Issue" title="Views">
+    <span id="/goodcampushire/" class="post-meta-item leancloud_visitors" data-flag-title="什么是一个优秀的校招候选人" title="Views">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -266,8 +263,8 @@
     </span>
     <span class="post-meta-item-text">Waline: </span>
   
-    <a title="waline" href="/2021/01/19/mongodbhostdiscoveryissue.en/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/2021/01/19/mongodbhostdiscoveryissue.en/" data-xid="/2021/01/19/mongodbhostdiscoveryissue.en/" itemprop="commentCount"></span>
+    <a title="waline" href="/goodcampushire/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/goodcampushire/" data-xid="/goodcampushire/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -281,109 +278,35 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>I have a sharded cluster (2 shards, each 3 mongods; 3 config server,
-2 mongoses) which is deployed by MongoDB Ops Manager.</p>
-<p>Last week, one of the shard host status was shown as a grey diamond
-(Hover: "Last Ping: Never"). Besides, in the Ops Manager's server page,
-a server had two processes (e.g. <code>sharddb-0</code> and
-<code>sharddb-config</code>). However, the cluster still works well and
-we can list the host <code>sharddb-0-0</code>(shard 0, replica 0) in the
-mongo shell by <code>sh.status()</code> and <code>rs.status()</code>.
-What's wrong with the cluster?</p>
+        <p>作为面试官面试过数百候选人，深知招人难，招合适的人更难。同时，所谓“良禽择木而栖”，找一份自己满意的工作也并非易事。社招由于岗位职责的不同，与校招的标准有较大区别，下回分解。今天我们从面试官的角度来聊聊，对于技术研发岗，什么是一个优秀的校招候选人。</p>
 <span id="more"></span>
-<h1 id="problem-analysis">Problem Analysis</h1>
-<p>It looks like that one of the server is out of Ops Manager's
-monitoring (but the agent log was still collected in time): <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/greydiamondprocessstatus.png"
-alt="MongoDB Processes Grey Diamond Status" /> In the first glance, I
-thought the issue was caused by the host. Therefore, I deleted the
-corresponding pod as well as its pvc in kubernetes and waiting for the
-host to be recovered. No luck.</p>
-<h2 id="monitoring-logs">Monitoring Logs</h2>
-<p>I checked the automation agent log:</p>
-<blockquote>
-<p>[2021-01-15T10:13:03.299+0000] [discovery.monitor.info]
-[monitoring/discovery.go:discover:793] Performing discovery with 10
-hosts [2021-01-15T10:13:06.661+0000] [discovery.monitor.info]
-[monitoring/discovery.go:discover:850] Received discovery responses from
-20/20 requests after 3s [2021-01-15T10:13:58.298+0000] [agent.info]
-[monitoring/agent.go:Run:266] Done. Sleeping for 55s...
-[2021-01-15T10:13:58.298+0000] [discovery.monitor.info]
-[monitoring/discovery.go:discover:793] Performing discovery with 10
-hosts</p>
-</blockquote>
-<p>Looks like the issue was caused by
-<code>mongodb-mms-automation-agent</code> host discovery.</p>
-<p>Since there are 11 hosts in total (2 * 3 + 3 + 2 = 11), the
-<code>mongodb-mms-automation-agent</code> needs to send 22 requests
-instead of 20. That's why it doesn't discover host
-<code>sharddb-0-0</code>.</p>
-<h2 id="system-warnings">System Warnings</h2>
-<p>After that, I found some system warnings in the admin page:</p>
-<blockquote>
-<p>Automation metrics found conflicting canonical
-hosts=[sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local:27017] within
-all ping's
-hosts=[sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local:27017]. Skipping
-this sample.</p>
-</blockquote>
-<p>Backup agent warnings:</p>
-<blockquote>
-<p>com.xgen.svc.mms.svc.alert.AlertProcessingSvc [runAlertCheck:187]
-Alert check failed: groupId=5ff879a85d86101b89072b19,
-event=BACKUP_AGENT_DOWN, target=unassigned
-java.lang.IllegalStateException: Duplicate key
-sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local (attempted merging
-values BackupAgentAudit{Id: 5ff8802c39e579142fd18bcd, GroupId:
-5ff879a85d86101b89072b19, Hostname:
-sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local, Version:
-10.14.17.6445} and BackupAgentAudit{Id: 5ff8802d39e579142fd18d2f,
-GroupId: 5ff879a85d86101b89072b19, Hostname:
-sharddb-0-1.sharddb-sh.mongodb.svc.cluster.local, Version:
-10.14.17.6445})</p>
-</blockquote>
-<p>The above logs indicate that the host <code>sharddb-0-0</code> is
-conflicted with some other hosts. But how to make the automation agent
-discover the missing hosts?</p>
-<h1 id="solution">Solution</h1>
-<p>After one week grinding, I accidently found the culprit: conflict
-host mappings. What's host mappings? Refer to: <a
-target="_blank" rel="noopener" href="https://docs.opsmanager.mongodb.com/current/tutorial/nav/host-mappings/">Host
-Mappings</a></p>
-<p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/hostmappings.png"
-alt="MongoDB Ops Manager Host Mappings" /></p>
-<p>Go to <code>Deployment -&gt; More -&gt; Host Mappings</code> to check
-the existing host mappings. If you find something like this:</p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Host</th>
-<th>Alias</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local:27017</td>
-<td>sharddb-0-1:27017</td>
-</tr>
-</tbody>
-</table>
-<p>That means <code>sharddb-0-0</code> is mapped to
-<code>sharddb-0-1</code>, then conflicting hosts issue occurs.</p>
-<p><strong>Solution: delete the conflict host mappings, or simply delete
-all host mappings.</strong> (Don't worry, the mapping will be
-reconstructed several minutes later.)</p>
-<p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/processstatusworking.png"
-alt="MongoDB Ops Manager Deployment Processes" /></p>
-<p>I guess the root cause is that the Ops Manager doesn't update the
-host mappings timely. If host A obtain a new IP which is previously used
-by host B, then the issue happens.</p>
+<h1 id="思维敏捷基本功扎实">思维敏捷，基本功扎实</h1>
+<p>从招聘方的角度，肯定是要招smart的候选人。而如何定义smart，则主要体现在思维的活跃度上。</p>
+<p>从面试官的角度来看，好的学历背景可以为你的能力背书，第一印象非常重要。不过不必担心，既然你能进入面试环节，说明学历和项目背景已经过关，不必过分焦虑。</p>
+<p>如果是计算机相关专业，要保证专业基础扎实。比如计算机体系结构，操作系统，数据库原理，计算机网络，编译原理等。如果面试的是算法岗位，则需要复习传统机器学习，深度学习，数学分析，高等代数，概率与统计等。值得一提的是，如果是计算机科班出身，至少需要了解一门除Python之外的面向对象的语言，如C++或Java。否则，编程能力和好奇心可能不足，对软件工程的认知也有所欠缺。</p>
+<p>提到好奇心，就谈谈了解项目全貌的问题。候选人在学校或之前的实习岗位往往会参与到大项目中的一个模块。在介绍项目时，最好可以先简要地说明项目背景，再谈及自己负责的模块。听起来很简单，实际上一定程度上反映了候选人是否有足够的上进心和学习能力。一个只关心自己一亩三分地的人，上进心和主观能动性可能不足。</p>
+<h1 id="沟通顺畅逻辑清晰">沟通顺畅，逻辑清晰</h1>
+<p>记得当年面试完Google，面试官问我有什么问题，我问了句：“您工作这么多年，工作上除了技术本身，最重要的能力是什么？”
+当时他想了一下，然后回答说：“沟通，沟通能力是最重要的。”多年过去，自己也有了切身体会，沟通和表达确实是一名优秀研发人员必备的素质。大到项目立项和架构设计评审，小到feature设计的确认，每天都要花大量时间在与其他人沟通。因此，沟通效率就显得至关重要。</p>
+<p>与有些候选人沟通非常费劲以至于面试都不想进行下去。一种是话非常密但毫无重点，问任何一个问题他都能东拉西扯说上一大堆，不正面回答问题。给面试官的感受就是每个字都听懂了，连起来不知其所云。另一种是问什么答什么，多一个字也不愿意说，好像是你在恳求他告诉你祖传秘方。</p>
+<p>比较好的表达方式类似于写文章，自上而下地阐述。先给出对于问题本身的总结，然后可以具体描述下解决问题的思路，其中穿插着遇到的的困难与挑战及对应的思考，作适当的展开，最后一两句话做个总结。</p>
+<p>所以当我希望与面试者探讨项目时，会如此引导：“挑一个你觉得有意思或挑战的项目，说下有什么问题，如何解决的问题，及最终的结果怎样？”</p>
+<p>当然，表达和沟通能力的锻炼，需要长期不断地训练，或者说是一种自身特质的体现。如果自己目前表达能力确实欠妥，也不要刻意强求这里提到的表达方式，有可能东施效颦。建议先用自己熟悉的方式把问题描述清楚。</p>
+<h1 id="态度端正">态度端正</h1>
+<p>从面试的过程来看，面试双方并不对等。但从结果来看，双向选择，公司在选择你的同时，你也有权选择公司。因此，在面试的过程中，要有不卑不亢，保持谦虚的态度。即使遇到了比较难的问题，或者之前的表现不太好，也不要影响自己的情绪，心态平和很重要。</p>
+<p>面试过程中，面试官可能会不断地横向扩展和纵向深入，直到问到候选人答不出来为止。这样做有两个目的，第一如前所述，考察候选人知识的广度和深度，所谓知其深浅；第二考察候选人的态度，是否主动积极，乐观向上，以及是否有钻研精神，不轻言放弃。</p>
+<p>一些很好的面试题会从实际业务中抽取，并去除业务背景上下文。有些候选人遇到这类问题会马上说：我不会。这是个非常不好的信号，即使没见过，也应该比较积极地面对，即使不能找出最优解，至少也应该做些尝试。工作中常常会遇到没见过且很有挑战的问题，你能直接对老板说“我做不了”吗？这时我往往会进一步引导：“这个问题不难，现想就可以，能考虑一下吗？”如果候选人依然后退，可能就会影响到面试结果了。</p>
+<h1 id="知识面丰富准备充分">知识面丰富，准备充分</h1>
+<p>简历内容准备要足够充分，保证自己简历上的内容及其扩展是非常熟悉的，否则就从简历中删除。一般来说，当简历相关内容都不能很好地回答时，会使面试官对你的印象分大减。甚至会考虑：是否简历上的其他内容也有一定水分？</p>
+<p>在技术层面的知识面广且成体系。本质在于解决问题的思路是否开阔。比如秒杀系统设计，作为后端研发，可能仅考虑了系统扩容这种非常直接和硬核的方案，而忽略了从前端提前过滤的手段。在工程应用中，常有许多巧妙的设计可以大大降低系统复杂度和成本。而此时就需要研发同学的思路开阔，想法多样。</p>
+<h1 id="其他">其他</h1>
+<p>如果面试官能感受到候选人非常热衷于技术，或者说是个Geek，自然是极好的。但就我遇到过的很多Geek，短板也比较明显，可能会比较坚持自我，习惯单兵作战，或者技术完美主义。这种习惯源于技术实力的自信和技术至上的执念。就个人而言，无所谓好坏。但对于团队而言，这样的候选人可能管理成本较高，同时可能无法与团队很好地协作。如果你也是个Geek，可以适当地收敛下锋芒。</p>
+<p>面试末尾的提问环节，不要问“我今天的面试表现如何，是否可以通过面试”。第一，这样的提问比较尴尬且不专业，面试官无法正面回答你的问题。第二，显示出你的不自信，表现好的候选人往往不会问这样的问题。</p>
+<p>在讨论问题时，结果可能并不那么重要。重要的是面试官和候选人是否能一起慢慢找出解决方案。可以把面试过程当做实际工作的缩影，当你和面试官在同一团队遇到有挑战有难度的问题时，以你为主如何想出多种方案并比较优劣，最终解决问题。所以，在面试的过程中要放轻松，一个好的面试官带来的感受不是他在面试或不断挑战你，而是你们一起接近最终目标的过程。</p>
+<p>候选人的责任心，也就是靠谱。所谓“事事有回音，凡事有交代”。可惜的是，这一点通过短短一小时的面试是看不出来的，或者说不能显式地体现，只能是面试官通过各种细节进行大致判断。但作为候选人，可以通过交流的方式，说话的表情和语气等等方面来尽力传递“我很靠谱”的信号。相信聪明的你在实际生活中肯定有这样的体验，觉得某人特别值得信任（这个感受可能是玄学
+:-) ）。</p>
+<p>上面所谈到的许多优秀候选人的特质，如smart、沟通能力强、基础知识扎实和对技术的热情等方面，都非一朝一夕所能习得，都需要长期不断地学习和积累。所以准备面试也不要急于求成，要注重在日常工作和学习中一点一滴的成长。</p>
+<p>最后想说的是，面试和其他所有事情一样，要看缘分。俗话说得好，在你进门的前三分钟，面试结果就已经定了。剩下的时间都是在为这前三分钟的结果找论据。所以放平心态，双向选择，总有一个合适的岗位在等着你。</p>
 
     </div>
 
@@ -394,43 +317,37 @@ by host B, then the issue happens.</p>
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/20/mongodbagentmonitoringnotwork.en/" rel="bookmark">MongoDB Agent Monitoring and Backup not Working</a></div>
+      <div class="popular-posts-title"><a href="/2020/02/23/cleanquicksort/" rel="bookmark">快速排序简洁实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+      <div class="popular-posts-title"><a href="/2020/05/01/codinginterviewcppcheatsheet/" rel="bookmark">代码面试C++/STL Cheat Sheet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+      <div class="popular-posts-title"><a href="/2020/05/22/findpeakelement/" rel="bookmark">Find Peak Element 寻找峰值</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/03/21/migrateopsmanager.en/" rel="bookmark">Migrate Ops Manager to a new Kubernetes Cluster</a></div>
+      <div class="popular-posts-title"><a href="/priorityqueueexample.en/" rel="bookmark">C++ priority_queue Example</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/mongodbchunkmigrationfailed.en/" rel="bookmark">MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</a></div>
+      <div class="popular-posts-title"><a href="/priorityqueueexample/" rel="bookmark">C++ priority_queue使用示例</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
-              <a href="/tags/MongoDB-Ops-Manager/" rel="tag"># MongoDB Ops Manager</a>
-              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
-              <a href="/tags/MongoDB-Agent/" rel="tag"># MongoDB Agent</a>
+              <a href="/tags/Coding-Interview/" rel="tag"># Coding Interview</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="prev" title="别在mongos前做负载均衡">
-                  <i class="fa fa-chevron-left"></i> 别在mongos前做负载均衡
+                <a href="/retrievermodels/" rel="prev" title="深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT">
+                  <i class="fa fa-chevron-left"></i> 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/01/20/mongodbagentmonitoringnotwork.en/" rel="next" title="MongoDB Agent Monitoring and Backup not Working">
-                  MongoDB Agent Monitoring and Backup not Working <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -486,7 +403,7 @@ by host B, then the issue happens.</p>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/2021/01/19/mongodbhostdiscoveryissue.en/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/goodcampushire/"}</script>
 <script>
 document.addEventListener('page:loaded', () => {
   NexT.utils.loadComments(CONFIG.waline.el).then(() => 
