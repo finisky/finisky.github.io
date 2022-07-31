@@ -258,8 +258,8 @@
     </span>
     <span class="post-meta-item-text">Waline: </span>
   
-    <a title="waline" href="/preventpodrestart/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/preventpodrestart/" data-xid="/preventpodrestart/" itemprop="commentCount"></span>
+    <a title="waline" href="/preventpodrestart/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/preventpodrestart/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -358,7 +358,7 @@ yaml中去掉。</p>
 
 
 
-    <div class="comments" id="waline-comments"></div>
+    <div class="comments" id="waline"></div>
 </div>
   </main>
 
@@ -402,16 +402,18 @@ yaml中去掉。</p>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://finiskycomments.vercel.app","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/preventpodrestart/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/preventpodrestart/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
-  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
     NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
-  ).then(() => {
-    new Waline(CONFIG.waline);
-  });
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
 });
 </script>
+
 <script>
             window.imageLazyLoadSetting = {
                 isSPA: false,
