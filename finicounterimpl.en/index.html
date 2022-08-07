@@ -23,14 +23,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="静态博客如Hexo&#x2F;Hugo&#x2F;Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。 突然发现缺少一个全站访问量统计的功能，Waline">
+<meta name="description" content="Static website such as Hexo&#x2F;Hugo&#x2F;Jekyll is very popular recent years. It is fast, easy to write, deploy and host. However, no free lunch: it is non-trivial to store dynamic information such as pagevie">
 <meta property="og:type" content="article">
-<meta property="og:title" content="FiniCounter: 静态网站访问量统计工具">
-<meta property="og:url" content="https://finisky.github.io/finicounterimpl/index.html">
+<meta property="og:title" content="FiniCounter: A Website Vistor Counter">
+<meta property="og:url" content="https://finisky.github.io/finicounterimpl.en/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="静态博客如Hexo&#x2F;Hugo&#x2F;Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。 突然发现缺少一个全站访问量统计的功能，Waline">
+<meta property="og:description" content="Static website such as Hexo&#x2F;Hugo&#x2F;Jekyll is very popular recent years. It is fast, easy to write, deploy and host. However, no free lunch: it is non-trivial to store dynamic information such as pagevie">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-08-07T05:20:03.000Z">
+<meta property="article:published_time" content="2022-08-07T09:20:59.000Z">
 <meta property="article:modified_time" content="2022-08-07T09:21:46.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Hexo">
@@ -42,14 +42,14 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/finicounterimpl/">
+<link rel="canonical" href="https://finisky.github.io/finicounterimpl.en/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/finicounterimpl/","path":"finicounterimpl/","title":"FiniCounter: 静态网站访问量统计工具"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/finicounterimpl.en/","path":"finicounterimpl.en/","title":"FiniCounter: A Website Vistor Counter"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>FiniCounter: 静态网站访问量统计工具 | Finisky Garden</title>
+<title>FiniCounter: A Website Vistor Counter | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -135,7 +135,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1api%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">统计API后端实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E8%A1%8C%E9%83%A8%E7%BD%B2"><span class="nav-number">1.1.</span> <span class="nav-text">自行部署</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">前端实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">如何使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-next%E9%9B%86%E6%88%90"><span class="nav-number">3.2.</span> <span class="nav-text">Hexo NexT集成</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">4.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#backend-implementation"><span class="nav-number">1.</span> <span class="nav-text">Backend Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#host-by-yourself"><span class="nav-number">1.1.</span> <span class="nav-text">Host By Yourself</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#frontend-implementation"><span class="nav-number">2.</span> <span class="nav-text">Frontend Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#how-to-use"><span class="nav-number">2.1.</span> <span class="nav-text">How to Use</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#basic-usage"><span class="nav-number">2.1.1.</span> <span class="nav-text">Basic Usage</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-next-theme-integration"><span class="nav-number">2.2.</span> <span class="nav-text">Hexo NexT Theme Integration</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">3.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#source-code"><span class="nav-number">4.</span> <span class="nav-text">Source Code</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.png" />
               <p class="site-author-name">扫码关注公众号</p>
@@ -209,7 +209,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/finicounterimpl/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/finicounterimpl.en/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.png">
@@ -222,7 +222,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          FiniCounter: 静态网站访问量统计工具
+          FiniCounter: A Website Vistor Counter
         </h1>
 
         <div class="post-meta-container">
@@ -234,7 +234,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-08-07 13:20:03 / Modified: 17:21:46" itemprop="dateCreated datePublished" datetime="2022-08-07T13:20:03+08:00">2022-08-07</time>
+      <time title="Created: 2022-08-07 17:20:59 / Modified: 17:21:46" itemprop="dateCreated datePublished" datetime="2022-08-07T17:20:59+08:00">2022-08-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -255,8 +255,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/finicounterimpl/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/finicounterimpl/" itemprop="commentCount"></span>
+    <a title="waline" href="/finicounterimpl.en/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/finicounterimpl.en/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,7 +266,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/finicounterimpl/"></span>
+      <span class="waline-pageview-count" data-path="/finicounterimpl.en/"></span>
     </span>
   
 </div>
@@ -278,26 +278,32 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>静态博客如Hexo/Hugo/Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。</p>
-<p>突然发现缺少一个全站访问量统计的功能，Waline目前不支持。大多数静态网站使用不蒜子，但看到由于使用人数众多，常常出现502错误和服务不稳定的情况。遂考虑自行开发这样的一个服务：FiniCounter。使用Vercel
-Serverless
-Function作为Web框架，MongoDB为后端存储。用户访问任意页面时，通过Fetch
-API调用Serverless
-Function，在MongoDB中计数加1并返回最新计数，在前端展示。</p>
-<p>本想开发个小工具自己用，后来发现天然支持多用户，独乐乐不如众乐乐，大家一起用吧
-:-)。效果展示：<a
-target="_blank" rel="noopener" href="https://finicounter.vercel.app/">FiniCounter</a>。</p>
+        <p>Static website such as Hexo/Hugo/Jekyll is very popular recent years.
+It is fast, easy to write, deploy and host. However, no free lunch: it
+is non-trivial to store dynamic information such as pageview counts and
+comments under the serverless architecture. This site uses Waline to
+implement article view count and comment system.</p>
+<p>Accidently I found that we do not have a full site pageview counter.
+Waline has post-level counter instead of site-level one.</p>
+<p>Just DIY: FiniCounter. Use Vercel serverless function as the web API
+framework, MongoDB as the storage. When a user comes to any page of the
+site, we invoke the count API through fetch API, increment the counter
+in the MongoDB, return the updated value and display in the page.</p>
+<p>Initially I want to develop a tool for myself. After I finish it, I
+decide to make it as a public <strong>free</strong> service :-) . <a
+target="_blank" rel="noopener" href="https://finicounter.vercel.app/en">FiniCounter</a> looks like
+this:</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finicounter/finicounterdemo.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finicounter/finicounterdemo.en.png"
 alt="FiniCounter Demo" /></p>
 <span id="more"></span>
-<h1 id="统计api后端实现">统计API后端实现</h1>
-<p>后端非常简单，只需要接收一个GET请求，在MongoDB中计数加1即可。Node.js不熟，主要精力都花在了如何在Vercel中使用Python
-Web框架Sanic了，趟了不少坑。</p>
-<p>API为Http
-GET请求，格式如下：<code>https://finicounter.vercel.app/counter?host=xxx.com</code>
-，按hostname进行计数。</p>
-<p>核心代码实现：</p>
+<h1 id="backend-implementation">Backend Implementation</h1>
+<p>The backend logic is straightforward. The server received a Http GET
+request and increment the corresponding count in MongoDB.</p>
+<p>The API format:
+<code>https://finicounter.vercel.app/counter?host=xxx.com</code></p>
+<p>It uses domain name <code>host</code> as the key to count.</p>
+<p>The main code is self-explained:</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python">MONGODB_URL <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"MONGODB_URL"</span><span class="token punctuation">)</span>
 CORS_ORIGINS <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"CORS_ORIGINS"</span><span class="token punctuation">)</span>
 DB_NAME <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"DB_NAME"</span><span class="token punctuation">)</span> <span class="token keyword">if</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"DB_NAME"</span><span class="token punctuation">)</span> <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">else</span> <span class="token string">"MyCounter"</span>
@@ -320,10 +326,12 @@ app <span class="token operator">=</span> Sanic<span class="token punctuation">(
 
 
 app<span class="token punctuation">.</span>run<span class="token punctuation">(</span>host<span class="token operator">=</span><span class="token string">"0.0.0.0"</span><span class="token punctuation">,</span> port<span class="token operator">=</span><span class="token number">8000</span><span class="token punctuation">,</span> fast<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="自行部署">自行部署</h2>
-<p>自行部署非常方便，仅需一个Vercel账户和一个MongoDB。</p>
-<p>fork 代码库 <code>https://github.com/finisky/finicounter</code>
-到你的GitHub账户，在Vercel中新建Project并导入该库，并设置如下三个环境变量即可：</p>
+<h2 id="host-by-yourself">Host By Yourself</h2>
+<p>Host FiniCounter yourself is easy. What you need is a Vercel account
+and a MongoDB.</p>
+<p>Just fork <code>https://github.com/finisky/finicounter</code> to your
+GitHub account, create a new project in Vercel, import the private
+repository and configure 3 environment variables:</p>
 <table>
 <thead>
 <tr class="header">
@@ -346,15 +354,15 @@ app<span class="token punctuation">.</span>run<span class="token punctuation">(<
 </tr>
 </tbody>
 </table>
-<p>数据存储在 DB <code>DB_NAME</code> 中的 <code>Counter</code>
-Collection。</p>
+<p>The data is stored in the <code>Counter</code> Collection of DB
+<code>DB_NAME</code> .</p>
 <p><img
 src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/vercelenvsetting.png"
 alt="Vercel Env Setting" /></p>
-<h1 id="前端实现">前端实现</h1>
-<p>前端采用Fetch API实现，获取计数完成后会将网页中id为
-<code>finicount_views</code> 元素对应的<code>innerText</code>
-设置为计数，前端API的javascript实现:</p>
+<h1 id="frontend-implementation">Frontend Implementation</h1>
+<p>The fronted is implemented by fetch API. The <code>innerText</code>
+of the element with id <code>finicount_views</code> will be set to the
+retrieved counter value. The script:</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">getViews</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
     <span class="token keyword">let</span> url <span class="token operator">=</span> <span class="token string">"https://finicounter.vercel.app/counter?host="</span> <span class="token operator">+</span> window<span class="token punctuation">.</span>location<span class="token punctuation">.</span>hostname<span class="token punctuation">;</span>
     <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
@@ -378,41 +386,50 @@ alt="Vercel Env Setting" /></p>
 <span class="token punctuation">&#125;</span>
 
 <span class="token function">renderViews</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>其中 <code>formatNumber</code> 函数会将较大的数字按逗号分隔显示，如
-<code>12,345,678</code> 。使用的同学可以按需定制修改。</p>
-<h1 id="如何使用">如何使用</h1>
-<h2 id="基本用法">基本用法</h2>
+<p>The function <code>formatNumber</code> will format the counter like
+<code>12,345,678</code> . Feel free to customize your own script if
+necessary.</p>
+<h2 id="how-to-use">How to Use</h2>
+<h3 id="basic-usage">Basic Usage</h3>
 <ol type="1">
-<li>添加一行javascript到网页：</li>
+<li>Add the following script to your websites:</li>
 </ol>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token operator">&lt;</span>script <span class="token keyword">async</span> src<span class="token operator">=</span><span class="token string">"//finicounter.vercel.app/finicounter.js"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <ol start="2" type="1">
-<li>添加任意容器来显示访客数，id 必须为 <code>finicount_views</code>
-:</li>
+<li>Add a container with id <code>finicount_views</code> to show the
+view counts:</li>
 </ol>
 <pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>finicount_views<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>搞定！访客数已经可以在你的网站中显示了，就像这样：<code>12,345,678</code>
-。</p>
-<h2 id="hexo-next集成">Hexo NexT集成</h2>
-<p>如果使用NexT主题，可采用 <a
-target="_blank" rel="noopener" href="https://theme-next.js.org/docs/advanced-settings/injects">Injects</a>
-的方法进行集成，将网站访问数显示在页脚：</p>
+<p>You are done! The view count will be shown on your site like this
+<code>12,345,678</code>.</p>
+<p><strong>Notice</strong>: the script should be added to
+<strong>every</strong> pages of your website. Otherwise, the page view
+counter might missing counts.</p>
+<p>It is also welcome to directly use the counter API
+<code>https://finicounter.vercel.app/counter?host=xxx.com</code> and
+customize the javascript yourself.</p>
+<p><strong>Each counter will be automatically deleted if not accessed
+for more than 3 months.</strong></p>
+<h2 id="hexo-next-theme-integration">Hexo NexT Theme Integration</h2>
+<p>For Hexo NexT theme, we can easily integrate FiniCounter by <a
+target="_blank" rel="noopener" href="https://theme-next.js.org/docs/advanced-settings/injects">Injects</a>.
+The total pageview can be displayed in the footer:</p>
 <p><img
 src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nextpageviewfooter.png"
 alt="FiniCounter Hexo NexT Demo" /></p>
-<p>在Hexo根目录的 <code>scripts/</code> 中添加新文件
-<code>totalpageview.js</code> 即可:</p>
+<p>Just add a new js file <code>totalpageview.js</code> in the Hexo root
+folder <code>scripts/</code>:</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">hexo<span class="token punctuation">.</span>extend<span class="token punctuation">.</span>filter<span class="token punctuation">.</span><span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'theme_inject'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">injects</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
   injects<span class="token punctuation">.</span>footer<span class="token punctuation">.</span><span class="token function">raw</span><span class="token punctuation">(</span><span class="token string">'totalpageview'</span><span class="token punctuation">,</span> <span class="token string">'&lt;div>&lt;span>&lt;a href="https://finicounter.vercel.app/" target="_blank">Total Pageview:&lt;/a>&lt;/span>&lt;span id="finicount_views" style="display:inline;padding-left:5px;">&lt;/span>&lt;div> &lt;script async src="//finicounter.vercel.app/finicounter.js">&lt;/script>'</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>cache<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>如果受欢迎，可以开发一个Hexo NexT Plugin进一步简化集成操作 :-) 。</p>
+<p>Leave Hexo NexT Plugin as future work :-) .</p>
 <h1 id="demo">Demo</h1>
-<p><a target="_blank" rel="noopener" href="https://finicounter.vercel.app/">Demo网站</a></p>
-<p>本站也正在使用此服务 :-) ，页脚有显示，本站的 <a
-href="/finicounter">Demo网站</a>。</p>
-<h1 id="完整代码">完整代码</h1>
-<p>完整代码见此 <a
-target="_blank" rel="noopener" href="https://github.com/finisky/finicounter">代码库</a> 。</p>
+<p><a target="_blank" rel="noopener" href="https://finicounter.vercel.app/">Demo</a></p>
+<p>This site is using FiniCounter :-) . <a href="/finicounter">Demo on
+this site</a> .</p>
+<h1 id="source-code">Source Code</h1>
+<p>Source code is available <a
+target="_blank" rel="noopener" href="https://github.com/finisky/finicounter">here</a> .</p>
 
     </div>
 
@@ -423,7 +440,7 @@ target="_blank" rel="noopener" href="https://github.com/finisky/finicounter">代
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/finicounterimpl.en/" rel="bookmark">FiniCounter: A Website Vistor Counter</a></div>
+      <div class="popular-posts-title"><a href="/finicounterimpl/" rel="bookmark">FiniCounter: 静态网站访问量统计工具</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/customizecategorybyextension/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局(简洁版)</a></div>
@@ -454,14 +471,11 @@ target="_blank" rel="noopener" href="https://github.com/finisky/finicounter">代
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/douyinproduct/" rel="prev" title="抖音为什么如此成功？">
-                  <i class="fa fa-chevron-left"></i> 抖音为什么如此成功？
+                <a href="/finicounterimpl/" rel="prev" title="FiniCounter: 静态网站访问量统计工具">
+                  <i class="fa fa-chevron-left"></i> FiniCounter: 静态网站访问量统计工具
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/finicounterimpl.en/" rel="next" title="FiniCounter: A Website Vistor Counter">
-                  FiniCounter: A Website Vistor Counter <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -515,7 +529,7 @@ target="_blank" rel="noopener" href="https://github.com/finisky/finicounter">代
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/finicounterimpl/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/finicounterimpl.en/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
