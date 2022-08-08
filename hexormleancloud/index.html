@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/avatar.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="7.19日，收到了LeanCloud的邮件，大意如下：  8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务 为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8 月 1 日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。  静态网站的状态存取是个痛点。好消息是本站使用Hexo NexT主题，天然集成了文章阅读量的功能，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo去LeanCloud依赖">
+<meta property="og:url" content="https://finisky.github.io/hexormleancloud/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="7.19日，收到了LeanCloud的邮件，大意如下：  8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务 为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8 月 1 日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。  静态网站的状态存取是个痛点。好消息是本站使用Hexo NexT主题，天然集成了文章阅读量的功能，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-08-08T16:26:09.000Z">
+<meta property="article:modified_time" content="2022-08-08T16:34:52.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="NexT">
+<meta property="article:tag" content="Hexo Extension">
+<meta property="article:tag" content="Serverless">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/hexormleancloud/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/hexormleancloud/","path":"hexormleancloud/","title":"Hexo去LeanCloud依赖"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hexo去LeanCloud依赖 | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Easy doesn't enter into grown-up life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li>
+        <li class="menu-item menu-item-machine-learning"><a href="/categories/Machine-Learning/" rel="section"><i class="fa fa-chart-area fa-fw"></i>Machine Learning</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-links-&-contacts"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links & Contacts</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%87%E6%8D%A2waline%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8"><span class="nav-number">1.</span> <span class="nav-text">切换Waline后端存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E6%95%B0%E6%8D%AE%E9%94%99%E8%AF%AF-waline%E7%89%88%E6%9C%AC%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.1.</span> <span class="nav-text">导出数据错误:
+Waline版本不匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE504%E9%94%99%E8%AF%AF"><span class="nav-number">1.2.</span> <span class="nav-text">导入数据504错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jwt-invalid-signature%E9%94%99%E8%AF%AF"><span class="nav-number">1.3.</span> <span class="nav-text">JWT Invalid Signature错误</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F%E8%87%B3waline"><span class="nav-number">2.</span> <span class="nav-text">切换文章阅读量至Waline</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">其他优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mongodb%E5%8A%A0%E7%B4%A2%E5%BC%95"><span class="nav-number">3.1.</span> <span class="nav-text">MongoDB加索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E8%AF%84%E8%AE%BA%E6%98%BE%E7%A4%BA%E6%96%87%E5%AD%97"><span class="nav-number">3.2.</span> <span class="nav-text">改变评论显示文字</span></a></li></ol></li></ol></div>
+            <div class="site-author site-overview-item animated">
+              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.png" />
+              <p class="site-author-name">扫码关注公众号</p>
+            </div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.png">
+  <p class="site-author-name">扫码关注公众号</p>
+  <p class="site-author-name" itemprop="name">finisky</p>
+  <div class="site-description" itemprop="description">Easy doesn't enter into grown-up life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">175</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/hexormleancloud/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo去LeanCloud依赖
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-08-09 00:26:09 / Modified: 00:34:52" itemprop="dateCreated datePublished" datetime="2022-08-09T00:26:09+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/hexormleancloud/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/hexormleancloud/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/hexormleancloud/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>7.19日，收到了LeanCloud的邮件，大意如下：</p>
+<blockquote>
+<p>8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务</p>
+<p>为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8
+月 1
+日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。</p>
+</blockquote>
+<p>静态网站的状态存取是个痛点。好消息是本站使用Hexo
+NexT主题，天然集成了文章阅读量的功能，后端存储是LeanCloud，仅需配置<code>app_id</code>与<code>app_key</code>。而评论系统是另一个坑，一年前
+<a
+href="/hexowaline">切换到了Waline</a>，一举攻克了这个难题，但当时Waline也依赖于LeanCloud。</p>
+<p>这次LeanCloud国际版共享域名不向中国大陆提供服务改动，对Waline无影响，因为Waline的前端部署在Vercel海外节点。<strong>但如果网站面向大陆用户，文章阅读量统计会受影响。</strong></p>
+<p>因此，考虑将本站去LeanCloud依赖。方法很简单，将文章阅读量切换至Waline，同时Waline的后端存储改用MongoDB。去依赖需要你有一台服务器，自建MongoDB，或者直接使用
+<a target="_blank" rel="noopener" href="https://www.mongodb.com/pricing">MongoDB Atlas的免费版</a>
+。</p>
+<span id="more"></span>
+<p>使用MongoDB存储数据的好处：</p>
+<ul>
+<li>速度更快，LeanCloud访问速度一言难尽</li>
+<li>数据自己存储，非常灵活，方便导入导出</li>
+</ul>
+<h1 id="切换waline后端存储">切换Waline后端存储</h1>
+<p>看起来很简单，参考 <a
+target="_blank" rel="noopener" href="https://waline.js.org/guide/server/databases.html#mongodb">#
+多数据库服务支持</a>
+。实际操作还是踩了不少坑，主要痛点是已有数据的导出和导入。</p>
+<p>切换存储很简单，仅需改变下Vercel前端的环境变量，并重新部署令其生效。保险起见，<strong>强烈建议新建项目，方便导出导入数据</strong>。方便描述，两个Vercel
+app用<code>OldApp</code>和<code>NewApp</code>进行指代。</p>
+<p>先在<code>NewApp</code>配置如下MongoDB的相关环境变量：</p>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/vercelmongodbsetting.png"
+alt="Vercel MongoDB Environment Variables Setting" /></p>
+<p>值得一提的是<code>MONGO_HOST</code>与<code>MONGO_PORT</code>的设置，是两个List:</p>
+<pre class="line-numbers language-none"><code class="language-none">MONGO_HOST&#x3D;[&quot;cluster0-shard-00-00.p4edw.mongodb.net&quot;,&quot;cluster0-shard-00-01.p4edw.mongodb.net&quot;,&quot;cluster0-shard-00-02.p4edw.mongodb.net&quot;]
+MONGO_PORT&#x3D;[27017,27017,27017,27017]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>个人觉得此配置有些过度设计，这么多参数，仅需一个参数替代：MongoDB连接串。</p>
+<p>改完环境变量，理论上后端已经从LeanCloud切换至MongoDB，重新部署即可。下面我们就重点来聊聊遇到的坑。</p>
+<h2 id="导出数据错误-waline版本不匹配">导出数据错误:
+Waline版本不匹配</h2>
+<p>导出数据可以通过评论的后端完成:
+<code>https://xxx.vercel.app/ui</code></p>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/walinemigrationui.png"
+alt="Waline Migration UI" /></p>
+<p>导出评论时出现如下错误：</p>
+<blockquote>
+<p>Failed to load resource: the server responded with a status of 500 ()
+https://xxx.vercel.app/comment?type=count&amp;url=%2Fsample%2F</p>
+</blockquote>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/walineversionmismatch.png"
+alt="Waline Version Mismatch" /></p>
+<p>Debug好久才发现，服务端(v2.6.2)与客户端(v1.6.0)版本不匹配所致，先得升级<code>OldApp</code>到v2.6.2，重新部署一次<code>OldApp</code>即可。</p>
+<h2 id="导入数据504错误">导入数据504错误</h2>
+<p>好容易导出了json数据，结果在导入数据时又出现了问题。</p>
+<p>发现无论导多少次，只能一次导入约40条数据，就出现"504"错误。看vercel.app的后台日志发现，POST请求超时了，<a
+target="_blank" rel="noopener" href="https://vercel.com/docs/concepts/limits/overview#general-limits">#
+Hobby版Serverless Function的执行时间最多只有10秒</a>:</p>
+<blockquote>
+<p>Serverless Function Execution Timeout (Seconds) 10</p>
+</blockquote>
+<p>没有读导入的源码，看起来是导入数据行数过多，10秒插入不完导致API超时。应该是Waline导入数据的实现比较简单所致，没有使用块插入优化和异步导入机制。可以理解，导入导出对大部分用户来说并不是个常用的功能，做得简单些也无妨。</p>
+<p>那么问题来了，如何将LeanCloud的数据导入MongoDB？有几种方案：</p>
+<ul>
+<li>LeanCloud后台导出jsonl文件，写程序自行解析并插入MongoDB，看了一下数据格式，来回转换比较麻烦</li>
+<li>解析导出的<code>waline.json</code>文件，写程序插入MongoDB</li>
+<li>如果数据量不太大，可将数据分成如30行一个块，逐块手动导入MongoDB，由于每次导入会清除MongoDB表中内容，每次用MongoDB
+Compass的导出功能将此块内容导出，最后再将MongoDB
+Compass导出的json逐个导入进去</li>
+</ul>
+<p>尝试写程序解析LeanCloud的数据格式，由于有日期和图片Base64编码的数据，解析和导入遇到了不少问题，最终采用第三种笨方法解决了问题。如果老数据量很大，还是得用前两种方案，其中第二种方案也未必奏效，利用Vercel导出大量数据一样会超时。</p>
+<h2 id="jwt-invalid-signature错误">JWT Invalid Signature错误</h2>
+<p>导入数据后发现本地运行Hexo加载评论没问题，但部署后出现错误：</p>
+<blockquote>
+<p>Waline.vue:262 Fetch comment list failed with 500: invalid
+signature</p>
+</blockquote>
+<p>百思不得其解，查了下Vercel日志：</p>
+<blockquote>
+<p>2022-07-31T04:14:27.552Z 314c32aa-1ca2-4cde-a720-a72d0be6a075 ERROR
+JsonWebTokenError: invalid signature at
+/var/task/node_modules/jsonwebtoken/verify.js:133:19 at getSecret
+(/var/task/node_modules/jsonwebtoken/verify.js:90:14) at
+Object.module.exports [as verify]
+(/var/task/node_modules/jsonwebtoken/verify.js:94:10) at
+module.exports.__before (/var/task/node_modules/<span class="citation"
+data-cites="waline/vercel/src/logic/base.js:51:26">@waline/vercel/src/logic/base.js:51:26</span>)
+at module.exports.__before (/var/task/node_modules/<span
+class="citation"
+data-cites="waline/vercel/src/logic/comment.js:5:17">@waline/vercel/src/logic/comment.js:5:17</span>)
+at /var/task/node_modules/think-logic/index.js:33:42 at dispatch
+(/var/task/node_modules/koa-compose/index.js:42:32) at
+/var/task/node_modules/think-router-rest/index.js:31:12 at dispatch
+(/var/task/node_modules/koa-compose/index.js:42:32) at Router.parseRule
+(/var/task/node_modules/think-router/router.js:266:17)</p>
+</blockquote>
+<p>JWT token错误，在网页端退出再重新登录即可解决问题，真是一波三折。</p>
+<h1 id="切换文章阅读量至waline">切换文章阅读量至Waline</h1>
+<p>参考 <a target="_blank" rel="noopener" href="https://waline.js.org/guide/client/pageview.html">#
+Waline浏览量统计</a> 文档。</p>
+<p>如果使用<code>@waline/hexo-next</code>插件(这里是v3.0.1)，仅需修改Hexo根目录下的<code>_config.yml</code>中的waline段：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">waline</span><span class="token punctuation">:</span>
+  <span class="token punctuation">...</span>
+  <span class="token key atrule">pageview</span><span class="token punctuation">:</span> <span class="token boolean important">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>同时，一定要将NexT主题中的<code>leancloud_visitors</code>
+disable：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">leancloud_visitors</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>此时，网站中的所有文章访问量统计都已切换为Waline浏览量统计。另一个问题来了，也需要数据迁移，不过这个操作简单许多，一般来说文章量都不太大，直接从LeanCloud导出文件，用Excel处理下，再导入MongoDB即可，访问量文档格式很简单，<code>waline.Counter</code>
+Collection示例文档：</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"_id"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"$oid"</span><span class="token operator">:</span> <span class="token string">"62e6696e8f46698ea8a8f475"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"/example/"</span><span class="token punctuation">,</span>
+  <span class="token property">"time"</span><span class="token operator">:</span> <span class="token number">86</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>BTW，前些天自行开发了个<a
+href="/finicounter">网站访问量统计工具</a>，现在看来，全站访问量也可通过Waline浏览量统计实现，改下前端参数<code>serverURL</code>和<code>path</code>，再在每个页面都加上这段额外的js即可。</p>
+<h1 id="其他优化">其他优化</h1>
+<h2 id="mongodb加索引">MongoDB加索引</h2>
+<p>随着数据量增多，为提升访问效率，MongoDB的Collection需要加些索引，Waline本身没有做这部分的优化。</p>
+<ul>
+<li><code>waline.Counter</code> Collection:
+url和time两列需要加索引。</li>
+<li><code>waline.Comment</code> Collection: 加联合索引
+<code>&lt;url, status, insertedAt&gt;</code>，可提升每篇文章评论的读取速度。</li>
+</ul>
+<h2 id="改变评论显示文字">改变评论显示文字</h2>
+<p>利用 <a target="_blank" rel="noopener" href="https://hexo.io/docs/data-files">Hexo数据文件</a> 和 <a
+target="_blank" rel="noopener" href="https://theme-next.js.org/docs/theme-settings/internationalization.html#Override-Default-Translations">NexT多语言支持</a>，在Hexo目录下（而非NexT的目录）<code>source/_data/languages.yml</code>
+(如无则创建):</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">en</span><span class="token punctuation">:</span>
+  <span class="token key atrule">post</span><span class="token punctuation">:</span>
+    <span class="token key atrule">comments</span><span class="token punctuation">:</span>
+      <span class="token key atrule">waline</span><span class="token punctuation">:</span> Comments
+<span class="token key atrule">zh-CN</span><span class="token punctuation">:</span>
+  <span class="token key atrule">post</span><span class="token punctuation">:</span>
+    <span class="token key atrule">comments</span><span class="token punctuation">:</span>
+      <span class="token key atrule">waline</span><span class="token punctuation">:</span> 评论<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finicounterimpl.en/" rel="bookmark">FiniCounter: A Website Vistor Counter</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finicounterimpl/" rel="bookmark">FiniCounter: 静态网站访问量统计工具</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/hexowaline/" rel="bookmark">Hexo使用Waline评论系统</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/customizecategorybyextension/" rel="bookmark">Hexo添加自定义分类菜单项并定制页面布局(简洁版)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/simplestblogroll.en/" rel="bookmark">Customize Hexo Blogroll Page</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/NexT/" rel="tag"># NexT</a>
+              <a href="/tags/Hexo-Extension/" rel="tag"># Hexo Extension</a>
+              <a href="/tags/Serverless/" rel="tag"># Serverless</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/finicounterimpl.en/" rel="prev" title="FiniCounter: A Website Vistor Counter">
+                  <i class="fa fa-chevron-left"></i> FiniCounter: A Website Vistor Counter
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div><div><span><a href="https://finicounter.vercel.app/" target="_blank">Total Pageview:</a></span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.vercel.app/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/hexormleancloud/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
