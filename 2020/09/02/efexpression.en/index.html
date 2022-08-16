@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 5.4.2">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
@@ -329,8 +329,8 @@ falls back to <code>IEnumerable</code>. Anyway, we need to pass
 <p>Take
 <code>Employee.Where(x =&gt; x.Name == "Jack").Select(x =&gt; x.Name)</code>
 for example. If you print out the translated SQL, you will find that the
-where expression is missing: <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
-<span class="token keyword">FROM</span> <span class="token punctuation">`</span>XXX<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> And that's why we have severe
+where expression is missing: <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token identifier"><span class="token punctuation">`</span>x<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Name<span class="token punctuation">`</span></span>
+<span class="token keyword">FROM</span> <span class="token identifier"><span class="token punctuation">`</span>XXX<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> And that's why we have severe
 performance issue. Next we discuss how to write correct
 <code>Expresssion&lt;Func&gt;</code> and its usage.</p>
 <h1 id="where-expression">Where Expression</h1>
@@ -351,9 +351,9 @@ Expression, pay attention to <code>Where</code> parameter):
 <p>From the caller's view, the usage are the same (the underlying
 mechanism are totally different): <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">var</span></span> employee <span class="token operator">=</span> <span class="token function">GetEntity</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Name <span class="token operator">==</span> <span class="token string">"Jack"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>If you print out the translated SQL, the where clause comes back:
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span>
-<span class="token keyword">FROM</span> <span class="token punctuation">`</span>XXX<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span>
-<span class="token keyword">WHERE</span> <span class="token punctuation">`</span>x<span class="token punctuation">`</span><span class="token punctuation">.</span><span class="token punctuation">`</span>Name<span class="token punctuation">`</span> <span class="token operator">=</span><span class="token operator">=</span> <span class="token string">'Jack'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token identifier"><span class="token punctuation">`</span>x<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Name<span class="token punctuation">`</span></span>
+<span class="token keyword">FROM</span> <span class="token identifier"><span class="token punctuation">`</span>XXX<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Employee<span class="token punctuation">`</span></span>
+<span class="token keyword">WHERE</span> <span class="token identifier"><span class="token punctuation">`</span>x<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Name<span class="token punctuation">`</span></span> <span class="token operator">=</span><span class="token operator">=</span> <span class="token string">'Jack'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="navigation-expression">Navigation Expression</h1>
 <p>I spent some time to investigate how to transform
 <code>Func&lt;DbSet&lt;Employee&gt;, IQueryable&lt;Employee&gt;&gt;</code>
