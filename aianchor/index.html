@@ -23,31 +23,28 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="在同一机器上对不同repo使用不同的github账号是个常见需求。举个例子，repo1托管在github账号x1下，而repo2托管在账号x2下，如何方便地在同一机器上使用不同账号自动git push到对应的远端？比较直接的做法是在不同repo目录下使用git config配置用户名，但这样有两个问题：  每个repo都要配置一遍比较繁琐 有些情况下无法配置。比如使用 hexo-deployer-">
+<meta name="description" content="随着元宇宙概念的兴起，AI虚拟主播也跟着又火起来了，但AI虚拟主播真是个好生意吗？ AI虚拟主播大致可分为两类，一类是纯的AI虚拟主播，另一类是真人驱动的AI虚拟主播。后者要解决的是真人出镜的问题，本文主要讨论的是前者。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="同一机器配置多个GitHub账号">
-<meta property="og:url" content="https://finisky.github.io/multiplegithubaccountsononemachine/index.html">
+<meta property="og:title" content="AI虚拟主播带货是不是个好生意？">
+<meta property="og:url" content="https://finisky.github.io/aianchor/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="在同一机器上对不同repo使用不同的github账号是个常见需求。举个例子，repo1托管在github账号x1下，而repo2托管在账号x2下，如何方便地在同一机器上使用不同账号自动git push到对应的远端？比较直接的做法是在不同repo目录下使用git config配置用户名，但这样有两个问题：  每个repo都要配置一遍比较繁琐 有些情况下无法配置。比如使用 hexo-deployer-">
+<meta property="og:description" content="随着元宇宙概念的兴起，AI虚拟主播也跟着又火起来了，但AI虚拟主播真是个好生意吗？ AI虚拟主播大致可分为两类，一类是纯的AI虚拟主播，另一类是真人驱动的AI虚拟主播。后者要解决的是真人出镜的问题，本文主要讨论的是前者。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-11-02T17:15:40.000Z">
-<meta property="article:modified_time" content="2021-11-02T17:18:50.000Z">
+<meta property="article:published_time" content="2022-08-22T01:42:06.000Z">
+<meta property="article:modified_time" content="2022-08-22T02:00:47.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="Linux">
-<meta property="article:tag" content="Ubuntu">
-<meta property="article:tag" content="Hexo">
-<meta property="article:tag" content="SSH">
+<meta property="article:tag" content="Product">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/multiplegithubaccountsononemachine/">
+<link rel="canonical" href="https://finisky.github.io/aianchor/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/multiplegithubaccountsononemachine/","path":"multiplegithubaccountsononemachine/","title":"同一机器配置多个GitHub账号"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/aianchor/","path":"aianchor/","title":"AI虚拟主播带货是不是个好生意？"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>同一机器配置多个GitHub账号 | Finisky Garden</title>
+<title>AI虚拟主播带货是不是个好生意？ | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -120,7 +117,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -133,11 +130,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90ssh-key"><span class="nav-number">1.</span> <span class="nav-text">生成SSH Key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%85%AC%E9%92%A5%E5%88%B0github%E8%B4%A6%E6%88%B7"><span class="nav-number">2.</span> <span class="nav-text">添加公钥到GitHub账户</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%BE%91ssh-config"><span class="nav-number">3.</span> <span class="nav-text">编辑SSH Config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5"><span class="nav-number">4.</span> <span class="nav-text">测试连接</span></a></li></ol></div>
-            <div class="site-author site-overview-item animated">
-              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.png" />
-              <p class="site-author-name">扫码关注公众号</p>
-            </div>
         </div>
         <!--/noindex-->
 
@@ -205,7 +197,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/multiplegithubaccountsononemachine/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/aianchor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.png">
@@ -218,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          同一机器配置多个GitHub账号
+          AI虚拟主播带货是不是个好生意？
         </h1>
 
         <div class="post-meta-container">
@@ -230,7 +222,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-11-03 01:15:40 / Modified: 01:18:50" itemprop="dateCreated datePublished" datetime="2021-11-03T01:15:40+08:00">2021-11-03</time>
+      <time title="Created: 2022-08-22 09:42:06 / Modified: 10:00:47" itemprop="dateCreated datePublished" datetime="2022-08-22T09:42:06+08:00">2022-08-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -238,7 +230,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+          <a href="/categories/Product/" itemprop="url" rel="index"><span itemprop="name">Product</span></a>
         </span>
     </span>
 
@@ -251,8 +243,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/multiplegithubaccountsononemachine/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/multiplegithubaccountsononemachine/" itemprop="commentCount"></span>
+    <a title="waline" href="/aianchor/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/aianchor/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -262,7 +254,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/multiplegithubaccountsononemachine/"></span>
+      <span class="waline-pageview-count" data-path="/aianchor/"></span>
     </span>
   
 </div>
@@ -274,91 +266,43 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>在同一机器上对不同repo使用不同的github账号是个常见需求。举个例子，<code>repo1</code>托管在github账号<code>x1</code>下，而<code>repo2</code>托管在账号<code>x2</code>下，如何方便地在同一机器上使用不同账号自动<code>git push</code>到对应的远端？比较直接的做法是在不同repo目录下使用<code>git config</code>配置用户名，但这样有两个问题：</p>
-<ul>
-<li>每个repo都要配置一遍比较繁琐</li>
-<li>有些情况下无法配置。比如使用 <a
-target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>
-部署Hexo网站时，<code>.deploy_git</code>目录是动态生成的，而所用的git账户和远端url修改不便。</li>
-</ul>
-<p>于是，我们可以借用SSH
-config文件来把不同github账号与repo联系起来。在SSH
-config中定义多个不同的host项即可，然后在访问github时，使用一个虚拟host作为别名代替真正的主机名<code>github.com</code>即可。</p>
+        <p>随着元宇宙概念的兴起，AI虚拟主播也跟着又火起来了，但AI虚拟主播真是个好生意吗？</p>
+<p>AI虚拟主播大致可分为两类，一类是纯的AI虚拟主播，另一类是真人驱动的AI虚拟主播。后者要解决的是真人出镜的问题，本文主要讨论的是前者。</p>
 <span id="more"></span>
-<h1 id="生成ssh-key">生成SSH Key</h1>
-<p>直接按步骤来即可： <a
-target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">#
-Generating a new SSH key and adding it to the ssh-agent</a></p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
-
-Generating public&#x2F;private ed25519 key pair.
-Enter file in which to save the key (&#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519): 
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519
-Your public key has been saved in &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519.pub
-The key fingerprint is:
-SHA256: xxx your_email@example.com<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Add your SSH private key to the ssh-agent: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-add ~&#x2F;.ssh&#x2F;id_ed25519
-Identity added: &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519 (your_email@example.com)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
-<h1 id="添加公钥到github账户">添加公钥到GitHub账户</h1>
-<p>按Tutorial步骤来，点点鼠标复制粘贴即可： <a
-target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">#
-Adding a new SSH key to your GitHub account</a></p>
-<p>拷贝公钥:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ cat ~&#x2F;.ssh&#x2F;id_ed25519.pub
-ssh-ed25519 xxxx your_email@example.com<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>然后把公钥通过GitHub配置页添加至账户: Profile Photo -&gt; Settings
--&gt; SSH and GPG keys -&gt; New SSH keys</p>
-<h1 id="编辑ssh-config">编辑SSH Config</h1>
-<p>这是最重要的的部分，编辑 <code>~/.ssh/config</code>
-（不存在则创建一个）: <pre class="line-numbers language-none"><code class="language-none">Host github.com
-    HostName github.com
-    User git
-    IdentityFile ~&#x2F;.ssh&#x2F;id_rsa
-
-Host githubx1
-    HostName github.com
-    User git
-    IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_x1
-
-Host githubx2
-    HostName github.com
-    User git
-    IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_x2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>各字段的解释：</p>
+<p>真人直播的优势：</p>
 <ul>
-<li>Host:
-主机别名，也是每段定义项的名字，将来用这个别名来指代所用的用户名及私钥</li>
-<li>HostName: 要登录的远端主机名
-(对github来说就是<code>github.com</code>)</li>
-<li>User: SSH连接所用的用户名 (对github来说就是<code>git</code>)</li>
-<li>IdentityFile: 上面生成的私钥</li>
+<li>个人品牌背书：比如LJQ和WY的直播间，就深受粉丝喜爱</li>
+<li>感染力强：情感更真切，虽显浮夸但带货效果更好</li>
+<li>互动自然：可以很好地解答用户问题，随机应变，提升直播间的人气</li>
 </ul>
-<p>假设上面示例文件中的私钥和账户对应关系如下:</p>
+<p>缺点是人力成本高，也不可能24小时在线。</p>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/aianchorreal.png" /></p>
+<p>虚拟人直播的优势：</p>
 <ul>
-<li><code>id_rsa</code> -&gt; <code>main@example.com</code></li>
-<li><code>id_rsa_x1</code> -&gt; <code>x1@example.com</code></li>
-<li><code>id_rsa_x2</code> -&gt; <code>x2@example.com</code></li>
+<li>不知疲倦，永远在线：虚拟人不需要休息</li>
+<li>成本较低：不需真人出镜，技术成熟</li>
 </ul>
-<p>一个repo的远端url大概长这样:</p>
-<pre class="line-numbers language-none"><code class="language-none">git@github.com:finisky&#x2F;TextCNN.git<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>对于无SSH config或上面的示例配置，使用上面url
-(<code>github.com</code>)
-进行访问时，使用的是账户<code>main@example.com</code>。如果我们想用<code>x1@example.com</code>来访问此repo，需要将它的主机名改一下，与SSH
-config中的配置相对应：</p>
-<pre class="line-numbers language-none"><code class="language-none">git@githubx1:finisky&#x2F;TextCNN.git<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h1 id="测试连接">测试连接</h1>
-<p>验证上面配置是否生效也很简单，使用下面命令测试即可：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh -T git@githubx1
-Hi x1! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
-
-$ ssh -T git@githubx2
-Hi x2! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
-
-$ ssh -T wrongusername@githubx2
-wrongusername@github.com: Permission denied (publickey).<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>如果登录成功，Hi之后会显示对应登录账户的GitHub用户名。</p>
+<p>缺点</p>
+<ul>
+<li>没有情感连接：用户一眼就能看出你是个没有感情的机器，很难产生情感认同从而带动消费。真人直播往往从表情、神态及身体动作来整体表达情感，但AI主播在这些方面往往欠缺，即使与真人的差别很小，也能被观众敏锐地察觉到。</li>
+<li>话术单调：虽然是在电商垂类，话术相对固定，但不同商品仍需要不同的表达方式。目前很多虚拟主播的话术还是以人工编辑为主，所以话术多样化本身也是个问题。</li>
+<li>互动性差：虚拟主播受限于技术，只能回答一些FAQ，对于订单类、与商品强关联的问题，往往束手无策。虽然在直播间中会加入“欢迎XX光临”这样的话术，依然掩盖不了不可自然交互的问题。</li>
+</ul>
+<p>反过来想，我们真的需要一个24小时在线的带货主播吗？似乎并不是，直播间的人气还是在晚上8点到12点最高，其他时间人气惨淡，就是人们在其他时段并没有被带货的需求，80/20原则，是否要挣这剩下的钱本身就值得商榷。</p>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/aianchor3d.png" /></p>
+<p>实际上，制作虚拟人的成本也不像声称的那么低：</p>
+<blockquote>
+<p>“柳夜熙”团队此前在接受媒体采访时表示，推出“柳夜熙”之前的半年多时间，成本投入已“远超百万”。即便目前柳夜熙拥有超过800万粉丝，仍处在烧钱吸粉阶段。从去年发出第一条视频至今，柳夜熙已发布6条短视频，这些视频时长均不长，但成本均不低。</p>
+</blockquote>
+<blockquote>
+<p>瑞银报告也指出，高级虚拟人物的先期投入成本平均为3000万元。A-SOUL的单曲制作成本约200万元，一场线下演唱会成本约2000万元。</p>
+</blockquote>
+<p><img
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/liuyexi.jpg" /></p>
+<p>一门好生意最终都要落到商业变现，当大潮退去，才知道谁在裸泳。</p>
+<p>这些AI虚拟主播，在一段时间内满足了大众猎奇心理，收获巨大流量。但这门生意是否能够持续，让我们拭目以待。</p>
 
     </div>
 
@@ -369,43 +313,28 @@ wrongusername@github.com: Permission denied (publickey).<span aria-hidden="true"
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/multiplegithubaccountsononemachine.en/" rel="bookmark">Confgure Multiple Github Accounts On One Machine</a></div>
+      <div class="popular-posts-title"><a href="/douyinproduct/" rel="bookmark">抖音为什么如此成功？</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/28/serverrefusedourkey.en/" rel="bookmark">SSH Server Refused Our Key</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/29/bashstartupfiles/" rel="bookmark">.bashrc不起作用与bash初始化文件执行顺序</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/07/22/cleanuplinuxdisk/" rel="bookmark">清理Linux的磁盘使用空间</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/31/cleanuptmp.en/" rel="bookmark">Clean .com.google.Chrome.* in /tmp</a></div>
+      <div class="popular-posts-title"><a href="/wechatvsalipay/" rel="bookmark">为什么微信能做支付，支付宝做不了社交</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"># Linux</a>
-              <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
-              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
-              <a href="/tags/SSH/" rel="tag"># SSH</a>
+              <a href="/tags/Product/" rel="tag"># Product</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/multiplegithubaccountsononemachine.en/" rel="prev" title="Confgure Multiple Github Accounts On One Machine">
-                  <i class="fa fa-chevron-left"></i> Confgure Multiple Github Accounts On One Machine
+                <a href="/hexormleancloud/" rel="prev" title="Hexo去LeanCloud依赖">
+                  <i class="fa fa-chevron-left"></i> Hexo去LeanCloud依赖
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/createstorageclassinaks.en/" rel="next" title="Create Storage Class in Azure Kubernetes Cluster">
-                  Create Storage Class in Azure Kubernetes Cluster <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -459,7 +388,7 @@ wrongusername@github.com: Permission denied (publickey).<span aria-hidden="true"
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/multiplegithubaccountsononemachine/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/aianchor/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
