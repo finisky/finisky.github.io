@@ -31,7 +31,7 @@
 <meta property="og:description" content="MongoDB sharded cluster is the most complicated architecture. The deployment of sharded cluster in Kubernetes is relatively hard. We will go through the deployment process by MongoDB Ops Manager in th">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-26T14:18:10.000Z">
-<meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
+<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -244,7 +244,7 @@ mongodsPerShardCount is 3</span></a></li></ol></li><li class="nav-item nav-level
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -388,7 +388,7 @@ Specification](https://docs.mongodb.com/kubernetes-operator/master/reference/k8s
 </ol>
 <p>Apply the yaml and we will see seven servers in the Ops Manager
 server page: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep1servers.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep1servers.png"
 alt="MongoDB Sharded Cluster Step1 Servers" /></p>
 <h2 id="expose-mongos-service">Expose mongos Service</h2>
 <p>In order to access the cluster from the Internet, we need to create a
@@ -613,10 +613,10 @@ If one server updates to <code>sslRequired</code> while others are still
 We will explain this issue in the last part.</p>
 <p>Apply <code>sharddb-step2.yaml</code>, the Ops Manager will first
 update the config servers, then the shard servers in reverse order: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbtlsupdating.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbtlsupdating.png"
 alt="MongoDB Sharded Cluster Step2 Updating" /></p>
 <p>Enable TLS success: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep2processes.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep2processes.png"
 alt="MongoDB Sharded Cluster Step2 Processes" /></p>
 <h2 id="set-mongodspershardcount-to-3">Set mongodsPerShardCount to
 3</h2>
@@ -661,10 +661,10 @@ alt="MongoDB Sharded Cluster Step2 Processes" /></p>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
       <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>Apply <code>sharddb-step3.yaml</code>: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3servers.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3servers.png"
 alt="MongoDB Sharded Cluster Step3 Servers" /></p>
 <p>The final status (Enable AUTH from UI): <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3processes.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3processes.png"
 alt="MongoDB Sharded Cluster Deploy Success" /></p>
 <h1 id="errors-and-solution">Errors and Solution</h1>
 <h2 id="invalid-certificates">Invalid Certificates</h2>
@@ -759,7 +759,7 @@ healthy and done</p>
 <h2 id="enable-tls-when-mongodspershardcount-is-3">Enable TLS when
 mongodsPerShardCount is 3</h2>
 <p>The cluster update is stuck: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updateplanerror.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updateplanerror.png"
 alt="MongoDB Sharded Cluster SSL Update Plan Error" /></p>
 <p>Look at the server log and check if the SSL migration plan is wrong.
 For example, this is a shard server at the stage of

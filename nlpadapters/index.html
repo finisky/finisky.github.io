@@ -31,7 +31,7 @@
 <meta property="og:description" content="NLP adapters主要想解决不同任务需要finetune整个模型的痛点，与Prompting一样，是一种轻量级的训练方法，也是Transfer Learning的应用。按出现时间来看，finetune早于adapters，adapters早于prompting。今天来重看这篇Adapters的文章，可以更好地理解lightweight finetune的发展过程。 Adapters在NLP中">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-05-01T11:03:46.000Z">
-<meta property="article:modified_time" content="2022-05-01T11:59:17.000Z">
+<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -228,10 +228,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2022-05-01 19:03:46 / Modified: 19:59:17" itemprop="dateCreated datePublished" datetime="2022-05-01T19:03:46+08:00">2022-05-01</time>
+      <time title="Created: 2022-05-01 19:03:46" itemprop="dateCreated datePublished" datetime="2022-05-01T19:03:46+08:00">2022-05-01</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -287,13 +293,13 @@ parameters to fine-tuning, while attaining similar performance.</p>
 </blockquote>
 <span id="more"></span>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/adaptervsfinetune.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/adaptervsfinetune.png"
 alt="Trade-off between accuracy and number of trained task-specific parameters" /></p>
 <p>从上图来看，Adapters可以在训练小两个量级参数的情况下达到与finetune基本一致的性能，这也是Adapter出现的主要动机。</p>
 <h1 id="adapter模块结构详解">Adapter模块结构详解</h1>
 <p>Adapter的结构并不复杂，仅在Transformer的结构上增加了两个网络层：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/adapterarchitecture.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/adapterarchitecture.png"
 alt="Architecture of the adapter module" /></p>
 <ul>
 <li>左图解释了如何将Adapter加入到Transformer结构中，即在Multi-headed

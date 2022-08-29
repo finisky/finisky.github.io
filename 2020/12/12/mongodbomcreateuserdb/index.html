@@ -31,7 +31,7 @@
 <meta property="og:description" content="本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。 整个系列：  安装MongoDB Ops Manager 创建用户数据库(replicaset) 用户数据库服务配置公网访问 openssl生成自签名CA证书和server证书 打开用户数据库TLS通信加密和Auth授权  所谓的Application Database是MongoDB Ops Mana">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-12T15:30:37.000Z">
-<meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
+<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -237,7 +237,7 @@ Manager的ConfigMap</span></a></li><li class="nav-item nav-level-2"><a class="na
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -392,7 +392,7 @@ Events:                 &lt;none&gt;<span aria-hidden="true" class="line-numbers
 Key的，虽然在Ops Manager中不显示，但可以从kubernetes
 dashboard的secret中找到：<code>ops-manager-admin-key</code>，也就是说不必生成新的APIkey和创建<code>om-user-credentials</code>了。查看<code>ops-manager-admin-key</code>的最末几位:
 <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/generateapikey.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/generateapikey.png"
 alt="OpsManager Public API Key" /></p>
 <p>修改userdb.yaml如下（只修改最后一行）： <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
@@ -417,14 +417,14 @@ userdb   ReplicaSet   Running   4.2.2-ent   13m<span aria-hidden="true" class="l
 <p>命令执行完毕之后，刷新All
 Clusters界面就有两个cluster了，同时对应的context和Project也自动创建好了，其中<code>userdb</code>就是创建好的用户数据库：
 <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/allclusters.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/allclusters.png"
 alt="MongoDB Ops Manager All Clusters" /></p>
 <p>查看userdb processes: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbprocesses.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbprocesses.png"
 alt="UserDB Processes" />
 发现TLS和AUTH都是Disabled。也就是说DB的通信没有加密，访问也没有用户名密码。</p>
 <p>查看userdb servers: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png"
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbservers.png"
 alt="UserDB Servers" />
 注意三个server的地址都是类似：<code>userdb-0.userdb-svc.mongodb.svc.cluster.local</code>，也就是内网地址，因此此时我们并不能通过mongo
 client连接到这些MongoDB Instance。</p>
