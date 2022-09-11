@@ -31,7 +31,7 @@
 <meta property="og:description" content="Sharded cluster是MongoDB部署中最复杂的形式，因为Sharded cluster的组件较多，部署步骤也更为繁琐。在实际部署中还有几个部署ReplicaSet时没遇到的证书和TLS问题。阅读本文前，强烈建议先阅读 创建用户数据库(replicaset) 作为基础。 一个Sharded cluster由三部分构成：  shard server: 存储一部分数据，每个shard可由一">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-26T12:13:42.000Z">
-<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
+<meta property="article:modified_time" content="2022-09-11T13:42:31.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -154,7 +154,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">176</span>
+          <span class="site-state-item-count">177</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -237,7 +237,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
+        <time title="Modified: 2022-09-11 21:42:31" itemprop="dateModified" datetime="2022-09-11T21:42:31+08:00">2022-09-11</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -334,7 +334,8 @@ cluster更新TLS的计划生成似乎有BUG，如果像ReplicaSet一样的方式
 <li><code>mongodsPerShardCount</code>设置为3，将shard变成3成员的ReplicaSet</li>
 </ol>
 <h2 id="初始部署">初始部署</h2>
-<p>第一步的配置文件<code>sharddb-step1.yaml</code>如下： <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<p>第一步的配置文件<code>sharddb-step1.yaml</code>如下：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb
@@ -368,7 +369,7 @@ cluster更新TLS的计划生成似乎有BUG，如果像ReplicaSet一样的方式
   <span class="token key atrule">mongosPodSpec</span><span class="token punctuation">:</span>
     <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
     <span class="token key atrule">memory</span><span class="token punctuation">:</span> 1Gi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-注意：</p>
+<p>注意：</p>
 <ol type="1">
 <li>这里一定不要加security字段，否则打开了tls会出现部署完成后servers之间互相不能通信，选不出Primary/Secondary节点的问题。即创建时一定是<code>TLS disabled</code>，配好证书后再将TLS打开。</li>
 <li><code>exposedExternally: false</code>是因为默认暴露服务的方法是NodePort，而这种方式在更新服务的时候可能会影响服务外部地址。所以干脆不用自带暴露地址的方式，而是自己手动写一个service。</li>
@@ -384,7 +385,8 @@ alt="MongoDB Sharded Cluster Step1" /></p>
 <p>mongos服务暴露与replica
 set相同，需要将每个mongos都暴露到公网，让client自主选择连接哪个mongos实例，这一点在transaction执行时更为重要，一个transaction的所有事务必须在同一个mongos上执行。参考<a
 href="/2021/01/13/dontuseloadbalancerinfrontofmongos/">别在mongos前做负载均衡</a></p>
-<p>直接apply <code>sharddbmongosservice.yaml</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<p>直接apply <code>sharddbmongosservice.yaml</code>:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> mongos<span class="token punctuation">-</span>svc<span class="token punctuation">-</span><span class="token number">0</span>
@@ -421,14 +423,14 @@ href="/2021/01/13/dontuseloadbalancerinfrontofmongos/">别在mongos前做负载�
   <span class="token key atrule">selector</span><span class="token punctuation">:</span>
     <span class="token key atrule">app</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>svc
     <span class="token key atrule">controller</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>operator
-    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="生成server证书">生成server证书</h2>
 <p>CA证书生成可以参考：<a
 href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></p>
 <h3 id="配置server.cnf">配置server.cnf</h3>
 <p>根据前面的介绍可知我们共有2*3=6个shard server，2个mongos
 server和3个config server，共11个server。</p>
-<p><code>server.cnf</code>中<code>[ alt_nams ]</code>字段要把所有server的私域地址加上：
+<p><code>server.cnf</code>中<code>[ alt_nams ]</code>字段要把所有server的私域地址加上：</p>
 <pre class="line-numbers language-none"><code class="language-none">sharddb-mongos0.com
 sharddb-mongos1.com
 sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local
@@ -442,28 +444,31 @@ sharddb-config-1.sharddb-cs.mongodb.svc.cluster.local
 sharddb-config-2.sharddb-cs.mongodb.svc.cluster.local
 sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local
 sharddb-mongos-1.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-其中前两个是mongos的域名，其余的11个是各server的内网地址。为了省事，可以把上面13个地址用通配符写成：
+<p>其中前两个是mongos的域名，其余的11个是各server的内网地址。为了省事，可以把上面13个地址用通配符写成：</p>
 <pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
 DNS.1 &#x3D; sharddb-mongos0.com
 DNS.2 &#x3D; sharddb-mongos1.com
 DNS.3 &#x3D; *.sharddb-sh.mongodb.svc.cluster.local
 DNS.4 &#x3D; *.sharddb-cs.mongodb.svc.cluster.local
-DNS.5 &#x3D; *.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>注意不能写成简写成如下形式： <pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
+DNS.5 &#x3D; *.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注意不能写成简写成如下形式：</p>
+<pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
 DNS.1 &#x3D; sharddb-mongos0.com
 DNS.2 &#x3D; sharddb-mongos1.com
 DNS.3 &#x3D; *.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-通配符地址只能作用于一级，参考： <a
+<p>通配符地址只能作用于一级，参考： <a
 target="_blank" rel="noopener" href="https://www.globalsign.com/en/blog/top-ssl-certificate-errors-and-solutions">#
 Common SSL Certificate Errors and How to Fix Them</a></p>
-<blockquote><p>Subdomain SANs are applicable to all host names extending the Common
+<blockquote>
+<p>Subdomain SANs are applicable to all host names extending the Common
 Name by one level. For example: support.domain.com could be a Subdomain
 SAN for a certificate with the Common Name domain.com
 advanced.support.domain.com could NOT be covered by a Subdomain SAN in a
 certificate issued to domain.com, as it is not a direct subdomain of
 domain.com</p>
 </blockquote>
-<p><code>server.cnf</code>最终配置如下： <pre class="line-numbers language-none"><code class="language-none">[ req ]
+<p><code>server.cnf</code>最终配置如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">[ req ]
 default_bits &#x3D; 4096
 default_md &#x3D; sha256
 distinguished_name &#x3D; req_dn
@@ -508,21 +513,43 @@ organizationalUnitName_default &#x3D; TestComp
 organizationalUnitName_max &#x3D; 64
 
 commonName &#x3D; Common Name (eg, YOUR name)
-commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="生成证书">生成证书</h3>
-<p>用下面四个命令生成私钥<code>server.key</code>，用<code>rootca.key</code>签名，并生成最终证书文件<code>server.pem</code>:
+<p>用下面四个命令生成私钥<code>server.key</code>，用<code>rootca.key</code>签名，并生成最终证书文件<code>server.pem</code>:</p>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out server.key 4096
 $ openssl req -new -key server.key -out server.csr -config server.cnf
 $ openssl x509 -sha256 -req -days 3650 -in server.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out server.crt -extfile server.cnf -extensions v3_req
-$ cat server.crt server.key &gt; server.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> 示例输出可以参考：<a
+$ cat server.crt server.key &gt; server.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>示例输出可以参考：<a
 href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a>，此处不再赘述。</p>
 <h3 id="copy-11个server证书">Copy 11个Server证书</h3>
-<p>文件名没有扩展名，把<code>server.pem</code>复制11份（rootca除外），命名规则如下：
-|File|Save as| |-|--| |CA|ca-pem| |Each shard in your sharded
-cluster|<code>sharddb-&lt;Y&gt;-&lt;X&gt;-pem</code>| |Each member of
-your config server replica
-set|<code>sharddb-config-&lt;X&gt;-pem</code>| |Each
-mongos|<code>sharddb-mongos-&lt;X&gt;-pem</code>|</p>
+<p>文件名没有扩展名，把<code>server.pem</code>复制11份（rootca除外），命名规则如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Save as</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CA</td>
+<td>ca-pem</td>
+</tr>
+<tr class="even">
+<td>Each shard in your sharded cluster</td>
+<td><code>sharddb-&lt;Y&gt;-&lt;X&gt;-pem</code></td>
+</tr>
+<tr class="odd">
+<td>Each member of your config server replica set</td>
+<td><code>sharddb-config-&lt;X&gt;-pem</code></td>
+</tr>
+<tr class="even">
+<td>Each mongos</td>
+<td><code>sharddb-mongos-&lt;X&gt;-pem</code></td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>Replace <code>&lt;Y&gt;</code> with a 0-based number for the sharded
 cluster.</li>
@@ -538,13 +565,13 @@ $ kubectl create secret generic sharddb-1-cert --from-file&#x3D;sharddb-1-0-pem 
 <h3 id="创建mongos-tls证书">创建Mongos TLS证书</h3>
 <pre class="line-numbers language-none"><code class="language-none">$ kubectl create secret generic sharddb-mongos-cert --from-file&#x3D;sharddb-mongos-0-pem --from-file&#x3D;sharddb-mongos-1-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h3 id="创建ca-configmap">创建CA ConfigMap</h3>
-<p>重命名：<code>rootca.crt -&gt; ca-pem</code>，然后：
-<pre class="line-numbers language-none"><code class="language-none">kubectl create configmap custom-ca --from-file&#x3D;ca-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>重命名：<code>rootca.crt -&gt; ca-pem</code>，然后：</p>
+<pre class="line-numbers language-none"><code class="language-none">kubectl create configmap custom-ca --from-file&#x3D;ca-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h2 id="开启tls">开启TLS</h2>
 <p>可参考：<a
 target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/#configure-tls-for-a-sharded-cluster">#
 Configure TLS for a Sharded Cluster</a></p>
-<p>与步骤1相比，<code>sharddb-step2.yaml</code>仅增加了最后的<code>security</code>段，注意此时<code>mongodsPerShardCount</code>仍为1：
+<p>与步骤1相比，<code>sharddb-step2.yaml</code>仅增加了最后的<code>security</code>段，注意此时<code>mongodsPerShardCount</code>仍为1：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
@@ -584,7 +611,7 @@ Configure TLS for a Sharded Cluster</a></p>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
       <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-注意这里<code>mongodsPerShardCount: 1</code>非常关键，如果不为1，在打开TLS时会出现卡死的情况，看起来是Ops
+<p>注意这里<code>mongodsPerShardCount: 1</code>非常关键，如果不为1，在打开TLS时会出现卡死的情况，看起来是Ops
 Manager的BUG，生成的SSL迁移计划有问题。正常迁移计划是同一replica
 set的三个server一步步进入到SSL下一状态：<code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>。而在shard
 server的三个实例中，其中一个会率先变成requireTLS，导致另外两个实例不不能连接这个server（以为它已经挂了），为保证高可用性自己也就停止继续更新，整个流程卡死。</p>
@@ -597,7 +624,7 @@ alt="MongoDB Sharded Cluster Step2 Updating" /></p>
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep2processes.png"
 alt="MongoDB Sharded Cluster Step2 Processes" /></p>
 <h2 id="增加shard的mongod实例到多个">增加shard的mongod实例到多个</h2>
-<p>与步骤2相比，<code>sharddb-step3.yaml</code>仅将<code>mongodsPerShardCount</code>改为3：
+<p>与步骤2相比，<code>sharddb-step3.yaml</code>仅将<code>mongodsPerShardCount</code>改为3：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
@@ -636,7 +663,7 @@ alt="MongoDB Sharded Cluster Step2 Processes" /></p>
   <span class="token key atrule">security</span><span class="token punctuation">:</span>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>应用后最终效果，共11个server: <img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3servers.png"
 alt="MongoDB Sharded Cluster Step3 Servers" /></p>
@@ -646,7 +673,8 @@ alt="MongoDB Sharded Cluster Deploy Success" /></p>
 <h1 id="常见错误及处理">常见错误及处理</h1>
 <h2 id="证书无效">证书无效</h2>
 <p>如果证书配置的SAN不正确，如通配符地址无效，在打开TLS后，Cluster更新时会出现如下错误：</p>
-<blockquote><p>Error checking out client (0x0) for
+<blockquote>
+<p>Error checking out client (0x0) for
 connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017
 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing
 to
@@ -740,7 +768,8 @@ alt="MongoDB Sharded Cluster SSL Update Plan Error" />
 具体查一下server上的log会发现，就是前面提到的Ops
 Manager生成的SSL迁移计划有问题。迁移计划必须三个server一步步来：<code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>。任何一个server步子迈大了，更新就不能继续了。</p>
 <p>看一个卡住的shard server的log:</p>
-<blockquote><p>{"logType":"automation-agent-verbose","contents":"[2020/12/26
+<blockquote>
+<p>{"logType":"automation-agent-verbose","contents":"[2020/12/26
 09:19:10.024] [.info] [cm/director/director.go:executePlan:866]
 <sharddb-0-0> [09:19:10.024] Running step 'WaitSSLUpdate' as part of
 move 'UpgradeSSLModeFromAllowedToPrefered'"}
@@ -831,7 +860,8 @@ mode' = requireSSL]"}
 {"logType":"automation-agent-verbose","contents":"]"}</p>
 </blockquote>
 <p>再来看看已经变成<code>Goal State</code>的一个shard server的log:</p>
-<blockquote><p>{"logType":"mongodb","contents":"2020-12-26T09:33:57.679+0000 I
+<blockquote>
+<p>{"logType":"mongodb","contents":"2020-12-26T09:33:57.679+0000 I
 NETWORK [conn348143] end connection 10.240.7.120:51662 (19 connections
 now open)"}
 {"logType":"mongodb","contents":"2020-12-26T09:33:57.728+0000 I NETWORK
@@ -855,8 +885,9 @@ connection from 10.240.5.150:57416 (connection id: 348145)"}</p>
 server更新太快变成<code>requireSSL</code>导致另外两个server不能连接的问题。没有找到好的解决办法，能想到的只是通过文中先把每个shard变为1个实例，打开TLS之后再更新为3个。这也是用MongoDB
 Ops Manager部署Sharded Cluster最坑的地方。</p>
 <h1 id="删除sharded-cluster">删除Sharded Cluster</h1>
-<p>中间任何一步出错，都需要使用下面命令将sharddb删除： <pre class="line-numbers language-none"><code class="language-none">kubectl delete mdb sharddb<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-注意sharddb中的shardServer和configServer都是有状态的，即它们都外接了PV，上面这条命令并不会在Kubernetes中释放PV，下次重建后可能挂载的还是老的PV，可能会出现一些意想不到的错误(如删除前是3个server，重建后只有1个server，但它却还在试图与另外两个server通信出现错误)。因此，除了执行上述命令外，还需要在Kubernetes集群中将PV删除，从而将当前错误状态彻底清除。</p>
+<p>中间任何一步出错，都需要使用下面命令将sharddb删除：</p>
+<pre class="line-numbers language-none"><code class="language-none">kubectl delete mdb sharddb<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>注意sharddb中的shardServer和configServer都是有状态的，即它们都外接了PV，上面这条命令并不会在Kubernetes中释放PV，下次重建后可能挂载的还是老的PV，可能会出现一些意想不到的错误(如删除前是3个server，重建后只有1个server，但它却还在试图与另外两个server通信出现错误)。因此，除了执行上述命令外，还需要在Kubernetes集群中将PV删除，从而将当前错误状态彻底清除。</p>
 
     </div>
 

@@ -31,7 +31,7 @@
 <meta property="og:description" content="MongoDB sharded cluster is the most complicated architecture. The deployment of sharded cluster in Kubernetes is relatively hard. We will go through the deployment process by MongoDB Ops Manager in th">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-26T14:18:10.000Z">
-<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
+<meta property="article:modified_time" content="2022-09-11T13:42:31.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="MongoDB Ops Manager">
@@ -161,7 +161,7 @@ mongodsPerShardCount is 3</span></a></li></ol></li><li class="nav-item nav-level
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">176</span>
+          <span class="site-state-item-count">177</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -244,7 +244,7 @@ mongodsPerShardCount is 3</span></a></li></ol></li><li class="nav-item nav-level
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
+        <time title="Modified: 2022-09-11 21:42:31" itemprop="dateModified" datetime="2022-09-11T21:42:31+08:00">2022-09-11</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -341,7 +341,8 @@ each shard contains only one server</li>
 make each shard a three instances cluster</li>
 </ol>
 <h2 id="initial-deployment">Initial Deployment</h2>
-<p>Create a file <code>sharddb-step1.yaml</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<p>Create a file <code>sharddb-step1.yaml</code>:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb
@@ -375,7 +376,7 @@ make each shard a three instances cluster</li>
   <span class="token key atrule">mongosPodSpec</span><span class="token punctuation">:</span>
     <span class="token key atrule">cpu</span><span class="token punctuation">:</span> <span class="token string">"1"</span>
     <span class="token key atrule">memory</span><span class="token punctuation">:</span> 1Gi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-Explanation:</p>
+<p>Explanation:</p>
 <ol type="1">
 <li>DO NOT add <code>security</code> section in this step. Otherwise,
 the TLS update process will be failed.</li>
@@ -395,7 +396,8 @@ alt="MongoDB Sharded Cluster Step1 Servers" /></p>
 service for every mongos. Refer to: <a
 href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/">Don't Use Load
 Balancer In front of Mongos</a></p>
-<p>Apply <code>sharddbmongosservice.yaml</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<p>Apply <code>sharddbmongosservice.yaml</code>:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> mongos<span class="token punctuation">-</span>svc<span class="token punctuation">-</span><span class="token number">0</span>
@@ -432,7 +434,7 @@ Balancer In front of Mongos</a></p>
   <span class="token key atrule">selector</span><span class="token punctuation">:</span>
     <span class="token key atrule">app</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>svc
     <span class="token key atrule">controller</span><span class="token punctuation">:</span> mongodb<span class="token punctuation">-</span>enterprise<span class="token punctuation">-</span>operator
-    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+    <span class="token key atrule">statefulset.kubernetes.io/pod-name</span><span class="token punctuation">:</span> sharddb<span class="token punctuation">-</span>mongos<span class="token punctuation">-</span><span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="create-server-certificates">Create Server Certificates</h2>
 <p>CA Creation: <a
 href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates
@@ -440,7 +442,8 @@ Self-signed Certificates</a></p>
 <h3 id="config-server.cnf">Config <code>server.cnf</code></h3>
 <p>The demo cluster consists of 11 servers: 2 * 3 = 6 shard servers, 2
 mongos servers and 3 config servers.</p>
-<p>The servers' external/internal endpoints: <pre class="line-numbers language-none"><code class="language-none">sharddb-mongos0.com
+<p>The servers' external/internal endpoints:</p>
+<pre class="line-numbers language-none"><code class="language-none">sharddb-mongos0.com
 sharddb-mongos1.com
 sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local
 sharddb-0-1.sharddb-sh.mongodb.svc.cluster.local
@@ -452,28 +455,32 @@ sharddb-config-0.sharddb-cs.mongodb.svc.cluster.local
 sharddb-config-1.sharddb-cs.mongodb.svc.cluster.local
 sharddb-config-2.sharddb-cs.mongodb.svc.cluster.local
 sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local
-sharddb-mongos-1.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>Use wildcard to make it more compact: <pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
+sharddb-mongos-1.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Use wildcard to make it more compact:</p>
+<pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
 DNS.1 &#x3D; sharddb-mongos0.com
 DNS.2 &#x3D; sharddb-mongos1.com
 DNS.3 &#x3D; *.sharddb-sh.mongodb.svc.cluster.local
 DNS.4 &#x3D; *.sharddb-cs.mongodb.svc.cluster.local
-DNS.5 &#x3D; *.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>DO NOT write them like this as it doesn't work: <pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
+DNS.5 &#x3D; *.sharddb-svc.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>DO NOT write them like this as it doesn't work:</p>
+<pre class="line-numbers language-none"><code class="language-none">[ alt_names ]
 DNS.1 &#x3D; sharddb-mongos0.com
 DNS.2 &#x3D; sharddb-mongos1.com
-DNS.3 &#x3D; *.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> Refer
-to: <a
+DNS.3 &#x3D; *.mongodb.svc.cluster.local<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Refer to: <a
 target="_blank" rel="noopener" href="https://www.globalsign.com/en/blog/top-ssl-certificate-errors-and-solutions">#
 Common SSL Certificate Errors and How to Fix Them</a></p>
-<blockquote><p>Subdomain SANs are applicable to all host names extending the Common
+<blockquote>
+<p>Subdomain SANs are applicable to all host names extending the Common
 Name by one level. For example: support.domain.com could be a Subdomain
 SAN for a certificate with the Common Name domain.com
 advanced.support.domain.com could NOT be covered by a Subdomain SAN in a
 certificate issued to domain.com, as it is not a direct subdomain of
 domain.com</p>
 </blockquote>
-<p>Final version of <code>server.cnf</code>: <pre class="line-numbers language-none"><code class="language-none">[ req ]
+<p>Final version of <code>server.cnf</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">[ req ]
 default_bits &#x3D; 4096
 default_md &#x3D; sha256
 distinguished_name &#x3D; req_dn
@@ -518,24 +525,47 @@ organizationalUnitName_default &#x3D; TestComp
 organizationalUnitName_max &#x3D; 64
 
 commonName &#x3D; Common Name (eg, YOUR name)
-commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+commonName_max &#x3D; 64<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="generate-server-certificate">Generate Server Certificate</h3>
 <p>Use the following 4 commands to generate private key
 <code>server.key</code>, signed it by the <code>rootca.key</code> and
-create <code>server.pem</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out server.key 4096
+create <code>server.pem</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ openssl genrsa -out server.key 4096
 $ openssl req -new -key server.key -out server.csr -config server.cnf
 $ openssl x509 -sha256 -req -days 3650 -in server.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out server.crt -extfile server.cnf -extensions v3_req
-$ cat server.crt server.key &gt; server.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> Sample output reference:
-<a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl
-Generates Self-signed Certificates</a></p>
+$ cat server.crt server.key &gt; server.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Sample output reference: <a
+href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl Generates
+Self-signed Certificates</a></p>
 <h3 id="copy-to-get-11-server-certificates">Copy to Get 11 Server
 Certificates</h3>
-<p>Rename the files by rules: |File|Save as| |-|--| |CA|ca-pem| |Each
-shard in your sharded
-cluster|<code>sharddb-&lt;Y&gt;-&lt;X&gt;-pem</code>| |Each member of
-your config server replica
-set|<code>sharddb-config-&lt;X&gt;-pem</code>| |Each
-mongos|<code>sharddb-mongos-&lt;X&gt;-pem</code>|</p>
+<p>Rename the files by rules:</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Save as</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CA</td>
+<td>ca-pem</td>
+</tr>
+<tr class="even">
+<td>Each shard in your sharded cluster</td>
+<td><code>sharddb-&lt;Y&gt;-&lt;X&gt;-pem</code></td>
+</tr>
+<tr class="odd">
+<td>Each member of your config server replica set</td>
+<td><code>sharddb-config-&lt;X&gt;-pem</code></td>
+</tr>
+<tr class="even">
+<td>Each mongos</td>
+<td><code>sharddb-mongos-&lt;X&gt;-pem</code></td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>Replace <code>&lt;Y&gt;</code> with a 0-based number for the sharded
 cluster.</li>
@@ -555,14 +585,16 @@ Certificate Secret</h3>
 Certificate Secret</h3>
 <pre class="line-numbers language-none"><code class="language-none">$ kubectl create secret generic sharddb-mongos-cert --from-file&#x3D;sharddb-mongos-0-pem --from-file&#x3D;sharddb-mongos-1-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h3 id="create-ca-configmap">Create CA ConfigMap</h3>
-<p>Rename <code>rootca.crt -&gt; ca-pem</code>: <pre class="line-numbers language-none"><code class="language-none">kubectl create configmap custom-ca --from-file&#x3D;ca-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Rename <code>rootca.crt -&gt; ca-pem</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">kubectl create configmap custom-ca --from-file&#x3D;ca-pem<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h2 id="enable-tls">Enable TLS</h2>
 <p>Refer to：<a
 target="_blank" rel="noopener" href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/#configure-tls-for-a-sharded-cluster">#
 Configure TLS for a Sharded Cluster</a></p>
 <p>Compared to step1, <code>sharddb-step2.yaml</code> only appends
 <code>security</code> section. Note that now the
-<code>mongodsPerShardCount</code> is still 1: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<code>mongodsPerShardCount</code> is still 1:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb
@@ -600,7 +632,7 @@ Configure TLS for a Sharded Cluster</a></p>
   <span class="token key atrule">security</span><span class="token punctuation">:</span>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>Here the <code>mongodsPerShardCount</code> must be 1. Otherwise, the
 update operation will stuck when you enable TLS. In short, the reason is
 that a replica set's migration plan must be in order, and the servers in
@@ -621,7 +653,8 @@ alt="MongoDB Sharded Cluster Step2 Processes" /></p>
 <h2 id="set-mongodspershardcount-to-3">Set mongodsPerShardCount to
 3</h2>
 <p>Compared to step2, <code>sharddb-step3.yaml</code> only changes
-<code>mongodsPerShardCount</code>: <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
+<code>mongodsPerShardCount</code>:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
 <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
   <span class="token key atrule">name</span><span class="token punctuation">:</span> sharddb
@@ -659,7 +692,7 @@ alt="MongoDB Sharded Cluster Step2 Processes" /></p>
   <span class="token key atrule">security</span><span class="token punctuation">:</span>
     <span class="token key atrule">tls</span><span class="token punctuation">:</span>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+      <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>Apply <code>sharddb-step3.yaml</code>: <img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3servers.png"
 alt="MongoDB Sharded Cluster Step3 Servers" /></p>
@@ -670,7 +703,8 @@ alt="MongoDB Sharded Cluster Deploy Success" /></p>
 <h2 id="invalid-certificates">Invalid Certificates</h2>
 <p>If the certificates' SAN cannot match the server address, the
 following error happens (view the agent log):</p>
-<blockquote><p>Error checking out client (0x0) for
+<blockquote>
+<p>Error checking out client (0x0) for
 connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017
 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing
 to
@@ -764,7 +798,8 @@ alt="MongoDB Sharded Cluster SSL Update Plan Error" /></p>
 <p>Look at the server log and check if the SSL migration plan is wrong.
 For example, this is a shard server at the stage of
 <code>disabled -&gt; sslAllowed</code>:</p>
-<blockquote><p>{"logType":"automation-agent-verbose","contents":"[2020/12/26
+<blockquote>
+<p>{"logType":"automation-agent-verbose","contents":"[2020/12/26
 09:19:10.024] [.info] [cm/director/director.go:executePlan:866]
 <sharddb-0-0> [09:19:10.024] Running step 'WaitSSLUpdate' as part of
 move 'UpgradeSSLModeFromAllowedToPrefered'"}
@@ -855,7 +890,8 @@ mode' = requireSSL]"}
 {"logType":"automation-agent-verbose","contents":"]"}</p>
 </blockquote>
 <p>Look another shard server which is <code>Goal State</code>:</p>
-<blockquote><p>{"logType":"mongodb","contents":"2020-12-26T09:33:57.679+0000 I
+<blockquote>
+<p>{"logType":"mongodb","contents":"2020-12-26T09:33:57.679+0000 I
 NETWORK [conn348143] end connection 10.240.7.120:51662 (19 connections
 now open)"}
 {"logType":"mongodb","contents":"2020-12-26T09:33:57.728+0000 I NETWORK
@@ -883,10 +919,12 @@ Currently, the only way to bypass this issue is make each shard one
 instance and increase the instance number after enabling TLS.</p>
 <h1 id="delete-sharded-cluster">Delete Sharded Cluster</h1>
 <p>If you want to re-deploy the cluster, use this command to delete the
-cluster: <pre class="line-numbers language-none"><code class="language-none">kubectl.exe delete mdb sharddb<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> Note that shard server and config server are
-stateful as they claim persistent volume (PV). The above command will
-not delete the PV in Kubernetes. Therefore, you need to delete all PVs
-to clean up the status.</p>
+cluster:</p>
+<pre class="line-numbers language-none"><code class="language-none">kubectl.exe delete mdb sharddb<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Note that shard server and config server are stateful as they claim
+persistent volume (PV). The above command will not delete the PV in
+Kubernetes. Therefore, you need to delete all PVs to clean up the
+status.</p>
 
     </div>
 
