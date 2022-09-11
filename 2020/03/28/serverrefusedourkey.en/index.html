@@ -152,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-count">179</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -288,17 +288,17 @@ key, the server said: "Server Refused Our Key"...</p>
 mode issue, it SHOULD NOT have write access for group.</p>
 <p>Firstly, I think the server sshd uses wrong config: OLDHOME/.ssh/.
 However, NEWHOME/.ssh/ contains same files, either one should work.</p>
-<p>Check the server error log: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: tail &#x2F;var&#x2F;log&#x2F;auth.log
-...
-Mar 28 17:08:43 DEAN sshd[40801]: Authentication refused: bad ownership or modes for directory NEWHOME<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+<p>Check the server error log: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: <span class="token function">tail</span> /var/log/auth.log
+<span class="token punctuation">..</span>.
+Mar <span class="token number">28</span> <span class="token number">17</span>:08:43 DEAN sshd<span class="token punctuation">[</span><span class="token number">40801</span><span class="token punctuation">]</span>: Authentication refused: bad ownership or modes <span class="token keyword">for</span> directory NEWHOME<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <p>The message clearly points out the issue, then I google this message
 and found that, by default, ssh <code>StrictModes</code> option is on,
 and it requires the HOME folder not have group write access. Besides,
 the .ssh/ foler should be 700, the authorized_keys file should be
 600:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">chmod g-w &#x2F;home&#x2F;user&#x2F;
-chmod 700 &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;
-chmod 600 &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;authorized_keys<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">chmod</span> g-w /home/user/
+<span class="token function">chmod</span> <span class="token number">700</span> /home/user/.ssh/
+<span class="token function">chmod</span> <span class="token number">600</span> /home/user/.ssh/authorized_keys<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>Or you can switch StrictModes off, but <strong>highly not
 recommended</strong> to do so. Because the StrictModes prevents other
 users modify your .ssh/ to illegally login.</p>

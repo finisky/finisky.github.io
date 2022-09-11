@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-count">179</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -305,31 +305,31 @@ Directories”</a></p>
 boot into recovery mode. Then I removed the extra disk from the portal
 and the system mount the disk failed and went to the single user mode so
 that I can execute commands:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;tmp# ls &#x2F;tmp
-bash: &#x2F;bin&#x2F;ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:/tmp<span class="token comment"># ls /tmp</span>
+bash: /bin/ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>Then occasionally I found that there are HUGE amount of something
-like this <code>.com.google.Chrome.nFbq9T</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;tmp# ls .com.google.Chrome.*
-bash: &#x2F;bin&#x2F;ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+like this <code>.com.google.Chrome.nFbq9T</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:/tmp<span class="token comment"># ls .com.google.Chrome.*</span>
+bash: /bin/ls: Argument list too long<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <p>Since I have a web crawler in the system, it seems that there are
 something wrong but it doesn't matter. I also cannot execute
 <code>rm -f .com.google.Chrome.*</code> due to
 <code>Argument list too long</code>. First list them:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;home# find &#x2F;tmp -type f -iname &quot;.com.google.Chrome*&quot; -ls | head
-find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.nFbq9T’: No such file or directory
-find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.WKCRCU’: No such file or directory
-find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.62cCbn’: No such file or directory
-find: ‘&#x2F;tmp&#x2F;.com.google.Chrome.RR1E3L’: No such file or directory<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:/home<span class="token comment"># find /tmp -type f -iname ".com.google.Chrome*" -ls | head</span>
+find: ‘/tmp/.com.google.Chrome.nFbq9T’: No such <span class="token function">file</span> or directory
+find: ‘/tmp/.com.google.Chrome.WKCRCU’: No such <span class="token function">file</span> or directory
+find: ‘/tmp/.com.google.Chrome.62cCbn’: No such <span class="token function">file</span> or directory
+find: ‘/tmp/.com.google.Chrome.RR1E3L’: No such <span class="token function">file</span> or directory<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>The command cannot quickly return, but I got above error messages.
 Seems that the OS is cleaning the <code>/tmp</code> folder but I cannot
 verify this. Through <code>df -lh</code> I found that the available disk
 space is increasing. To speed up the process, execute:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:&#x2F;home# find &#x2F;tmp -iname &quot;.com.google.Chrome*&quot; -delete &gt; &#x2F;dev&#x2F;null 2&gt;&amp;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>After nearly an hour it finished: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$ df -lh
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">root@DEAN:/home<span class="token comment"># find /tmp -iname ".com.google.Chrome*" -delete > /dev/null 2>&amp;1</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>After nearly an hour it finished: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$ <span class="token function">df</span> -lh
 Filesystem      Size  Used Avail Use% Mounted on
-udev            1.9G     0  1.9G   0% &#x2F;dev
-tmpfs           393M  1.1M  392M   1% &#x2F;run
-&#x2F;dev&#x2F;sda1        29G   13G   16G  46% &#x2F;
-...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+udev            <span class="token number">1</span>.9G     <span class="token number">0</span>  <span class="token number">1</span>.9G   <span class="token number">0</span>% /dev
+tmpfs           393M  <span class="token number">1</span>.1M  392M   <span class="token number">1</span>% /run
+/dev/sda1        29G   13G   16G  <span class="token number">46</span>% /
+<span class="token punctuation">..</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>It looks like there were 16G <code>.com.google.Chrome.</code>
 files... And because of this, the system is stuck at boot.
 Unfortunately, the root cause of this problem is not found yet.</p>

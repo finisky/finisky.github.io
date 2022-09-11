@@ -152,7 +152,7 @@ post-related-sidebar.swig</span></a></li><li class="nav-item nav-level-1"><a cla
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-count">179</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -301,21 +301,21 @@ alt="原始的目录" /></p>
 <li>风格与主题保持一致</li>
 </ul>
 <h2 id="所有改动一览">所有改动一览</h2>
-<p>修改改三个文件，新增两个文件： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~&#x2F;finisky&#x2F;themes&#x2F;next&#x2F;layout$ git status
+<p>修改改三个文件，新增两个文件： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~/finisky/themes/next/layout$ <span class="token function">git</span> status
 On branch related
-Changes not staged for commit:
-  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-  (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+Changes not staged <span class="token keyword">for</span> commit:
+  <span class="token punctuation">(</span>use <span class="token string">"git add &lt;file>..."</span> to update what will be committed<span class="token punctuation">)</span>
+  <span class="token punctuation">(</span>use <span class="token string">"git checkout -- &lt;file>..."</span> to discard changes <span class="token keyword">in</span> working directory<span class="token punctuation">)</span>
 
-        modified:   _macro&#x2F;post.swig
-        modified:   _macro&#x2F;sidebar.swig
-        modified:   ..&#x2F;source&#x2F;css&#x2F;_common&#x2F;outline&#x2F;sidebar&#x2F;sidebar.styl
+        modified:   _macro/post.swig
+        modified:   _macro/sidebar.swig
+        modified:   <span class="token punctuation">..</span>/source/css/_common/outline/sidebar/sidebar.styl
 
 Untracked files:
-  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+  <span class="token punctuation">(</span>use <span class="token string">"git add &lt;file>..."</span> to include <span class="token keyword">in</span> what will be committed<span class="token punctuation">)</span>
 
-        _partials&#x2F;post&#x2F;post-related-sidebar.swig
-        ..&#x2F;source&#x2F;css&#x2F;_common&#x2F;outline&#x2F;sidebar&#x2F;sidebar-related.styl<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+        _partials/post/post-related-sidebar.swig
+        <span class="token punctuation">..</span>/source/css/_common/outline/sidebar/sidebar-related.styl<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="获取相关文章数据">获取相关文章数据</h1>
 <p>复用hexo-related-popular-posts计算出来的相关文章数据即可，源码在_partials/post/post-related.swig
 (隐去无关内容): <pre class="line-numbers language-html" data-language="html"><code class="language-html">&#123;%- set popular_posts = popular_posts_json(theme.related_posts.params, page) %&#125;
@@ -379,14 +379,14 @@ Contents的模板在themes/next/layout/_macro/sidebar.swig中。该文件定义�
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>aside</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>看起来实现并不复杂，copy下Table of
 Contents的div，只把内容修改成popular_posts即可。实验了下发现naive了，这样修改页面渲染会出问题，js报错，页面展示异常。想到应该是js修改了这些元素的内容，验证：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~&#x2F;finisky&#x2F;themes&#x2F;next$ grep -r &quot;post-toc&quot; .
-...
-.&#x2F;source&#x2F;js&#x2F;utils.js:    const navItems &#x3D; document.querySelectorAll(&#39;.post-toc li&#39;);
-.&#x2F;source&#x2F;js&#x2F;utils.js:    var tocElement &#x3D; document.querySelector(&#39;.post-toc-wrap&#39;);
-.&#x2F;source&#x2F;js&#x2F;utils.js:      document.querySelectorAll(&#39;.post-toc .active&#39;).forEach(element &#x3D;&gt; &#123;
-.&#x2F;source&#x2F;js&#x2F;utils.js:      while (!parent.matches(&#39;.post-toc&#39;)) &#123;
-.&#x2F;source&#x2F;js&#x2F;utils.js:    document.querySelector(&#39;.post-toc-wrap&#39;).style.maxHeight &#x3D; sidebarWrapperHeight;
-.&#x2F;source&#x2F;js&#x2F;utils.js:    var hasTOC &#x3D; document.querySelector(&#39;.post-toc&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~/finisky/themes/next$ <span class="token function">grep</span> -r <span class="token string">"post-toc"</span> <span class="token builtin class-name">.</span>
+<span class="token punctuation">..</span>.
+./source/js/utils.js:    const navItems <span class="token operator">=</span> document.querySelectorAll<span class="token punctuation">(</span><span class="token string">'.post-toc li'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+./source/js/utils.js:    var tocElement <span class="token operator">=</span> document.querySelector<span class="token punctuation">(</span><span class="token string">'.post-toc-wrap'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+./source/js/utils.js:      document.querySelectorAll<span class="token punctuation">(</span><span class="token string">'.post-toc .active'</span><span class="token punctuation">)</span>.forEach<span class="token punctuation">(</span>element <span class="token operator">=</span><span class="token operator">></span> <span class="token punctuation">&#123;</span>
+./source/js/utils.js:      <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>parent.matches<span class="token punctuation">(</span><span class="token string">'.post-toc'</span><span class="token punctuation">))</span> <span class="token punctuation">&#123;</span>
+./source/js/utils.js:    document.querySelector<span class="token punctuation">(</span><span class="token string">'.post-toc-wrap'</span><span class="token punctuation">)</span>.style.maxHeight <span class="token operator">=</span> sidebarWrapperHeight<span class="token punctuation">;</span>
+./source/js/utils.js:    var hasTOC <span class="token operator">=</span> document.querySelector<span class="token punctuation">(</span><span class="token string">'.post-toc'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>可见utils.js会获取class为"post-toc"的元素并操作，会引发上述错误。</p>
 <p>我们仅需要复用TOC的css显示风格，不会用到js的这些动态操作。同时，我们不希望改变原有的逻辑。综上，比较好的实现方式是copy下TOC的css，在此基础上修改成相关文章的css
 style。</p>
