@@ -143,7 +143,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -185,6 +185,129 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/09/01/perlcgi.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/09/01/perlcgi.en/" class="post-title-link" itemprop="url">Can't locate CGI.pm in @INC</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-09-01 00:58:20" itemprop="dateCreated datePublished" datetime="2020-09-01T00:58:20+08:00">2020-09-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/2020/09/01/perlcgi.en/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/09/01/perlcgi.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/2020/09/01/perlcgi.en/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Install an old library <a
+target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu
+20.04. When visit the cgi, internal server error pops up.</p>
+<p>Debug the cgi by directly run it in
+<code>/var/www/lightsquid</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">/var/www/lightsquid$ perl index.cgi
+Can't <span class="token function">locate</span> CGI.pm <span class="token keyword">in</span> @INC <span class="token punctuation">(</span>you may need to <span class="token function">install</span> the CGI module<span class="token punctuation">)</span> <span class="token punctuation">(</span>@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base<span class="token punctuation">)</span> at index.cgi line <span class="token number">19</span>.
+BEGIN failed--compilation aborted at index.cgi line <span class="token number">19</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>Seems that some modules are missing, after several search: <a
+target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
+<p>Combined with the error message: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ <span class="token function">apt</span> <span class="token function">install</span> libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>Then it works: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">/var/www/lightsquid$ perl index.cgi
+```html
+<span class="token operator">&lt;</span><span class="token operator">!</span>DOCTYPE html PUBLIC <span class="token string">"-//W3C//DTD HTML 4.01 Transitional//EN"</span><span class="token operator">></span>
+
+<span class="token operator">&lt;</span>HTML<span class="token operator">></span>
+<span class="token operator">&lt;</span>HEAD<span class="token operator">></span>
+  <span class="token operator">&lt;</span>META <span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"robots"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"noindex,nofollow"</span><span class="token operator">></span>
+  <span class="token operator">&lt;</span>META <span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"generator"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"LightSquid - http://lightsquid.sf.net"</span><span class="token operator">></span>
+  <span class="token operator">&lt;</span>META http-equiv<span class="token operator">=</span><span class="token string">"Content-Type"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"text/html; charset=US-ASCII"</span><span class="token operator">></span>
+  <span class="token operator">&lt;</span>META HTTP-EQUIV<span class="token operator">=</span><span class="token string">"REFRESH"</span> <span class="token assign-left variable">CONTENT</span><span class="token operator">=</span><span class="token string">"600"</span><span class="token operator">></span>
+<span class="token punctuation">..</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1202,121 +1325,8 @@ Need”中对attention提出了通用的query/key/value抽象，开始时觉得�
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/22/findpeakelement/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/22/findpeakelement/" class="post-title-link" itemprop="url">Find Peak Element 寻找峰值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-05-22 14:31:43" itemprop="dateCreated datePublished" datetime="2020-05-22T14:31:43+08:00">2020-05-22</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Coding-Interview/" itemprop="url" rel="index"><span itemprop="name">Coding Interview</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Comments: </span>
-  
-    <a title="waline" href="/2020/05/22/findpeakelement/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/05/22/findpeakelement/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/2020/05/22/findpeakelement/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/find-peak-element/">Find Peak
-Element</a>
-给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index
-i，使得<code>n[i - 1] &lt; n[i] &gt; n[i + 1]</code>。保证峰值一定存在，如果有多个峰值，可返回任意一个。</p>
-<p>乍看此题不难，O(n)的算法很容易想到，直接遍历数组即可。但题目要求给出O(log(n))的算法。显然，直观上应该用二分查找，否则复杂度要求不能满足。可数组是无序的，无法直接应用二分查找。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/22/findpeakelement/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 </div>
