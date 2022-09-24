@@ -143,7 +143,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -185,6 +185,150 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/12/26/mongodbomcreateshardedcluster.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.png">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/12/26/mongodbomcreateshardedcluster.en/" class="post-title-link" itemprop="url">Deploy MongoDB Sharded Cluster by Ops Manager</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-26 22:18:10" itemprop="dateCreated datePublished" datetime="2020-12-26T22:18:10+08:00">2020-12-26</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-09-11 21:42:31" itemprop="dateModified" datetime="2022-09-11T21:42:31+08:00">2022-09-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/2020/12/26/mongodbomcreateshardedcluster.en/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/12/26/mongodbomcreateshardedcluster.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/2020/12/26/mongodbomcreateshardedcluster.en/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>MongoDB sharded cluster is the most complicated architecture. The
+deployment of sharded cluster in Kubernetes is relatively hard. We will
+go through the deployment process by MongoDB Ops Manager in this
+post.</p>
+<p>Before start, please go through the <a
+href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB
+ReplicaSet</a> first.</p>
+<p>A MongoDB <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/glossary/#term-sharded-cluster">sharded
+cluster</a> consists of the following components: - <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/sharded-cluster-shards/">shard</a>:
+Each shard contains a subset of the sharded data. Each shard can be
+deployed as a <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set">replica
+set</a>. - <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/sharded-cluster-query-router/">mongos</a>:
+The <code>mongos</code> acts as a query router, providing an interface
+between client applications and the sharded cluster. - <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/core/sharded-cluster-config-servers/">config
+servers</a>: Config servers store metadata and configuration settings
+for the cluster.</p>
+<p>In this post, we are going to create a sharded cluster with 2 shards
+(3 instances replica set), 2 mongos and 3 config servers.</p>
+<p>MongoDB Ops Manager Series:</p>
+<ol type="1">
+<li><a href="/2020/12/19/mongodbopsmanager.en/">Install MongoDB Ops
+Manager</a></li>
+<li><a href="/2020/12/19/mongodbomcreateuserdb.en/">Create a UserDB
+ReplicaSet</a></li>
+<li><a href="/2020/12/19/mongodbomexposeservices.en/">Expose UserDB to
+Public</a></li>
+<li><a href="/2020/12/19/mongodbomselfsignedcertificates.en/">Openssl
+Generates Self-signed Certificates</a></li>
+<li><a href="/2020/12/19/mongodbomtlsauth.en/">Enable UserDB TLS and
+Auth</a></li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/26/mongodbomcreateshardedcluster.en/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1347,137 +1491,6 @@ Connect to a MongoDB Database Resource from Outside Kubernetes</a></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/12/12/mongodbomexposeservices/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/12/12/mongodbomcreateuserdb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.png">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="Easy doesn't enter into grown-up life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/12/mongodbomcreateuserdb/" class="post-title-link" itemprop="url">Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-12-12 23:30:37" itemprop="dateCreated datePublished" datetime="2020-12-12T23:30:37+08:00">2020-12-12</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Comments: </span>
-  
-    <a title="waline" href="/2020/12/12/mongodbomcreateuserdb/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/12/12/mongodbomcreateuserdb/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/2020/12/12/mongodbomcreateuserdb/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本文为系列第二部分，使用第一部分安装好的MongoDB Ops
-Manager创建用户数据库。</p>
-<p>整个系列：</p>
-<ol type="1">
-<li><a href="/2020/12/12/mongodbopsmanager/">安装MongoDB Ops
-Manager</a></li>
-<li><a
-href="/2020/12/12/mongodbomcreateuserdb/">创建用户数据库(replicaset)</a></li>
-<li><a
-href="/2020/12/12/mongodbomexposeservices/">用户数据库服务配置公网访问</a></li>
-<li><a
-href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证书和server证书</a></li>
-<li><a
-href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth授权</a></li>
-</ol>
-<p>所谓的<code>Application Database</code>是MongoDB Ops
-Manager的后端DB，并不能用来存放用户数据，所以我们需要用Ops
-Manager创建用户数据库。使用Ops
-Manager创建的MongoDB叫做<code>Deployment</code>，注意此<code>Deployment</code>是<code>MongoDB Deployment</code>，与kubernetes的<code>Deployment</code>不是一码事。</p>
-<p>简单起见，本文以创建一个3实例的MongoDB
-<code>userdb</code>为例，<code>Sharding Cluster</code>由于组件复杂，server数量更多，配置比<code>ReplicaSet</code>要麻烦些，但配置过程基本一致。可参考：
-<a href="/2020/12/26/mongodbomcreateshardedcluster/">MongoDB Ops
-Manager部署Sharded Cluster</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/12/mongodbomcreateuserdb/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
