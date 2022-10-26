@@ -23,32 +23,33 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="之前我们谈到 Adapters 与 Prompting 都是轻量级的训练方法，所谓 lightweight-finetuning。今天来看一下另一种轻量级训练大语言模型的方法: LoRA: Low-Rank Adaptation of Large Language Models 。 首先来看finetune大规模语言模型的问题：  An important paradigm of natural">
+<meta name="description" content="之前 WeLM的文章 探讨了微信大语言模型的原理。同时，WeLM开放了API：https:&#x2F;&#x2F;welm.weixin.qq.com&#x2F;docs&#x2F;api&#x2F; ，有幸申请到了API Token，将其接入了微信公众号Finisky Garden，聊天机器人取名小菲，大家可以来试试~">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LoRA: Low-Rank Adaptation of Large Language Models 简读">
-<meta property="og:url" content="https://finisky.github.io/lora/index.html">
+<meta property="og:title" content="小菲陪您唠唠磕">
+<meta property="og:url" content="https://finisky.github.io/finisky-bot/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="之前我们谈到 Adapters 与 Prompting 都是轻量级的训练方法，所谓 lightweight-finetuning。今天来看一下另一种轻量级训练大语言模型的方法: LoRA: Low-Rank Adaptation of Large Language Models 。 首先来看finetune大规模语言模型的问题：  An important paradigm of natural">
+<meta property="og:description" content="之前 WeLM的文章 探讨了微信大语言模型的原理。同时，WeLM开放了API：https:&#x2F;&#x2F;welm.weixin.qq.com&#x2F;docs&#x2F;api&#x2F; ，有幸申请到了API Token，将其接入了微信公众号Finisky Garden，聊天机器人取名小菲，大家可以来试试~">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-05-13T10:48:01.000Z">
-<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
+<meta property="article:published_time" content="2022-10-26T11:26:52.000Z">
+<meta property="article:modified_time" content="2022-10-26T11:28:57.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
 <meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
 <meta property="article:tag" content="Prompt">
 <meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/lora/">
+<link rel="canonical" href="https://finisky.github.io/finisky-bot/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/lora/","path":"lora/","title":"LoRA: Low-Rank Adaptation of Large Language Models 简读"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/finisky-bot/","path":"finisky-bot/","title":"小菲陪您唠唠磕"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>LoRA: Low-Rank Adaptation of Large Language Models 简读 | Finisky Garden</title>
+<title>小菲陪您唠唠磕 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -122,7 +123,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -135,11 +136,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%B2%E6%9C%89%E6%96%B9%E6%A1%88%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">已有方案的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#adapter%E5%BC%95%E5%85%A5inference-latency"><span class="nav-number">1.1.</span> <span class="nav-text">Adapter引入Inference Latency</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prefix-tuning%E9%9A%BE%E4%BA%8E%E8%AE%AD%E7%BB%83"><span class="nav-number">1.2.</span> <span class="nav-text">Prefix-Tuning难于训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%80%A7%E8%83%BD%E4%B8%8D%E5%A6%82full-finetuning"><span class="nav-number">1.3.</span> <span class="nav-text">模型性能不如Full Finetuning</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lora"><span class="nav-number">2.</span> <span class="nav-text">LoRA</span></a></li></ol></div>
-            <div class="site-author site-overview-item animated">
-              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
-              <p class="site-author-name">扫码关注公众号</p>
-            </div>
         </div>
         <!--/noindex-->
 
@@ -207,7 +203,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/lora/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/finisky-bot/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -220,7 +216,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          LoRA: Low-Rank Adaptation of Large Language Models 简读
+          小菲陪您唠唠磕
         </h1>
 
         <div class="post-meta-container">
@@ -230,16 +226,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2022-05-13 18:48:01" itemprop="dateCreated datePublished" datetime="2022-05-13T18:48:01+08:00">2022-05-13</time>
+      <time title="Created: 2022-10-26 19:26:52 / Modified: 19:28:57" itemprop="dateCreated datePublished" datetime="2022-10-26T19:26:52+08:00">2022-10-26</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -259,8 +249,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/lora/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/lora/" itemprop="commentCount"></span>
+    <a title="waline" href="/finisky-bot/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/finisky-bot/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -270,7 +260,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/lora/"></span>
+      <span class="waline-pageview-count" data-path="/finisky-bot/"></span>
     </span>
   
 </div>
@@ -282,102 +272,67 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>之前我们谈到 Adapters 与 Prompting 都是轻量级的训练方法，所谓
-lightweight-finetuning。今天来看一下另一种轻量级训练大语言模型的方法:</p>
-<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation
-of Large Language Models</a> 。</p>
-<p>首先来看finetune大规模语言模型的问题：</p>
-<blockquote>
-<p>An important paradigm of natural language processing consists of
-large-scale pretraining on general domain data and adaptation to
-particular tasks or domains. As we pre-train larger models, full
-fine-tuning, which retrains all model parameters, becomes less feasible.
-Using GPT-3 175B as an example – deploying independent instances of
-fine-tuned models, each with 175B parameters, is prohibitively
-expensive.</p>
-</blockquote>
+        <p>之前 <a href="/welm-paper-summary/">WeLM的文章</a>
+探讨了微信大语言模型的原理。同时，WeLM开放了API：https://welm.weixin.qq.com/docs/api/
+，有幸申请到了API
+Token，将其接入了微信公众号<code>Finisky Garden</code>，聊天机器人取名<code>小菲</code>，大家可以来试试~</p>
 <span id="more"></span>
-<h1 id="已有方案的问题">已有方案的问题</h1>
-<p>为解决finetune大规模语言模型的问题，已有多种方案，比如部分finetune、adapters和prompting。但这些方法存在如下问题：</p>
+<p>WeLM是个基于prompt的补全模型，实现ChatBot要用到其中<code>个性对话生成</code>任务，示例prompt如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">李白，字太白，号青莲居士，又号“谪仙人”，唐代伟大的浪漫主义诗人，被后人誉为“诗仙”。
+我：今天我们穿越时空连线李白，请问李白你爱喝酒吗？
+李白：当然。花间一壶酒，独酌无相亲。举杯邀明月，对影成三人。
+我：你觉得杜甫怎么样？
+李白：他很仰慕我，但他有属于自己的风采。
+我：你为何能如此逍遥？
+李白：天生我材必有用，千金散尽还复来！
+我：你都去过哪些地方？
+李白：<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>同理，想打造<code>小菲</code>这么一个互联网从业者的形象，就构造了如下的prompt:</p>
+<pre class="line-numbers language-none"><code class="language-none">小菲是一个资深互联网从业者，对技术和产品都有很深的理解。小菲还非常博学，上知天文，下知地理。
+我：你叫什么？
+小菲：我叫小菲。
+我：你怎么看现在的互联网？
+小菲：互联网是一个非常吸引人的行业。互联网的出现，打破了时间和空间的界限。
+我：&#123;query&#125;
+小菲：<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>调用API的参数如下：</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"prompt"</span><span class="token operator">:</span> prompt_text<span class="token punctuation">,</span>
+    <span class="token property">"model"</span><span class="token operator">:</span> <span class="token string">"xl"</span><span class="token punctuation">,</span>
+    <span class="token property">"max_tokens"</span><span class="token operator">:</span> <span class="token number">48</span><span class="token punctuation">,</span>
+    <span class="token property">"temperature"</span><span class="token operator">:</span> <span class="token number">0.85</span><span class="token punctuation">,</span>
+    <span class="token property">"top_p"</span><span class="token operator">:</span> <span class="token number">0.95</span><span class="token punctuation">,</span>
+    <span class="token property">"top_k"</span><span class="token operator">:</span> <span class="token number">50</span><span class="token punctuation">,</span>
+    <span class="token property">"n"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token property">"echo"</span><span class="token operator">:</span> False<span class="token punctuation">,</span>
+    <span class="token property">"stop"</span><span class="token operator">:</span> <span class="token string">"\n"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>来看看小菲的对话能力如何：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/finiskybot1.png" /></p>
+<p>上面看起来聊得还不错，跟论文中提到的一样，WeLM：</p>
 <ul>
-<li>Adapters引入额外的inference latency （由于增加了层数）</li>
-<li>Prefix-Tuning比较难于训练</li>
-<li>模型性能不如finetuning</li>
+<li>学习了大量知识，可以把它当成一个问答搜索引擎</li>
+<li>支持多语言无缝切换</li>
+<li>生成的内容较长，也有信息量</li>
 </ul>
-<h2 id="adapter引入inference-latency">Adapter引入Inference Latency</h2>
-<p>显然，增加模型层数会增加inference的时长：</p>
-<blockquote>
-<p>While one can reduce the overall latency by pruning layers or
-exploiting multi-task settings, there is no direct ways to bypass the
-extra compute in adapter layers.</p>
-</blockquote>
+<p>但也有一些不好的情况：</p>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/adapterslatency.png"
-alt="Adapter Extra Inference Latency" /></p>
-<p>从上图可以看出，对于线上batch size为1，sequence
-length比较短的情况，inference
-latency的变化比例会更明显。不过个人认为，绝对延迟的区别不大。 :-)</p>
-<h2 id="prefix-tuning难于训练">Prefix-Tuning难于训练</h2>
-<p>与Prefix-Tuning的难于训练相比，LoRA则更容易训练：</p>
-<blockquote>
-<p>We observe that prefix tuning is difficult to optimize and that its
-performance changes non-monotonically in trainable parameters,
-confirming similar observations in the original paper.</p>
-</blockquote>
-<h2 id="模型性能不如full-finetuning">模型性能不如Full Finetuning</h2>
-<p>预留一些sequence做adaption会让处理下游任务的可用sequence长度变少，一定程度上会影响模型性能:</p>
-<blockquote>
-<p>More fundamentally, reserving a part of the sequence length for
-adaptation necessarily reduces the sequence length available to process
-a downstream task, which we suspect makes tuning the prompt less
-performant compared to other methods.</p>
-</blockquote>
-<h1 id="lora">LoRA</h1>
-<p>先看看LoRA的motivation:</p>
-<blockquote>
-<p>We take inspiration from Li et al. (2018a); Aghajanyan et al. (2020)
-which show that the learned over-parametrized models in fact reside on a
-low intrinsic dimension.</p>
-<p>We hypothesize that the change in weights during model adaptation
-also has a low “intrinsic rank”, leading to our proposed Low-Rank
-Adaptation (LoRA) approach.</p>
-</blockquote>
-<p>虽然模型的参数众多，但其实模型主要依赖<code>low intrinsic dimension</code>，那adaption应该也依赖于此，所以提出了Low-Rank
-Adaptation (LoRA)。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/lora.png"
-alt="LoRA Model" /></p>
-<p>LoRA的思想也很简单，在原始PLM旁边增加一个旁路，做一个降维再升维的操作，来模拟所谓的<code>intrinsic rank</code>。训练的时候固定PLM的参数，只训练降维矩阵A与升维矩阵B。而模型的输入输出维度不变，输出时将BA与PLM的参数叠加。用随机高斯分布初始化A，用0矩阵初始化B，保证训练的开始此旁路矩阵依然是0矩阵。</p>
-<p>具体来看，假设预训练的矩阵为 <span class="math inline">\(W_0 \in
-\mathbb{R}^{d \times k}\)</span>，它的更新可表示为：</p>
-<p><span class="math display">\[W_0 + \Delta W = W_0 + BA, B \in
-\mathbb{R}^{d \times r}, A \in \mathbb{R}^{r \times k} \]</span></p>
-<p>其中秩<span class="math inline">\(r &lt;&lt; min(d,k)\)</span>。</p>
-<p>这种思想有点类似于残差连接，同时使用这个旁路的更新来模拟full
-finetuning的过程。并且，full
-finetuning可以被看做是LoRA的特例（当r等于k时）：</p>
-<blockquote>
-<p>This means that when applying LoRA to all weight matrices and
-training all biases, we roughly recover the expressiveness of full
-fine-tuning by setting the LoRA rank r to the rank of the pre-trained
-weight matrices.</p>
-<p>In other words, as we increase the number of trainable parameters,
-training LoRA roughly converges to training the original model, while
-adapter-based methods converges to an MLP and prefix-based methods to a
-model that cannot take long input sequences.</p>
-</blockquote>
-<p>LoRA也几乎未引入额外的inference latency，只需要计算 <span
-class="math inline">\(W = W_0 + BA\)</span> 即可。</p>
-<p>LoRA与Transformer的结合也很简单，仅在QKV
-attention的计算中增加一个旁路，而不动MLP模块：</p>
-<blockquote>
-<p>We limit our study to only adapting the attention weights for
-downstream tasks and freeze the MLP modules (so they are not trained in
-downstream tasks) both for simplicity and parameter-efficiency.</p>
-</blockquote>
-<p>总结，基于大模型的内在低秩特性，增加旁路矩阵来模拟full
-finetuning，LoRA是个简单有效的方案来达成lightweight
-finetuning的目的。</p>
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/finiskybot2.png" /></p>
+<p>总结一下WeLM目前存在的问题：</p>
+<ul>
+<li>偶现复读机现象: 比如会生成
+<code>百度阿里腾讯百度 腾讯阿里 百度 百度 腾讯 百度 腾讯 百度 百度 百度 腾讯</code>
+这样的句子。</li>
+<li>生成半句话：比如
+<code>互联网是一个非常吸引人的行业。互联网的</code>。把stopwords设置为句号之类的也不合适，会将回复硬截断。因此，还需要对回复做后处理。</li>
+<li>多轮对话能力:
+不好将对话上下文接入prompt，尤其是在复读机现象未解的情况下，多轮对话将复读回复输入到模型中，生成的回复也复读的概率非常高，导致整个对话无法继续。即某一轮对话的错误，会因为引入上下文而放大。上图中的右边就是加入6轮对话历史之后的对话效果，可见模型很难从上下文中抽身。因此，目前只支持单轮对话，没有上下文能力，作为一个问答机器人还不错。</li>
+<li>时效性：比如美国总统是谁的问题，由于模型没有借助搜索引擎获取最新数据，所以答案可能不准确。</li>
+<li>生套prompt：为了个性化，每次对话都会将小菲的背景描述带上，导致回复可能存在一些相关性问题。</li>
+</ul>
+<p>欢迎大家来<code>Finisky Garden</code>与小菲聊聊天，扯扯淡~</p>
+<p>有任何建议，欢迎留言讨论！</p>
 
     </div>
 
@@ -387,9 +342,6 @@ finetuning的目的。</p>
       
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/finisky-bot/" rel="bookmark">小菲陪您唠唠磕</a></div>
-    </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/welm-paper-summary/" rel="bookmark">WeLM: A Well-Read Pre-trained Language Model for Chinese 简读</a></div>
     </li>
@@ -402,6 +354,9 @@ finetuning的目的。</p>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
     </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
   </ul>
 
 
@@ -410,6 +365,7 @@ finetuning的目的。</p>
               <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
               <a href="/tags/NLP/" rel="tag"># NLP</a>
               <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
               <a href="/tags/Prompt/" rel="tag"># Prompt</a>
               <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
@@ -418,14 +374,11 @@ finetuning的目的。</p>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/pandoccode64bug.en/" rel="prev" title="'pandoc exited with code 64' Solution">
-                  <i class="fa fa-chevron-left"></i> 'pandoc exited with code 64' Solution
+                <a href="/muyu-app/" rel="prev" title="这么个玩意儿也能赚钱？">
+                  <i class="fa fa-chevron-left"></i> 这么个玩意儿也能赚钱？
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/githubactiontorestorefilemtime.en/" rel="next" title="GitHub Checkout Action Preserve File Modification Time">
-                  GitHub Checkout Action Preserve File Modification Time <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -475,11 +428,11 @@ finetuning的目的。</p>
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/lora/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/finisky-bot/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
