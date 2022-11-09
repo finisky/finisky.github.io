@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="XG2u6IqsZb">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Knowledge Grounded Conversation (KGC)，就是基于知识的对话生成，与不使用知识的对话生成相比，生成的回复更有信息量，可更好地与用户互动。 本文不是KGC的综述，所谓漫谈，则是比较随性地聊聊这个方向的代表工作，顺带简单梳理其发展脉络。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="漫谈 Knowledge Grounded Conversation">
+<meta property="og:url" content="https://finisky.github.io/brief-on-knowledge-grounded-conversation/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Knowledge Grounded Conversation (KGC)，就是基于知识的对话生成，与不使用知识的对话生成相比，生成的回复更有信息量，可更好地与用户互动。 本文不是KGC的综述，所谓漫谈，则是比较随性地聊聊这个方向的代表工作，顺带简单梳理其发展脉络。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-11-09T15:53:46.000Z">
+<meta property="article:modified_time" content="2022-11-09T16:26:41.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/brief-on-knowledge-grounded-conversation/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/brief-on-knowledge-grounded-conversation/","path":"brief-on-knowledge-grounded-conversation/","title":"漫谈 Knowledge Grounded Conversation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>漫谈 Knowledge Grounded Conversation | Finisky Garden</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, Software Engineering and Product Design</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#knowledge-groudned-conversation-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Knowledge Groudned
+Conversation 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#kgc-workflow"><span class="nav-number">1.1.</span> <span class="nav-text">KGC Workflow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wizard-of-wikipedia-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">Wizard of Wikipedia 数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transformer-memory-network"><span class="nav-number">1.3.</span> <span class="nav-text">Transformer Memory Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#knowledge-selection"><span class="nav-number">2.</span> <span class="nav-text">Knowledge Selection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#postks"><span class="nav-number">2.1.</span> <span class="nav-text">PostKS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#skt"><span class="nav-number">2.2.</span> <span class="nav-text">SKT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipm"><span class="nav-number">2.3.</span> <span class="nav-text">PIPM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unsupervised-knowledge-selection"><span class="nav-number">2.4.</span> <span class="nav-text">Unsupervised Knowledge
+Selection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#diffks"><span class="nav-number">2.5.</span> <span class="nav-text">DiffKS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#knowledge-augmentation"><span class="nav-number">3.</span> <span class="nav-text">Knowledge Augmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#retrieval-augmentation"><span class="nav-number">3.1.</span> <span class="nav-text">Retrieval Augmentation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#internet-augmented-generation"><span class="nav-number">3.2.</span> <span class="nav-text">Internet-Augmented
+Generation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#generation-model"><span class="nav-number">4.</span> <span class="nav-text">Generation Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#low-resource-kgc"><span class="nav-number">4.1.</span> <span class="nav-text">Low-Resource KGC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zero-resource-kgc"><span class="nav-number">4.2.</span> <span class="nav-text">Zero-Resource KGC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#knowledgpt"><span class="nav-number">4.3.</span> <span class="nav-text">KnowledGPT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            <div class="site-author site-overview-item animated">
+              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
+              <p class="site-author-name">扫码关注公众号</p>
+            </div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">190</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/brief-on-knowledge-grounded-conversation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="NLP, Software Engineering and Product Design">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          漫谈 Knowledge Grounded Conversation
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-11-09 23:53:46" itemprop="dateCreated datePublished" datetime="2022-11-09T23:53:46+08:00">2022-11-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-11-10 00:26:41" itemprop="dateModified" datetime="2022-11-10T00:26:41+08:00">2022-11-10</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/brief-on-knowledge-grounded-conversation/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/brief-on-knowledge-grounded-conversation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/brief-on-knowledge-grounded-conversation/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Knowledge Grounded Conversation
+(KGC)，就是基于知识的对话生成，与不使用知识的对话生成相比，生成的回复更有信息量，可更好地与用户互动。</p>
+<p>本文不是KGC的综述，所谓漫谈，则是比较随性地聊聊这个方向的代表工作，顺带简单梳理其发展脉络。</p>
+<span id="more"></span>
+<h1 id="knowledge-groudned-conversation-简介">Knowledge Groudned
+Conversation 简介</h1>
+<p>KGC这个问题约在2018年底被Facebook提出，并同时发布了一个数据集 Wizard
+of Wikipedia (WoW) 与模型 Transformer Memory Network (TMN)。</p>
+<p>[ICLR2019] [WoW] <a
+target="_blank" rel="noopener" href="https://openreview.net/forum?id=r1l73iRqKm">Wizard of Wikipedia:
+Knowledge-Powered Conversational Agents</a></p>
+<p>在开放域对话中，恰当地使用knowledge是个必要的功能，但这个问题却没被很好地解决。seq2seq模型只能通过参数记忆输入到输出的映射，却不能很好地将knowledge作为上下文建模。所以WoW提出了一个有监督学习任务，可以让模型基于相关knowledge生成回复，也就是
+Knowledge Grounded Conversation。</p>
+<h2 id="kgc-workflow">KGC Workflow</h2>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/kgcflow.png"
+alt="KGC Workflow" /></p>
+<p>如上图所示，KGC的输入是<code>Context/Query</code>，通过 Knowledge
+Selector 选出最优 <code>Knowledge</code> ，然后将
+<code>&lt;Context/Query, Knowledge&gt;</code> 作为输入， Response
+Generator 生成最终
+<code>Response</code>。所以KGC模型主要由两部分构成：<strong>Knowledge
+Selection</strong> 和 <strong>Response Generation</strong>。</p>
+<h2 id="wizard-of-wikipedia-数据集">Wizard of Wikipedia 数据集</h2>
+<p><strong>WoW是KGC方向的经典数据集</strong>，几乎所有KGC相关的后续工作都会使用此数据集进行实验验证。对话由一个
+Apprentice 和一个 Wizard 完成：</p>
+<ul>
+<li>Apprentice:
+扮演的角色是一个好奇的学徒，很想聊天。双方的目标是针对一个选定的话题进行深入的聊天，同时保证整个会话比较吸引人和有趣。这种对话有别于普通的chitchat，它更强调使用knowledge进行聊天。</li>
+<li>Wizard:
+扮演的角色是遇到了另一个好奇的人，同时自己也很希望与之深入交谈。在交流的过程中，Wizard可以借助一个IR系统从Wikipedia中检索相关的段落展开聊天，而这个段落对Apprentice是不可见的。Wizard在每轮对话前先阅读这个段落，然后基于这个知识与Apprentice进行对话，保证对话与此段落相关并且回复比较引人入胜。</li>
+</ul>
+<p>对话开始时一方先选择一个话题开始，Apprentice提出问题后，Wizard这边会通过IR系统显示出相关的knowledge，他可以选择一个相关的knowledge进行对话，或者都不选进行回复。整个会话至少要持续4~5轮，最终构造出整个数据集。数据集的一些统计数据：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/wowstats.png"
+alt="WoW Dataset Stats" /></p>
+<h2 id="transformer-memory-network">Transformer Memory Network</h2>
+<p>模型结构很直观，把context与knowledge分别编码，再输入decoder生成最终的回复。这里的
+TMN 也是许多后续工作的baseline。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/tmn.png"
+alt="Transformer Memory Network" /></p>
+<h1 id="knowledge-selection">Knowledge Selection</h1>
+<p>很多工作都指出Knowledge
+Selection的准确性对于端到端性能的影响非常明显，即只要knowledge选择的准确性越高，模型效果越好。这一点也不难理解，很多选出来的knowledge甚至可以直接作为query的回复，后一步response
+generation仅需要对选出的knowledge做些许改写即可。因此，有不少工作都聚焦在knowledge
+selection部分。</p>
+<p>Knowledge
+Selection是个<strong>one-to-many的问题</strong>，即给定了context之后，可能有多个候选的knowledge都是不错的选择，比如像WoW数据集，就是人为地从N个选择中挑一个，再根据
+<code>&lt;context, selected knowledge&gt;</code>
+进行最终回复生成。这就存在一个问题：数据集中所谓的 golden
+knowledge，到底是不是真正的
+golden？如果看看数据集会发现，很多情况下，其他未被选中的knowledge可能也是不错的选择。由此引发的问题就是：如果不看答案
+(response)，即使是真人也很难选出golden
+knowledge，因为从context并不能提供足够多的信息来辅助选择。</p>
+<p>下面就具体聊聊这些关于knowledge selection的工作。</p>
+<h2 id="postks">PostKS</h2>
+<p>[IJCAI2019] <a href="#postks">PostKS</a> <a
+target="_blank" rel="noopener" href="https://www.ijcai.org/proceedings/2019/0706.pdf">Learning to
+Select Knowledge for Response Generation in Dialog Systems</a></p>
+<p>PostKS 首先提出了一种提升Knowledge
+Selection效果的方案，思路很直观，<strong>用后验分布逼近先验分布</strong>，也就是说，用response来指导选择knoweldge，选择knowledge中与response比较接近的那个。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/postks.png"
+alt="PostKS Model" /></p>
+<p>从上图可以看出，x是输入的句子（或者说上下文）,
+y是生成的response，那么先验分布是 <span
+class="math inline">\(p(k|x)\)</span>，后验分布是 <span
+class="math inline">\(p(k |x,
+y)\)</span>，训练方案就是使用KL散度来最小化损失函数，达到后验逼近先验的目的，从而可以根据context来预测哪个是
+golden knowledge。</p>
+<h2 id="skt">SKT</h2>
+<p>[ICLR2020] <a href="#skt">SKT</a> <a
+target="_blank" rel="noopener" href="https://openreview.net/pdf?id=Hke0K1HKwr">Sequential Latent
+Knowledge Selection for Knowledge-Grounded Dialogue</a></p>
+<p>SKT 提出了另一种思路进行knowledge
+selection。论文首先做了一个实验，测试了看和不看response两种情况下，knowledge
+selection的准确率：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sktacc.png"
+alt="SKT Motivation" /></p>
+<p>结果很有意思，对真人来说，不看response选对knowledge的准确率只有17.1%，而在看response的情况下，高达83.7%。所以论文的动机就很明确了：</p>
+<blockquote>
+<p>Our sequential model can keep track of prior and posterior
+distribution over knowledge, which are sequentially updated considering
+the responses in previous turns, and thus we can better predict the
+knowledge by sampling from the posterior.</p>
+</blockquote>
+<p>模型叫做 sequential knowledge transformer，与之前工作的区别在于：</p>
+<blockquote>
+<p>First, we regard the knowledge selection as a sequential decision
+process instead of a single-step decision process. Second, due to the
+diversity of knowledge selection in dialogue, we model it as latent
+variables.</p>
+</blockquote>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sktmodel.png"
+alt="SKT Model" /></p>
+<p>本质上也是后验逼近先验的方法，概率图模型如上图所示。对不同的对话轮数进行factorize，然后再优化其ELBO。</p>
+<h2 id="pipm">PIPM</h2>
+<p>[EMNLP2020] <a href="#pipm">PIPM</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.emnlp-main.275/">Bridging the Gap
+between Prior and Posterior Knowledge Selection for Knowledge-Grounded
+Dialogue Generation</a></p>
+<p>腾讯之后提出了基于SKT的改进工作，从标题就能基本看明白想法：先验和后验信息之间存在gap。具体来说，从先验信息选择knowledge缺乏后验信息，模型训练时是基于后验选择的knowledge，而在推断时却只有先验分布。论文提出使用
+Posterior Information Prediction Module (PIPM)
+模块来预测和补全后验信息，和知识蒸馏的方式来解决用不合适的知识生成回复的问题。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/bridgegappipm.png"
+alt="PIPM Framework" /></p>
+<p>所谓的后验信息是以对话历史和knowledge
+pool作为输入，用前向网络来生成的一些词汇。</p>
+<h2 id="unsupervised-knowledge-selection">Unsupervised Knowledge
+Selection</h2>
+<p>[ACL2021findings] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2021.findings-acl.105/">Unsupervised
+Knowledge Selection for Dialogue Generation</a></p>
+<p>之后同作者又提出了使用无监督的方案来做knowledge selection,
+所谓无监督，主要是不使用标注的golden label，而基于 Oracle
+Label进行选择。 Oracle Label
+的生成是用启发式的方法找与response最接近的knowledge作为 golden：</p>
+<blockquote>
+<p>Assuming that the gold knowledge should contribute most tokens to the
+response generation.</p>
+</blockquote>
+<p>不过Oracle
+Label含有噪音，论文通过计算response与knowledge的相似度并重新归一化来提升效果。同时，还使用知识蒸馏的方式，teacher在训练时使用golden
+response作为额外输入，来引导student学习knowledge selection分布。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/ddsl.png"
+alt="Distilled Distant Supervision Loss" /></p>
+<h2 id="diffks">DiffKS</h2>
+<p>[EMNLP2020findings] <a href="#diffks">DiffKS</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.findings-emnlp.11/">Difference-aware
+Knowledge Selection for Knowledge-grounded Conversation
+Generation</a></p>
+<p>同期还有另一篇工作DiffKS，通过考虑历史选择的knowledge，来更好地指导本轮的选择。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/diffksexample.png"
+alt="DiffKS Example" /></p>
+<p>上面的例子解释了主要思路，如果本轮的选择与之前相同的knowledge，那么生成的回复就可能重复；如果本轮选择的knowledge与之前选择的knowledge差异过大，则会导致回复不一致的问题。</p>
+<p>论文提出了两种方法引入对knowledge diff的建模:</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/diffksmodel.png"
+alt="DiffKS Model" /></p>
+<p>其中Disentangled Selection将上下文相关性与knowledge
+diff两部分的建模解耦，可以支持ablation
+study从而评估diff信息对模型性能的影响。最终实验也验证了diff信息在几个数据集上的效果都很明显。</p>
+<h1 id="knowledge-augmentation">Knowledge Augmentation</h1>
+<h2 id="retrieval-augmentation">Retrieval Augmentation</h2>
+<p>[EMNLP2021findings] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2021.findings-emnlp.320/">Retrieval
+Augmentation Reduces Hallucination in Conversation</a></p>
+<p>对GPT3这样的大模型，在对话任务中常常会有一些额外的发挥，所谓hallucination：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/gpt3hallucination.png"
+alt="Hallucination in GPT3" /></p>
+<p>为了解决这个问题，可以用KGC的方法，通过retrieval
+knowledge的方式，给模型提供更准确的信息，避免它自己的随意发挥。本文是个实验文章，对各种可能的
+retrievers, rankers 和 encoder-decoders
+进行排列组合，分析指出在什么情况下什么技术栈效果最好。同时它的最优模型也达到了SOTA的水平。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/hallucinationresult.png"
+alt="Hallucination Results" /></p>
+<p>从结果来看，Response Generation中 <a
+href="/fusion-in-decoder-paper-summary/">FiD</a> + RAG
+的效果不错，而knowledge retrieval 使用 <a
+href="/retrievermodels/">DPR</a> 比较好。</p>
+<h2 id="internet-augmented-generation">Internet-Augmented
+Generation</h2>
+<p>[ACL2022] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2022.acl-long.579/">Internet-Augmented
+Dialogue Generation</a></p>
+<p>即使语言模型很大，它记住的knowledge也会过时，于是就可能生成错误回复。结合前面的思路，既然提供额外的knowledge可以提升对话效果，减少自由发挥。那我们是否可以直接用搜索引擎根据上下文来搜索相关knowledge，同时解决自由发挥和知识实时性的问题？答案是肯定的，文章的标题已经把idea明确阐述。模型上也没有太多创新，还是
+FiD+RAG, DPR 与 FAISS
+这些，但有搜索引擎的强大搜索能力，回复质量得到了显著提升。</p>
+<h1 id="generation-model">Generation Model</h1>
+<p>为了解决 <code>&lt;query, knowledge, response&gt;</code>
+训练数据不足的问题，下面两篇文章分别在低资源和零资源的设定下，通过不同的模型结构达到构建可用KGC系统的目的。</p>
+<h2 id="low-resource-kgc">Low-Resource KGC</h2>
+<p>[EMNLP2020] <a
+target="_blank" rel="noopener" href="https://openreview.net/forum?id=rJeIcTNtvS">Low-Resource
+Knowledge-Grounded Dialogue Generation</a></p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/lowresourcekgcmodel.png"
+alt="Low Resource KGC with Pre-trained Language Models" /></p>
+<p>在训练数据较少的设置下，主要想法是通过解耦decoder，让生成模型的大部分参数可以通过较为容易获取的
+<code>&lt;query, response&gt;</code> 数据进行学习：</p>
+<blockquote>
+<p>The key idea is to make parameters that rely on knowledge-grounded
+dialogues small and independent by disentangling the response decoder,
+and thus we can learn the major part of the generation model from
+ungrounded dialogues and plain text that are much easier to acquire.</p>
+</blockquote>
+<p>具体来看，在decoder每次进行word选择时，可以分成三部分：1.
+语句通顺，符合语法 2. 符合上下文 3.
+与提供的knowledge相符。而这三部分可以解耦单独学习，从而达到仅用少量数据就能学到完整模型的目的。</p>
+<h2 id="zero-resource-kgc">Zero-Resource KGC</h2>
+<p>[NIPS2020] <a
+target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2020/file/609c5e5089a9aa967232aba2a4d03114-Paper.pdf">Zero
+Resource Knowledge Grounded Dialogue Generation</a></p>
+<p>这篇文章是用变分推断的方式解决问题，引入了两个隐变量，其中 <span
+class="math inline">\(Z_k\)</span> 代表 latent knowledge，<span
+class="math inline">\(Z_\alpha\)</span> 控制要使用多少<span
+class="math inline">\(Z_k\)</span>。目标是在无标注数据的情况下学习分布
+<span class="math inline">\(p(R|C,K)\)</span>。</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/zeroresourcekgcmodel.png"
+alt="Zero Resource KGC Model" /></p>
+<h2 id="knowledgpt">KnowledGPT</h2>
+<p>[EMNLP2020] <a href="#knowledgpt">KnowledGPT</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.emnlp-main.272/">Knowledge-Grounded
+Dialogue Generation with Pre-trained Language Models</a></p>
+<p>同期的这篇工作是利用预训练语言模型对knowledge selection和response
+generation进行联合优化。使用GPT2作为预训练模型，构建由context-aware
+knowledge encoder和sequential knowledge selector组成的知识选择模块：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/kgcwithplm.png"
+alt="KGC with PLM Model" /></p>
+<p>KnowledGPT
+在WoW和CMU_DoG数据集中的大多评估指标上都达到了SOTA，说明预训练模型对KGC回复生成还是有显著的提升作用。</p>
+<h1 id="总结">总结</h1>
+<p>本文简单梳理了KGC发展的脉络及代表工作，特别对 Knowledge Selection 与
+Response Generation
+部分工作的主要思想进行了概括和简介，没有公式，只谈思路，希望对大家有所启发。如对论文细节感兴趣，可参阅文末参考文献。疏漏在所难免，望见谅。</p>
+<p>文中提到的都是传统KGC相关的工作，KGC作为研究热点，最近关于KGC的工作也是层出不穷，比如一些更难的问题
+Stylized KGC, KGC与人设的结合等等。如有机会，且听下回分解~</p>
+<h1 id="参考文献">参考文献</h1>
+<ul>
+<li>[ICLR2019] [WoW] <a
+target="_blank" rel="noopener" href="https://openreview.net/forum?id=r1l73iRqKm">Wizard of Wikipedia:
+Knowledge-Powered Conversational Agents</a></li>
+<li>[IJCAI2019] <a href="#postks">PostKS</a> <a
+target="_blank" rel="noopener" href="https://www.ijcai.org/proceedings/2019/0706.pdf">Learning to
+Select Knowledge for Response Generation in Dialog Systems</a></li>
+<li>[ICLR2020] <a href="#skt">SKT</a> <a
+target="_blank" rel="noopener" href="https://openreview.net/pdf?id=Hke0K1HKwr">Sequential Latent
+Knowledge Selection for Knowledge-Grounded Dialogue</a></li>
+<li>[EMNLP2020] <a href="#pipm">PIPM</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.emnlp-main.275/">Bridging the Gap
+between Prior and Posterior Knowledge Selection for Knowledge-Grounded
+Dialogue Generation</a></li>
+<li>[ACL2021findings] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2021.findings-acl.105/">Unsupervised
+Knowledge Selection for Dialogue Generation</a></li>
+<li>[EMNLP2020findings] <a href="#diffks">DiffKS</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.findings-emnlp.11/">Difference-aware
+Knowledge Selection for Knowledge-grounded Conversation
+Generation</a></li>
+<li>[EMNLP2021findings] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2021.findings-emnlp.320/">Retrieval
+Augmentation Reduces Hallucination in Conversation</a></li>
+<li>[ACL2022] <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2022.acl-long.579/">Internet-Augmented
+Dialogue Generation</a></li>
+<li>[EMNLP2020] <a
+target="_blank" rel="noopener" href="https://openreview.net/forum?id=rJeIcTNtvS">Low-Resource
+Knowledge-Grounded Dialogue Generation</a></li>
+<li>[NIPS2020] <a
+target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2020/file/609c5e5089a9aa967232aba2a4d03114-Paper.pdf">Zero
+Resource Knowledge Grounded Dialogue Generation</a></li>
+<li>[EMNLP2020] <a href="#knowledgpt">KnowledGPT</a> <a
+target="_blank" rel="noopener" href="https://aclanthology.org/2020.emnlp-main.272/">Knowledge-Grounded
+Dialogue Generation with Pre-trained Language Models</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/briefintrotoprompt.en/" rel="bookmark">Brief Introduction to NLP Prompting</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/briefintrotoprompt/" rel="bookmark">NLP Prompt技术简介</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/diamonte-dataset-paper-summary/" rel="bookmark">Towards Boosting the Open-Domain Chatbot with Human Feedback 简读</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/finisky-bot/" rel="prev" title="小菲陪您唠唠磕">
+                  <i class="fa fa-chevron-left"></i> 小菲陪您唠唠磕
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div><div><span><a href="https://finicounter.vercel.app/" target="_blank">Total Pageview:</a></span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.vercel.app/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/brief-on-knowledge-grounded-conversation/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
