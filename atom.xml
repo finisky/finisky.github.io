@@ -6,7 +6,7 @@
   <link href="https://finisky.github.io/atom.xml" rel="self"/>
   
   <link href="https://finisky.github.io/"/>
-  <updated>2022-11-12T16:29:07.000Z</updated>
+  <updated>2022-11-14T16:14:36.000Z</updated>
   <id>https://finisky.github.io/</id>
   
   <author>
@@ -15,6 +15,75 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用301重定向迁移 GitHub Pages</title>
+    <link href="https://finisky.github.io/migrate-github-pages-by-301-redirects/"/>
+    <id>https://finisky.github.io/migrate-github-pages-by-301-redirects/</id>
+    <published>2022-11-14T16:12:58.000Z</published>
+    <updated>2022-11-14T16:14:36.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;在一篇老文 &lt;a href=&quot;/2019/12/11/migrategithubpages/&quot;&gt;#
+迁移Hexo博客到GitHub Pages&lt;/a&gt; 中提到:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;GitHub
+Pages可能是个单行线，只能迁出，不好再迁出了。简单研究了一下文档，它不允许用户修改Server配置，所以看起来无法完成301重定向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但在迁移博客时，301重定向必不可少，它是保证站点迁移不损失搜索排名的关键所在。具体来说，在迁移到新站点之后，需要
+&lt;a
+href=&quot;https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes&quot;&gt;手动修改
+Google Search Console 的配置&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Do you lose credit for links when you redirect to new
+URLs?&lt;/strong&gt;&lt;br /&gt;
+No, 301 or 302 redirects do not cause a loss in PageRank&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以如何才是无损排名迁移 GitHub Pages 的正确方式？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Hexo" scheme="https://finisky.github.io/categories/Hexo/"/>
+    
+    
+    <category term="SEO" scheme="https://finisky.github.io/tags/SEO/"/>
+    
+    <category term="Hexo" scheme="https://finisky.github.io/tags/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Migrate GitHub Pages by 301 Redirects</title>
+    <link href="https://finisky.github.io/en/migrate-github-pages-by-301-redirects/"/>
+    <id>https://finisky.github.io/en/migrate-github-pages-by-301-redirects/</id>
+    <published>2022-11-14T15:53:00.000Z</published>
+    <updated>2022-11-14T16:14:36.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;GitHub Pages cannot perform HTTP 301 redirects as you cannot modify
+the server config. However, 301 redirects is really crucial for SEO. In
+order to keep the site ranking, you need to 301 redirects the old GitHub
+Pages to your new site, and &lt;a
+href=&quot;https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes&quot;&gt;manually
+notify Google Search Console&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Do you lose credit for links when you redirect to new
+URLs?&lt;/strong&gt;&lt;br /&gt;
+No, 301 or 302 redirects do not cause a loss in PageRank&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So how to migrate GitHub Pages to a new site without losing site
+ranking?&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Hexo" scheme="https://finisky.github.io/categories/Hexo/"/>
+    
+    
+    <category term="SEO" scheme="https://finisky.github.io/tags/SEO/"/>
+    
+    <category term="Hexo" scheme="https://finisky.github.io/tags/Hexo/"/>
+    
+  </entry>
   
   <entry>
     <title>老板喜欢什么样的下属？</title>
@@ -518,92 +587,6 @@ href=&quot;/hexowaline&quot;&gt;切换到了Waline&lt;/a&gt;，一举攻克了�
     <category term="NexT" scheme="https://finisky.github.io/tags/NexT/"/>
     
     <category term="Hexo Extension" scheme="https://finisky.github.io/tags/Hexo-Extension/"/>
-    
-    <category term="Serverless" scheme="https://finisky.github.io/tags/Serverless/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>FiniCounter: A Website Vistor Counter</title>
-    <link href="https://finisky.github.io/finicounterimpl.en/"/>
-    <id>https://finisky.github.io/finicounterimpl.en/</id>
-    <published>2022-08-07T09:20:59.000Z</published>
-    <updated>2022-08-29T03:55:42.000Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Static website such as Hexo/Hugo/Jekyll is very popular recent years.
-It is fast, easy to write, deploy and host. However, no free lunch: it
-is non-trivial to store dynamic information such as pageview counts and
-comments under the serverless architecture. This site uses Waline to
-implement article view count and comment system.&lt;/p&gt;
-&lt;p&gt;Accidently I found that we do not have a full site pageview counter.
-Waline has post-level counter instead of site-level one.&lt;/p&gt;
-&lt;p&gt;Just DIY: FiniCounter. Use Vercel serverless function as the web API
-framework, MongoDB as the storage. When a user comes to any page of the
-site, we invoke the count API through fetch API, increment the counter
-in the MongoDB, return the updated value and display in the page.&lt;/p&gt;
-&lt;p&gt;Initially I want to develop a tool for myself. After I finish it, I
-decide to make it as a public &lt;strong&gt;free&lt;/strong&gt; service :-) . &lt;a
-href=&quot;https://finicounter.vercel.app/en&quot;&gt;FiniCounter&lt;/a&gt; looks like
-this:&lt;/p&gt;
-&lt;p&gt;&lt;img
-src=&quot;https://cdn.jsdelivr.net/gh/finisky/finicounter/finicounterdemo.en.png&quot;
-alt=&quot;FiniCounter Demo&quot; /&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/categories/Hexo/"/>
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/tags/Hexo/"/>
-    
-    <category term="MongoDB" scheme="https://finisky.github.io/tags/MongoDB/"/>
-    
-    <category term="NexT" scheme="https://finisky.github.io/tags/NexT/"/>
-    
-    <category term="Hexo Extension" scheme="https://finisky.github.io/tags/Hexo-Extension/"/>
-    
-    <category term="Hugo" scheme="https://finisky.github.io/tags/Hugo/"/>
-    
-    <category term="Serverless" scheme="https://finisky.github.io/tags/Serverless/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>FiniCounter: 静态网站访问量统计工具</title>
-    <link href="https://finisky.github.io/finicounterimpl/"/>
-    <id>https://finisky.github.io/finicounterimpl/</id>
-    <published>2022-08-07T05:20:03.000Z</published>
-    <updated>2022-08-29T03:55:42.000Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;静态博客如Hexo/Hugo/Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。&lt;/p&gt;
-&lt;p&gt;突然发现缺少一个全站访问量统计的功能，Waline目前不支持。大多数静态网站使用不蒜子，但看到由于使用人数众多，常常出现502错误和服务不稳定的情况。遂考虑自行开发这样的一个服务：FiniCounter。使用Vercel
-Serverless
-Function作为Web框架，MongoDB为后端存储。用户访问任意页面时，通过Fetch
-API调用Serverless
-Function，在MongoDB中计数加1并返回最新计数，在前端展示。&lt;/p&gt;
-&lt;p&gt;本想开发个小工具自己用，后来发现天然支持多用户，独乐乐不如众乐乐，大家一起用吧
-:-)。效果展示：&lt;a
-href=&quot;https://finicounter.vercel.app/&quot;&gt;FiniCounter&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;img
-src=&quot;https://cdn.jsdelivr.net/gh/finisky/finicounter/finicounterdemo.png&quot;
-alt=&quot;FiniCounter Demo&quot; /&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/categories/Hexo/"/>
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/tags/Hexo/"/>
-    
-    <category term="MongoDB" scheme="https://finisky.github.io/tags/MongoDB/"/>
-    
-    <category term="NexT" scheme="https://finisky.github.io/tags/NexT/"/>
-    
-    <category term="Hexo Extension" scheme="https://finisky.github.io/tags/Hexo-Extension/"/>
-    
-    <category term="Hugo" scheme="https://finisky.github.io/tags/Hugo/"/>
     
     <category term="Serverless" scheme="https://finisky.github.io/tags/Serverless/"/>
     
