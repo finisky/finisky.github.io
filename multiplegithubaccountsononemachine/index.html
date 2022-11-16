@@ -154,7 +154,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">194</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -290,24 +290,24 @@ config中定义多个不同的host项即可，然后在访问github时，使用�
 <p>直接按步骤来即可： <a
 target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">#
 Generating a new SSH key and adding it to the ssh-agent</a></p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-keygen -t ed25519 -C <span class="token string">"your_email@example.com"</span>
 
-Generating public&#x2F;private ed25519 key pair.
-Enter file in which to save the key (&#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519): 
-Enter passphrase (empty for no passphrase):
+Generating public/private ed25519 key pair.
+Enter <span class="token function">file</span> <span class="token keyword">in</span> <span class="token function">which</span> to save the key <span class="token punctuation">(</span>/home/user/.ssh/id_ed25519<span class="token punctuation">)</span>: 
+Enter passphrase <span class="token punctuation">(</span>empty <span class="token keyword">for</span> no passphrase<span class="token punctuation">)</span>:
 Enter same passphrase again:
-Your identification has been saved in &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519
-Your public key has been saved in &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519.pub
+Your identification has been saved <span class="token keyword">in</span> /home/user/.ssh/id_ed25519
+Your public key has been saved <span class="token keyword">in</span> /home/user/.ssh/id_ed25519.pub
 The key fingerprint is:
 SHA256: xxx your_email@example.com<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Add your SSH private key to the ssh-agent: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-add ~&#x2F;.ssh&#x2F;id_ed25519
-Identity added: &#x2F;home&#x2F;user&#x2F;.ssh&#x2F;id_ed25519 (your_email@example.com)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
+<p>Add your SSH private key to the ssh-agent: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh-add ~/.ssh/id_ed25519
+Identity added: /home/user/.ssh/id_ed25519 <span class="token punctuation">(</span>your_email@example.com<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <h1 id="添加公钥到github账户">添加公钥到GitHub账户</h1>
 <p>按Tutorial步骤来，点点鼠标复制粘贴即可： <a
 target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">#
 Adding a new SSH key to your GitHub account</a></p>
 <p>拷贝公钥:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ cat ~&#x2F;.ssh&#x2F;id_ed25519.pub
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ <span class="token function">cat</span> ~/.ssh/id_ed25519.pub
 ssh-ed25519 xxxx your_email@example.com<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>然后把公钥通过GitHub配置页添加至账户: Profile Photo -&gt; Settings
 -&gt; SSH and GPG keys -&gt; New SSH keys</p>
@@ -351,14 +351,14 @@ config中的配置相对应：</p>
 <pre class="line-numbers language-none"><code class="language-none">git@githubx1:finisky&#x2F;TextCNN.git<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h1 id="测试连接">测试连接</h1>
 <p>验证上面配置是否生效也很简单，使用下面命令测试即可：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ssh -T git@githubx1
-Hi x1! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ <span class="token function">ssh</span> -T git@githubx1
+Hi x1<span class="token operator">!</span> You<span class="token string">'ve successfully authenticated, but GitHub does not provide shell access.
 
 $ ssh -T git@githubx2
-Hi x2! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+Hi x2! You'</span>ve successfully authenticated, but GitHub does not provide shell access.
 
-$ ssh -T wrongusername@githubx2
-wrongusername@github.com: Permission denied (publickey).<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+$ <span class="token function">ssh</span> -T wrongusername@githubx2
+wrongusername@github.com: Permission denied <span class="token punctuation">(</span>publickey<span class="token punctuation">)</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>如果登录成功，Hi之后会显示对应登录账户的GitHub用户名。</p>
 
     </div>

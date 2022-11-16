@@ -23,12 +23,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.">
+<meta name="description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v">
 <meta property="og:type" content="article">
 <meta property="og:title" content="invalid object doesn&#39;t have additional properties error">
 <meta property="og:url" content="https://finisky.github.io/2019/12/31/k8sinvalidobject/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.">
+<meta property="og:description" content="When I use kubectl to deploy a service: $ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx a SchemeError was raised: EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-12-31T11:30:23.000Z">
 <meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
@@ -152,7 +152,7 @@ Path</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-lin
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">194</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -279,7 +279,7 @@ Path</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-lin
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>When I use kubectl to deploy a service: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl --kubeconfig&#x3D;C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace&#x3D;xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> a SchemeError
+        <p>When I use kubectl to deploy a service: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ kubectl --kubeconfig<span class="token operator">=</span>C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>xxx<span class="token punctuation">\</span>.kube<span class="token punctuation">\</span>config apply -f deploy.yaml --namespace<span class="token operator">=</span>xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> a SchemeError
 was raised: <pre class="line-numbers language-none"><code class="language-none">EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v1beta1.RollingUpdateStatefulSetStrategy): invalid object doesn&#39;t have additional properties<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <span id="more"></span>
 <p>Seems that the issue is caused by kubectl version mismatch: <a
@@ -291,9 +291,9 @@ and Set Up kubectl</a> <pre class="line-numbers language-none"><code class="lang
 locally.</p>
 <h1 id="check-kubeconfig">Check kubeconfig</h1>
 <p>Double check the right kubeconfig is specified and connect to the
-right cluster: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; kubectl.exe version
-Client Version: version.Info&#123;Major:&quot;1&quot;, Minor:&quot;17&quot;, GitVersion:&quot;v1.17.0&quot;, GitCommit:&quot;70132b0f130acc0bed193d9ba59dd186f0e634cf&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2019-12-07T21:20:10Z&quot;, GoVersion:&quot;go1.13.4&quot;, Compiler:&quot;gc&quot;, Platform:&quot;windows&#x2F;amd64&quot;&#125;
-Unable to connect to the server: dial tcp: lookup k8s-cluster.io: no such host<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
+right cluster: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token operator">></span> kubectl.exe version
+Client Version: version.Info<span class="token punctuation">&#123;</span>Major:<span class="token string">"1"</span>, Minor:<span class="token string">"17"</span>, GitVersion:<span class="token string">"v1.17.0"</span>, GitCommit:<span class="token string">"70132b0f130acc0bed193d9ba59dd186f0e634cf"</span>, GitTreeState:<span class="token string">"clean"</span>, BuildDate:<span class="token string">"2019-12-07T21:20:10Z"</span>, GoVersion:<span class="token string">"go1.13.4"</span>, Compiler:<span class="token string">"gc"</span>, Platform:<span class="token string">"windows/amd64"</span><span class="token punctuation">&#125;</span>
+Unable to connect to the server: dial tcp: lookup k8s-cluster.io: no such <span class="token function">host</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="connect-right-server">Connect Right Server</h2>
 <p>The server is displayed after "dial tcp:": "k8s-cluster.io". If
 "Unable to connect to the server" is displayed, you might use a wrong
@@ -304,10 +304,10 @@ Path</h2>
 <p>One may install multiple kubectl on the same machine. If you found
 client version is not matched, consider specifying the right one. You
 can also view the current kubectl by (For Linux, command
-<code>which</code>): <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&gt; Get-Command kubectl.exe
+<code>which</code>): <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token operator">></span> Get-Command kubectl.exe
 CommandType     Name                                               Version    Source
 -----------     ----                                               -------    ------
-Application     kubectl.exe                                        0.0.0.0    C:\Program Files\Docker\Docker\Resources\bin\kubectl.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+Application     kubectl.exe                                        <span class="token number">0.0</span>.0.0    C:<span class="token punctuation">\</span>Program Files<span class="token punctuation">\</span>Docker<span class="token punctuation">\</span>Docker<span class="token punctuation">\</span>Resources<span class="token punctuation">\</span>bin<span class="token punctuation">\</span>kubectl.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>I install the Docker Desktop on Windows and the default kubectl
 location is <code>C:\Program Files\Docker\Docker\Resources\bin\</code>.
 So, download the matched kubectl from <a

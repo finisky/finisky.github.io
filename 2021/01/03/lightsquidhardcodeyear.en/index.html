@@ -151,7 +151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">194</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -284,23 +284,23 @@ maintained since 2009.</p>
 <p>Today, I found lightsquid doesn't work in 2021. Why?</p>
 <span id="more"></span>
 <h1 id="lightsquid-error">Lightsquid Error</h1>
-<p>When I run lightparser, the output looks like this: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ .&#x2F;lightparser.pl access.log.66666
-&gt;&gt;&gt; use file :: &#x2F;var&#x2F;log&#x2F;squid&#x2F;access.log.66666
-run TIME: 1 sec
+<p>When I run lightparser, the output looks like this: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ./lightparser.pl access.log.66666
+<span class="token operator">>></span><span class="token operator">></span> use <span class="token function">file</span> :: /var/log/squid/access.log.66666
+run TIME: <span class="token number">1</span> sec
 LightSquid parser statistic report
 
-                 3312 lines processed (average 3312.00 lines per second)
-                    0 lines parsed
-                    0 lines recovered
-                    0 lines notrecovered
-                    0 lines skiped by bad year
-                 3312 lines skiped by date filter
-                    0 lines skiped by Denied filter
-                    0 lines skiped by skipURL filter
+                 <span class="token number">3312</span> lines processed <span class="token punctuation">(</span>average <span class="token number">3312.00</span> lines per second<span class="token punctuation">)</span>
+                    <span class="token number">0</span> lines parsed
+                    <span class="token number">0</span> lines recovered
+                    <span class="token number">0</span> lines notrecovered
+                    <span class="token number">0</span> lines skiped by bad year
+                 <span class="token number">3312</span> lines skiped by <span class="token function">date</span> filter
+                    <span class="token number">0</span> lines skiped by Denied filter
+                    <span class="token number">0</span> lines skiped by skipURL filter
 
-WARNING !!!!, parsed 0 lines from total : 3312
-please check confiuration !!!!
-may be wrong log format selected ?<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+WARNING <span class="token operator">!</span><span class="token operator">!</span><span class="token operator">!</span><span class="token operator">!</span>, parsed <span class="token number">0</span> lines from total <span class="token builtin class-name">:</span> <span class="token number">3312</span>
+please check confiuration <span class="token operator">!</span><span class="token operator">!</span><span class="token operator">!</span><span class="token operator">!</span>
+may be wrong log <span class="token function">format</span> selected ?<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>Seems that all lines are filtered by the date filter. I double
 checked the log format and make sure it is correct and the same with
 previous days.</p>
@@ -428,25 +428,25 @@ customized filename: <pre class="line-numbers language-perl" data-language="perl
 
 <span class="token keyword">print</span> <span class="token string">">>> use file :: $logpath/$filename\n"</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$debug</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> Apparently, only one argument
 <code>ARGV[0]</code> is applied. If you wrote the command like this and
-not fixed the first issue: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$.&#x2F;lightparser.pl access.log.66666 today<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> or <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$.&#x2F;lightparser.pl today access.log.66666<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> You will
+not fixed the first issue: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$./lightparser.pl access.log.66666 today<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> or <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$./lightparser.pl today access.log.66666<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> You will
 encounter the "parsed 0 lines" error.</p>
 <h1 id="summary">Summary</h1>
 <p>Just fix the first issue and you will make lightsquid works longer
-:-) <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ .&#x2F;lightparser.pl access.log.66666
-&gt;&gt;&gt; use file :: &#x2F;var&#x2F;log&#x2F;squid&#x2F;access.log.66666
-&gt;&gt;&gt; Make Report 20210102 (1577 - log line parsed)
-&gt;&gt;&gt; Make Report 20210103 (1572 - log line parsed)
-run TIME: 1 sec
+:-) <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ ./lightparser.pl access.log.66666
+<span class="token operator">>></span><span class="token operator">></span> use <span class="token function">file</span> :: /var/log/squid/access.log.66666
+<span class="token operator">>></span><span class="token operator">></span> Make Report <span class="token number">20210102</span> <span class="token punctuation">(</span><span class="token number">1577</span> - log line parsed<span class="token punctuation">)</span>
+<span class="token operator">>></span><span class="token operator">></span> Make Report <span class="token number">20210103</span> <span class="token punctuation">(</span><span class="token number">1572</span> - log line parsed<span class="token punctuation">)</span>
+run TIME: <span class="token number">1</span> sec
 LightSquid parser statistic report
 
-                 3312 lines processed (average 3312.00 lines per second)
-                 3149 lines parsed
-                    0 lines recovered
-                    0 lines notrecovered
-                    0 lines skiped by bad year
-                    0 lines skiped by date filter
-                  163 lines skiped by Denied filter
-                    0 lines skiped by skipURL filter
+                 <span class="token number">3312</span> lines processed <span class="token punctuation">(</span>average <span class="token number">3312.00</span> lines per second<span class="token punctuation">)</span>
+                 <span class="token number">3149</span> lines parsed
+                    <span class="token number">0</span> lines recovered
+                    <span class="token number">0</span> lines notrecovered
+                    <span class="token number">0</span> lines skiped by bad year
+                    <span class="token number">0</span> lines skiped by <span class="token function">date</span> filter
+                  <span class="token number">163</span> lines skiped by Denied filter
+                    <span class="token number">0</span> lines skiped by skipURL filter
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>Fixed version: https://github.com/finisky/lightsquid-1.8.1</p>
 
@@ -468,10 +468,10 @@ LightSquid parser statistic report
       <div class="popular-posts-title"><a href="/2020/03/31/cleanuptmp.en/" rel="bookmark">Clean .com.google.Chrome.* in /tmp</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/08/29/googlebbr/" rel="bookmark">Linux服务器使用BBR提升网速</a></div>
+      <div class="popular-posts-title"><a href="/git-is-case-sensitive-while-file-system-is-not/" rel="bookmark">Windows大小写不敏感导致的git冲突</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/multiplegithubaccountsononemachine.en/" rel="bookmark">Confgure Multiple Github Accounts On One Machine</a></div>
+      <div class="popular-posts-title"><a href="/2020/08/29/googlebbr/" rel="bookmark">Linux服务器使用BBR提升网速</a></div>
     </li>
   </ul>
 

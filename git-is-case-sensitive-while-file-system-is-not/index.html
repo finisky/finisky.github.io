@@ -23,29 +23,28 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content=".bashrc不起作用 按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
+<meta name="description" content="来个好玩的，遇到过 git reset --hard 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo: D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git Cloning into &#39;git-case-d">
 <meta property="og:type" content="article">
-<meta property="og:title" content=".bashrc不起作用与bash初始化文件执行顺序">
-<meta property="og:url" content="https://finisky.github.io/2020/03/29/bashstartupfiles/index.html">
+<meta property="og:title" content="Windows大小写不敏感导致的git冲突">
+<meta property="og:url" content="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content=".bashrc不起作用 按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动source .bashrc，在~&#x2F;目录增加.bash_profile或.profile解决：">
+<meta property="og:description" content="来个好玩的，遇到过 git reset --hard 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo: D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git Cloning into &#39;git-case-d">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-03-29T03:55:50.000Z">
-<meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
+<meta property="article:published_time" content="2022-11-15T11:01:30.000Z">
+<meta property="article:modified_time" content="2022-11-16T02:11:48.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
-<meta property="article:tag" content="Ubuntu">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/2020/03/29/bashstartupfiles/">
+<link rel="canonical" href="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/03/29/bashstartupfiles/","path":"/2020/03/29/bashstartupfiles/","title":".bashrc不起作用与bash初始化文件执行顺序"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/","path":"git-is-case-sensitive-while-file-system-is-not/","title":"Windows大小写不敏感导致的git冲突"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>.bashrc不起作用与bash初始化文件执行顺序 | Finisky Garden</title>
+<title>Windows大小写不敏感导致的git冲突 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -132,9 +131,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bashrc%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">.bashrc不起作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bash_profile-.bashrc-.bash_login-.profile%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">.bash_profile
-.bashrc .bash_login .profile执行顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash-startup%E6%96%87%E4%BB%B6%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">2.1.</span> <span class="nav-text">bash startup文件执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interactive-shell%E5%92%8Clogin-shell"><span class="nav-number">2.2.</span> <span class="nav-text">interactive shell和login
-shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bashrc%E5%8F%88%E5%9C%A8%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%A2%AB%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">.bashrc又在什么时候被调用？</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E5%90%8D%E6%96%87%E4%BB%B6%E5%86%B2%E7%AA%81"><span class="nav-number">1.1.</span> <span class="nav-text">同名文件冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%90%8C%E5%90%8D%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-number">1.2.</span> <span class="nav-text">合并同名文件夹</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">2.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
               <p class="site-author-name">扫码关注公众号</p>
@@ -206,7 +203,7 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/03/29/bashstartupfiles/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -219,7 +216,7 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          .bashrc不起作用与bash初始化文件执行顺序
+          Windows大小写不敏感导致的git冲突
         </h1>
 
         <div class="post-meta-container">
@@ -230,14 +227,14 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2020-03-29 11:55:50" itemprop="dateCreated datePublished" datetime="2020-03-29T11:55:50+08:00">2020-03-29</time>
+      <time title="Created: 2022-11-15 19:01:30" itemprop="dateCreated datePublished" datetime="2022-11-15T19:01:30+08:00">2022-11-15</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+        <time title="Modified: 2022-11-16 10:11:48" itemprop="dateModified" datetime="2022-11-16T10:11:48+08:00">2022-11-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -258,8 +255,8 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/2020/03/29/bashstartupfiles/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/03/29/bashstartupfiles/" itemprop="commentCount"></span>
+    <a title="waline" href="/git-is-case-sensitive-while-file-system-is-not/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/git-is-case-sensitive-while-file-system-is-not/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -269,7 +266,7 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/2020/03/29/bashstartupfiles/"></span>
+      <span class="waline-pageview-count" data-path="/git-is-case-sensitive-while-file-system-is-not/"></span>
     </span>
   
 </div>
@@ -281,93 +278,114 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="bashrc不起作用">.bashrc不起作用</h1>
-<p>按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动<code>source .bashrc</code>，在<code>~/</code>目录增加.bash_profile或.profile解决：</p>
+        <p>来个好玩的，遇到过 <code>git reset --hard</code>
+来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git
+Cloning into &#39;git-case-demo&#39;...
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11&#x2F;11), done.
+remote: Compressing objects: 100% (6&#x2F;6), done.
+remote: Total 11 (delta 0), reused 8 (delta 0), pack-reused 0
+Unpacking objects: 100% (11&#x2F;11), 1.85 KiB | 126.00 KiB&#x2F;s, done.
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
+
+  &#39;File.txt&#39;
+  &#39;file.txt&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后就会发现刚拉的<code>main</code>分支都不干净(橙色)，而且<code>git reset --hard</code>也失效了，仔细看才发现，每reset一次，会在大写
+<code>File.txt</code> 和小写 <code>file.txt</code>
+之间切换，神奇不？</p>
 <span id="more"></span>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"> ~&#x2F;.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~&#x2F;.bash_profile or ~&#x2F;.bash_login
-# exists.
-# see &#x2F;usr&#x2F;share&#x2F;doc&#x2F;bash&#x2F;examples&#x2F;startup-files for examples.
-# the files are located in the bash-doc package.
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/gitresetnotworking.png" /></p>
+<p>在github上浏览 <a
+target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">repo</a>，会发现文件目录与本地的不同：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/gitviewdiff.png" /></p>
+<p>github上根目录有两个txt <code>File.txt</code> 和
+<code>file.txt</code> ，两个文件夹 <code>Folder</code> 和
+<code>folder</code>，而本地只有一个<code>file.txt</code> 和一个
+<code>Folder</code> 。而这也是 <code>git reset --hard</code>
+失效的根本原因：</p>
+<p><strong>git是大小写敏感的，而Windows系统是大小写不敏感的</strong>。</p>
+<p>所以这个问题只会出现在Windows上使用git的情况，Windows将
+<code>File.txt</code> 和 <code>file.txt</code>
+认为是同一文件，所以reset失效了。Linux/Mac与git一致，大小写敏感，所以不存在这样的问题。<code>Folder</code>
+与 <code>folder</code>
+也是同理，在Windows上这两个文件夹会被合并成同一个。</p>
+<p>这个问题常常会在配置CICD时发现，本地是Windows环境，而部署编译的机器是Linux，会提示找不到文件，但在Windows环境中看文件明明是存在的……</p>
+<h1 id="解决方案">解决方案</h1>
+<p>在Linux/Mac上把文件统一当然可以解决问题，但如果手边没有Linux怎么办？</p>
+<p>git是大小写敏感的，因此可以通过 <code>git mv</code> 解决问题。</p>
+<h2 id="同名文件冲突">同名文件冲突</h2>
+<p>假设保留小写文件，将大写文件覆盖之:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> <span class="token function">mv</span> File.txt file.txt
 
-# the default umask is set in &#x2F;etc&#x2F;profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
+<span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
+On branch fixconflicts
+Changes to be committed:
+  <span class="token punctuation">(</span>use <span class="token string">"git restore --staged &lt;file>..."</span> to unstage<span class="token punctuation">)</span>
+        deleted:    File.txt
+        modified:   file.txt<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注意，直接在Windows中删除 <code>File.txt</code>
+是不行的，两个文件都会被删除:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
+On branch fixconflicts
+Changes not staged <span class="token keyword">for</span> commit:
+  <span class="token punctuation">(</span>use <span class="token string">"git add/rm &lt;file>..."</span> to update what will be committed<span class="token punctuation">)</span>
+  <span class="token punctuation">(</span>use <span class="token string">"git restore &lt;file>..."</span> to discard changes <span class="token keyword">in</span> working directory<span class="token punctuation">)</span>
+        deleted:    File.txt
+        deleted:    file.txt
 
-# if running bash
-if [ -n &quot;$BASH_VERSION&quot; ]; then
-    # include .bashrc if it exists
-    if [ -f &quot;$HOME&#x2F;.bashrc&quot; ]; then
-        . &quot;$HOME&#x2F;.bashrc&quot;
-    fi
-fi
+no changes added to commit <span class="token punctuation">(</span>use <span class="token string">"git add"</span> and/or <span class="token string">"git commit -a"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>最后，commit change，分支上就干净了。</p>
+<h2 id="合并同名文件夹">合并同名文件夹</h2>
+<p>可以通过两次 <code>git mv</code> 完成:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">git</span> <span class="token function">mv</span> Folder temp
+$ <span class="token function">git</span> <span class="token function">mv</span> temp folder<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>先将其重命名成完全不同的文件夹，再合并文件夹内容即可：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> <span class="token function">mv</span> Folder temp
 
-# set PATH so it includes user&#39;s private bin if it exists
-if [ -d &quot;$HOME&#x2F;bin&quot; ] ; then
-    PATH&#x3D;&quot;$HOME&#x2F;bin:$PATH&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>但问题的根源在于.bash_profile .bashrc .bash_login
-.profile几个文件的执行顺序。</p>
-<h1 id="bash_profile-.bashrc-.bash_login-.profile执行顺序">.bash_profile
-.bashrc .bash_login .profile执行顺序</h1>
-<h2 id="bash-startup文件执行顺序">bash startup文件执行顺序</h2>
-<p>man是个好东西，<code>man bash</code>:</p>
-<blockquote><p>When bash is invoked as an interactive login shell, or as a
-non-interactive shell with the --login option, it first reads and
-executes commands from the file /etc/profile, if that file exists. After
-reading that file, it looks for ~/.bash_profile, ~/.bash_login, and
-~/.profile, in that order, and reads and executes commands from the
-first one that exists and is readable. The --noprofile option may be
-used when the shell is started to inhibit this behavior.</p>
-</blockquote>
-<p>可见这些文件的执行顺序如下：</p>
-<ul>
-<li><code>/etc/profile</code></li>
-<li><code>~/.bash_profile</code></li>
-<li><code>~/.bash_login</code></li>
-<li><code>~/.profile</code></li>
-</ul>
-<p>但同时需要注意前提条件是bash是<code>interactive login shell</code>，那什么是interactive
-shell，什么是login shell?</p>
-<h2 id="interactive-shell和login-shell">interactive shell和login
-shell</h2>
-<blockquote><p>A login shell is one whose first character of argument zero is a -,
-or one started with the --login option.</p>
-<p>An interactive shell is one started without non-option arguments
-(unless -s is specified) and without the -c option whose standard input
-and error are both connected to terminals (as determined by isatty(3)),
-or one started with the -i option. PS1 is set and $- includes i if bash
-is interactive, allowing a shell script or a startup file to test this
-state.</p>
-</blockquote>
-<p>上面的定义虽然字字都能看懂，但按字面理解起来比较困难。通俗地来说，interactive
-shell就是需要人机交互的，比如执行一个脚本就不需要人机交互。login
-shell就是是否需要登录，比如本地再开一个terminal就不需要再次登录。</p>
-<p>参考如下实例对二者排列组合： <a
-target="_blank" rel="noopener" href="https://askubuntu.com/questions/879364/differentiate-interactive-login-and-non-interactive-non-login-shell">#
-Differentiate Interactive login and non-interactive non-login
-shell</a></p>
-<ul>
-<li>interactive login shell: 远程登录，如ssh</li>
-<li>interactive non-login shell: 本地起一个bash</li>
-<li>non-interactive non-login shell: 运行脚本</li>
-<li>non-interactive login shell: 少见</li>
-</ul>
-<p>可以用如下命令测试当前环境是什么样的bash: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: echo $-; shopt login_shell
-himBHs
-login_shell     on<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-第一行中如果含有字母i则是iteractive
-shell；第二行显而易见。上述执行结果是ssh，可见ssh是iteractive login
-shell。</p>
-<h2 id="bashrc又在什么时候被调用">.bashrc又在什么时候被调用？</h2>
-<blockquote><p>When an interactive shell that is not a login shell is started, bash
-reads and executes commands from /etc/bash.bashrc and ~/.bashrc, if
-these files exist.</p>
-</blockquote>
-<p>好了，因为putty通过ssh登录，因此它是iteractive login
-shell，所以不会调用.bashrc，因此开头增加.bash_profile或.profile文件的目的就是调用.bashrc。</p>
-<p><strong>Tips:
-Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之间有一定的继承和渊源，有兴趣可以了解一下。只不过bash在当前的发行版中最为常见。</strong></p>
+<span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
+On branch fixconflicts
+Changes to be committed:
+  <span class="token punctuation">(</span>use <span class="token string">"git restore --staged &lt;file>..."</span> to unstage<span class="token punctuation">)</span>
+        renamed:    Folder/file2.txt -<span class="token operator">></span> temp/file2.txt
+
+Changes not staged <span class="token keyword">for</span> commit:
+  <span class="token punctuation">(</span>use <span class="token string">"git add/rm &lt;file>..."</span> to update what will be committed<span class="token punctuation">)</span>
+  <span class="token punctuation">(</span>use <span class="token string">"git restore &lt;file>..."</span> to discard changes <span class="token keyword">in</span> working directory<span class="token punctuation">)</span>
+        deleted:    folder/file1.txt
+
+Untracked files:
+  <span class="token punctuation">(</span>use <span class="token string">"git add &lt;file>..."</span> to include <span class="token keyword">in</span> what will be committed<span class="token punctuation">)</span>
+        temp/file1.txt
+
+
+<span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> <span class="token function">mv</span> temp folder
+
+<span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
+On branch fixconflicts
+Changes to be committed:
+  <span class="token punctuation">(</span>use <span class="token string">"git restore --staged &lt;file>..."</span> to unstage<span class="token punctuation">)</span>
+        renamed:    Folder/file2.txt -<span class="token operator">></span> folder/file2.txt<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="demo">Demo</h1>
+<p>Demo Repo: <a
+target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">https://github.com/finisky/git-case-demo</a></p>
+<p>其中fixconflicts分支已按本文解决了问题，供参考。</p>
+<h1 id="参考">参考</h1>
+<p><a
+target="_blank" rel="noopener" href="https://www.hanselman.com/blog/git-is-casesensitive-and-your-filesystem-may-not-be-weird-folder-merging-on-windows">#
+Git is case-sensitive and your filesystem may not be - Weird folder
+merging on Windows</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/49804345/git-on-windows-merging-2-directories-with-the-same-name-but-different-case">#
+Git on Windows: "merging" 2 directories with the same name but different
+case</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/devops/repos/git/case-sensitivity?view=azure-devops">#
+Git case sensitivity</a></p>
 
     </div>
 
@@ -378,6 +396,9 @@ Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之�
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/29/bashstartupfiles/" rel="bookmark">.bashrc不起作用与bash初始化文件执行顺序</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/07/22/cleanuplinuxdisk/" rel="bookmark">清理Linux的磁盘使用空间</a></div>
     </li>
     <li class="popular-posts-item">
@@ -387,10 +408,7 @@ Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之�
       <div class="popular-posts-title"><a href="/2020/08/29/googlebbr/" rel="bookmark">Linux服务器使用BBR提升网速</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/multiplegithubaccountsononemachine.en/" rel="bookmark">Confgure Multiple Github Accounts On One Machine</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/multiplegithubaccountsononemachine/" rel="bookmark">同一机器配置多个GitHub账号</a></div>
+      <div class="popular-posts-title"><a href="/2021/01/03/lightsquidhardcodeyear.en/" rel="bookmark">Lightsquid Stop Working in 2021</a></div>
     </li>
   </ul>
 
@@ -398,21 +416,17 @@ Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之�
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Linux/" rel="tag"># Linux</a>
-              <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/03/28/fluorescentlamptoled/" rel="prev" title="荧光灯改装LED灯板">
-                  <i class="fa fa-chevron-left"></i> 荧光灯改装LED灯板
+                <a href="/migrate-github-pages-by-301-redirects/" rel="prev" title="用301重定向迁移 GitHub Pages">
+                  <i class="fa fa-chevron-left"></i> 用301重定向迁移 GitHub Pages
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/03/29/tmpfolderexplosion.en/" rel="next" title="A start job is running for Create Volatile Files and Directories">
-                  A start job is running for Create Volatile Files and Directories <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -466,7 +480,7 @@ Linux中有许多不同版本的shell，如sh、csh、tcsh、zsh等。它们之�
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/2020/03/29/bashstartupfiles/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/git-is-case-sensitive-while-file-system-is-not/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {

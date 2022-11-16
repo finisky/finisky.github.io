@@ -156,7 +156,7 @@ Error checking if rs member is up错误</span></a></li></ol></li><li class="nav-
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">194</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -426,12 +426,12 @@ alt="Updating Deployment Details" />
 <code>userdb</code>还会重启。如果出现service匹配不到pod的情况，参考<a
 href="/2020/12/12/mongodbomexposeservices/">第三部分</a>提到暴露service之后要把<code>controller-revision-hash</code>从service的<code>spec.selector中</code>删除。</p>
 <p>完毕之后，Processes的界面TLS会变为Enabled。如果<code>kubectl exec</code>查看<code>userdb</code>对应的pod，可以发现证书保存在<code>/mongodb-automation/</code>：
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">I have no name!@userdb-0:&#x2F;$ ls -l &#x2F;mongodb-automation&#x2F;
-total 8
-lrwxrwxrwx 1 2000 root   45 Dec 11 06:25 ca.pem -&gt; &#x2F;var&#x2F;lib&#x2F;mongodb-automation&#x2F;secrets&#x2F;ca&#x2F;ca-pem
-drwxr-xr-x 2 2000 root 4096 Dec 11 06:25 files
--rw-r--r-- 1 2000 root    3 Dec 11 06:25 mongodb-mms-automation-agent.pid
-lrwxrwxrwx 1 2000 root   54 Dec 11 06:25 server.pem -&gt; &#x2F;var&#x2F;lib&#x2F;mongodb-automation&#x2F;secrets&#x2F;certs&#x2F;userdb-0-pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">I have no name<span class="token operator">!</span>@userdb-0:/$ <span class="token function">ls</span> -l /mongodb-automation/
+total <span class="token number">8</span>
+lrwxrwxrwx <span class="token number">1</span> <span class="token number">2000</span> root   <span class="token number">45</span> Dec <span class="token number">11</span> 06:25 ca.pem -<span class="token operator">></span> /var/lib/mongodb-automation/secrets/ca/ca-pem
+drwxr-xr-x <span class="token number">2</span> <span class="token number">2000</span> root <span class="token number">4096</span> Dec <span class="token number">11</span> 06:25 files
+-rw-r--r-- <span class="token number">1</span> <span class="token number">2000</span> root    <span class="token number">3</span> Dec <span class="token number">11</span> 06:25 mongodb-mms-automation-agent.pid
+lrwxrwxrwx <span class="token number">1</span> <span class="token number">2000</span> root   <span class="token number">54</span> Dec <span class="token number">11</span> 06:25 server.pem -<span class="token operator">></span> /var/lib/mongodb-automation/secrets/certs/userdb-0-pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2
 id="error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up错误"><code>Error calling ComputeState</code>,
 <code>Error dialing to connParams</code>,
@@ -449,23 +449,23 @@ href="/2020/12/12/mongodbomselfsignedcertificates/">openssl生成自签名CA证�
 <p>成功的话，现在再用mongo
 shell连接数据库，注意要打开TLS并指定<code>--tlsCAFile</code>。这里也有一点小技巧，mongodb的connection
 string不支持指定<code>tlsCAFile</code>，所以要采用命令行和connection
-string相结合的用法： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F; --tls --tlsCAFile rootca.crt
+string相结合的用法： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
 MongoDB shell version v4.4.2
-connecting to: mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
-Implicit session: session &#123; &quot;id&quot; : UUID(&quot;fcbaa78a-21dd-472f-a84f-bf3435bf9088&quot;) &#125;
-MongoDB server version: 4.2.2
-WARNING: shell and server versions do not match
+connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class="token operator">=</span>disabled<span class="token operator">&amp;</span><span class="token assign-left variable">gssapiServiceName</span><span class="token operator">=</span>mongodb
+Implicit session: session <span class="token punctuation">&#123;</span> <span class="token string">"id"</span> <span class="token builtin class-name">:</span> UUID<span class="token punctuation">(</span><span class="token string">"fcbaa78a-21dd-472f-a84f-bf3435bf9088"</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span>
+MongoDB server version: <span class="token number">4.2</span>.2
+WARNING: shell and server versions <span class="token keyword">do</span> not match
 ---
 The server generated these startup warnings when booting:
-2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten]
-2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
-2020-12-11T06:25:58.940+0000 I  STORAGE  [initandlisten] **          See http:&#x2F;&#x2F;dochub.mongodb.org&#x2F;core&#x2F;prodnotes-filesystem
-2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten]
-2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
-2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
-2020-12-11T06:26:00.201+0000 I  CONTROL  [initandlisten]
+<span class="token number">2020</span>-12-11T06:25:58.940+0000 I  STORAGE  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span>
+<span class="token number">2020</span>-12-11T06:25:58.940+0000 I  STORAGE  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span> ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+<span class="token number">2020</span>-12-11T06:25:58.940+0000 I  STORAGE  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span> **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+<span class="token number">2020</span>-12-11T06:26:00.201+0000 I  CONTROL  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span>
+<span class="token number">2020</span>-12-11T06:26:00.201+0000 I  CONTROL  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span> ** WARNING: Access control is not enabled <span class="token keyword">for</span> the database.
+<span class="token number">2020</span>-12-11T06:26:00.201+0000 I  CONTROL  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span> **          Read and <span class="token function">write</span> access to data and configuration is unrestricted.
+<span class="token number">2020</span>-12-11T06:26:00.201+0000 I  CONTROL  <span class="token punctuation">[</span>initandlisten<span class="token punctuation">]</span>
 ---
-MongoDB Enterprise userdb:PRIMARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+MongoDB Enterprise userdb:PRIMARY<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <p>最后的<code>PRIMARY</code>说明cluster配置成功！用<code>rs.conf()</code>确认一下horizons:
 <pre class="line-numbers language-none"><code class="language-none">MongoDB Enterprise userdb:PRIMARY&gt; rs.conf()
 &#123;
@@ -514,13 +514,13 @@ MongoDB Enterprise userdb:PRIMARY&gt;<span aria-hidden="true" class="line-number
 <img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbreplicasetdone.png"
 alt="UserDB Deployment Completed" /></p>
-<p>此时再用mongo shell登录不再有Startup Warnings: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F; --tls --tlsCAFile rootca.crt
+<p>此时再用mongo shell登录不再有Startup Warnings: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
 MongoDB shell version v4.4.2
-connecting to: mongodb:&#x2F;&#x2F;userdb0.com:27017,userdb1.com:27017,userdb2.com:27017&#x2F;?compressors&#x3D;disabled&amp;gssapiServiceName&#x3D;mongodb
-Implicit session: session &#123; &quot;id&quot; : UUID(&quot;5063023a-b76d-4d03-923f-18332e2e7cc9&quot;) &#125;
-MongoDB server version: 4.2.2
-WARNING: shell and server versions do not match
-MongoDB Enterprise userdb:PRIMARY&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class="token operator">=</span>disabled<span class="token operator">&amp;</span><span class="token assign-left variable">gssapiServiceName</span><span class="token operator">=</span>mongodb
+Implicit session: session <span class="token punctuation">&#123;</span> <span class="token string">"id"</span> <span class="token builtin class-name">:</span> UUID<span class="token punctuation">(</span><span class="token string">"5063023a-b76d-4d03-923f-18332e2e7cc9"</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span>
+MongoDB server version: <span class="token number">4.2</span>.2
+WARNING: shell and server versions <span class="token keyword">do</span> not match
+MongoDB Enterprise userdb:PRIMARY<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h1 id="总结">总结</h1>
 <p>本系列文章描述了如何部署MongoDB Ops Manager，并使用Ops
 Manager搭建用户MongoDB数据库的详细流程。中间步骤繁多，细节之处难免有疏漏，可在评论中留言指出。</p>

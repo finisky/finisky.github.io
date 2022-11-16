@@ -148,7 +148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">194</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -360,11 +360,11 @@ command execution timeout:</p>
 get its size by the above command. Put it together, the final script
 (modify <code>ns</code> and the <code>Uuid</code> field according to
 your scenario):</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">var ns &#x3D; &quot;&quot;;
-db.getSiblingDB(&quot;config&quot;).chunks.find(&#123;ns : ns&#125;).forEach(function(chunk) &#123;
-  chunkSize &#x3D; db.runCommand(&#123; dataSize: ns, keyPattern: &#123; &quot;Uuid&quot;: 1 &#125;, min: &#123; &quot;Uuid&quot;: chunk.min.Uuid &#125;, max: &#123; &quot;Uuid&quot;: chunk.max.Uuid &#125;, maxTimeMS:1000 &#125;)
-  print(chunk.shard + &quot;  &quot; + chunk.min.Uuid + &quot;: &quot; + tojson(chunkSize.size&#x2F;1024&#x2F;1024) + &quot;MB&quot;)
-  &#125;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">var ns <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+db.getSiblingDB<span class="token punctuation">(</span><span class="token string">"config"</span><span class="token punctuation">)</span>.chunks.find<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>ns <span class="token builtin class-name">:</span> ns<span class="token punctuation">&#125;</span><span class="token punctuation">)</span>.forEach<span class="token punctuation">(</span>function<span class="token punctuation">(</span>chunk<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  chunkSize <span class="token operator">=</span> db.runCommand<span class="token punctuation">(</span><span class="token punctuation">&#123;</span> dataSize: ns, keyPattern: <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token builtin class-name">:</span> <span class="token number">1</span> <span class="token punctuation">&#125;</span>, min: <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token builtin class-name">:</span> chunk.min.Uuid <span class="token punctuation">&#125;</span>, max: <span class="token punctuation">&#123;</span> <span class="token string">"Uuid"</span><span class="token builtin class-name">:</span> chunk.max.Uuid <span class="token punctuation">&#125;</span>, maxTimeMS:1000 <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+  print<span class="token punctuation">(</span>chunk.shard + <span class="token string">"  "</span> + chunk.min.Uuid + <span class="token string">": "</span> + tojson<span class="token punctuation">(</span>chunkSize.size/1024/1024<span class="token punctuation">)</span> + <span class="token string">"MB"</span><span class="token punctuation">)</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>Sample output: <pre class="line-numbers language-none"><code class="language-none">mongo-0  00020DFCE1B64BE28098133E09F0DFF9: 27.868586540222168MB
 mongo-0  020FC0A3F7DC456D8CA48787A22BFEF5: 0.03055095672607422MB
 mongo-1  02109DCC630C4EB68D890BB1C664C732: 2.049802780151367MB

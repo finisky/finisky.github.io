@@ -6,7 +6,7 @@
   <link href="https://finisky.github.io/atom.xml" rel="self"/>
   
   <link href="https://finisky.github.io/"/>
-  <updated>2022-11-14T16:14:36.000Z</updated>
+  <updated>2022-11-16T02:11:48.000Z</updated>
   <id>https://finisky.github.io/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Windows大小写不敏感导致的git冲突</title>
+    <link href="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/"/>
+    <id>https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/</id>
+    <published>2022-11-15T11:01:30.000Z</published>
+    <updated>2022-11-16T02:11:48.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;来个好玩的，遇到过 &lt;code&gt;git reset --hard&lt;/code&gt;
+来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-shell&quot; data-language=&quot;shell&quot;&gt;&lt;code class=&quot;language-shell&quot;&gt;D:\$ git clone https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;finisky&amp;#x2F;git-case-demo.git
+Cloning into &amp;#39;git-case-demo&amp;#39;...
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11&amp;#x2F;11), done.
+remote: Compressing objects: 100% (6&amp;#x2F;6), done.
+remote: Total 11 (delta 0), reused 8 (delta 0), pack-reused 0
+Unpacking objects: 100% (11&amp;#x2F;11), 1.85 KiB | 126.00 KiB&amp;#x2F;s, done.
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
+
+  &amp;#39;File.txt&amp;#39;
+  &amp;#39;file.txt&amp;#39;&lt;span aria-hidden=&quot;true&quot; class=&quot;line-numbers-rows&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后就会发现刚拉的&lt;code&gt;main&lt;/code&gt;分支都不干净(橙色)，而且&lt;code&gt;git reset --hard&lt;/code&gt;也失效了，仔细看才发现，每reset一次，会在大写
+&lt;code&gt;File.txt&lt;/code&gt; 和小写 &lt;code&gt;file.txt&lt;/code&gt;
+之间切换，神奇不？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://finisky.github.io/categories/Linux/"/>
+    
+    
+    <category term="Linux" scheme="https://finisky.github.io/tags/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title>用301重定向迁移 GitHub Pages</title>
@@ -548,47 +584,6 @@ Memory，并在之后的对话中同时考虑双方的Persona Memory进行更好
     
     
     <category term="Product" scheme="https://finisky.github.io/tags/Product/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hexo去LeanCloud依赖</title>
-    <link href="https://finisky.github.io/hexormleancloud/"/>
-    <id>https://finisky.github.io/hexormleancloud/</id>
-    <published>2022-08-08T16:26:09.000Z</published>
-    <updated>2022-08-29T03:55:42.000Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;7.19日，收到了LeanCloud的邮件，大意如下：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务&lt;/p&gt;
-&lt;p&gt;为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8
-月 1
-日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;静态网站的状态存取是个痛点。好消息是本站使用Hexo
-NexT主题，天然集成了文章阅读量的功能，后端存储是LeanCloud，仅需配置&lt;code&gt;app_id&lt;/code&gt;与&lt;code&gt;app_key&lt;/code&gt;。而评论系统是另一个坑，一年前
-&lt;a
-href=&quot;/hexowaline&quot;&gt;切换到了Waline&lt;/a&gt;，一举攻克了这个难题，但当时Waline也依赖于LeanCloud。&lt;/p&gt;
-&lt;p&gt;这次LeanCloud国际版共享域名不向中国大陆提供服务改动，对Waline无影响，因为Waline的前端部署在Vercel海外节点。&lt;strong&gt;但如果网站面向大陆用户，文章阅读量统计会受影响。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;因此，考虑将本站去LeanCloud依赖。方法很简单，将文章阅读量切换至Waline，同时Waline的后端存储改用MongoDB。去依赖需要你有一台服务器，自建MongoDB，或者直接使用
-&lt;a href=&quot;https://www.mongodb.com/pricing&quot;&gt;MongoDB Atlas的免费版&lt;/a&gt;
-。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/categories/Hexo/"/>
-    
-    
-    <category term="Hexo" scheme="https://finisky.github.io/tags/Hexo/"/>
-    
-    <category term="MongoDB" scheme="https://finisky.github.io/tags/MongoDB/"/>
-    
-    <category term="NexT" scheme="https://finisky.github.io/tags/NexT/"/>
-    
-    <category term="Hexo Extension" scheme="https://finisky.github.io/tags/Hexo-Extension/"/>
-    
-    <category term="Serverless" scheme="https://finisky.github.io/tags/Serverless/"/>
     
   </entry>
   
