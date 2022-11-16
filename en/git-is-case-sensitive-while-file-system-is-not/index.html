@@ -23,28 +23,28 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="来个好玩的，遇到过 git reset --hard 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo: D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git Cloning into &#39;git-case-demo&#39;... remote: Enumerat">
+<meta name="description" content="git reset --hard not working: everytime you reset, the file is flipped between file.txt and File.txt, really weird... It&#39;s not a joke, just clone this repo on Windows and you can reproduce it: D:\$ gi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows大小写不敏感导致的git冲突">
-<meta property="og:url" content="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/index.html">
+<meta property="og:title" content="Git reset --hard Not Working: File System Is Not Case Sensitive">
+<meta property="og:url" content="https://finisky.github.io/en/git-is-case-sensitive-while-file-system-is-not/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="来个好玩的，遇到过 git reset --hard 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo: D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git Cloning into &#39;git-case-demo&#39;... remote: Enumerat">
+<meta property="og:description" content="git reset --hard not working: everytime you reset, the file is flipped between file.txt and File.txt, really weird... It&#39;s not a joke, just clone this repo on Windows and you can reproduce it: D:\$ gi">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-11-15T11:01:30.000Z">
-<meta property="article:modified_time" content="2022-11-16T02:11:48.000Z">
+<meta property="article:published_time" content="2022-11-16T02:12:06.000Z">
+<meta property="article:modified_time" content="2022-11-16T05:57:40.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/">
+<link rel="canonical" href="https://finisky.github.io/en/git-is-case-sensitive-while-file-system-is-not/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/","path":"git-is-case-sensitive-while-file-system-is-not/","title":"Windows大小写不敏感导致的git冲突"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/en/git-is-case-sensitive-while-file-system-is-not/","path":"/en/git-is-case-sensitive-while-file-system-is-not/","title":"Git reset --hard Not Working: File System Is Not Case Sensitive"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Windows大小写不敏感导致的git冲突 | Finisky Garden</title>
+<title>Git reset --hard Not Working: File System Is Not Case Sensitive | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -131,7 +131,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E5%90%8D%E6%96%87%E4%BB%B6%E5%86%B2%E7%AA%81"><span class="nav-number">1.1.</span> <span class="nav-text">同名文件冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%90%8C%E5%90%8D%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-number">1.2.</span> <span class="nav-text">合并同名文件夹</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">2.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#solution"><span class="nav-number">1.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fix-case-insensitive-files"><span class="nav-number">1.1.</span> <span class="nav-text">Fix Case-Insensitive Files</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#merge-case-insensitive-folders"><span class="nav-number">1.2.</span> <span class="nav-text">Merge Case-Insensitive
+Folders</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">2.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
               <p class="site-author-name">扫码关注公众号</p>
@@ -203,7 +204,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/en/git-is-case-sensitive-while-file-system-is-not/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -216,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows大小写不敏感导致的git冲突
+          Git reset --hard Not Working: File System Is Not Case Sensitive
         </h1>
 
         <div class="post-meta-container">
@@ -226,16 +227,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2022-11-15 19:01:30" itemprop="dateCreated datePublished" datetime="2022-11-15T19:01:30+08:00">2022-11-15</time>
+      <time title="Created: 2022-11-16 10:12:06 / Modified: 13:57:40" itemprop="dateCreated datePublished" datetime="2022-11-16T10:12:06+08:00">2022-11-16</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-11-16 10:11:48" itemprop="dateModified" datetime="2022-11-16T10:11:48+08:00">2022-11-16</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -255,8 +250,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/git-is-case-sensitive-while-file-system-is-not/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/git-is-case-sensitive-while-file-system-is-not/" itemprop="commentCount"></span>
+    <a title="waline" href="/en/git-is-case-sensitive-while-file-system-is-not/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/en/git-is-case-sensitive-while-file-system-is-not/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,7 +261,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/git-is-case-sensitive-while-file-system-is-not/"></span>
+      <span class="waline-pageview-count" data-path="/en/git-is-case-sensitive-while-file-system-is-not/"></span>
     </span>
   
 </div>
@@ -278,48 +273,60 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>来个好玩的，遇到过 <code>git reset --hard</code>
-来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">D:<span class="token punctuation">\</span>$ <span class="token function">git</span> clone https://github.com/finisky/git-case-demo.git
-Cloning into <span class="token string">'git-case-demo'</span><span class="token punctuation">..</span>.
-remote: Enumerating objects: <span class="token number">11</span>, done.
-remote: Counting objects: <span class="token number">100</span>% <span class="token punctuation">(</span><span class="token number">11</span>/11<span class="token punctuation">)</span>, done.
-remote: Compressing objects: <span class="token number">100</span>% <span class="token punctuation">(</span><span class="token number">6</span>/6<span class="token punctuation">)</span>, done.
-remote: Total <span class="token number">11</span> <span class="token punctuation">(</span>delta <span class="token number">0</span><span class="token punctuation">)</span>, reused <span class="token number">8</span> <span class="token punctuation">(</span>delta <span class="token number">0</span><span class="token punctuation">)</span>, pack-reused <span class="token number">0</span>
-Unpacking objects: <span class="token number">100</span>% <span class="token punctuation">(</span><span class="token number">11</span>/11<span class="token punctuation">)</span>, <span class="token number">1.85</span> KiB <span class="token operator">|</span> <span class="token number">126.00</span> KiB/s, done.
-warning: the following paths have collided <span class="token punctuation">(</span>e.g. case-sensitive paths
-on a case-insensitive filesystem<span class="token punctuation">)</span> and only one from the same
-colliding group is <span class="token keyword">in</span> the working tree:
+        <p><code>git reset --hard</code> not working: everytime you reset, the
+file is flipped between <code>file.txt</code> and <code>File.txt</code>,
+really weird...</p>
+<p>It's not a joke, just clone <a
+target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">this repo</a> on
+<strong>Windows</strong> and you can reproduce it:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">D:\$ git clone https:&#x2F;&#x2F;github.com&#x2F;finisky&#x2F;git-case-demo.git
+Cloning into &#39;git-case-demo&#39;...
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11&#x2F;11), done.
+remote: Compressing objects: 100% (6&#x2F;6), done.
+remote: Total 11 (delta 0), reused 8 (delta 0), pack-reused 0
+Unpacking objects: 100% (11&#x2F;11), 1.85 KiB | 126.00 KiB&#x2F;s, done.
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
 
-  <span class="token string">'File.txt'</span>
-  <span class="token string">'file.txt'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后就会发现刚拉的<code>main</code>分支都不干净(橙色)，而且<code>git reset --hard</code>也失效了，仔细看才发现，每reset一次，会在大写
-<code>File.txt</code> 和小写 <code>file.txt</code>
-之间切换，神奇不？</p>
+  &#39;File.txt&#39;
+  &#39;file.txt&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>After clone the repo, you will find that the <code>main</code> branch
+is not clean. <code>git reset --hard</code> not working:</p>
 <span id="more"></span>
 <p><img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/gitresetnotworking.png" /></p>
-<p>在github上浏览 <a
-target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">repo</a>，会发现文件目录与本地的不同：</p>
+<p>Browse the <a
+target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">repo</a> on GitHub, you
+will find that the folder structure are different with local:</p>
 <p><img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/gitviewdiff.png" /></p>
-<p>github上根目录有两个txt <code>File.txt</code> 和
-<code>file.txt</code> ，两个文件夹 <code>Folder</code> 和
-<code>folder</code>，而本地只有一个<code>file.txt</code> 和一个
-<code>Folder</code> 。而这也是 <code>git reset --hard</code>
-失效的根本原因：</p>
-<p><strong>git是大小写敏感的，而Windows系统是大小写不敏感的</strong>。</p>
-<p>所以这个问题只会出现在Windows上使用git的情况，Windows将
-<code>File.txt</code> 和 <code>file.txt</code>
-认为是同一文件，所以reset失效了。Linux/Mac与git一致，大小写敏感，所以不存在这样的问题。<code>Folder</code>
-与 <code>folder</code>
-也是同理，在Windows上这两个文件夹会被合并成同一个。</p>
-<p>这个问题常常会在配置CICD时发现，本地是Windows环境，而部署编译的机器是Linux，会提示找不到文件，但在Windows环境中看文件明明是存在的……</p>
-<h1 id="解决方案">解决方案</h1>
-<p>在Linux/Mac上把文件统一当然可以解决问题，但如果手边没有Linux怎么办？</p>
-<p>git是大小写敏感的，因此可以通过 <code>git mv</code> 解决问题。</p>
-<h2 id="同名文件冲突">同名文件冲突</h2>
-<p>假设保留小写文件，将大写文件覆盖之:</p>
+<p>GitHub has two files <code>File.txt</code> and <code>file.txt</code>,
+while local has only one file <code>file.txt</code>. GitHub has two
+folders <code>Folder</code> and <code>folder</code>, while local has
+only one folder <code>Folder</code>. That's why
+<code>git reset --hard</code> not working:</p>
+<p><strong>git is case-sensitive, while filesystem is not</strong>。</p>
+<p>So the problem occurs on Windows only. Windows regards
+<code>File.txt</code> and <code>file.txt</code> as the same file.
+Linux/Mac is case-sensitive as git, so the problem will never
+happen.</p>
+<p>Similarly, Windows regards <code>Folder</code> and
+<code>folder</code> as the same one, so the files will be merged into
+one folder.</p>
+<p>Typically, the issue will be found when you configure CICD pipeline.
+Your local development environment is Windows but the build agent is
+Linux. It's hard to debug as it reports that files are not found while
+they are in your Windows folder...</p>
+<h1 id="solution">Solution</h1>
+<p>Apparently we can fix it in a case-sensitive environment such as
+Linux/Mac. The problem is, what if we don't have such environment
+(Windows only)?</p>
+<p>The solution is to use git command <code>git mv</code>.</p>
+<h2 id="fix-case-insensitive-files">Fix Case-Insensitive Files</h2>
+<p>Assume we keep the lower case file and use the upper case file to
+overwrite it:</p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> <span class="token function">mv</span> File.txt file.txt
 
 <span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
@@ -328,8 +335,8 @@ Changes to be committed:
   <span class="token punctuation">(</span>use <span class="token string">"git restore --staged &lt;file>..."</span> to unstage<span class="token punctuation">)</span>
         deleted:    File.txt
         modified:   file.txt<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>注意，直接在Windows中删除 <code>File.txt</code>
-是不行的，两个文件都会被删除:</p>
+<p>Note that directly deleting <code>File.txt</code> on Windows doesn't
+work, as both files will be deleted:</p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
 On branch fixconflicts
 Changes not staged <span class="token keyword">for</span> commit:
@@ -339,12 +346,14 @@ Changes not staged <span class="token keyword">for</span> commit:
         deleted:    file.txt
 
 no changes added to commit <span class="token punctuation">(</span>use <span class="token string">"git add"</span> and/or <span class="token string">"git commit -a"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>最后，commit change，分支上就干净了。</p>
-<h2 id="合并同名文件夹">合并同名文件夹</h2>
-<p>可以通过两次 <code>git mv</code> 完成:</p>
+<p>Finally, commit changes and the branch will be clean.</p>
+<h2 id="merge-case-insensitive-folders">Merge Case-Insensitive
+Folders</h2>
+<p>Merge the two folders by two <code>git mv</code>:</p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">git</span> <span class="token function">mv</span> Folder temp
 $ <span class="token function">git</span> <span class="token function">mv</span> temp folder<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>先将其重命名成完全不同的文件夹，再合并文件夹内容即可：</p>
+<p>The idea is rename it to a different folder <code>temp</code> first,
+and then merge <code>temp</code> with <code>folder</code>:</p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> <span class="token function">mv</span> Folder temp
 
 <span class="token punctuation">(</span>fixconflicts -<span class="token operator">></span> origin<span class="token punctuation">)</span>D:<span class="token punctuation">\</span>git-case-demo$ <span class="token function">git</span> status
@@ -373,8 +382,9 @@ Changes to be committed:
 <h1 id="demo">Demo</h1>
 <p>Demo Repo: <a
 target="_blank" rel="noopener" href="https://github.com/finisky/git-case-demo">https://github.com/finisky/git-case-demo</a></p>
-<p>其中fixconflicts分支已按本文解决了问题，供参考。</p>
-<h1 id="参考">参考</h1>
+<p>FYI, the <code>fixconflicts</code> branch resolves all issues
+according to this article.</p>
+<h1 id="reference">Reference</h1>
 <p><a
 target="_blank" rel="noopener" href="https://www.hanselman.com/blog/git-is-casesensitive-and-your-filesystem-may-not-be-weird-folder-merging-on-windows">#
 Git is case-sensitive and your filesystem may not be - Weird folder
@@ -405,7 +415,7 @@ Git case sensitivity</a></p>
       <div class="popular-posts-title"><a href="/2020/03/31/cleanuptmp.en/" rel="bookmark">Clean .com.google.Chrome.* in /tmp</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/en/git-is-case-sensitive-while-file-system-is-not/" rel="bookmark">Git reset --hard Not Working: File System Is Not Case Sensitive</a></div>
+      <div class="popular-posts-title"><a href="/git-is-case-sensitive-while-file-system-is-not/" rel="bookmark">Windows大小写不敏感导致的git冲突</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/08/29/googlebbr/" rel="bookmark">Linux服务器使用BBR提升网速</a></div>
@@ -422,14 +432,11 @@ Git case sensitivity</a></p>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/migrate-github-pages-by-301-redirects/" rel="prev" title="用301重定向迁移 GitHub Pages">
-                  <i class="fa fa-chevron-left"></i> 用301重定向迁移 GitHub Pages
+                <a href="/git-is-case-sensitive-while-file-system-is-not/" rel="prev" title="Windows大小写不敏感导致的git冲突">
+                  <i class="fa fa-chevron-left"></i> Windows大小写不敏感导致的git冲突
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/en/git-is-case-sensitive-while-file-system-is-not/" rel="next" title="Git reset --hard Not Working: File System Is Not Case Sensitive">
-                  Git reset --hard Not Working: File System Is Not Case Sensitive <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -483,7 +490,7 @@ Git case sensitivity</a></p>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/git-is-case-sensitive-while-file-system-is-not/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/en/git-is-case-sensitive-while-file-system-is-not/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
