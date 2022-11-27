@@ -153,7 +153,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">199</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -299,34 +299,34 @@ a different version of cuda or python would be fine.</p>
 </ol>
 <p>This command resolved my issue (PyTorch version really matters! from
 1.3.0 to 1.2.0):</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda install pytorch&#x3D;&#x3D;1.2.0 torchvision&#x3D;&#x3D;0.4.0 cudatoolkit&#x3D;10.0 -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">conda <span class="token function">install</span> <span class="token assign-left variable">pytorch</span><span class="token operator">==</span><span class="token number">1.2</span>.0 <span class="token assign-left variable">torchvision</span><span class="token operator">==</span><span class="token number">0.4</span>.0 <span class="token assign-left variable">cudatoolkit</span><span class="token operator">=</span><span class="token number">10.0</span> -c pytorch<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>If you use conda, you can refer to this page to find a working
 combination (downgrade might be better than upgrade...): <a
 target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">INSTALLING
 PREVIOUS VERSIONS OF PYTORCH</a></p>
 <h2 id="detailed-error-message">Detailed Error Message</h2>
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ python seq2seq.py
-Traceback (most recent call last):
-  File &quot;seq2seq.py&quot;, line 311, in &lt;module&gt;
-    trainIters(encoder, attndecoder, 75000, print_every&#x3D;5000)
-  File &quot;seq2seq.py&quot;, line 289, in trainIters
-    decoder, encoder_optimizer, decoder_optimizer, criterion)
-  File &quot;seq2seq.py&quot;, line 233, in train
-    encoder_output, encoder_hidden &#x3D; encoder(input_tensor[ei], encoder_hidden)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;module.py&quot;, line 541, in __call__
-    result &#x3D; self.forward(*input, **kwargs)
-  File &quot;seq2seq.py&quot;, line 154, in forward
-    output, hidden &#x3D; self.gru(output, hidden)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;module.py&quot;, line 541, in __call__
-    result &#x3D; self.forward(*input, **kwargs)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 729, in forward
-    return self.forward_tensor(input, hx)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 721, in forward_tensor
-    output, hidden &#x3D; self.forward_impl(input, hx, batch_sizes, max_batch_size, sorted_indices)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 699, in forward_impl
-    result &#x3D; self.run_impl(input, hx, batch_sizes)
-  File &quot;&#x2F;home&#x2F;user&#x2F;miniconda3&#x2F;envs&#x2F;torch&#x2F;lib&#x2F;python3.7&#x2F;site-packages&#x2F;torch&#x2F;nn&#x2F;modules&#x2F;rnn.py&quot;, line 680, in run_impl
-    self.dropout, self.training, self.bidirectional, self.batch_first)
+Traceback <span class="token punctuation">(</span>most recent call last<span class="token punctuation">)</span>:
+  File <span class="token string">"seq2seq.py"</span>, line <span class="token number">311</span>, <span class="token keyword">in</span> <span class="token operator">&lt;</span>module<span class="token operator">></span>
+    trainIters<span class="token punctuation">(</span>encoder, attndecoder, <span class="token number">75000</span>, <span class="token assign-left variable">print_every</span><span class="token operator">=</span><span class="token number">5000</span><span class="token punctuation">)</span>
+  File <span class="token string">"seq2seq.py"</span>, line <span class="token number">289</span>, <span class="token keyword">in</span> trainIters
+    decoder, encoder_optimizer, decoder_optimizer, criterion<span class="token punctuation">)</span>
+  File <span class="token string">"seq2seq.py"</span>, line <span class="token number">233</span>, <span class="token keyword">in</span> train
+    encoder_output, encoder_hidden <span class="token operator">=</span> encoder<span class="token punctuation">(</span>input_tensor<span class="token punctuation">[</span>ei<span class="token punctuation">]</span>, encoder_hidden<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/module.py"</span>, line <span class="token number">541</span>, <span class="token keyword">in</span> __call__
+    result <span class="token operator">=</span> self.forward<span class="token punctuation">(</span>*input, **kwargs<span class="token punctuation">)</span>
+  File <span class="token string">"seq2seq.py"</span>, line <span class="token number">154</span>, <span class="token keyword">in</span> forward
+    output, hidden <span class="token operator">=</span> self.gru<span class="token punctuation">(</span>output, hidden<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/module.py"</span>, line <span class="token number">541</span>, <span class="token keyword">in</span> __call__
+    result <span class="token operator">=</span> self.forward<span class="token punctuation">(</span>*input, **kwargs<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/rnn.py"</span>, line <span class="token number">729</span>, <span class="token keyword">in</span> forward
+    <span class="token builtin class-name">return</span> self.forward_tensor<span class="token punctuation">(</span>input, hx<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/rnn.py"</span>, line <span class="token number">721</span>, <span class="token keyword">in</span> forward_tensor
+    output, hidden <span class="token operator">=</span> self.forward_impl<span class="token punctuation">(</span>input, hx, batch_sizes, max_batch_size, sorted_indices<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/rnn.py"</span>, line <span class="token number">699</span>, <span class="token keyword">in</span> forward_impl
+    result <span class="token operator">=</span> self.run_impl<span class="token punctuation">(</span>input, hx, batch_sizes<span class="token punctuation">)</span>
+  File <span class="token string">"/home/user/miniconda3/envs/torch/lib/python3.7/site-packages/torch/nn/modules/rnn.py"</span>, line <span class="token number">680</span>, <span class="token keyword">in</span> run_impl
+    self.dropout, self.training, self.bidirectional, self.batch_first<span class="token punctuation">)</span>
 RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="do-not-upgrade-ubuntu">DO NOT Upgrade Ubuntu</h2>
 <p>Someone said newer Ubuntu fixed some low-level libraries. I upgraded

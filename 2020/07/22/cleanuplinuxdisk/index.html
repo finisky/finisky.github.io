@@ -152,7 +152,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">199</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -338,7 +338,7 @@ This group contains 14 packages. <span aria-hidden="true" class="line-numbers-ro
 就本机为例，里面有许多libbitcoin相关的lib，而实际上它们已经不再使用了。不幸的是，并没有一个好工具清理<code>/usr/local/lib</code>，因为此处就是放许多库文件的文件夹，如果不用apt/yum之类的包管理软件，系统很难知道哪些库文件是不再使用的，这是用户层面的逻辑。</p>
 <h2 id="清理varlogjournal">清理<code>/var/log/journal</code></h2>
 <p>先查看journal log有多大： <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ journalctl --disk-usage
-Archived and active journals take up 5.8G in the file system.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+Archived and active journals take up <span class="token number">5</span>.8G <span class="token keyword">in</span> the <span class="token function">file</span> system.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 用如下命令手动清理只保留最近10天的log: <pre class="line-numbers language-none"><code class="language-none">$ journalctl --vacuum-time&#x3D;10d
 Vacuuming done, freed 5.1G of archived journals from &#x2F;var&#x2F;log&#x2F;journal.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <p>最后可以编辑<code>/etc/systemd/journald.conf</code>，设置最大jounal
@@ -346,13 +346,13 @@ log占用空间为1000M： <pre class="line-numbers language-none"><code class="
 <h2 id="清理conda">清理conda</h2>
 <p><code>conda clean -a</code>是个好东西，按提示来即可，说明如下：
 <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ conda clean --help
-usage: conda clean [-h] [-a] [-i] [-p] [-t] [-f]
-                   [-c TEMPFILES [TEMPFILES ...]] [-d] [--json] [-q] [-v] [-y]
+usage: conda clean <span class="token punctuation">[</span>-h<span class="token punctuation">]</span> <span class="token punctuation">[</span>-a<span class="token punctuation">]</span> <span class="token punctuation">[</span>-i<span class="token punctuation">]</span> <span class="token punctuation">[</span>-p<span class="token punctuation">]</span> <span class="token punctuation">[</span>-t<span class="token punctuation">]</span> <span class="token punctuation">[</span>-f<span class="token punctuation">]</span>
+                   <span class="token punctuation">[</span>-c TEMPFILES <span class="token punctuation">[</span>TEMPFILES <span class="token punctuation">..</span>.<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token punctuation">[</span>-d<span class="token punctuation">]</span> <span class="token punctuation">[</span>--json<span class="token punctuation">]</span> <span class="token punctuation">[</span>-q<span class="token punctuation">]</span> <span class="token punctuation">[</span>-v<span class="token punctuation">]</span> <span class="token punctuation">[</span>-y<span class="token punctuation">]</span>
 Remove unused packages and caches.
 
 Options:
 optional arguments:
-  -h, --help            Show this help message and exit.
+  -h, --help            Show this <span class="token builtin class-name">help</span> message and exit.
 Removal Targets:
   -a, --all             Remove index cache, lock files, unused cache packages,
                         and tarballs.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>

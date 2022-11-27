@@ -147,7 +147,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">199</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -278,18 +278,18 @@
 <code>.com.google.Chrome.*</code> be created in my /tmp folder.
 Obviously the culprit is Chrome. However, after some research no
 solution is found to prevent Chrome creating these garbage.</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;tmp$ du -csh .com.google.Chrome.*
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">/tmp$ <span class="token function">du</span> -csh .com.google.Chrome.*
 
-8.0K    .com.google.Chrome.00OKwD
+<span class="token number">8</span>.0K    .com.google.Chrome.00OKwD
 104K    .com.google.Chrome.013jYf
 172K    .com.google.Chrome.015x5t
-...
+<span class="token punctuation">..</span>.
 48K     .com.google.Chrome.Zytrhf
 16K     .com.google.Chrome.zz233G
 36K     .com.google.Chrome.ZzrsZY
 163M    total
-&#x2F;tmp$  find &#x2F;tmp -name &quot;.com.google.Chrome*&quot; -ls| wc -l
-3468<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+/tmp$  <span class="token function">find</span> /tmp -name <span class="token string">".com.google.Chrome*"</span> -ls<span class="token operator">|</span> <span class="token function">wc</span> -l
+<span class="token number">3468</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>Update 2020/12/12</strong> I found there are lots of
 <code>.com.google.Chrome.*</code> files in
 <code>/tmp/snap.chromium/tmp</code> :-( . Look at the
@@ -315,9 +315,9 @@ at boot. If your system is rarely reboot:</p>
 start job is running for Create Volatile Files and Directories</a></p>
 <p>Therefore, I have to make a cron job to automatically cleanup /tmp
 periodically. The cleanup script <code>cleanuptmp.sh</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">#!&#x2F;bin&#x2F;bash
-find &#x2F;tmp -name &quot;.com.google.Chrome*&quot; -mtime +0.5 -exec rm -r &#123;&#125; \;
-find &#x2F;tmp&#x2F;snap.chromium&#x2F;tmp -name &quot;.com.google.Chrome*&quot; -mtime +0.5 -exec rm -r &#123;&#125; \;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token shebang important">#!/bin/bash</span>
+<span class="token function">find</span> /tmp -name <span class="token string">".com.google.Chrome*"</span> -mtime +0.5 -exec <span class="token function">rm</span> -r <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token punctuation">\</span><span class="token punctuation">;</span>
+<span class="token function">find</span> /tmp/snap.chromium/tmp -name <span class="token string">".com.google.Chrome*"</span> -mtime +0.5 -exec <span class="token function">rm</span> -r <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token punctuation">\</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <p>The script will delete all .com.google.Chrome* directories with last
 modify time 12 hours before.</p>
 <p>Since the <code>/tmp/snap.chromium/tmp</code> folder has
@@ -325,7 +325,7 @@ modify time 12 hours before.</p>
 ...
 drwxrwxrwt 887 root root 1114112 Dec 12 11:40 tmp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <p>We need to add a cron job entry to <code>root</code> user by
-<code>sudo crontab -e</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">15 10,22 * * * &#x2F;home&#x2F;xxx&#x2F;cleanuptmp.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<code>sudo crontab -e</code>: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token number">15</span> <span class="token number">10,22</span> * * * /home/xxx/cleanuptmp.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 <p>It will cleanup the <code>/tmp</code> at 10:15 and 22:15
 everyday.</p>
 
