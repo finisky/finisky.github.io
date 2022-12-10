@@ -144,7 +144,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">199</span>
+          <span class="site-state-item-count">200</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -157,7 +157,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-count">60</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -186,6 +186,134 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/createstorageclassinaks.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="NLP, Software Engineering, Product Design and Career Development">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/createstorageclassinaks.en/" class="post-title-link" itemprop="url">Create Storage Class in Azure Kubernetes Cluster</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-05 18:45:58" itemprop="dateCreated datePublished" datetime="2021-11-05T18:45:58+08:00">2021-11-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-11-15 13:31:52" itemprop="dateModified" datetime="2021-11-15T13:31:52+08:00">2021-11-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Misc/" itemprop="url" rel="index"><span itemprop="name">Misc</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/createstorageclassinaks.en/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/createstorageclassinaks.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/createstorageclassinaks.en/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Follow <a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv">#
+Dynamically create and use a persistent volume with Azure Files in Azure
+Kubernetes Service (AKS)</a> to create a new storage class in AKS:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">kind</span><span class="token punctuation">:</span> StorageClass
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> storage.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> standard<span class="token punctuation">-</span>grs
+<span class="token key atrule">provisioner</span><span class="token punctuation">:</span> kubernetes.io/azure<span class="token punctuation">-</span>disk
+<span class="token key atrule">parameters</span><span class="token punctuation">:</span>
+  <span class="token key atrule">cachingmode</span><span class="token punctuation">:</span> ReadOnly
+  <span class="token key atrule">kind</span><span class="token punctuation">:</span> Managed
+  <span class="token key atrule">skuName</span><span class="token punctuation">:</span> Standard_GRS
+<span class="token key atrule">reclaimPolicy</span><span class="token punctuation">:</span> Delete
+<span class="token key atrule">allowVolumeExpansion</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+<span class="token key atrule">volumeBindingMode</span><span class="token punctuation">:</span> Immediate<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>If you create new resource by kubernetes dashboard, an error might
+occur:</p>
+<pre class="line-numbers language-none"><code class="language-none">Deploying file has failed
+the server could not find the requested resource<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/createstorageclassinaks.en/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1266,139 +1394,6 @@ Manager做分片集群的管理，可以轻松地做快照恢复，那么主从�
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/mongodbslavesync/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/mongodbslavesync.en/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.jpg">
-      <meta itemprop="name" content="finisky">
-      <meta itemprop="description" content="NLP, Software Engineering, Product Design and Career Development">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/mongodbslavesync.en/" class="post-title-link" itemprop="url">MongoDB Master-Slave Replication by Change Stream</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-07-22 20:27:32" itemprop="dateCreated datePublished" datetime="2021-07-22T20:27:32+08:00">2021-07-22</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-07-23 00:09:32" itemprop="dateModified" datetime="2021-07-23T00:09:32+08:00">2021-07-23</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Comments: </span>
-  
-    <a title="waline" href="/mongodbslavesync.en/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/mongodbslavesync.en/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="Views">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/mongodbslavesync.en/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>By the <a
-target="_blank" rel="noopener" href="https://docs.mongodb.com/v4.4/changeStreams/">official
-manual</a>:</p>
-<blockquote>
-<p>Change streams allow applications to access real-time data changes
-without the complexity and risk of tailing the oplog. Applications can
-use change streams to subscribe to all data changes on a single
-collection, a database, or an entire deployment, and immediately react
-to them. Because change streams use the aggregation framework,
-applications can also filter for specific changes or transform the
-notifications at will.</p>
-</blockquote>
-<p>Here we leverage change stream to replicate data from one MongoDB to
-another <strong>in realtime</strong>.</p>
-<p>There is some existing tools such as <a
-target="_blank" rel="noopener" href="https://github.com/alibaba/MongoShake">MongoShake</a> do the same
-thing. However, MongoShake is a little bit complicated to use. We
-encoutered two issues:</p>
-<ul>
-<li>Modify the source code to use TLS authentication</li>
-<li>Cannot perform increment sync in <code>all</code> sync_mode</li>
-</ul>
-<p>Since our goal is realtime replication, we choose a more
-straightforward and controllable way: MongoDB Ops Manager cluster
-restore and change stream to apply realtime changes.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/mongodbslavesync.en/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
