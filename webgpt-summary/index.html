@@ -23,28 +23,33 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="I have encountered an issue: solution can be successfully built and run, but lots of classes in the VisualStudio are marked as red color by ReSharper. Clean and rebuild the solution doesn&#39;t work. Some">
+<meta name="description" content="WebGPT是OpenAI在2021年底发布的解决long-form quesion-answering (LFQA) 的方案。比InstructGPT的提出稍早一些。 WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing WebGPT: Browser-assisted question-an">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ReSharper Marked Classes in Red Color Issue">
-<meta property="og:url" content="https://finisky.github.io/2019/12/20/resharperredcolor/index.html">
+<meta property="og:title" content="WebGPT 简读">
+<meta property="og:url" content="https://finisky.github.io/webgpt-summary/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="I have encountered an issue: solution can be successfully built and run, but lots of classes in the VisualStudio are marked as red color by ReSharper. Clean and rebuild the solution doesn&#39;t work. Some">
+<meta property="og:description" content="WebGPT是OpenAI在2021年底发布的解决long-form quesion-answering (LFQA) 的方案。比InstructGPT的提出稍早一些。 WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing WebGPT: Browser-assisted question-an">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2019-12-20T12:59:57.000Z">
-<meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
+<meta property="article:published_time" content="2022-12-13T10:24:46.000Z">
+<meta property="article:modified_time" content="2022-12-13T10:36:33.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta property="article:tag" content="Reinforcement Learning">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/2019/12/20/resharperredcolor/">
+<link rel="canonical" href="https://finisky.github.io/webgpt-summary/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2019/12/20/resharperredcolor/","path":"/2019/12/20/resharperredcolor/","title":"ReSharper Marked Classes in Red Color Issue"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/webgpt-summary/","path":"webgpt-summary/","title":"WebGPT 简读"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>ReSharper Marked Classes in Red Color Issue | Finisky Garden</title>
+<title>WebGPT 简读 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -131,7 +136,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#clean-resharper-cache"><span class="nav-number">1.</span> <span class="nav-text">Clean ReSharper Cache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#visualstudio-clean-build"><span class="nav-number">2.</span> <span class="nav-text">VisualStudio Clean Build</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#web%E4%BA%A4%E4%BA%92%E8%AE%BE%E8%AE%A1%E5%8F%8A%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">Web交互设计及工作流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">训练方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%94%B6%E9%9B%86"><span class="nav-number">2.1.</span> <span class="nav-text">数据收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83"><span class="nav-number">2.2.</span> <span class="nav-text">训练</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0"><span class="nav-number">3.</span> <span class="nav-text">效果评估</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA%E5%88%92%E9%87%8D%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">结论(划重点)</span></a></li></ol></div>
             <div class="site-author site-overview-item animated">
               <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
               <p class="site-author-name">扫码关注公众号</p>
@@ -203,7 +208,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2019/12/20/resharperredcolor/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/webgpt-summary/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -216,7 +221,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ReSharper Marked Classes in Red Color Issue
+          WebGPT 简读
         </h1>
 
         <div class="post-meta-container">
@@ -226,23 +231,17 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2019-12-20 20:59:57" itemprop="dateCreated datePublished" datetime="2019-12-20T20:59:57+08:00">2019-12-20</time>
+      <time title="Created: 2022-12-13 18:24:46 / Modified: 18:36:33" itemprop="dateCreated datePublished" datetime="2022-12-13T18:24:46+08:00">2022-12-13</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
         </span>
     </span>
 
@@ -255,8 +254,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/2019/12/20/resharperredcolor/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2019/12/20/resharperredcolor/" itemprop="commentCount"></span>
+    <a title="waline" href="/webgpt-summary/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/webgpt-summary/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,7 +265,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/2019/12/20/resharperredcolor/"></span>
+      <span class="waline-pageview-count" data-path="/webgpt-summary/"></span>
     </span>
   
 </div>
@@ -278,54 +277,109 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>I have encountered an issue: solution can be successfully built and
-run, but lots of classes in the VisualStudio are marked as red color by
-ReSharper. Clean and rebuild the solution doesn't work. Something like
-this: <a
-target="_blank" rel="noopener" href="https://stackoverflow.com/questions/6040338/everything-compiles-but-resharper-marks-everything-in-red">Everything
-compiles, but Resharper marks everything in red?</a></p>
-<span id="more"></span>
-<h1 id="clean-resharper-cache">Clean ReSharper Cache</h1>
-<p>The following instructions are tested under Resharper Ultimate
-2019.2: <pre class="line-numbers language-none"><code class="language-none">Visual Studio &gt; ReSharper &gt; General &gt; Options &gt; General &gt; Clear Caches<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>"Restart" ReSharper: <pre class="line-numbers language-none"><code class="language-none">Visual Studio &gt; Tools &gt; Options &gt; ReSharper Ultimate &gt; Suspend Now&#x2F;Resume Now<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>If this operation doesn't resolve the issue, continue reading...</p>
-<h1 id="visualstudio-clean-build">VisualStudio Clean Build</h1>
-<p>VisualStudio's solution clean doesn't remove bin/ and obj/, which
-might lead to some weird build or runtime errors. In our case, it seems
-that ReSharper still uses old assembly. Specifically, when you change a
-project from dotnet framework to dotnetstandard or dotnetcore, the issue
-frequently happens. Therefore, a REALLY CLEAN BUILD should be performed.
-(<a
-target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1088593/how-to-clean-visual-studio-bin-and-obj-folders">How
-to clean Visual Studio bin and obj folders</a>)</p>
-<p>To make a clean build, commit all changes and execute:
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ <span class="token function">git</span> clean -fdx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p><strong>Warning!</strong> This command is DANGEROUS, it will delete
-all untracked files. (bin/, obj/, etc.)</p>
-<p>What these options mean: (<a
-target="_blank" rel="noopener" href="https://git-scm.com/docs/git-clean">https://git-scm.com/docs/git-clean</a>)</p>
-<blockquote><p>-d Normally, when no <path> is specified, git clean will not recurse
-into untracked directories to avoid removing too much. Specify -d to
-have it recurse into such directories as well. If any paths are
-specified, -d is irrelevant; all untracked files matching the specified
-paths (with exceptions for nested git directories mentioned under
---force) will be removed.</p>
-<p>-f --force If the Git configuration variable clean.requireForce is
-not set to false, <em>git clean</em> will refuse to delete files or
-directories unless given -f or -i. Git will refuse to modify untracked
-nested git repositories (directories with a .git subdirectory) unless a
-second -f is given.</p>
-<p>-x Don’t use the standard ignore rules (see <a
-target="_blank" rel="noopener" href="https://git-scm.com/docs/gitignore">gitignore[5]</a>), but still
-use the ignore rules given with <code>-e</code> options from the command
-line. This allows removing all untracked files, including build
-products. This can be used (possibly in conjunction with <em>git
-restore</em> or <em>git reset</em>) to create a pristine working
-directory to test a clean build.</p>
+        <p>WebGPT是OpenAI在2021年底发布的解决long-form quesion-answering (LFQA)
+的方案。比InstructGPT的提出稍早一些。</p>
+<p><a target="_blank" rel="noopener" href="https://openai.com/blog/webgpt/">WebGPT: Improving the
+Factual Accuracy of Language Models through Web Browsing</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2112.09332">WebGPT: Browser-assisted
+question-answering with human feedback</a></p>
+<p>WebGPT想解决什么问题？让开放域QA回复更长更可靠。</p>
+<blockquote>
+<p>A rising challenge in NLP is long-form question-answering (LFQA), in
+which a paragraph-length answer is generated in response to an
+open-ended question. LFQA systems have the potential to become one of
+the main ways people learn about the world, but currently lag behind
+human performance.</p>
 </blockquote>
-<p>After the git clean, rebuild the solution and wait resharper finish
-processing the assembly. Then the red color warnings disappear. :-)</p>
+<span id="more"></span>
+<p>WebGPT的思路类似 <a
+href="https://finisky.github.io/brief-on-knowledge-grounded-conversation/">Knowledge-Grounded
+Conversation</a>，利用搜索引擎做相关文档检索，从而生成更长的答案。主要的两个贡献：</p>
+<ul>
+<li>微调的语言模型可以与一个基于文本的Web浏览环境交互，从而可以端到端地使用模仿和强化学习优化检索和聚合效果。</li>
+<li>参考Web检索出来的信息生成回复。labeler可以根据检索出来的信息判断factual准确率，降低了独立调研问题正确性的难度。</li>
+</ul>
+<p>这个想法并非WebGPT首次提出，在2021年初Facebook (FAIR)
+就提出使用搜索引擎来提升对话回复的质量：</p>
+<p>[ACL2022][Internet-Augmented Dialogue
+Generation](https://aclanthology.org/2022.acl-long.579/)</p>
+<blockquote>
+<p>We propose an approach that learns to generate an internet search
+query based on the context, and then conditions on the search results to
+finally generate a response, a method that can employ up-to-the-minute
+relevant information.</p>
+</blockquote>
+<p>虽然发表在ACL2022，但这篇paper是在2021年初就提出了。WebGPT比它的思路更进一步，完全模拟了人使用搜索引擎的方法(有更多action:
+搜索、点击、翻页、回退等等)，而非仅生成search query并使用其结果。</p>
+<h1 id="web交互设计及工作流程">Web交互设计及工作流程</h1>
+<p>之前的工作如REALM和RAG都聚焦在提升文档检索性能，而WebGPT直接使用Bing
+Search API来解决这个问题，有两个优势：</p>
+<blockquote>
+<p>First, modern search engines are already very powerful, and index a
+large number of up-to-date documents.</p>
+<p>Second, it allows us to focus on the higher-level task of using a
+search engine to answer questions, something that humans can do well,
+and that a language model can mimic.</p>
+</blockquote>
+<p>所谓<code>text-based web-browsing environment</code>长这样，也就是模型与Web交互的界面：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/webgptenv.png"
+alt="Text-based web-browsing environment" /></p>
+<p>如上图右边所示，模型输入是一段prompt，包含问题、当前位置的文本、过去的actions、标题等等信息。作为响应，模型必须输出下列action之一：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/webgptactions.png"
+alt="Actions WebGPT can take" /></p>
+<p>重复上述过程，并且上下文信息只在summary中出现。这些action中有一个是<code>Quote</code>，它会将标题、领域等等信息记录下来作为将来模型输入使用。这个过程继续直到<code>end browsing</code>出现，或超过最大action数，或达到reference最大长度，模型就进入生成阶段，生成最终回复。</p>
+<h1 id="训练方法">训练方法</h1>
+<h2 id="数据收集">数据收集</h2>
+<blockquote>
+<p>Guidance from humans is central to our approach.</p>
+</blockquote>
+<p>训练数据分为两部分，demonstrations和comparisons:</p>
+<ul>
+<li>demonstrations:
+预训练语言模型不会使用Web浏览，所以需要收集真人使用搜索引擎回答问题的数据。</li>
+<li>comparisons:
+训练后发现，只用demonstrations并不能直接提升回复质量。所以收集了对同一问题模型生成的多个回复，并标注哪个更好，这种数据就是comparisons。</li>
+</ul>
+<p>所谓comparisons数据与InstructGPT的RLHF思想一致，主要动机是让模型判别哪个答案更优。</p>
+<p>为了更容易地收集这两种数据，还设计了两个对应的GUI，细节可以看原文。</p>
+<blockquote>
+<p>For both demonstrations and comparisons, we emphasized that answers
+should be relevant, coherent, and supported by trustworthy
+references.</p>
+</blockquote>
+<h2 id="训练">训练</h2>
+<p>训练主要基于之前GPT-3预训练模型的三个版本：760M, 13B 和
+175B。训练方法如下：</p>
+<ul>
+<li>Behavior cloning (BC):
+用demonstrations数据，以真人输出的command为目标finetune模型。</li>
+<li>Reward modeling (RM):
+基于BC，将最后的非嵌入层去掉，以question/answer/reference为输入，scalar为输出，训练一个RM。</li>
+<li>Reinforcement learning (RL): 使用PPO算法，finetune BC模型。</li>
+<li>Rejection sampling (best-of-n):
+从BC或RL模型采样固定数目的答案，取RM打分最高的一个作为优化RM的替代方案。</li>
+</ul>
+<p>可见，训练的前三步与InstructGPT完全一致，唯一区别就是第一步的BC模型与SFT模型所用训练数据不同。</p>
+<h1 id="效果评估">效果评估</h1>
+<p>ELI5是个开放域LFQA数据集。评估效果如下：</p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/webgpteli5.png" /></p>
+<p>最好的175B best-of-64模型在usefullness和factual
+accuracy上都超过了真人。</p>
+<blockquote>
+<p>Our results are shown in Figure 2. Our best model, the 175B
+best-of-64 model, produces answers that are preferred to those written
+by our human demonstrators 56% of the time.</p>
+</blockquote>
+<h1 id="结论划重点">结论(划重点)</h1>
+<ul>
+<li>使用搜索引擎可以显著提高对话回复的真实性和信息量。这一点在LaMDA/CharacterAI/WebGPT和上文提到的ACL2022论文中都得以验证。</li>
+<li>Human-feedback，或者说comparison对模型效果提升至关重要。这一点在InstructGPT/ChatGPT/WebGPT和百度的Diamonte上都得以验证。</li>
+</ul>
+<p>个人以为，最近对话系统的进展主要得益于上述三点：<strong>大模型，搜索加持与人工偏好标注</strong>。目前SOTA的模型基本是在某一点做得很突出或多个技术的整合。</p>
+<p>最后，说句题外话，OpenAI做的工作都很落地和实用，动机和想法明确，不是拍一堆难懂的公式，做一些cherry-pick的实验，而实际效果不佳。这一点可能也是国内研究与顶级研究之间真正的差距所在。</p>
 
     </div>
 
@@ -336,40 +390,42 @@ processing the assembly. Then the red color warnings disappear. :-)</p>
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/09/06/aspnetcoresupporttextplain.en/" rel="bookmark">AspNetCore Accept text/plain as applicatoin/json</a></div>
+      <div class="popular-posts-title"><a href="/instructgpt-summary/" rel="bookmark">InstructGPT/ChatGPT 简读</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/01/31/await/" rel="bookmark">C# async/await编程模型的执行逻辑解析</a></div>
+      <div class="popular-posts-title"><a href="/chatgpt-limitations/" rel="bookmark">ChatGPT的未解难题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/11/08/chromedriver/" rel="bookmark">selenium ChromeDriver不匹配问题</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos.en/" rel="bookmark">Don't Use Load Balancer In front of Mongos</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/13/dontuseloadbalancerinfrontofmongos/" rel="bookmark">别在mongos前做负载均衡</a></div>
+      <div class="popular-posts-title"><a href="/finisky-bot/" rel="bookmark">小菲陪您唠唠磕</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+              <a href="/tags/Reinforcement-Learning/" rel="tag"># Reinforcement Learning</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2019/12/18/seleniumpageloadstrategy/" rel="prev" title="selenium禁止页面加载javascript">
-                  <i class="fa fa-chevron-left"></i> selenium禁止页面加载javascript
+                <a href="/chatgpt-limitations/" rel="prev" title="ChatGPT的未解难题">
+                  <i class="fa fa-chevron-left"></i> ChatGPT的未解难题
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2019/12/31/k8sinvalidobject/" rel="next" title="invalid object doesn't have additional properties error">
-                  invalid object doesn't have additional properties error <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -423,7 +479,7 @@ processing the assembly. Then the red color warnings disappear. :-)</p>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/2019/12/20/resharperredcolor/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/webgpt-summary/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
