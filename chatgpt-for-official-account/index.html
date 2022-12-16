@@ -23,31 +23,32 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="在迁移博客之后，就切换了图床，使用github作免费的图床。但最近发现它不太稳定，常常打不开。研究发现可以用jsdelivr作github的CDN加速，只需替换下图片地址即可。这才是github图床正确的打开方式 :-)">
+<meta name="description" content="ChatGPT火爆全网，要是能接到自己的微信公众号后台，岂不美哉？ 想必有此想法的同志不止我一人，上周末就研究了一下，有几个问题需要解决。 首先就是ChatGPT API，最关键的问题没有之一，OpenAI并没有官方API支持。不过github上早有人反向工程破解了此API，Python实现：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CDN jsdelivr加速github图床">
-<meta property="og:url" content="https://finisky.github.io/speedupgithubbycdn/index.html">
+<meta property="og:title" content="为什么不接ChatGPT到微信公号？">
+<meta property="og:url" content="https://finisky.github.io/chatgpt-for-official-account/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="在迁移博客之后，就切换了图床，使用github作免费的图床。但最近发现它不太稳定，常常打不开。研究发现可以用jsdelivr作github的CDN加速，只需替换下图片地址即可。这才是github图床正确的打开方式 :-)">
+<meta property="og:description" content="ChatGPT火爆全网，要是能接到自己的微信公众号后台，岂不美哉？ 想必有此想法的同志不止我一人，上周末就研究了一下，有几个问题需要解决。 首先就是ChatGPT API，最关键的问题没有之一，OpenAI并没有官方API支持。不过github上早有人反向工程破解了此API，Python实现：">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-12-19T05:15:40.000Z">
-<meta property="article:modified_time" content="2021-12-29T11:10:28.000Z">
+<meta property="article:published_time" content="2022-12-16T02:08:02.000Z">
+<meta property="article:modified_time" content="2022-12-16T02:42:55.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="python">
-<meta property="article:tag" content="Hexo">
-<meta property="article:tag" content="Markdown">
-<meta property="article:tag" content="Hugo">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/speedupgithubbycdn/">
+<link rel="canonical" href="https://finisky.github.io/chatgpt-for-official-account/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/speedupgithubbycdn/","path":"speedupgithubbycdn/","title":"CDN jsdelivr加速github图床"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/chatgpt-for-official-account/","path":"chatgpt-for-official-account/","title":"为什么不接ChatGPT到微信公号？"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>CDN jsdelivr加速github图床 | Finisky Garden</title>
+<title>为什么不接ChatGPT到微信公号？ | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -121,7 +122,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -134,11 +135,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jsdelivr%E5%8A%A0%E9%80%9Fgithub%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">jsdelivr加速github图片地址格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E6%9B%BF%E6%8D%A2%E6%89%80%E6%9C%89post%E5%9B%BE%E7%89%87%E5%9C%B0%E5%9D%80"><span class="nav-number">2.</span> <span class="nav-text">shell脚本替换所有post图片地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
-            <div class="site-author site-overview-item animated">
-              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
-              <p class="site-author-name">扫码关注公众号</p>
-            </div>
         </div>
         <!--/noindex-->
 
@@ -206,7 +202,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/speedupgithubbycdn/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/chatgpt-for-official-account/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -219,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          CDN jsdelivr加速github图床
+          为什么不接ChatGPT到微信公号？
         </h1>
 
         <div class="post-meta-container">
@@ -229,23 +225,17 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2021-12-19 13:15:40" itemprop="dateCreated datePublished" datetime="2021-12-19T13:15:40+08:00">2021-12-19</time>
+      <time title="Created: 2022-12-16 10:08:02 / Modified: 10:42:55" itemprop="dateCreated datePublished" datetime="2022-12-16T10:08:02+08:00">2022-12-16</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-12-29 19:10:28" itemprop="dateModified" datetime="2021-12-29T19:10:28+08:00">2021-12-29</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
         </span>
     </span>
 
@@ -258,8 +248,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/speedupgithubbycdn/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/speedupgithubbycdn/" itemprop="commentCount"></span>
+    <a title="waline" href="/chatgpt-for-official-account/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/chatgpt-for-official-account/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -269,7 +259,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/speedupgithubbycdn/"></span>
+      <span class="waline-pageview-count" data-path="/chatgpt-for-official-account/"></span>
     </span>
   
 </div>
@@ -281,44 +271,55 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>在迁移博客之后，就切换了图床，使用github作免费的图床。但最近发现它不太稳定，常常打不开。研究发现可以用jsdelivr作github的CDN加速，只需替换下图片地址即可。这才是github图床正确的打开方式
-:-)</p>
+        <p>ChatGPT火爆全网，要是能接到自己的微信公众号后台，岂不美哉？</p>
+<p>想必有此想法的同志不止我一人，上周末就研究了一下，有几个问题需要解决。</p>
+<p>首先就是ChatGPT
+API，最关键的问题没有之一，OpenAI并没有官方API支持。不过github上早有人反向工程破解了此API，Python实现：</p>
 <span id="more"></span>
-<h1
-id="jsdelivr加速github图片地址格式">jsdelivr加速github图片地址格式</h1>
-<p>如何把图片放到github repo不再赘述。图片路径格式如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;master&#x2F;&#123;folderpath&#125;&#x2F;&#123;filename&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果希望使用jsdelivr的CDN，需要将上面图片路径转换为：</p>
-<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;&#123;folderpath&#125;&#x2F;&#123;filename&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>或者说可做前缀替换：</p>
-<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;master&#x2F;
+<p><a target="_blank" rel="noopener" href="https://github.com/acheong08/ChatGPT">revChatGPT</a></p>
+<p>使用方法很简单：<code>pip3 install --upgrade revChatGPT</code></p>
+<p>写了个demo <code>chatgpt.py</code>:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/python3</span>
 
---&gt;
+<span class="token keyword">import</span> logging
+<span class="token keyword">from</span> revChatGPT<span class="token punctuation">.</span>revChatGPT <span class="token keyword">import</span> Chatbot
 
-https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;&#123;user&#125;&#x2F;&#123;repo&#125;&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>举例，假设图片<code>p.png</code>存放在<code>user</code>
-<code>repo</code>的<code>a/</code>目录，那图片的原始地址如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;user&#x2F;repo&#x2F;master&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>CDN加速地址：</p>
-<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;user&#x2F;repo&#x2F;a&#x2F;p.png<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果遇到如下错误：</p>
-<blockquote>
-<p>Package size exceeded the configured limit of 50 MB. Try
-https://github.com/user/repo/tree/master/master/a/xxx.jpg instead.</p>
-</blockquote>
-<p>大概率是图片地址写错了，比如这里就多了一个<code>master</code>，正确地址应该是：<code>https://cdn.jsdelivr.net/gh/user/repo/a/xxx.jpg</code></p>
-<h1
-id="shell脚本替换所有post图片地址">shell脚本替换所有post图片地址</h1>
-<p>可直接用如下脚本在Hexo根目录中执行完成替换工作：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token shebang important">#!/bin/bash</span>
+logger <span class="token operator">=</span> logging<span class="token punctuation">.</span>getLogger<span class="token punctuation">(</span><span class="token string">'meng'</span><span class="token punctuation">)</span>
 
-<span class="token keyword">for</span> <span class="token for-or-select variable">f</span> <span class="token keyword">in</span> ./source/_posts/*.md<span class="token punctuation">;</span> <span class="token keyword">do</span>
-	<span class="token builtin class-name">echo</span> <span class="token string">"Process "</span><span class="token variable">$f</span>
-	<span class="token function">sed</span> -i <span class="token string">'s/https:\/\/raw.githubusercontent.com\/user\/repo\/master\//https:\/\/cdn.jsdelivr.net\/gh\/user\/repo\//'</span> <span class="token variable">$f</span>
-<span class="token keyword">done</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h1 id="reference">Reference</h1>
-<p>https://blog.csdn.net/q906270629/article/details/115394248</p>
-<p>https://zhuanlan.zhihu.com/p/76951130</p>
+config <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">"email"</span><span class="token punctuation">:</span> <span class="token string">"your_email"</span><span class="token punctuation">,</span>
+    <span class="token string">"password"</span><span class="token punctuation">:</span> <span class="token string">"your_password"</span>
+<span class="token punctuation">&#125;</span>
+
+chatbot <span class="token operator">=</span> Chatbot<span class="token punctuation">(</span>config<span class="token punctuation">,</span> conversation_id<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">chat</span><span class="token punctuation">(</span>history<span class="token punctuation">,</span> query<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    response <span class="token operator">=</span> chatbot<span class="token punctuation">.</span>get_chat_response<span class="token punctuation">(</span>query<span class="token punctuation">,</span> output<span class="token operator">=</span><span class="token string">"text"</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span> <span class="token punctuation">(</span>response<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> response<span class="token punctuation">[</span><span class="token string">'message'</span><span class="token punctuation">]</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    response <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">'你懂python吗？'</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span> <span class="token punctuation">(</span>response<span class="token punctuation">)</span>
+    response <span class="token operator">=</span> chat<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">'你懂go吗？'</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span> <span class="token punctuation">(</span>response<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>不过由于不是官方API，稳定性不太好，加上每次API调用都需要重登录，速度也不太快，更不必提生成一段长文本所需要的时间了，<strong>获取结果基本在15秒以上。</strong></p>
+<p>于是这就引发了另一个问题，微信要求<a
+target="_blank" rel="noopener" href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html"><strong>5秒内回复消息</strong></a>，否则提示“该公众号暂时无法提供服务，请稍后再试”，考虑到ChatGPT的生成时间，就给接入微信公众号带来了困难。</p>
+<p>虽然有其他方案，比如记录上下文，先在5秒内返回一条文本消息“请15秒后输入‘xxx’获取结果”，后台将生成的结果缓存，然后让用户再发一条定制消息"xxx"，再将缓存的文本返回，但整个聊天体验就非常差了。</p>
+<p>所以聪明的开发者们考虑了另外两个方案来解决问题：</p>
+<ul>
+<li>自己开发小程序，不受5秒回复限制，不过已经被微信官方认定为违规下线</li>
+<li>"ChatGPT"公众号，用阅读原文的方式导流到一个破解ChatGPT
+API的网站，不过由于用的人过多，这个网站已无法正常返回，目测被OpenAI限制使用了</li>
+</ul>
+<p>此外上周末revChatGPT还好使，今天再访问这个repo发现也被archived，原因不言自明。</p>
+<p>所以，本公众号还是使用开放的WeLM
+API与大家聊天吧，<strong>关注公众号，直接留言，小菲就可以跟您唠上了。</strong>
+不过由于WeLM采用Prompt的方式进行上下文补全，有可能进行错误放大，所以不支持上下文指代，只能单轮对话。</p>
+<p><a href="/finisky-bot/">小菲陪您唠唠磕</a></p>
+<p><img
+src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/finiskybot1.png" /></p>
 
     </div>
 
@@ -329,43 +330,41 @@ id="shell脚本替换所有post图片地址">shell脚本替换所有post图片�
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/speedupgithubbycdn.en/" rel="bookmark">Speed Up Github Image Hosting By Jsdelivr CDN</a></div>
+      <div class="popular-posts-title"><a href="/chatgpt-limitations/" rel="bookmark">ChatGPT的未解难题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/commonmarktostandardmarkdown/" rel="bookmark">段落和列表中间添加空行的脚本</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/hugoaddcssjs.en/" rel="bookmark">Hugo Add Customized CSS or Javascript</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/hugoaddcssjs/" rel="bookmark">Hugo添加自定义css和javascript</a></div>
+      <div class="popular-posts-title"><a href="/finisky-bot/" rel="bookmark">小菲陪您唠唠磕</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/deployhexofromprivaterepo.en/" rel="bookmark">Deploy Hexo From Private Repository to GitHub Pages</a></div>
+      <div class="popular-posts-title"><a href="/instructgpt-summary/" rel="bookmark">InstructGPT/ChatGPT 简读</a></div>
     </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/python/" rel="tag"># python</a>
-              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
-              <a href="/tags/Markdown/" rel="tag"># Markdown</a>
-              <a href="/tags/Hugo/" rel="tag"># Hugo</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/mongodbendlessretry/" rel="prev" title="MongoDB BulkWrite无限重试问题解决">
-                  <i class="fa fa-chevron-left"></i> MongoDB BulkWrite无限重试问题解决
+                <a href="/webgpt-summary/" rel="prev" title="WebGPT 简读">
+                  <i class="fa fa-chevron-left"></i> WebGPT 简读
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/speedupgithubbycdn.en/" rel="next" title="Speed Up Github Image Hosting By Jsdelivr CDN">
-                  Speed Up Github Image Hosting By Jsdelivr CDN <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -419,7 +418,7 @@ id="shell脚本替换所有post图片地址">shell脚本替换所有post图片�
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/speedupgithubbycdn/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/chatgpt-for-official-account/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
