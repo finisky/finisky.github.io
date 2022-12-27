@@ -25,13 +25,13 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 <meta name="description" content="Sparrow是DeepMind在今年9月底发布的对话系统，主打的点在&quot;helpful, correct, and harmless&quot;。总体来看，思路也是&quot;alignment&quot;，即让对话机器人的回复与用户的意图更贴合。在技术路线上，也是采用reinforcement learning from human feedback，通过定义一批规则，让模型更好地向期望的对话方向推进; 此外，对于事实型的问">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Sparrow 简读">
+<meta property="og:title" content="DeepMind Sparrow 对话系统简析">
 <meta property="og:url" content="https://finisky.github.io/sparrow-summary/index.html">
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="Sparrow是DeepMind在今年9月底发布的对话系统，主打的点在&quot;helpful, correct, and harmless&quot;。总体来看，思路也是&quot;alignment&quot;，即让对话机器人的回复与用户的意图更贴合。在技术路线上，也是采用reinforcement learning from human feedback，通过定义一批规则，让模型更好地向期望的对话方向推进; 此外，对于事实型的问">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-12-27T12:06:39.000Z">
-<meta property="article:modified_time" content="2022-12-27T12:11:32.000Z">
+<meta property="article:modified_time" content="2022-12-27T12:35:06.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -46,10 +46,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/sparrow-summary/","path":"sparrow-summary/","title":"Sparrow 简读"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/sparrow-summary/","path":"sparrow-summary/","title":"DeepMind Sparrow 对话系统简析"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Sparrow 简读 | Finisky Garden</title>
+<title>DeepMind Sparrow 对话系统简析 | Finisky Garden</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96909088-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-96909088-2","only_pageview":false}</script>
@@ -221,7 +221,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Sparrow 简读
+          DeepMind Sparrow 对话系统简析
         </h1>
 
         <div class="post-meta-container">
@@ -233,7 +233,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-12-27 20:06:39 / Modified: 20:11:32" itemprop="dateCreated datePublished" datetime="2022-12-27T20:06:39+08:00">2022-12-27</time>
+      <time title="Created: 2022-12-27 20:06:39 / Modified: 20:35:06" itemprop="dateCreated datePublished" datetime="2022-12-27T20:06:39+08:00">2022-12-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -332,13 +332,11 @@ Search Result</strong>。这种构造方法一看就很眼熟，与LaMDA非常�
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sparrowcontext.png"
 alt="Sparrow LM Context" /></p>
 <p>即把用户输入与搜索Query和结果用prompt连在一起，让语言模型对回复进行补全。其中补全的策略是
-<a href="https://finisky.github.io/nucleussampling/">Nucleus
+<a href="/nucleussampling/">Nucleus
 Sampling</a>，搜索结果由Google提供。</p>
 <h2 id="数据收集">数据收集</h2>
-<p>数据收集方式与 <a
-href="https://finisky.github.io/lamda-paper-summary/">LaMDA</a>, <a
-href="https://finisky.github.io/webgpt-summary/">WebGPT</a> 和 Blender
-Bot 3有许多相似之处。</p>
+<p>数据收集方式与 <a href="/lamda-paper-summary/">LaMDA</a>, <a
+href="/webgpt-summary/">WebGPT</a> 和 Blender Bot 3有许多相似之处。</p>
 <p><img
 src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sparrowratingui.png"
 alt="Sparrow Rating UI" /></p>
