@@ -377,7 +377,7 @@ volume的大小；mongosPodSpec由于仅可以指定cpu和memory。此外，还�
 Specification](https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/）</li>
 </ol>
 <p>部署完毕之后在Ops Manager中的效果如下，共7个server: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep1servers.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep1servers.png"
 alt="MongoDB Sharded Cluster Step1" /></p>
 <h2 id="暴露mongos服务">暴露mongos服务</h2>
 <p>mongos服务暴露与replica
@@ -616,10 +616,10 @@ server的三个实例中，其中一个会率先变成requireTLS，导致另外�
 <p>应用<code>sharddb-step2.yaml</code>之后即可开启TLS，可以从Ops
 Manager的servers界面中看到server由configServer到shardServer倒序依次更新。
 <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbtlsupdating.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbtlsupdating.png"
 alt="MongoDB Sharded Cluster Step2 Updating" /></p>
 <p>开启TLS成功的状态： <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep2processes.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep2processes.png"
 alt="MongoDB Sharded Cluster Step2 Processes" /></p>
 <h2 id="增加shard的mongod实例到多个">增加shard的mongod实例到多个</h2>
 <p>与步骤2相比，<code>sharddb-step3.yaml</code>仅将<code>mongodsPerShardCount</code>改为3：</p>
@@ -663,10 +663,10 @@ alt="MongoDB Sharded Cluster Step2 Processes" /></p>
       <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
       <span class="token key atrule">ca</span><span class="token punctuation">:</span> custom<span class="token punctuation">-</span>ca<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>应用后最终效果，共11个server: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3servers.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3servers.png"
 alt="MongoDB Sharded Cluster Step3 Servers" /></p>
 <p>最终更新成功的状态(界面开启AUTH)： <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/sharddbstep3processes.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3processes.png"
 alt="MongoDB Sharded Cluster Deploy Success" /></p>
 <h1 id="常见错误及处理">常见错误及处理</h1>
 <h2 id="证书无效">证书无效</h2>
@@ -761,7 +761,7 @@ healthy and done</p>
 id="mongodspershardcount为3时打开tls">mongodsPerShardCount为3时打开TLS</h2>
 <p>如果将三步变为两步，即创建cluster时就设定<code>mongodsPerShardCount</code>为3，在更新TLS时就会出现卡死的情况：
 <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updateplanerror.png"
+src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updateplanerror.png"
 alt="MongoDB Sharded Cluster SSL Update Plan Error" />
 具体查一下server上的log会发现，就是前面提到的Ops
 Manager生成的SSL迁移计划有问题。迁移计划必须三个server一步步来：<code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>。任何一个server步子迈大了，更新就不能继续了。</p>
