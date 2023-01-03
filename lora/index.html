@@ -309,7 +309,7 @@ exploiting multi-task settings, there is no direct ways to bypass the
 extra compute in adapter layers.</p>
 </blockquote>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/adapterslatency.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/adapterslatency.png"
 alt="Adapter Extra Inference Latency" /></p>
 <p>从上图可以看出，对于线上batch size为1，sequence
 length比较短的情况，inference
@@ -342,7 +342,7 @@ Adaptation (LoRA) approach.</p>
 <p>虽然模型的参数众多，但其实模型主要依赖<code>low intrinsic dimension</code>，那adaption应该也依赖于此，所以提出了Low-Rank
 Adaptation (LoRA)。</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/lora.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/lora.png"
 alt="LoRA Model" /></p>
 <p>LoRA的思想也很简单，在原始PLM旁边增加一个旁路，做一个降维再升维的操作，来模拟所谓的<code>intrinsic rank</code>。训练的时候固定PLM的参数，只训练降维矩阵A与升维矩阵B。而模型的输入输出维度不变，输出时将BA与PLM的参数叠加。用随机高斯分布初始化A，用0矩阵初始化B，保证训练的开始此旁路矩阵依然是0矩阵。</p>
 <p>具体来看，假设预训练的矩阵为 <span class="math inline">\(W_0 \in

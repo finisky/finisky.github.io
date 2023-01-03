@@ -306,7 +306,7 @@ translation)，WeLM也能正确地翻译。</li>
 <li>WeLM还能解释和调整自己做的一些决定。</li>
 </ul>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmexample.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmexample.png"
 alt="WeLM Illustration" /></p>
 <h1 id="训练数据">训练数据</h1>
 <p>同时使用了中英文数据，总数据的原始文本大小超过了
@@ -316,7 +316,7 @@ alt="WeLM Illustration" /></p>
 tokens的数据。对这些数据进行重采样，以保证数据的多样性。</p>
 <p>重采样后训练数据的统计信息：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmdatastats.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmdatastats.png"
 alt="WeLM Data Stats" /></p>
 <h1 id="模型">模型</h1>
 <p>基于 Megatron-LM 和 DeepSpeed 进行训练。模型结构与 GPT3的 自回归
@@ -330,7 +330,7 @@ Transformer 相同，主要区别：</p>
 <p>共训练了3个（原文有typo）不同大小的模型，采用 AdamW optimizer，FP16
 混合精度训练：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmmodeldetails.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmmodeldetails.png"
 alt="WeLM Model Details" /></p>
 <p>训练成本很可观，最大的模型用128块 A100 训练了24天：</p>
 <blockquote>
@@ -352,11 +352,11 @@ scale.</p>
 <p>在18个中文NLP任务上，与CPM/Pangu/Ernie
 3.0(10B)相比，多数情况下WeLM的性能最优：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmcnresult.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmcnresult.png"
 alt="WeLM Chinese NLP Tasks Result" /></p>
 <p>看下我们关注的文本生成任务，WeLM作文本生成主要靠prompt。看它如何扮演李白的角色，注意，在这段对话中还有中英夹杂的情况：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmlibai.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmlibai.png"
 alt="WeLM Li Bai" /></p>
 <p>这里的对话还是挺有意思的，生成的回复也不局限于前面的prompt，还有一些额外的知识引入，不过与
 Google 的
@@ -365,7 +365,7 @@ LaMDA相比，此处并没有搜索引擎的加持，而只是大模型本身的
 <p>此外，作者还探索了是否可以通过显式的多任务学习来加强模型的泛化能力。方法是用人工写的不同任务的prompts训练模型，称做<strong>WePrompt</strong>。为属于14个类别的76个任务手写了
 1227 个 prompts 模板：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/weprompttasks.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/weprompttasks.png"
 alt="WePrompt Tasks" /></p>
 <p>训练数据的构造：从76个任务中随机选择一个，再从该任务中采样一条标注数据和一条prompt模板，并通过这个模板构造一条自然语言训练数据，重复上述过程直到将这个句子达到2048
 tokens。最后使用这些构造的数据fine-tune WeLM得到WePrompt。</p>
@@ -373,7 +373,7 @@ tokens。最后使用这些构造的数据fine-tune WeLM得到WePrompt。</p>
 tuning的方式进行训练的。</p>
 <p>最后，模型还尝试了可解释性与自我纠错。看看下面这个自我纠错的例子：</p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmselfcalibration.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/nlp/welmselfcalibration.png"
 alt="WeLM Self-Calibration" /></p>
 <h1 id="总结">总结</h1>
 <p>WeLM通过筛选高质量训练数据，跨语言训练并使用prompt

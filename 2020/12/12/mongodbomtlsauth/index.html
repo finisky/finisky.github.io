@@ -300,7 +300,7 @@ href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth
 <code>Secure Connections to Application Database</code>,
 <code>Secure Connections to MongoDB Deployments</code>，我们需要的是最后一个，<code>Enable TLS to MongoDB Deployments</code>。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到<code>userdb</code>的每个server上，然后才能配置这些证书所在的路径。</p>
 <p>用一张图解释： <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/securedifferentconnections.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/mongodb/securedifferentconnections.png"
 alt="Different Level of Security" /></p>
 <p>如果你读Ops Manager的文档 <a
 target="_blank" rel="noopener" href="https://docs.opsmanager.mongodb.com/current/tutorial/enable-ssl-for-a-deployment/#get-and-install-the-tls-certificate-on-each-mongodb-host">#
@@ -413,10 +413,10 @@ string是相同的即可。</p>
 <p>应用userdb.yaml: <pre class="line-numbers language-none"><code class="language-none">$ kubectl apply -f userdb.yaml -n mongodb
 mongodb.mongodb.com&#x2F;userdb configured<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <p><img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttls.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttls.png"
 alt="Updating UserDB Deployment" /></p>
 <p>具体更新的Details: <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttlsdetails.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttlsdetails.png"
 alt="Updating Deployment Details" />
 可见为了保证服务不中断，TLS的更新需要经过多步完成：<code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>。</p>
 <p>这步更新需要一些时间，要重启多次，中间DB对应的statefulset
@@ -509,7 +509,7 @@ MongoDB Enterprise userdb:PRIMARY<span class="token operator">></span><span aria
 &amp; deploy即可。</p>
 <p>一切完成之后的界面如下，可见TLS和AUTH都已变成了<code>Enabled</code>：
 <img
-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbreplicasetdone.png"
+src="https://fastly.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbreplicasetdone.png"
 alt="UserDB Deployment Completed" /></p>
 <p>此时再用mongo shell登录不再有Startup Warnings: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
 MongoDB shell version v4.4.2
