@@ -30,6 +30,21 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="Knowledge Grounded Conversation (KGC)，就是基于知识的对话生成，与不使用知识的对话生成相比，生成的回复更有信息量，可更好地与用户互动。 本文不是KGC的综述，所谓漫谈，则是比较随性地聊聊这个方向的代表工作，顺带简单梳理其发展脉络。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/kgcflow.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/wowstats.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/tmn.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/postks.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/sktacc.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/sktmodel.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bridgegappipm.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/ddsl.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/diffksexample.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/diffksmodel.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/gpt3hallucination.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/hallucinationresult.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/lowresourcekgcmodel.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/zeroresourcekgcmodel.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/kgcwithplm.png">
 <meta property="article:published_time" content="2022-11-09T15:53:46.000Z">
 <meta property="article:modified_time" content="2022-11-09T16:26:41.000Z">
 <meta property="article:author" content="finisky">
@@ -38,6 +53,7 @@
 <meta property="article:tag" content="NLG">
 <meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/kgcflow.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/brief-on-knowledge-grounded-conversation/">
@@ -295,8 +311,7 @@ Knowledge-Powered Conversational Agents</a></p>
 <p>在开放域对话中，恰当地使用knowledge是个必要的功能，但这个问题却没被很好地解决。seq2seq模型只能通过参数记忆输入到输出的映射，却不能很好地将knowledge作为上下文建模。所以WoW提出了一个有监督学习任务，可以让模型基于相关knowledge生成回复，也就是
 Knowledge Grounded Conversation。</p>
 <h2 id="kgc-workflow">KGC Workflow</h2>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/kgcflow.png"
+<p><img src="https://coriva.eu.org/images/nlp/kgcflow.png"
 alt="KGC Workflow" /></p>
 <p>如上图所示，KGC的输入是<code>Context/Query</code>，通过 Knowledge
 Selector 选出最优 <code>Knowledge</code> ，然后将
@@ -314,14 +329,12 @@ Apprentice 和一个 Wizard 完成：</p>
 扮演的角色是遇到了另一个好奇的人，同时自己也很希望与之深入交谈。在交流的过程中，Wizard可以借助一个IR系统从Wikipedia中检索相关的段落展开聊天，而这个段落对Apprentice是不可见的。Wizard在每轮对话前先阅读这个段落，然后基于这个知识与Apprentice进行对话，保证对话与此段落相关并且回复比较引人入胜。</li>
 </ul>
 <p>对话开始时一方先选择一个话题开始，Apprentice提出问题后，Wizard这边会通过IR系统显示出相关的knowledge，他可以选择一个相关的knowledge进行对话，或者都不选进行回复。整个会话至少要持续4~5轮，最终构造出整个数据集。数据集的一些统计数据：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/wowstats.png"
+<p><img src="https://coriva.eu.org/images/nlp/wowstats.png"
 alt="WoW Dataset Stats" /></p>
 <h2 id="transformer-memory-network">Transformer Memory Network</h2>
 <p>模型结构很直观，把context与knowledge分别编码，再输入decoder生成最终的回复。这里的
 TMN 也是许多后续工作的baseline。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/tmn.png"
+<p><img src="https://coriva.eu.org/images/nlp/tmn.png"
 alt="Transformer Memory Network" /></p>
 <h1 id="knowledge-selection">Knowledge Selection</h1>
 <p>很多工作都指出Knowledge
@@ -343,8 +356,7 @@ target="_blank" rel="noopener" href="https://www.ijcai.org/proceedings/2019/0706
 Select Knowledge for Response Generation in Dialog Systems</a></p>
 <p>PostKS 首先提出了一种提升Knowledge
 Selection效果的方案，思路很直观，<strong>用后验分布逼近先验分布</strong>，也就是说，用response来指导选择knoweldge，选择knowledge中与response比较接近的那个。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/postks.png"
+<p><img src="https://coriva.eu.org/images/nlp/postks.png"
 alt="PostKS Model" /></p>
 <p>从上图可以看出，x是输入的句子（或者说上下文）,
 y是生成的response，那么先验分布是 <span
@@ -359,8 +371,7 @@ Knowledge Selection for Knowledge-Grounded Dialogue</a></p>
 <p>SKT 提出了另一种思路进行knowledge
 selection。论文首先做了一个实验，测试了看和不看response两种情况下，knowledge
 selection的准确率：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sktacc.png"
+<p><img src="https://coriva.eu.org/images/nlp/sktacc.png"
 alt="SKT Motivation" /></p>
 <p>结果很有意思，对真人来说，不看response选对knowledge的准确率只有17.1%，而在看response的情况下，高达83.7%。所以论文的动机就很明确了：</p>
 <blockquote>
@@ -376,8 +387,7 @@ process instead of a single-step decision process. Second, due to the
 diversity of knowledge selection in dialogue, we model it as latent
 variables.</p>
 </blockquote>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/sktmodel.png"
+<p><img src="https://coriva.eu.org/images/nlp/sktmodel.png"
 alt="SKT Model" /></p>
 <p>本质上也是后验逼近先验的方法，概率图模型如上图所示。对不同的对话轮数进行factorize，然后再优化其ELBO。</p>
 <h2 id="pipm">PIPM</h2>
@@ -388,8 +398,7 @@ Dialogue Generation</a></p>
 <p>腾讯之后提出了基于SKT的改进工作，从标题就能基本看明白想法：先验和后验信息之间存在gap。具体来说，从先验信息选择knowledge缺乏后验信息，模型训练时是基于后验选择的knowledge，而在推断时却只有先验分布。论文提出使用
 Posterior Information Prediction Module (PIPM)
 模块来预测和补全后验信息，和知识蒸馏的方式来解决用不合适的知识生成回复的问题。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/bridgegappipm.png"
+<p><img src="https://coriva.eu.org/images/nlp/bridgegappipm.png"
 alt="PIPM Framework" /></p>
 <p>所谓的后验信息是以对话历史和knowledge
 pool作为输入，用前向网络来生成的一些词汇。</p>
@@ -409,8 +418,7 @@ response generation.</p>
 <p>不过Oracle
 Label含有噪音，论文通过计算response与knowledge的相似度并重新归一化来提升效果。同时，还使用知识蒸馏的方式，teacher在训练时使用golden
 response作为额外输入，来引导student学习knowledge selection分布。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/ddsl.png"
+<p><img src="https://coriva.eu.org/images/nlp/ddsl.png"
 alt="Distilled Distant Supervision Loss" /></p>
 <h2 id="diffks">DiffKS</h2>
 <p>[EMNLP2020findings] <a href="#diffks">DiffKS</a> <a
@@ -418,13 +426,11 @@ target="_blank" rel="noopener" href="https://aclanthology.org/2020.findings-emnl
 Knowledge Selection for Knowledge-grounded Conversation
 Generation</a></p>
 <p>同期还有另一篇工作DiffKS，通过考虑历史选择的knowledge，来更好地指导本轮的选择。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/diffksexample.png"
+<p><img src="https://coriva.eu.org/images/nlp/diffksexample.png"
 alt="DiffKS Example" /></p>
 <p>上面的例子解释了主要思路，如果本轮的选择与之前相同的knowledge，那么生成的回复就可能重复；如果本轮选择的knowledge与之前选择的knowledge差异过大，则会导致回复不一致的问题。</p>
 <p>论文提出了两种方法引入对knowledge diff的建模:</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/diffksmodel.png"
+<p><img src="https://coriva.eu.org/images/nlp/diffksmodel.png"
 alt="DiffKS Model" /></p>
 <p>其中Disentangled Selection将上下文相关性与knowledge
 diff两部分的建模解耦，可以支持ablation
@@ -435,15 +441,13 @@ study从而评估diff信息对模型性能的影响。最终实验也验证了di
 target="_blank" rel="noopener" href="https://aclanthology.org/2021.findings-emnlp.320/">Retrieval
 Augmentation Reduces Hallucination in Conversation</a></p>
 <p>对GPT3这样的大模型，在对话任务中常常会有一些额外的发挥，所谓hallucination：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/gpt3hallucination.png"
+<p><img src="https://coriva.eu.org/images/nlp/gpt3hallucination.png"
 alt="Hallucination in GPT3" /></p>
 <p>为了解决这个问题，可以用KGC的方法，通过retrieval
 knowledge的方式，给模型提供更准确的信息，避免它自己的随意发挥。本文是个实验文章，对各种可能的
 retrievers, rankers 和 encoder-decoders
 进行排列组合，分析指出在什么情况下什么技术栈效果最好。同时它的最优模型也达到了SOTA的水平。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/hallucinationresult.png"
+<p><img src="https://coriva.eu.org/images/nlp/hallucinationresult.png"
 alt="Hallucination Results" /></p>
 <p>从结果来看，Response Generation中 <a
 href="/fusion-in-decoder-paper-summary/">FiD</a> + RAG
@@ -464,8 +468,7 @@ FiD+RAG, DPR 与 FAISS
 <p>[EMNLP2020] <a
 target="_blank" rel="noopener" href="https://openreview.net/forum?id=rJeIcTNtvS">Low-Resource
 Knowledge-Grounded Dialogue Generation</a></p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/lowresourcekgcmodel.png"
+<p><img src="https://coriva.eu.org/images/nlp/lowresourcekgcmodel.png"
 alt="Low Resource KGC with Pre-trained Language Models" /></p>
 <p>在训练数据较少的设置下，主要想法是通过解耦decoder，让生成模型的大部分参数可以通过较为容易获取的
 <code>&lt;query, response&gt;</code> 数据进行学习：</p>
@@ -487,8 +490,7 @@ class="math inline">\(Z_k\)</span> 代表 latent knowledge，<span
 class="math inline">\(Z_\alpha\)</span> 控制要使用多少<span
 class="math inline">\(Z_k\)</span>。目标是在无标注数据的情况下学习分布
 <span class="math inline">\(p(R|C,K)\)</span>。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/zeroresourcekgcmodel.png"
+<p><img src="https://coriva.eu.org/images/nlp/zeroresourcekgcmodel.png"
 alt="Zero Resource KGC Model" /></p>
 <h2 id="knowledgpt">KnowledGPT</h2>
 <p>[EMNLP2020] <a href="#knowledgpt">KnowledGPT</a> <a
@@ -497,8 +499,7 @@ Dialogue Generation with Pre-trained Language Models</a></p>
 <p>同期的这篇工作是利用预训练语言模型对knowledge selection和response
 generation进行联合优化。使用GPT2作为预训练模型，构建由context-aware
 knowledge encoder和sequential knowledge selector组成的知识选择模块：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/kgcwithplm.png"
+<p><img src="https://coriva.eu.org/images/nlp/kgcwithplm.png"
 alt="KGC with PLM Model" /></p>
 <p>KnowledGPT
 在WoW和CMU_DoG数据集中的大多评估指标上都达到了SOTA，说明预训练模型对KGC回复生成还是有显著的提升作用。</p>

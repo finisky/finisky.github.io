@@ -30,6 +30,8 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。 整个系列：  安装MongoDB Ops Manager 创建用户数据库(replicaset) 用户数据库服务配置公网访问 openssl生成自签名CA证书和server证书 打开用户数据库TLS通信加密和Auth授权  所谓的Application Database是MongoDB Ops Mana">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/mongodb/generateapikey.png">
+<meta property="og:image" content="https://coriva.eu.org/images/mongodb/allclusters.png">
 <meta property="article:published_time" content="2020-12-12T15:30:37.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -38,6 +40,7 @@
 <meta property="article:tag" content="Kubernetes">
 <meta property="article:tag" content="TLS">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/mongodb/generateapikey.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/2020/12/12/mongodbomcreateuserdb/">
@@ -389,8 +392,7 @@ Events:                 &lt;none&gt;<span aria-hidden="true" class="line-numbers
 <p>没有想到特别好的方法，但在<code>Public API access</code>页面中发现默认是有一个API
 Key的，虽然在Ops Manager中不显示，但可以从kubernetes
 dashboard的secret中找到：<code>ops-manager-admin-key</code>，也就是说不必生成新的APIkey和创建<code>om-user-credentials</code>了。查看<code>ops-manager-admin-key</code>的最末几位:
-<img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/generateapikey.png"
+<img src="https://coriva.eu.org/images/mongodb/generateapikey.png"
 alt="OpsManager Public API Key" /></p>
 <p>修改userdb.yaml如下（只修改最后一行）： <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> mongodb.com/v1
 <span class="token key atrule">kind</span><span class="token punctuation">:</span> MongoDB
@@ -414,15 +416,14 @@ NAME     TYPE         STATE     VERSION     AGE
 userdb   ReplicaSet   Running   4.2.2-ent   13m<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></p>
 <p>命令执行完毕之后，刷新All
 Clusters界面就有两个cluster了，同时对应的context和Project也自动创建好了，其中<code>userdb</code>就是创建好的用户数据库：
-<img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/allclusters.png"
+<img src="https://coriva.eu.org/images/mongodb/allclusters.png"
 alt="MongoDB Ops Manager All Clusters" /></p>
 <p>查看userdb processes: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbprocesses.png"
+src="https://coriva.eu.org/images/mongodb/userdbprocesses.png"
 alt="UserDB Processes" />
 发现TLS和AUTH都是Disabled。也就是说DB的通信没有加密，访问也没有用户名密码。</p>
 <p>查看userdb servers: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbservers.png"
+src="https://coriva.eu.org/images/mongodb/userdbservers.png"
 alt="UserDB Servers" />
 注意三个server的地址都是类似：<code>userdb-0.userdb-svc.mongodb.svc.cluster.local</code>，也就是内网地址，因此此时我们并不能通过mongo
 client连接到这些MongoDB Instance。</p>
@@ -442,6 +443,9 @@ href="/2020/12/12/mongodbomexposeservices/">Kubernetes部署MongoDB集群(三)�
       <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="bookmark">Deploy MongoDB Sharded Cluster by Ops Manager</a></div>
     </li>
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="bookmark">部署Kubernetes MongoDB Sharded Cluster</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="bookmark">MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></div>
     </li>
     <li class="popular-posts-item">
@@ -449,9 +453,6 @@ href="/2020/12/12/mongodbomexposeservices/">Kubernetes部署MongoDB集群(三)�
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/12/mongodbomexposeservices/" rel="bookmark">Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/12/19/mongodbomselfsignedcertificates.en/" rel="bookmark">MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates</a></div>
     </li>
   </ul>
 

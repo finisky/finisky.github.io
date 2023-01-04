@@ -30,6 +30,7 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="I have a sharded cluster (2 shards, each 3 mongods; 3 config server, 2 mongoses) which is deployed by MongoDB Ops Manager. Last week, one of the shard host status was shown as a grey diamond (Hover: &quot;">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/mongodb/hostmappings.png">
 <meta property="article:published_time" content="2021-01-19T14:25:25.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -37,6 +38,7 @@
 <meta property="article:tag" content="MongoDB Ops Manager">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/mongodb/hostmappings.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/2021/01/19/mongodbhostdiscoveryissue.en/">
@@ -290,7 +292,7 @@ What's wrong with the cluster?</p>
 <h1 id="problem-analysis">Problem Analysis</h1>
 <p>It looks like that one of the server is out of Ops Manager's
 monitoring (but the agent log was still collected in time): <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/greydiamondprocessstatus.png"
+src="https://coriva.eu.org/images/mongodb/greydiamondprocessstatus.png"
 alt="MongoDB Processes Grey Diamond Status" /> In the first glance, I
 thought the issue was caused by the host. Therefore, I deleted the
 corresponding pod as well as its pvc in kubernetes and waiting for the
@@ -346,8 +348,7 @@ discover the missing hosts?</p>
 host mappings. What's host mappings? Refer to: <a
 target="_blank" rel="noopener" href="https://docs.opsmanager.mongodb.com/current/tutorial/nav/host-mappings/">Host
 Mappings</a></p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/hostmappings.png"
+<p><img src="https://coriva.eu.org/images/mongodb/hostmappings.png"
 alt="MongoDB Ops Manager Host Mappings" /></p>
 <p>Go to <code>Deployment -&gt; More -&gt; Host Mappings</code> to check
 the existing host mappings. If you find something like this:</p>
@@ -375,7 +376,7 @@ the existing host mappings. If you find something like this:</p>
 all host mappings.</strong> (Don't worry, the mapping will be
 reconstructed several minutes later.)</p>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/processstatusworking.png"
+src="https://coriva.eu.org/images/mongodb/processstatusworking.png"
 alt="MongoDB Ops Manager Deployment Processes" /></p>
 <p>I guess the root cause is that the Ops Manager doesn't update the
 host mappings timely. If host A obtain a new IP which is previously used

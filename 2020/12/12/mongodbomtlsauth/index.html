@@ -30,6 +30,7 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="本文为系列第五部分，用生成的自签名证书打开userdb的TLS和AUTH，并且完成userdb的公网域名访问。 整个系列：  安装MongoDB Ops Manager 创建用户数据库(replicaset) 用户数据库服务配置公网访问 openssl生成自签名CA证书和server证书 打开用户数据库TLS通信加密和Auth授权">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/mongodb/userdbreplicasetdone.png">
 <meta property="article:published_time" content="2020-12-12T15:30:40.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -38,6 +39,7 @@
 <meta property="article:tag" content="Kubernetes">
 <meta property="article:tag" content="TLS">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/mongodb/userdbreplicasetdone.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/2020/12/12/mongodbomtlsauth/">
@@ -300,7 +302,7 @@ href="/2020/12/12/mongodbomtlsauth/">打开用户数据库TLS通信加密和Auth
 <code>Secure Connections to Application Database</code>,
 <code>Secure Connections to MongoDB Deployments</code>，我们需要的是最后一个，<code>Enable TLS to MongoDB Deployments</code>。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到<code>userdb</code>的每个server上，然后才能配置这些证书所在的路径。</p>
 <p>用一张图解释： <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/securedifferentconnections.png"
+src="https://coriva.eu.org/images/mongodb/securedifferentconnections.png"
 alt="Different Level of Security" /></p>
 <p>如果你读Ops Manager的文档 <a
 target="_blank" rel="noopener" href="https://docs.opsmanager.mongodb.com/current/tutorial/enable-ssl-for-a-deployment/#get-and-install-the-tls-certificate-on-each-mongodb-host">#
@@ -413,10 +415,10 @@ string是相同的即可。</p>
 <p>应用userdb.yaml: <pre class="line-numbers language-none"><code class="language-none">$ kubectl apply -f userdb.yaml -n mongodb
 mongodb.mongodb.com&#x2F;userdb configured<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></p>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updatingdeploymenttls.png"
+src="https://coriva.eu.org/images/mongodb/updatingdeploymenttls.png"
 alt="Updating UserDB Deployment" /></p>
 <p>具体更新的Details: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/updatingdeploymenttlsdetails.png"
+src="https://coriva.eu.org/images/mongodb/updatingdeploymenttlsdetails.png"
 alt="Updating Deployment Details" />
 可见为了保证服务不中断，TLS的更新需要经过多步完成：<code>disabled -&gt; sslAllowed -&gt; sslPreferred -&gt; sslRequired</code>。</p>
 <p>这步更新需要一些时间，要重启多次，中间DB对应的statefulset
@@ -508,8 +510,7 @@ MongoDB Enterprise userdb:PRIMARY<span class="token operator">></span><span aria
 <p>TLS设置成功之后打开AUTH就非常简单了，直接在Deployment的Processes界面中点AUTH的<code>Disabled</code>，按提示直接点下一步到最后Save，再点下界面上方的review
 &amp; deploy即可。</p>
 <p>一切完成之后的界面如下，可见TLS和AUTH都已变成了<code>Enabled</code>：
-<img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/userdbreplicasetdone.png"
+<img src="https://coriva.eu.org/images/mongodb/userdbreplicasetdone.png"
 alt="UserDB Deployment Completed" /></p>
 <p>此时再用mongo shell登录不再有Startup Warnings: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
 MongoDB shell version v4.4.2
@@ -535,6 +536,9 @@ Manager搭建用户MongoDB数据库的详细流程。中间步骤繁多，细节
       <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="bookmark">Deploy MongoDB Sharded Cluster by Ops Manager</a></div>
     </li>
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="bookmark">部署Kubernetes MongoDB Sharded Cluster</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="bookmark">MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></div>
     </li>
     <li class="popular-posts-item">
@@ -542,9 +546,6 @@ Manager搭建用户MongoDB数据库的详细流程。中间步骤繁多，细节
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/19/mongodbomexposeservices.en/" rel="bookmark">MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/12/12/mongodbomexposeservices/" rel="bookmark">Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></div>
     </li>
   </ul>
 

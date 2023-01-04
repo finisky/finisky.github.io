@@ -307,7 +307,7 @@ Kubernetes的构成，以及如何安装MongoDB Ops Manager。</p>
 <h1 id="mongodb-ops-manager-kubernetes部署简介">MongoDB Ops Manager
 Kubernetes部署简介</h1>
 <p>一张简图说明MongoDB Ops Manager部署的架构： <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/architecture.png"
+src="https://coriva.eu.org/images/mongodb/architecture.png"
 alt="MongoDB Ops Manager Architecture" /> Kubernetes
 Deployment仅有一个：</p>
 <ul>
@@ -370,7 +370,7 @@ deployment.apps/mongodb-enterprise-operator created<span aria-hidden="true" clas
 <p>此处在集群中新建了一个Deployment:
 mongodb-enterprise-operator，可在kubernetes dashboard中查看：</p>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/kubernetesoperatordeployment.png"
+src="https://coriva.eu.org/images/mongodb/kubernetesoperatordeployment.png"
 alt="MongoDB Enterprise Operator Deployment" /></p>
 <h2 id="安装mongodb-ops-manager">安装MongoDB Ops Manager</h2>
 <h3 id="创建ops-manager管理员secret">创建Ops Manager管理员secret</h3>
@@ -410,14 +410,14 @@ mongodbopsmanager.mongodb.com&#x2F;ops-manager created<span aria-hidden="true" c
 <p>等着Ops Manager的这些资源创建完毕并变成"Running": <pre class="line-numbers language-none"><code class="language-none">$ kubectl get om -n mongodb
 NAME          REPLICAS   VERSION   STATE (OPSMANAGER)   STATE (APPDB)   STATE (BACKUP)   AGE   WARNINGS
 ops-manager              4.2.4     Running              Running         Pending          18m<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre> <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/kubernetesstatefulset.png"
+src="https://coriva.eu.org/images/mongodb/kubernetesstatefulset.png"
 alt="MongoDB Ops Manager Statefulset" /></p>
 <p>查看创建的services: <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/kubernetesoperatorservices.png"
+src="https://coriva.eu.org/images/mongodb/kubernetesoperatorservices.png"
 alt="MongoDB Ops Manager Services" /></p>
 <p>可以找到Ops Manager的service
 ops-manager-svc-ext的地址：x.x.x.250:8080。在浏览器中打开： <img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/opsmanagerlogin.png"
+src="https://coriva.eu.org/images/mongodb/opsmanagerlogin.png"
 alt="MongoDB Ops Manager Login Page" /></p>
 <p>填入创建ops-manager-admin-secret的用户名<code>xxx@xxx.com</code>和密码即可登录。然后出现了<code>Configure Ops Manager</code>的界面，如设置Ops
 Manager的URL（而非当前的集群内部地址：http://ops-manager-svc.mongodb.svc.cluster.local:8080）等。这些配置都可以在之后通过Admin界面修改，不再赘述。</p>
@@ -428,7 +428,7 @@ secret &quot;ops-manager-admin-secret&quot; deleted<span aria-hidden="true" clas
 <p>官方tutorial说它不会再被用到，目测登录用户名和密码已经被写入了创建好的后端DB中。</p>
 <h2 id="配置完成界面">配置完成界面</h2>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/mongodb/opsmanagerprocesses.png"
+src="https://coriva.eu.org/images/mongodb/opsmanagerprocesses.png"
 alt="MongoDB Ops Manager Deployment Processes" /></p>
 <p><strong>注意</strong>： 这里的三个DB是供Ops
 Manager使用的后端DB(所谓Application
@@ -452,6 +452,9 @@ Part2: Ops Manager in Kubernetes</a></p>
       <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster.en/" rel="bookmark">Deploy MongoDB Sharded Cluster by Ops Manager</a></div>
     </li>
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/12/26/mongodbomcreateshardedcluster/" rel="bookmark">部署Kubernetes MongoDB Sharded Cluster</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/19/mongodbomcreateuserdb.en/" rel="bookmark">MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></div>
     </li>
     <li class="popular-posts-item">
@@ -459,9 +462,6 @@ Part2: Ops Manager in Kubernetes</a></p>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/12/19/mongodbomexposeservices.en/" rel="bookmark">MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/12/12/mongodbomexposeservices/" rel="bookmark">Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></div>
     </li>
   </ul>
 

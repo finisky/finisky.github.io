@@ -30,6 +30,7 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="如果一个interface或abstract method的参数为基类形参，而有另一个类实现了该interface，但却使用了派生类形参，会发生什么？或者考虑另一种情况，一个interface或abstract method的返回值为基类对象，而它的实现返回的却是派生类对象，会发生什么？ 这两个问题的答案是相同的，都是编译报错。想来有点费解，这不是违反SOLID原则中的里氏替换原则么？再仔细想想可">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/iplayinterface.png">
 <meta property="article:published_time" content="2019-12-09T14:11:45.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -38,6 +39,7 @@
 <meta property="article:tag" content="OOP">
 <meta property="article:tag" content="Design Pattern">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/iplayinterface.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/2019/12/09/interfacederivedparameter/">
@@ -287,8 +289,7 @@ method的定义其实与实现它们的类本身是无关的，这些类对它�
 <h1 id="问题定义">问题定义</h1>
 <p>上面这段话看起来有点拗口，还是拿实例说话（此处定义了可说明问题的最小实例，例子本身的抽象可能略有不当，会意即可）。考虑下面的类关系：猫会玩毛球，狗要玩狗棒，毛球和狗棒自玩具类继承下来，而猫和狗实现了玩这个接口。对应一下：</p>
 <p>有一个IPlay接口，Cat类和Dog类实现了此接口，形参为Toy类，而CatToy(毛球)和DogToy(狗棒)都继承了Toy(玩具)这个基类。但CatToy和DogToy分别有一个派生的属性Size和Length。UML图示意如下：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/iplayinterface.png"
+<p><img src="https://coriva.eu.org/images/iplayinterface.png"
 alt="IPlayInterface" /></p>
 <p>首先定义Toy基类及派生类： <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">Toy</span>
 <span class="token punctuation">&#123;</span>

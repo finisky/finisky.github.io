@@ -30,6 +30,9 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="7.19日，收到了LeanCloud的邮件，大意如下：  8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务 为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8 月 1 日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。  静态网站的状态存取是个痛点。好消息是本站使用Hexo NexT主题，天然集成了文章阅读量的功能，">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/vercelmongodbsetting.png">
+<meta property="og:image" content="https://coriva.eu.org/images/walinemigrationui.png">
+<meta property="og:image" content="https://coriva.eu.org/images/walineversionmismatch.png">
 <meta property="article:published_time" content="2022-08-08T16:26:09.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -39,6 +42,7 @@
 <meta property="article:tag" content="Hexo Extension">
 <meta property="article:tag" content="Serverless">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/vercelmongodbsetting.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/hexormleancloud/">
@@ -310,8 +314,7 @@ target="_blank" rel="noopener" href="https://waline.js.org/guide/server/database
 <p>切换存储很简单，仅需改变下Vercel前端的环境变量，并重新部署令其生效。保险起见，<strong>强烈建议新建项目，方便导出导入数据</strong>。方便描述，两个Vercel
 app用<code>OldApp</code>和<code>NewApp</code>进行指代。</p>
 <p>先在<code>NewApp</code>配置如下MongoDB的相关环境变量：</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/vercelmongodbsetting.png"
+<p><img src="https://coriva.eu.org/images/vercelmongodbsetting.png"
 alt="Vercel MongoDB Environment Variables Setting" /></p>
 <p>值得一提的是<code>MONGO_HOST</code>与<code>MONGO_PORT</code>的设置，是两个List:</p>
 <pre class="line-numbers language-none"><code class="language-none">MONGO_HOST&#x3D;[&quot;cluster0-shard-00-00.p4edw.mongodb.net&quot;,&quot;cluster0-shard-00-01.p4edw.mongodb.net&quot;,&quot;cluster0-shard-00-02.p4edw.mongodb.net&quot;]
@@ -322,16 +325,14 @@ MONGO_PORT&#x3D;[27017,27017,27017,27017]<span aria-hidden="true" class="line-nu
 Waline版本不匹配</h2>
 <p>导出数据可以通过评论的后端完成:
 <code>https://xxx.vercel.app/ui</code></p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/walinemigrationui.png"
+<p><img src="https://coriva.eu.org/images/walinemigrationui.png"
 alt="Waline Migration UI" /></p>
 <p>导出评论时出现如下错误：</p>
 <blockquote>
 <p>Failed to load resource: the server responded with a status of 500 ()
 https://xxx.vercel.app/comment?type=count&amp;url=%2Fsample%2F</p>
 </blockquote>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/walineversionmismatch.png"
+<p><img src="https://coriva.eu.org/images/walineversionmismatch.png"
 alt="Waline Version Mismatch" /></p>
 <p>Debug好久才发现，服务端(v2.6.2)与客户端(v1.6.0)版本不匹配所致，先得升级<code>OldApp</code>到v2.6.2，重新部署一次<code>OldApp</code>即可。</p>
 <h2 id="导入数据504错误">导入数据504错误</h2>

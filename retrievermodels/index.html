@@ -30,6 +30,9 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="文本匹配与检索是NLP中的经典问题，主要研究两个文本的主义相似度，通常用在检索系统的召回阶段。传统的召回方案如tf-idf和BM25具有速度优势，但在语义匹配方面有所欠缺。随着预训练模型的发展，使用深度模型进行文本检索变得必要与可行。 使用深度模型进行检索，主要矛盾是检索性能与速度的平衡。 本文对几篇经典的文本检索模型工作DPR, Poly-Encoders, DC-BERT 与 ColBERT">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/polyencoders.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/dcbert.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/colbert.png">
 <meta property="article:published_time" content="2022-06-03T03:18:00.000Z">
 <meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
 <meta property="article:author" content="finisky">
@@ -37,6 +40,7 @@
 <meta property="article:tag" content="NLP">
 <meta property="article:tag" content="Transformer">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/polyencoders.png">
 
 
 <link rel="canonical" href="https://finisky.eu.org/retrievermodels/">
@@ -298,7 +302,7 @@ Interaction over BERT</a></p>
 Network)，也即图(a)所示的情形。思路很直接，把query和doc进行分别编码成一个向量，再对它们计算cosine
 similarity或点积作为最终打分。双塔模型的代表作有DSSM，SmartReply还有下文提到的DPR。</p>
 <p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/querydocmatchingparadigm.png"
+src="https://coriva.eu.org/images/nlp/querydocmatchingparadigm.png"
 alt="Query document matching paradigms" /></p>
 <p>在预训练模型兴起之后，所谓的 full interaction (图b中称为 all-to-all
 interaction，或在Poly-Encoders中称之为 cross-encoder，都是一个意思)
@@ -337,8 +341,7 @@ search也是使用FAISS。</p>
 <p>query和doc使用两个独立的Transformer进行编码。其中query编码的计算：</p>
 <p><span class="math display">\[y_{ctxt} = \sum_i w_i \sum_j
 w_{j}^{c_i}h_j\]</span></p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/polyencoders.png"
+<p><img src="https://coriva.eu.org/images/nlp/polyencoders.png"
 alt="PolyEncoders architecture" /></p>
 <h1 id="dc-bert">DC-BERT</h1>
 <p>[SIGIR2020] <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.12591">DC-BERT:
@@ -352,8 +355,7 @@ Layer完成，可以通过调整超参数k，达到性能与速度的折衷。</
 <p>DC-BERT contains two BERT models to independently encode the question
 and each retrieved document.</p>
 </blockquote>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/dcbert.png"
+<p><img src="https://coriva.eu.org/images/nlp/dcbert.png"
 alt="DCBERT architecture" /></p>
 <h1 id="colbert">ColBERT</h1>
 <p>[SIGIR2020] <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.12832">ColBERT:
@@ -393,8 +395,7 @@ list.</p>
 <p><span class="math display">\[S_{q,d}=\sum_{i \in [|E_q|]} \max_{j \in
 [|E_d|]} E_{q_i} \cdot E_{d_j}^T\]</span></p>
 <p>即对query中的每个token与doc中的所有token计算Sim值并取出最大值，再将其求和作为最终分数。直观上感觉这种算法与BM25等文本匹配算法类似，但计算粒度更为精细。</p>
-<p><img
-src="https://raw.githubusercontent.com/finisky/finiskyimages/master/nlp/colbert.png"
+<p><img src="https://coriva.eu.org/images/nlp/colbert.png"
 alt="ColBERT architecture" /></p>
 <p>上图可见，doc可以被离线计算和索引。值得一提的是，这里的交互部分是不可训练的：</p>
 <blockquote>
@@ -434,7 +435,7 @@ computational cost.</p>
       <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/finisky-bot/" rel="bookmark">小菲陪您唠唠磕</a></div>
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
     </li>
   </ul>
 
