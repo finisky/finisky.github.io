@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="f6d91994ba785a63">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.eu.org","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Meta AI在2022年8月发布了新一代的对话系统 BlenderBot 3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。 BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time BlenderBot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlenderBot 3 对话系统简析">
+<meta property="og:url" content="https://finisky.eu.org/blenderbot3-summary/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Meta AI在2022年8月发布了新一代的对话系统 BlenderBot 3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。 BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time BlenderBot">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bb3module.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bb3flow.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bb3finetunetask.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bb3demo.png">
+<meta property="article:published_time" content="2023-01-06T12:12:01.000Z">
+<meta property="article:modified_time" content="2023-01-06T16:01:46.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/bb3module.png">
+
+
+<link rel="canonical" href="https://finisky.eu.org/blenderbot3-summary/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.eu.org/blenderbot3-summary/","path":"blenderbot3-summary/","title":"BlenderBot 3 对话系统简析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>BlenderBot 3 对话系统简析 | Finisky Garden</title>
+  
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.cn.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, Software Engineering and Product Design</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#model"><span class="nav-number">1.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#datasets"><span class="nav-number">2.</span> <span class="nav-text">Datasets</span></a></li></ol></div>
+            <div class="site-author site-overview-item animated">
+              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
+              <p class="site-author-name">扫码关注公众号</p>
+            </div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">205</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.eu.org/blenderbot3-summary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="NLP, Software Engineering, Product Design and Career Development">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BlenderBot 3 对话系统简析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-01-06 20:12:01" itemprop="dateCreated datePublished" datetime="2023-01-06T20:12:01+08:00">2023-01-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2023-01-07 00:01:46" itemprop="dateModified" datetime="2023-01-07T00:01:46+08:00">2023-01-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/blenderbot3-summary/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/blenderbot3-summary/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/blenderbot3-summary/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Meta AI在2022年8月发布了新一代的对话系统 BlenderBot
+3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。</p>
+<p><a
+target="_blank" rel="noopener" href="https://ai.facebook.com/blog/blenderbot-3-a-175b-parameter-publicly-available-chatbot-that-improves-its-skills-and-safety-over-time/">BlenderBot
+3: A 175B parameter, publicly available chatbot that improves its skills
+and safety over time</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2208.03188">BlenderBot 3: a deployed
+conversational agent that continually learns to responsibly
+engage</a></p>
+<p>BlenderBot 3 (BB3) 只对在美国的成人开放，只用英文对话：</p>
+<blockquote>
+<p>We present BlenderBot 3 (BB3), an open-domain dialogue model that we
+have deployed as an English speaking conversational agent on a public
+website accessible by adults in the United States.</p>
+</blockquote>
+<p>此研究的主要目的与<a
+href="/sparrow-summary/">Sparrow</a>最接近，使对话更responsible &amp;
+useful:</p>
+<blockquote>
+<p>The goal of this research program is then to explore how to construct
+models that continue to improve from such interactions both in terms of
+becoming more responsible and more useful.</p>
+</blockquote>
+<p>这个tech
+report包括了BB3部署的细节，包括UI设计，本文主要关注模型部分。</p>
+<span id="more"></span>
+<h1 id="model">Model</h1>
+<p>BB3是由Transformer model构成，发布了三个不同大小的模型：3B
+(encoder-decoder，R2C2), 30B 和 175B (decoder-only, OPT)。</p>
+<p>BB3是个模块化的系统，总体来看比较复杂，但模型底层架构都是一个transformer，只不过通过不同的control
+codes (或者说prompt)
+来让它执行不同模块的功能。思路与其他大模型一致，让模型做multi-task
+learning。</p>
+<blockquote>
+<p>Training a single transformer model to execute the modules, with
+special control codes in the input context telling the model which
+module it is executing.</p>
+</blockquote>
+<p>先来看看BB3都有哪些模块：</p>
+<p><img src="https://coriva.eu.org/images/nlp/bb3module.png"
+alt="BB3 Modules" /></p>
+<p>一眼望去头都大了，居然有9个模块，实际上大体分属三类：Search，Generator和long-term
+memory。而这些模块的执行流程如下：</p>
+<p><img src="https://coriva.eu.org/images/nlp/bb3flow.png"
+alt="BB3 Execution Flow" /></p>
+<p>此流程看起来更为复杂，让我一度怀疑生成回复到底需要多长时间？简单描述下执行过程，收到Query后，判断是否需要Search，是否需要long-term
+memory，然后提取相关的entity，将Search
+result/memory/entity聚合，生成最终的回复。</p>
+<h1 id="datasets">Datasets</h1>
+<p>模型使用的预训练数据是类似的：cc100en约100B tokens，PushShift.io
+Reddit数据等，最终数据约有180B tokens。</p>
+<p>Finetune主要采用各种对话数据集，包括QA，open-domain,
+knowledge-grounded conversation，task-oriented
+dialogue，以及一些对话安全性的数据集。这些任务如下图：</p>
+<p><img src="https://coriva.eu.org/images/nlp/bb3finetunetask.png"
+alt="BB3 Finetune Task" /></p>
+<p>BB3部署在 <a
+target="_blank" rel="noopener" href="https://blenderbot.ai">https://blenderbot.ai</a>，不过仅能在美国使用。论文剩下的部分讨论了如何从与人类交互的数据中持续学习，其方法和结论在另两篇论文中有详细论述，此处不再赘述。</p>
+<blockquote>
+<p>We are committed to sharing organic conversational data collected
+from the interactive demo system as well as model snapshots in the
+future.</p>
+</blockquote>
+<p>看下BB3聊天的效果，它可以聊任何话题：</p>
+<p><img src="https://coriva.eu.org/images/nlp/bb3demo.png"
+alt="BB3 Demo" /></p>
+<p>总体来看，BB3通过大模型、搜索技术与多任务学习使人机对话更聪明，安全和有用。同时收集BB3与真人对话的数据，并计划发布数据集，以探索和验证如何从人机交互中改进对话质量。相比于<a
+href="/instructgpt-summary/">ChatGPT</a>/<a
+href="/sparrow-summary/">Sparrow</a>/<a
+href="/lamda-paper-summary/">LaMDA</a>，BB3更偏向于系统和产品设计，旨在从真实的数据中不断学习。正如其在博客中所言：</p>
+<blockquote>
+<p>As more and more people interact with the demo, we will aim to
+improve our models using their feedback, and release deployment data and
+updated model snapshots, for the benefit of the wider AI community.</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/chatgpt-for-official-account/" rel="bookmark">为什么不接ChatGPT到微信公号？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/chatgpt-limitations/" rel="bookmark">ChatGPT的未解难题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline.en/" rel="bookmark">Fine-tune GPT with Line-by-Line Dataset</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finetunelmlinebyline/" rel="bookmark">使用LineByLine数据集训练GPT</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/finisky-bot/" rel="bookmark">小菲陪您唠唠磕</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/sparrow-summary/" rel="prev" title="DeepMind Sparrow 对话系统简析">
+                  <i class="fa fa-chevron-left"></i> DeepMind Sparrow 对话系统简析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div><div><span><a href="https://finicounter.eu.org/" target="_blank">Total Pageview:</a></span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.cn.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/blenderbot3-summary/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
