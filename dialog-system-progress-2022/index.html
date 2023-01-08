@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="f6d91994ba785a63">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.eu.org","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="2022年随着ChatGPT的大火而结束，最近一年的时间各巨头相继推出了许多表现出色的对话系统，有意思的是大家前进的方向不谋而合，不再专注模型结构和规模，而转向实用性：如何让一个对话系统更有用、更安全、更理解用户意图？ 对话系统在过去一年里的主要提升得益如下三点：  大模型：对话系统的基础，规模大才有足够的通用表示能力 从人工反馈学习 (RLHF)：通过人工标注不同模型输出，使模型更好地与用户意图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022 对话系统进展">
+<meta property="og:url" content="https://finisky.eu.org/dialog-system-progress-2022/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="2022年随着ChatGPT的大火而结束，最近一年的时间各巨头相继推出了许多表现出色的对话系统，有意思的是大家前进的方向不谋而合，不再专注模型结构和规模，而转向实用性：如何让一个对话系统更有用、更安全、更理解用户意图？ 对话系统在过去一年里的主要提升得益如下三点：  大模型：对话系统的基础，规模大才有足够的通用表示能力 从人工反馈学习 (RLHF)：通过人工标注不同模型输出，使模型更好地与用户意图">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/lamdagroundedness.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/characteraibillgates.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/bb3flow.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/sparrowmodel.png">
+<meta property="article:published_time" content="2023-01-08T04:29:09.000Z">
+<meta property="article:modified_time" content="2023-01-08T04:36:07.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
+<meta property="article:tag" content="Reinforcement Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/lamdagroundedness.png">
+
+
+<link rel="canonical" href="https://finisky.eu.org/dialog-system-progress-2022/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.eu.org/dialog-system-progress-2022/","path":"dialog-system-progress-2022/","title":"2022 对话系统进展"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2022 对话系统进展 | Finisky Garden</title>
+  
+
+
+
+<link rel="dns-prefetch" href="https://finiskycomments.cn.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Finisky Garden</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, Software Engineering and Product Design</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+        <li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li>
+        <li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li>
+        <li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>Links</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#instructgptchatgpt"><span class="nav-number">1.</span> <span class="nav-text">InstructGPT&#x2F;ChatGPT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#webgpt"><span class="nav-number">1.1.</span> <span class="nav-text">WebGPT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lamda"><span class="nav-number">2.</span> <span class="nav-text">LaMDA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#character.ai"><span class="nav-number">2.1.</span> <span class="nav-text">Character.AI</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#blenderbot-3"><span class="nav-number">3.</span> <span class="nav-text">BlenderBot 3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sparrow"><span class="nav-number">4.</span> <span class="nav-text">Sparrow</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            <div class="site-author site-overview-item animated">
+              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
+              <p class="site-author-name">扫码关注公众号</p>
+            </div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">206</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.eu.org/dialog-system-progress-2022/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+      <meta itemprop="description" content="NLP, Software Engineering, Product Design and Career Development">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2022 对话系统进展
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-01-08 12:29:09 / Modified: 12:36:07" itemprop="dateCreated datePublished" datetime="2023-01-08T12:29:09+08:00">2023-01-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Comments: </span>
+  
+    <a title="waline" href="/dialog-system-progress-2022/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/dialog-system-progress-2022/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/dialog-system-progress-2022/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>2022年随着ChatGPT的大火而结束，最近一年的时间各巨头相继推出了许多表现出色的对话系统，有意思的是大家前进的方向不谋而合，不再专注模型结构和规模，而转向实用性：如何让一个对话系统更有用、更安全、更理解用户意图？</p>
+<p>对话系统在过去一年里的主要提升得益如下三点：</p>
+<ul>
+<li><strong>大模型</strong>：对话系统的基础，规模大才有足够的通用表示能力</li>
+<li><strong>从人工反馈学习
+(RLHF)</strong>：通过人工标注不同模型输出，使模型更好地与用户意图align，甚至更小的模型可达到同样效果</li>
+<li><strong>搜索API</strong>：使回复有所参考，内容更具体更有用，避免胡说八道
+(hallucination)</li>
+</ul>
+<span id="more"></span>
+<p>有些重要且高频的关键词值得一提，在所有主流对话系统上都得以体现：</p>
+<ul>
+<li><strong>Safe/Harmless</strong>:
+回复安全无害，避免误导性或敏感内容</li>
+<li><strong>Useful/Helpful</strong>:
+回复提供有用的信息，对用户有所帮助</li>
+<li><strong>Grounded</strong>:
+基于检索信息的内容生成，避免一本正经地编造内容</li>
+</ul>
+<p>下表列出了一年内比较典型的对话模型，包括模型大小及训练数据规模
+(参考DPC论文图表)：</p>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><strong>Date</strong></th>
+<th style="text-align: center;"><strong>Model</strong></th>
+<th style="text-align: center;"><strong>Size</strong></th>
+<th style="text-align: center;"><strong>Training Tokens</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">2020.06</td>
+<td style="text-align: center;">GPT-3</td>
+<td style="text-align: center;">175B</td>
+<td style="text-align: center;">300B</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2022.01</td>
+<td style="text-align: center;"><a
+href="https://finisky.eu.org/instructgpt-summary/">InstructGPT</a></td>
+<td style="text-align: center;">1.3B</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2022.01</td>
+<td style="text-align: center;"><a
+href="https://finisky.eu.org/lamda-paper-summary/">LaMDA</a></td>
+<td style="text-align: center;">137B</td>
+<td style="text-align: center;">168B (2.81T?)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2022.08</td>
+<td style="text-align: center;"><a
+href="https://finisky.eu.org/blenderbot3-summary/">BlenderBot 3</a></td>
+<td style="text-align: center;">175B</td>
+<td style="text-align: center;">180B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2022.09</td>
+<td style="text-align: center;"><a
+href="https://finisky.eu.org/sparrow-summary/">Sparrow</a></td>
+<td style="text-align: center;">70B</td>
+<td style="text-align: center;">1.4T</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2022.09</td>
+<td style="text-align: center;">Character.AI</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2022.11</td>
+<td style="text-align: center;"><a
+href="https://finisky.eu.org/instructgpt-summary/">ChatGPT</a></td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">?</td>
+</tr>
+</tbody>
+</table>
+<p>下面简要介绍下这些系统的亮点，感兴趣可通过链接查看简析或阅读原论文。</p>
+<h1 id="instructgptchatgpt">InstructGPT/ChatGPT</h1>
+<p><a href="https://finisky.eu.org/instructgpt-summary/">#
+InstructGPT/ChatGPT 简读</a></p>
+<p>OpenAI的ChatGPT应该是今年最有亮点的对话系统，在年末火爆出圈横扫全网。正是它的成功才让大家都注意到了RLHF的威力，有趣的是，ChatGPT的前身InstructGPT在年初就提出了RLHF，却并没有引起大家的广泛关注，还是得实际产品效果说话啊。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/instructgptmethods.svg" /></p>
+<p>与Sparrow的基模型 <a
+target="_blank" rel="noopener" href="https://arxiv.org/abs/2203.15556">Chinchilla</a>
+的结论一致，不必单纯追求模型越来越大，<strong>小模型也可以有很好的对话效果</strong>。只不过两个模型的思考维度不同，Chinchilla
+是在给定计算资源的条件下，如何更高效地训练模型；而InstructGPT则是通过人工反馈和强化学习让模型更好地贴近用户意图。</p>
+<p>除了在论文上写到的核心思想外，ChatGPT/InstructGPT在模型训练和数据工程上应该还有不少trick，而中间的这些差距才是国内大模型应该缩小差距的方向。</p>
+<h2 id="webgpt">WebGPT</h2>
+<p><a href="https://finisky.eu.org/webgpt-summary/"># WebGPT
+简读</a></p>
+<p>虽然ChatGPT并未接入搜索API，但OpenAI在同期 (2021.12) 发布了 <a
+href="https://finisky.eu.org/webgpt-summary/">WebGPT</a>，使用搜索引擎显著提高对话回复的真实性和信息量，所以ChatGPT拥有搜索能力并不是难事，这项工作也值得关注。</p>
+<h1 id="lamda">LaMDA</h1>
+<p><a href="https://finisky.eu.org/lamda-paper-summary/"># LaMDA:
+Language Models for Dialog Applications 简读</a></p>
+<p>Google在今年初提出了LaMDA模型，主要改进了safety和factual
+groudning的问题。方案是模拟人类先研究后回复的训练方案，从而让模型更好利用外部知识。同时，提出了一系列精细化定义的对话质量评估指标，并通过标注和微调，让模型有了很好的对话体验。</p>
+<p>具体来说，Fine-tuning通过两个不同的task完成，一个叫<code>Base</code>，就是普通的文本生成任务，类似直接回答；另一个叫<code>Research</code>，需要借助
+Toolset (TS) 完成。推理阶段模型的输出有两种，若输出是 <code>User</code>
+打头，则后面跟着的文本就是最终回复，若输出是 <code>TS</code>
+打头，则后面跟着的文本是要输入 TS
+并以此输出作为下一轮模型的输入，继续改进回复。这样的迭代过程最多经历4轮。下面的这个例子很好地解释了这个过程，Eiffel
+Tower是哪年建的：</p>
+<p><img src="https://coriva.eu.org/images/nlp/lamdagroundedness.png"
+alt="LaMDA Groundedness" /></p>
+<p>从LaMDA的最终效果来看，回复长而具体，且言之有物。通过Toolset将搜索与回复生成结合在一起，巧妙地模拟了人类对于未知问题先研究后回答的过程，挺有意思。</p>
+<h2 id="character.ai">Character.AI</h2>
+<p>Character.AI是今年硅谷的一个明星创业公司，产品可在 <a
+target="_blank" rel="noopener" href="https://beta.character.ai/">这里</a>
+体验。对话体验相当好，每个人物的对话都带有鲜明的人设(比如Elon
+Mask)。至于其技术原理，考虑到创始人是从LaMDA团队出来的，虽然他们否认了模型是LaMDA，不过猜想基本原理应大同小异。</p>
+<p>来看看Elon Musk如何评价Bill Gates :-) :</p>
+<p><img src="https://coriva.eu.org/images/nlp/characteraibillgates.png"
+alt="Elon Musk is a fan of Bill Gates" /></p>
+<h1 id="blenderbot-3">BlenderBot 3</h1>
+<p><a href="https://finisky.eu.org/blenderbot3-summary/"># BlenderBot 3
+对话系统简析</a></p>
+<p>Meta AI在2022年8月发布了新一代的对话系统 BlenderBot
+3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。</p>
+<p><img src="https://coriva.eu.org/images/nlp/bb3flow.png"
+alt="BB3 Execution Flow" /></p>
+<p>BlenderBot
+3的工作流如下：先判断Query是否需要Search，是否需要long-term
+memory，然后提取相关的entity，将Search
+result/memory/entity聚合，生成最终的回复。而上述所有的模块都由语言模型通过不同的input形式
+(prompt) 实现。</p>
+<p>通过BlenderBot
+3的部署，可以收集它与真人对话的数据，以探索和验证如何从人机交互中改进对话质量，及这么做的瓶颈在哪。相比于<a
+href="https://finisky.eu.org/instructgpt-summary/">ChatGPT</a>/<a
+href="https://finisky.eu.org/sparrow-summary/">Sparrow</a>/<a
+href="https://finisky.eu.org/lamda-paper-summary/">LaMDA</a>，BlenderBot
+3更偏向于系统和产品设计，旨在从真实的数据中不断学习。</p>
+<h1 id="sparrow">Sparrow</h1>
+<p><a href="https://finisky.eu.org/sparrow-summary/"># DeepMind Sparrow
+对话系统简析</a></p>
+<p>Sparrow是DeepMind在今年9月底发布的对话系统，主打的点在"helpful,
+correct, and
+harmless"。总体来看，思路也是"alignment"，即让对话机器人的回复与用户的意图更贴合。在技术路线上，也是采用RLHF，通过定义一批规则，让模型更好地向期望的对话方向推进;
+此外，对于事实型的问题，参考搜索出的内容给出回复。</p>
+<p>Sparrow使用人工反馈的方式是让标注者对模型的不同回复标出最好的一个。除了这个正向的Preference
+Reward Model，还引入了Rule Reward
+Model，规定了模型的对话规则。采用Adversarial
+Probing的方式，让标注者引导Sparrow进行一段打破预定规则的对话。说白了就是让标注者“钓鱼执法”，引导模型说不好的话，通过学习这些负例，从而让模型的回复更加安全。</p>
+<p><img src="https://coriva.eu.org/images/nlp/sparrowmodel.png"
+alt="Sparrow Model" /></p>
+<p>Sparrow提到训练一个对话系统是很有挑战的，原因在于很难定义什么是一个好的对话：</p>
+<blockquote>
+<p>Training a conversational AI is an especially challenging problem
+because it’s difficult to pinpoint what makes a dialogue successful.</p>
+</blockquote>
+<h1 id="总结">总结</h1>
+<p>正如开篇所说，过去一年对话系统的关键词是 safe, useful 和
+grounded。而达成这些目标采用的方法是足够大的基模型，RLHF和通过搜索融合外部知识。</p>
+<p>RLHF可算是最大的进展，之前研究的方向都是如何把模型做得更大，从而拥有更强的泛化能力，而RLHF通过使模型更好地与用户意图align，达到事半功倍的效果。虽然不同模型使用的RLHF的方案有所差异，但大体思路都是人工标注不同模型结果的优劣，经过闭环反馈让模型更聪明。</p>
+<p>对于如何融合搜索的外部知识，各家也提出了自己的方案，不过主流思想是通过prompt设计，让基模型既能生成Search
+Query，又能结合上下文及前轮搜索结果生成最终回复。基于搜索知识的回复 <a
+href="https://finisky.eu.org/brief-on-knowledge-grounded-conversation/">knowlege-grounded
+conversation</a>
+也不是新课题，自2018年提出后也有许多进展，这一波恰好与大规模语言模型进行了有机的整合。</p>
+<p>以更长一些视角来看对话系统近五年的进展，大约呈螺旋上升并相辅相成的趋势。从开始的
+pre-trained model (BERT/GPT) 初现威力，到 multi-task learning
+(UniLM/BART) 拓展模型能力，到 few-shot/zero-shot learning (GPT-3)
+向大模型发展。同时，<a
+href="https://finisky.eu.org/briefintrotoprompt/">prompt learning</a>
+(PET/Prefix-Tuning/T5) 的发展更加释放了模型的泛化能力; <a
+href="https://finisky.eu.org/brief-on-knowledge-grounded-conversation/">knowlege-grounded
+conversation</a> (Internet-Augmented/Retrieval Augmentation)
+技术让模型更加言之有物。最后RLHF的提出与这些技术的整合使得对话系统得到了显著的发展。</p>
+<p>最近还有一个话题引起了大家的广泛讨论，ChatGPT的出现对于对话系统研究者到底是好消息还是坏消息？个人倾向于乐观，ChatGPT极大地推高了对话系统能力的上限，对于行业当然是极好的消息。否则像前几年大众对于对话系统的认知都停留在“人工智障”的阶段，那么行业将如何自楚和发展？虽然目前国内对话系统的水平与全球最高水准存在差距，但我坚信聪明的国人可以很快迎头赶上。离大众在各种产品上体验丝滑人机对话的日子可能不远了。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/instructgpt-summary/" rel="bookmark">InstructGPT/ChatGPT 简读</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/sparrow-summary/" rel="bookmark">DeepMind Sparrow 对话系统简析</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/webgpt-summary/" rel="bookmark">WebGPT 简读</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/blenderbot3-summary/" rel="bookmark">BlenderBot 3 对话系统简析</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/chatgpt-for-official-account/" rel="bookmark">为什么不接ChatGPT到微信公号？</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+              <a href="/tags/Reinforcement-Learning/" rel="tag"># Reinforcement Learning</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blenderbot3-summary/" rel="prev" title="BlenderBot 3 对话系统简析">
+                  <i class="fa fa-chevron-left"></i> BlenderBot 3 对话系统简析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div><div><span><a href="https://finicounter.eu.org/" target="_blank">Total Pageview:</a></span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.1.4/es5/tex-mml-chtml.js","integrity":"sha256-ncNI9OXOS5Ek4tzVYiOMmN/KKCPZ6V0Cpv2P/zHntiA="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.cn.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/dialog-system-progress-2022/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
