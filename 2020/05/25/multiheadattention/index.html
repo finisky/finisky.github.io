@@ -22,11 +22,11 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.eu.org","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 <meta name="description" content="Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper “Attention is All you Need”中对attention提出了通用的query&#x2F;key&#x2F;value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MultiHeadAttention实现详解">
-<meta property="og:url" content="https://finisky.eu.org/2020/05/25/multiheadattention/index.html">
+<meta property="og:url" content="https://finisky.github.io/2020/05/25/multiheadattention/index.html">
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper “Attention is All you Need”中对attention提出了通用的query&#x2F;key&#x2F;value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本">
 <meta property="og:locale" content="en_US">
@@ -43,11 +43,11 @@
 <meta name="twitter:image" content="https://coriva.eu.org/images/multiheadattention.png">
 
 
-<link rel="canonical" href="https://finisky.eu.org/2020/05/25/multiheadattention/">
+<link rel="canonical" href="https://finisky.github.io/2020/05/25/multiheadattention/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.eu.org/2020/05/25/multiheadattention/","path":"/2020/05/25/multiheadattention/","title":"MultiHeadAttention实现详解"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/2020/05/25/multiheadattention/","path":"/2020/05/25/multiheadattention/","title":"MultiHeadAttention实现详解"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>MultiHeadAttention实现详解 | Finisky Garden</title>
@@ -55,7 +55,7 @@
 
 
 
-<link rel="dns-prefetch" href="https://finiskycomments.cn.eu.org">
+<link rel="dns-prefetch" href="https://comments.finisky.eu.org">
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
@@ -201,7 +201,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.eu.org/2020/05/25/multiheadattention/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/25/multiheadattention/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -527,7 +527,7 @@ Output size: torch.Size([1, 10, 512])<span aria-hidden="true" class="line-number
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://finiskycomments.cn.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/2020/05/25/multiheadattention/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/2020/05/25/multiheadattention/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
