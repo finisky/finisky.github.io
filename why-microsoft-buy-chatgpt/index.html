@@ -23,34 +23,32 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.5.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="对话系统中的个性化，或者说带有人设的AI对话机器人是个挺热的研究问题。随着虚拟人的爆火，如何能打造千人千面与用户沟通的AI，也就自然登上了舞台。今天就来看一篇ACL2022findings的文章： [ACL2022findings] Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 很多对话系统不能很好">
+<meta name="description" content="最近微软投资ChatGPT的消息甚嚣尘上，二者的联手会给产业和用户带来什么？ # Microsoft in talks to invest $10 bln in ChatGPT-owner OpenAI 从新闻上来看，微软会将ChatGPT集成到Office和Bing Search。但实际情况可能不止于此，微软擅长做平台，CVP已经在Azure Blog称ChatGPT将不久在Azure Open">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 简读">
-<meta property="og:url" content="https://finisky.github.io/long-time-no-see-paper-summary/index.html">
+<meta property="og:title" content="微软与ChatGPT联手会带来什么？">
+<meta property="og:url" content="https://finisky.github.io/why-microsoft-buy-chatgpt/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="对话系统中的个性化，或者说带有人设的AI对话机器人是个挺热的研究问题。随着虚拟人的爆火，如何能打造千人千面与用户沟通的AI，也就自然登上了舞台。今天就来看一篇ACL2022findings的文章： [ACL2022findings] Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 很多对话系统不能很好">
+<meta property="og:description" content="最近微软投资ChatGPT的消息甚嚣尘上，二者的联手会给产业和用户带来什么？ # Microsoft in talks to invest $10 bln in ChatGPT-owner OpenAI 从新闻上来看，微软会将ChatGPT集成到Office和Bing Search。但实际情况可能不止于此，微软擅长做平台，CVP已经在Azure Blog称ChatGPT将不久在Azure Open">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://coriva.eu.org/images/nlp/dulemonsample.png">
-<meta property="og:image" content="https://coriva.eu.org/images/nlp/platoltm.png">
-<meta property="og:image" content="https://coriva.eu.org/images/nlp/dulemonstats.png">
-<meta property="article:published_time" content="2022-09-11T11:21:36.000Z">
-<meta property="article:modified_time" content="2023-01-02T16:52:56.000Z">
+<meta property="article:published_time" content="2023-01-23T02:49:00.000Z">
+<meta property="article:modified_time" content="2023-01-23T02:56:50.000Z">
 <meta property="article:author" content="finisky">
+<meta property="article:tag" content="Product">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
 <meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/dulemonsample.png">
 
 
-<link rel="canonical" href="https://finisky.github.io/long-time-no-see-paper-summary/">
+<link rel="canonical" href="https://finisky.github.io/why-microsoft-buy-chatgpt/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/long-time-no-see-paper-summary/","path":"long-time-no-see-paper-summary/","title":"Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 简读"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/why-microsoft-buy-chatgpt/","path":"why-microsoft-buy-chatgpt/","title":"微软与ChatGPT联手会带来什么？"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 简读 | Finisky Garden</title>
+<title>微软与ChatGPT联手会带来什么？ | Finisky Garden</title>
   
 
 
@@ -121,7 +119,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -134,11 +132,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">1.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#plato-ltm%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">PLATO-LTM工作流</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#persona-extractor"><span class="nav-number">2.1.</span> <span class="nav-text">Persona Extractor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#persona-memory"><span class="nav-number">2.2.</span> <span class="nav-text">Persona Memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generator"><span class="nav-number">2.3.</span> <span class="nav-text">Generator</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86dulemon"><span class="nav-number">3.</span> <span class="nav-text">数据集DuLeMon</span></a></li></ol></div>
-            <div class="site-author site-overview-item animated">
-              <img class="site-author-image" itemprop="image" alt="finisky" src="/images/qrcode.jpg" />
-              <p class="site-author-name">扫码关注公众号</p>
-            </div>
         </div>
         <!--/noindex-->
 
@@ -206,7 +199,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/long-time-no-see-paper-summary/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/why-microsoft-buy-chatgpt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -219,7 +212,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 简读
+          微软与ChatGPT联手会带来什么？
         </h1>
 
         <div class="post-meta-container">
@@ -229,23 +222,17 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2022-09-11 19:21:36" itemprop="dateCreated datePublished" datetime="2022-09-11T19:21:36+08:00">2022-09-11</time>
+      <time title="Created: 2023-01-23 10:49:00 / Modified: 10:56:50" itemprop="dateCreated datePublished" datetime="2023-01-23T10:49:00+08:00">2023-01-23</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2023-01-03 00:52:56" itemprop="dateModified" datetime="2023-01-03T00:52:56+08:00">2023-01-03</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+          <a href="/categories/Product/" itemprop="url" rel="index"><span itemprop="name">Product</span></a>
         </span>
     </span>
 
@@ -258,8 +245,8 @@
     </span>
     <span class="post-meta-item-text">Comments: </span>
   
-    <a title="waline" href="/long-time-no-see-paper-summary/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/long-time-no-see-paper-summary/" itemprop="commentCount"></span>
+    <a title="waline" href="/why-microsoft-buy-chatgpt/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/why-microsoft-buy-chatgpt/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -269,7 +256,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">Views: </span>
-      <span class="waline-pageview-count" data-path="/long-time-no-see-paper-summary/"></span>
+      <span class="waline-pageview-count" data-path="/why-microsoft-buy-chatgpt/"></span>
     </span>
   
 </div>
@@ -281,78 +268,50 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>对话系统中的个性化，或者说带有人设的AI对话机器人是个挺热的研究问题。随着虚拟人的爆火，如何能打造千人千面与用户沟通的AI，也就自然登上了舞台。今天就来看一篇ACL2022findings的文章：</p>
-<p>[ACL2022findings] <a
-target="_blank" rel="noopener" href="https://aclanthology.org/2022.findings-acl.207.pdf">Long Time No
-See! Open-Domain Conversation with Long-Term Persona Memory</a></p>
-<p>很多对话系统不能很好地利用用户对话的长程记忆，从而影响对话效果。百度的这篇文章提出了一个新任务
-<code>Long-term Memory Conversation (LeMon)</code> 并发布了对应的数据集
-DuLeMon。该系统可以在用户和AI对话的过程中动态提取有用的Persona
-Memory，并在之后的对话中同时考虑双方的Persona Memory进行更好的对话。</p>
+        <p>最近微软投资ChatGPT的消息甚嚣尘上，二者的联手会给产业和用户带来什么？</p>
+<p><a
+target="_blank" rel="noopener" href="https://www.reuters.com/technology/microsoft-talks-invest-10-bln-chatgpt-owner-semafor-2023-01-10/">#
+Microsoft in talks to invest $10 bln in ChatGPT-owner OpenAI</a></p>
+<p>从新闻上来看，微软会将ChatGPT集成到Office和Bing
+Search。但实际情况可能不止于此，微软擅长做平台，CVP已经在<a
+target="_blank" rel="noopener" href="https://azure.microsoft.com/en-us/blog/general-availability-of-azure-openai-service-expands-access-to-large-advanced-ai-models-with-added-enterprise-benefits/">Azure
+Blog</a>称ChatGPT将不久在Azure OpenAI Service上可用:</p>
+<blockquote>
+<p>Customers will also be able to access ChatGPT—a fine-tuned version of
+GPT-3.5 that has been trained and runs inference on Azure AI
+infrastructure—through Azure OpenAI Service soon.</p>
+</blockquote>
+<p>好消息是这个服务可以直接让中小企业基于API研发产品而无须自行研发模型。坏消息是它的效果太好以至于自己训练的模型不能达到同水平的效果，形成对此底层服务的强依赖。</p>
 <span id="more"></span>
-<h1 id="demo">Demo</h1>
-<p>本文主要贡献在于构建了一个考虑用户和AI双方人设的对话系统，并发布了对应的数据集，模型并没有太多创新点。话不多说，直接看例子：</p>
-<p><img src="https://coriva.eu.org/images/nlp/dulemonsample.png"
-alt="DuLeMon Dataset Sample" /></p>
-<p>首先，Persona的定义是一个自然句描述，这也是大部分人设相关文章的通用做法。在此例中，Bot有四个Persona，用户也有四个Persona，对话开始，Bot会首先根据User
-Persona冷启动，开启对话:“最近看电视剧了吗？”。当用户不感兴趣时，Bot又会主动展示自己的Persona：“我看书比较多一些”。当用户愿意继续当前话题时，就接着聊；当用户切换话题或不再主动跟进时，Bot会考虑User
-Persona主动发问或切换话题，如此这般不停地进行下去。</p>
-<h1 id="plato-ltm工作流">PLATO-LTM工作流</h1>
-<p><img src="https://coriva.eu.org/images/nlp/platoltm.png"
-alt="PLATO-LTM" /></p>
-<p>PLATO-LTM包括几个部分，也是它的工作流：</p>
+<p>值得注意的是，像ChatGPT这样的模型可能会形成马太效应，赢者通吃。模型效果很大程度上来源于真实数据，如果有一个玩家占据了流量入口，那么通过线上不断地与用户交互形成正向闭环，将会越来越强，从而形成一定的壁垒。</p>
+<p>ChatGPT与微软的联手可能会催生很多有趣的产品。微软在之前也有过AI助手，比如已经不做的Cortana，是否可以考虑重回市场？基于ChatGPT出色的代码生成能力，将其集成到Visual
+Studio和VS
+Code中则是一个特别直接的应用场景，显著提升生产效率。再如使用ChatGPT给各种游戏的NPC赋予对话能力，这也是最近各大游戏公司与元宇宙公司都在主力投入的方向。</p>
+<p>ChatGPT与Office的结合会使Office套件会变得更加智能：</p>
 <ul>
-<li>Persona Extractor: 在对话过程中动态提取User Persona，并存储到Persona
-Memory</li>
-<li>Retriever: 在生成回复之前，先从Persona
-Memory中检索是否有相关的Persona为Generator所用</li>
-<li>Generator: 使用上下文，User Persona和Bot Persona生成回复</li>
+<li>Outlook:
+Google在几年前推出的SmartReply技术，可以帮助用户快速生成邮件回复。有了ChatGPT，Outlook生成回复的质量会大幅提升。</li>
+<li>Word:
+更好地帮用户识别语法错误，根据上下文生成文章或报告的草稿，甚至可以写小说进行文学创作。</li>
+<li>PowerPoint:
+以前只是推荐部分设计模板，现在可以帮你生成完整的PPT，并根据用户的要求不断修正。</li>
 </ul>
-<h2 id="persona-extractor">Persona Extractor</h2>
-<p>Persona
-Extractor采用ERNIE-CNN的架构，利用初始版本的DuLeMon数据集训练分类器。</p>
-<h2 id="persona-memory">Persona Memory</h2>
-<p>类似DPR的双塔结构，进行Persona的存储与检索，没什么特别的。</p>
-<h2 id="generator">Generator</h2>
-<p>使用PLATO-2，一个Transformer语言模型进行回复生成。值得一提的是如何让模型学到双方的不同角色：</p>
+<p>ChatGPT与Bing的结合则是相辅相成，一方面有搜索技术的加持，可以让ChatGPT基于搜索结果进行参考回复；另一方面，用户与搜索引擎的交互也可能发生一定的变化。经过多年搜索引擎的反向训练，用户已经习惯了关键词检索。但让用户用自然语言进行搜索和交互的探索似乎从未停止，现在有了ChatGPT，用户的信息检索是否可以通过对话完成？</p>
+<p><a
+target="_blank" rel="noopener" href="https://www.theverge.com/2023/1/4/23538552/microsoft-bing-chatgpt-search-google-competition">#
+Microsoft to challenge Google by integrating ChatGPT with Bing
+search</a></p>
 <blockquote>
-<p>We added two strategies to distinguish different roles in the
-dialogue and prevent the confusing use of persona information. * Role
-Embedding: different role embedding is used to distinguish the persona
-of different chat parties, abbreviated role_embed. * Role Token:
-splicing "system persona" before the chatbot persona and "user persona"
-before the user persona, abbreviated role_token.</p>
+<p>By using the technology behind ChatGPT — which is built by AI company
+OpenAI — Bing could provide more humanlike answers to questions instead
+of just links to information. Both Google and Bing already surface
+relevant information from links at the top of many search queries, but
+Google’s knowledge panels are particularly widespread when it comes to
+searching for information about people, places, organizations, and
+things.</p>
 </blockquote>
-<h1 id="数据集dulemon">数据集DuLeMon</h1>
-<p>百度的文章有一大好处是大部分实验场景都在中文落地，数据集也是中文的。</p>
-<blockquote>
-<p>During the conversation, the chatbot can see the persona of both
-parties; the other is that the persona associated with the response is
-explicitly annotated in our dataset. Unlike the PersonaChat dataset, the
-setting in DuLeMon is that one speaker plays the role of a chatbot, and
-the other plays the user’s role.</p>
-</blockquote>
-<p>数据集的构造方式如下：</p>
-<ul>
-<li>Persona collection: 使用PersonaChat数据集进行翻译和改写所得。</li>
-<li>Dialogue collection:
-crowd-sourcing，随机分配persona给两个worker，他们按照这些persona进行一次对话。</li>
-</ul>
-<blockquote>
-<p>The chatbot should think more about chatting to make it go on. It
-should utilize the known user’s persona to conduct the in-depth chat.
-The user will act as an ordinary user to cooperate with the
-conversation.</p>
-</blockquote>
-<ul>
-<li>Persona Grounding Labeling: 用来训练Persona
-Extractor，对每个response进行标注，是否使用了bot或user persona。</li>
-</ul>
-<p>DuLeMon数据集的一些统计：</p>
-<p><img src="https://coriva.eu.org/images/nlp/dulemonstats.png"
-alt="DuLeMon DataSet Stats" /></p>
-<p>BOTH是同时考虑双方Persona的对话数，SELF是仅考虑Bot
-Persona的对话数，从数量级差距可见构建双方Persona的数据集成本还是挺高的。</p>
+<p>不过商业化要考虑的问题不止这些，ChatGPT的产品落地并不简单。第一，模型的安全性与正确性问题。ChatGPT毕竟是个黑盒的神经网络，再智能也有一定的错误率。模型虽然经过安全性和防诱导的训练，但人类语言博大精深，依然很难保证模型回复的100%安全与回答的逻辑正确。第二，成本问题，线上部署大模型并经受流量考验是个烧钱的活儿，这一点可以从Azure发布的服务收费上体现，成本足够低商业模式才能成立。</p>
+<p>总之，微软与ChatGPT的联手是条鲶鱼，会给行业带来新鲜血液和更多可能性，同时也会催生更多有趣产品的出现，期待它们能影响和改变我们的生活。</p>
 
     </div>
 
@@ -362,9 +321,6 @@ Persona的对话数，从数量级差距可见构建双方Persona的数据集成
       
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/autoencodervsautoregressive/" rel="bookmark">Autoencoding和Autoregressive的区别</a></div>
-    </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/blenderbot3-summary/" rel="bookmark">BlenderBot 3 对话系统简析</a></div>
     </li>
@@ -377,28 +333,30 @@ Persona的对话数，从数量级差距可见构建双方Persona的数据集成
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/briefintrotoprompt/" rel="bookmark">NLP Prompt技术简介</a></div>
     </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/chatgpt-for-official-account/" rel="bookmark">为什么不接ChatGPT到微信公号？</a></div>
+    </li>
   </ul>
 
 
     <footer class="post-footer">
           <div class="post-tags">
+              <a href="/tags/Product/" rel="tag"># Product</a>
               <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
               <a href="/tags/NLP/" rel="tag"># NLP</a>
               <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/aianchor/" rel="prev" title="AI虚拟主播带货是不是个好生意？">
-                  <i class="fa fa-chevron-left"></i> AI虚拟主播带货是不是个好生意？
+                <a href="/en/git-sync-remote-branch-automatically-by-webhook/" rel="prev" title="Git Sync Remote Branch Automatically by Webhook">
+                  <i class="fa fa-chevron-left"></i> Git Sync Remote Branch Automatically by Webhook
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/en/pandoc-exited-with-code-null-solution/" rel="next" title="'pandoc exited with code null' Solution">
-                  'pandoc exited with code null' Solution <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -452,7 +410,7 @@ Persona的对话数，从数量级差距可见构建双方Persona的数据集成
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/long-time-no-see-paper-summary/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/why-microsoft-buy-chatgpt/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
