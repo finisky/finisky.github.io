@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="f6d91994ba785a63">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近升级NexT主题到最新版v8.14.1，相关文章功能从v8.10开始由hexo-related-popular-posts替换成了hexo-related-posts，后者是用tf-idf算法对文章全文进行相似度计算而得相关文章，比hexo-related-popular-posts要精准和先进一些，不过副作用是计算量变大，在文章数较多的情况下运行会比较慢，这样在写完文章后用hexo s进行本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo环境变量区分生产环境">
+<meta property="og:url" content="https://finisky.github.io/how-to-set-hexo-env/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="最近升级NexT主题到最新版v8.14.1，相关文章功能从v8.10开始由hexo-related-popular-posts替换成了hexo-related-posts，后者是用tf-idf算法对文章全文进行相似度计算而得相关文章，比hexo-related-popular-posts要精准和先进一些，不过副作用是计算量变大，在文章数较多的情况下运行会比较慢，这样在写完文章后用hexo s进行本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-27T16:42:27.000Z">
+<meta property="article:modified_time" content="2023-01-27T16:50:30.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="NexT">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/how-to-set-hexo-env/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/how-to-set-hexo-env/","path":"how-to-set-hexo-env/","title":"Hexo环境变量区分生产环境"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hexo环境变量区分生产环境 | Finisky Garden</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://comments.finisky.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Finisky Garden</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, 软件工程, 产品设计</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li><li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>友链</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8F%8Aaction-workflow"><span class="nav-number">3.</span> <span class="nav-text">修改配置文件及Action
+Workflow</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name" itemprop="name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">211</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2019/12/05/sidebarrelatedposts/" rel="bookmark">
+        <time class="popular-posts-time">2019-12-05</time>
+        <br>
+      Hexo NexT主题侧边栏展示相关文章
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/wrongpermalinksdate.en/" rel="bookmark">
+        <time class="popular-posts-time">2022-06-11</time>
+        <br>
+      Hexo Generate Wrong Permalinks Date
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/customizecategorybyextension/" rel="bookmark">
+        <time class="popular-posts-time">2021-06-20</time>
+        <br>
+      Hexo添加自定义分类菜单项并定制页面布局(简洁版)
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/07/18/updatehexoplugin/" rel="bookmark">
+        <time class="popular-posts-time">2020-07-18</time>
+        <br>
+      Hexo升级插件版本解决兼容性问题
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/changepermalinkformat.en/" rel="bookmark">
+        <time class="popular-posts-time">2021-06-15</time>
+        <br>
+      Hexo Change Permanent Link Format With Backward Compatibility
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/how-to-set-hexo-env/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hexo环境变量区分生产环境 | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo环境变量区分生产环境
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-28 00:42:27 / 修改时间：00:50:30" itemprop="dateCreated datePublished" datetime="2023-01-28T00:42:27+08:00">2023-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/how-to-set-hexo-env/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/how-to-set-hexo-env/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/how-to-set-hexo-env/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近升级NexT主题到最新版v8.14.1，相关文章功能从v8.10开始由<code>hexo-related-popular-posts</code>替换成了<code>hexo-related-posts</code>，后者是用tf-idf算法对文章全文进行相似度计算而得相关文章，比<code>hexo-related-popular-posts</code>要精准和先进一些，不过副作用是计算量变大，在文章数较多的情况下运行会比较慢，这样在写完文章后用<code>hexo s</code>进行本地调试效率就变低了，每次文章修改都要重新计算一遍tf-idf。好在
+<a
+target="_blank" rel="noopener" href="https://github.com/sergeyzwezdin/hexo-related-posts">hexo-related-posts</a>
+考虑到了此问题，可以通过设置<code>enable_env_name</code>变量，只在特定环境(如生产环境)中才开启此功能。不过文档略有些问题，费了一番周折才设置环境变量成功。</p>
+<p><strong>短答案</strong>：<code>$ hexo &lt;command&gt; --&lt;env_key&gt; env_value</code>。</p>
+<p>长答案：本文介绍了如何使用环境变量仅在生产环境开启相关文章功能。</p>
+<span id="more"></span>
+<h1 id="需求">需求</h1>
+<ul>
+<li><code>hexo server</code>本地调试禁用相关文章</li>
+<li>GitHub Action部署时开启相关文章</li>
+</ul>
+<p>判断相关文章是否启用可以看hexo日志：</p>
+<pre class="line-numbers language-none"><code class="language-none">INFO Start processing
+INFO Calculating of related posts is enabled. Start processing...
+INFO TF&#x2F;IDF is calculated
+INFO Related post processing done
+...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="设置环境变量">设置环境变量</h1>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/sergeyzwezdin/hexo-related-posts">hexo-related-posts</a>
+文档是这么写的：</p>
+<blockquote>
+<p>It's possible to disable plugin execution depending on env variable.
+For example, if you want to calculate related post only for production
+build, you can set this parameter to <code>prod</code>. In this case,
+related post will be generated only if you put <code>prod</code> key
+during running Hexo, i.e. <code>hexo generate -- --prod</code></p>
+</blockquote>
+<p>但我发现使用<code>hexo generate -- --prod</code>并不能达到预期效果。看源码：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> enable <span class="token operator">=</span> <span class="token punctuation">(</span>hexo<span class="token punctuation">.</span>config<span class="token punctuation">.</span>related_posts<span class="token punctuation">.</span>enable <span class="token operator">||</span> hexo<span class="token punctuation">.</span>config<span class="token punctuation">.</span>related_posts<span class="token punctuation">.</span>enable <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span>
+<span class="token punctuation">(</span>hexo<span class="token punctuation">.</span>config<span class="token punctuation">.</span>related_posts<span class="token punctuation">.</span>enable_env_name <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> hexo<span class="token punctuation">.</span>env<span class="token punctuation">.</span>args<span class="token punctuation">[</span>hexo<span class="token punctuation">.</span>config<span class="token punctuation">.</span>related_posts<span class="token punctuation">.</span>enable_env_name<span class="token punctuation">]</span> <span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>即<code>related_posts</code>需要enable，并在<code>hexo.env.args</code>中需要存在<code>enable_env_name</code>对应的值。</p>
+<p>可惜，官方文档 <a target="_blank" rel="noopener" href="https://hexo.io/docs/variables.html">#
+Variables</a> 并没有说明如何使用全局变量<code>env</code>。参考了 <a
+target="_blank" rel="noopener" href="https://www.ckqing.com/2022/10/16/hexo-environment-variable/">#
+Hexo Environment Variables</a>
+才知道，可以在hexo命令后加入参数即可，比如可以这样带入参数<code>prod</code>，<code>hexo.env.args</code>中就会存在<code>prod</code>这个key：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ hexo server <span class="token parameter variable">--prod</span>
+$ hexo generate <span class="token parameter variable">--prod</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>如果要加入value比如1也很容易：<code>hexo server --prod 1</code>
+即可。</p>
+<h1 id="修改配置文件及action-workflow">修改配置文件及Action
+Workflow</h1>
+<p>下面就需要同时修改hexo配置文件和NexT主题配置文件，对于同一插件，比较好的做法当然是在一个配置文件中管理，比如在hexo配置文件<code>_config.yml</code>中加入：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">related_posts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">enable_env_name</span><span class="token punctuation">:</span> prod
+  <span class="token key atrule">icon</span><span class="token punctuation">:</span> fa fa<span class="token punctuation">-</span>signs<span class="token punctuation">-</span>post<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后将NexT主题中的相关配置还原：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">related_posts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  <span class="token key atrule">icon</span><span class="token punctuation">:</span> fa fa<span class="token punctuation">-</span>signs<span class="token punctuation">-</span>post<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>测试不好使，记不太清同一变量两处设置时hexo与主题的变量优先级了，看起来主题变量的值会覆盖hexo配置。但如果仅在NexT主题配置<code>_config.yml</code>中加入<code>enable_env_name: prod</code>也不好使，猜想是NexT主题并没有读取此变量值。所以需要同时在hexo配置文件与NexT主题配置文件中设置<code>enable: true</code>。</p>
+<p>最后，因为<a href="/deployhexofromprivaterepo/">使用GitHub
+Action自动部署站点</a>，需要修改下Workflow
+Yaml，<code>hexo g</code>时加上<code>--prod</code>参数:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Hexo
+  <span class="token key atrule">run</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    pandoc --version
+    npm i -g hexo-cli
+    npm i
+    hexo clean &amp;&amp; hexo g --prod</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>由于本地调试直接使用<code>hexo s</code>，所以相关文章默认会被禁用。</p>
+<p><strong>注意：</strong>
+<code>hexo-related-posts</code>有缓存功能，测试是否启用时需要修改任意一篇文章，或<code>hexo clean</code>后再测试。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/NexT/" rel="tag"># NexT</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/eta-2824-2-manual/" rel="prev" title="ETA 2824-2 机芯保养手册">
+                  <i class="fa fa-chevron-left"></i> ETA 2824-2 机芯保养手册
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div><div><span class="post-meta-item-icon"><i class="far fa-eye"></i></span><span><a href="https://finicounter.eu.org/" target="_blank">Total Views</a>:</span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/finisky" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en-US","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/how-to-set-hexo-env/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script></body>
+</html>
