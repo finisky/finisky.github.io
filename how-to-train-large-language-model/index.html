@@ -22,28 +22,31 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="卜算子自嘲 丁元英 本是后山人， 偶做前堂客。 醉舞经阁半卷书， 坐井说天阔。 大志戏功名， 海斗量福祸。 论到囊中羞涩时， 怒指乾坤错。">
+    <meta name="description" content="随着神经网络模型规模的不断增大，对硬件的显存和算力提出了新的要求。首先模型参数过多，导致单机内存放不下，即使能放得下，算力也跟不上。同时，硬件算力的增长远远比不上模型增长的速度，单机训练变得不再可行，需要并行化分布式训练加速。比如Megatron-Turing NLG有 530B 的参数，训练需要超过 10T 的内存来存储权重、梯度和状态。  同时，模型是一个有机的整体，简单增加机器数量并不能提升">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自嘲">
-<meta property="og:url" content="https://finisky.github.io/zichao/index.html">
+<meta property="og:title" content="大模型分布式训练的并行策略">
+<meta property="og:url" content="https://finisky.github.io/how-to-train-large-language-model/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="卜算子自嘲 丁元英 本是后山人， 偶做前堂客。 醉舞经阁半卷书， 坐井说天阔。 大志戏功名， 海斗量福祸。 论到囊中羞涩时， 怒指乾坤错。">
+<meta property="og:description" content="随着神经网络模型规模的不断增大，对硬件的显存和算力提出了新的要求。首先模型参数过多，导致单机内存放不下，即使能放得下，算力也跟不上。同时，硬件算力的增长远远比不上模型增长的速度，单机训练变得不再可行，需要并行化分布式训练加速。比如Megatron-Turing NLG有 530B 的参数，训练需要超过 10T 的内存来存储权重、梯度和状态。  同时，模型是一个有机的整体，简单增加机器数量并不能提升">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-07-12T15:56:59.000Z">
-<meta property="article:modified_time" content="2022-06-07T03:31:19.000Z">
+<meta property="article:published_time" content="2023-02-02T15:32:10.000Z">
+<meta property="article:modified_time" content="2023-02-02T15:34:07.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="Thoughts">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://finisky.github.io/zichao/">
+<link rel="canonical" href="https://finisky.github.io/how-to-train-large-language-model/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/zichao/","path":"zichao/","title":"自嘲"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/how-to-train-large-language-model/","path":"how-to-train-large-language-model/","title":"大模型分布式训练的并行策略"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>自嘲 | Finisky Garden</title>
+<title>大模型分布式训练的并行策略 | Finisky Garden</title>
   
 
 
@@ -104,7 +107,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -117,6 +120,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C-data-parallelism"><span class="nav-number">1.</span> <span class="nav-text">数据并行 (Data Parallelism)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C-tensor-parallelism"><span class="nav-number">2.</span> <span class="nav-text">张量并行 (Tensor Parallelism)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%B9%B6%E8%A1%8C-pipeline-parallelism"><span class="nav-number">3.</span> <span class="nav-text">流水线并行 (Pipeline
+Parallelism)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#d%E5%B9%B6%E8%A1%8C-3d-parallelism"><span class="nav-number">4.</span> <span class="nav-text">3D并行 (3D Parallelism)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -159,17 +164,38 @@
   </div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2019/08/11/dreamoftheredchamber/" rel="bookmark">
-        <time class="popular-posts-time">2019-08-11</time>
+      <a class="popular-posts-link" href="/nlmpowerlaw/" rel="bookmark">
+        <time class="popular-posts-time">2022-01-05</time>
         <br>
-      重温87版《红楼梦》
+      Scaling Laws for Neural Language Models简读
       </a>
     </li>
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2019/04/14/computerquotes/" rel="bookmark">
-        <time class="popular-posts-time">2019-04-14</time>
+      <a class="popular-posts-link" href="/training-compute-optimal-large-language-models-summary/" rel="bookmark">
+        <time class="popular-posts-time">2023-01-24</time>
         <br>
-      计算机界有趣的名言金句
+      Training Compute-Optimal Large Language Models 简读
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/05/25/multiheadattention/" rel="bookmark">
+        <time class="popular-posts-time">2020-05-25</time>
+        <br>
+      MultiHeadAttention实现详解
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/finetunelmlinebyline.en/" rel="bookmark">
+        <time class="popular-posts-time">2021-11-14</time>
+        <br>
+      Fine-tune GPT with Line-by-Line Dataset
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/finetunelmlinebyline/" rel="bookmark">
+        <time class="popular-posts-time">2021-11-14</time>
+        <br>
+      使用LineByLine数据集训练GPT
       </a>
     </li>
   </ul>
@@ -192,7 +218,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/zichao/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/how-to-train-large-language-model/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -205,12 +231,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="自嘲 | Finisky Garden">
+      <meta itemprop="name" content="大模型分布式训练的并行策略 | Finisky Garden">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          自嘲
+          大模型分布式训练的并行策略
         </h1>
 
         <div class="post-meta-container">
@@ -220,15 +246,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-07-12 23:56:59" itemprop="dateCreated datePublished" datetime="2021-07-12T23:56:59+08:00">2021-07-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-07 11:31:19" itemprop="dateModified" datetime="2022-06-07T11:31:19+08:00">2022-06-07</time>
+      <time title="创建时间：2023-02-02 23:32:10 / 修改时间：23:34:07" itemprop="dateCreated datePublished" datetime="2023-02-02T23:32:10+08:00">2023-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -236,7 +256,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
+          <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
         </span>
     </span>
 
@@ -249,8 +269,8 @@
     </span>
     <span class="post-meta-item-text">评论：</span>
   
-    <a title="waline" href="/zichao/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/zichao/" itemprop="commentCount"></span>
+    <a title="waline" href="/how-to-train-large-language-model/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/how-to-train-large-language-model/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -260,7 +280,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/zichao/"></span>
+      <span class="waline-pageview-count" data-path="/how-to-train-large-language-model/"></span>
     </span>
   
 </div>
@@ -272,10 +292,68 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <blockquote>
-<p>卜算子自嘲 丁元英</p>
-<p>本是后山人， 偶做前堂客。 醉舞经阁半卷书， 坐井说天阔。</p>
-<p>大志戏功名， 海斗量福祸。 论到囊中羞涩时， 怒指乾坤错。</p>
+        <p>随着神经网络模型规模的不断增大，对硬件的显存和算力提出了新的要求。首先模型参数过多，导致单机内存放不下，即使能放得下，算力也跟不上。同时，硬件算力的增长远远比不上模型增长的速度，单机训练变得不再可行，需要并行化分布式训练加速。比如<code>Megatron-Turing NLG</code>有
+530B 的参数，训练需要超过 10T 的内存来存储权重、梯度和状态。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/trendofnlpmodelsize.png" /></p>
+<p>同时，模型是一个有机的整体，简单增加机器数量并不能提升算力，需要有并行策略和通信设计，才能实现高效的并行训练。本文简要介绍目前主流的几种并行策略：数据并行，张量并行，流水线并行和混合并行。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2201.11990"># Using DeepSpeed and
+Megatron to Train Megatron-Turing NLG 530B, A Large-Scale Generative
+Language Model</a></p>
+<span id="more"></span>
+<h1 id="数据并行-data-parallelism">数据并行 (Data Parallelism)</h1>
+<blockquote>
+<p>Data parallelism is a ubiquitous technique in deep learning in which
+each input batch of training data is divided among the data-parallel
+workers.</p>
+</blockquote>
+<p>示意图来自 <a
+target="_blank" rel="noopener" href="https://colossalai.org/docs/concepts/paradigms_of_parallelism/">ColossalAI</a>:</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/dataparallelism.png" /></p>
+<p>数据并行原理很简单，所有设备都保存完整的模型参数，仅把数据集切分成N份，在更新参数时，将所有设备的梯度进行聚合即可。数据并行实现简单，是首选的并行方案，缺点是存储效率不高，模型参数被冗余存储N次。当模型比较大时，通信开销很大，甚至会影响计算效率。所以数据并行适用于模型较小而数据量较大的情况
+(不过根据 <a
+href="/training-compute-optimal-large-language-models-summary/">DPC</a>
+的结论，这样的情况不应存在)。</p>
+<h1 id="张量并行-tensor-parallelism">张量并行 (Tensor Parallelism)</h1>
+<blockquote>
+<p>Tensor model parallelism is a broad class of model parallelism
+techniques that partitions the individual layers of the model across
+workers.</p>
+</blockquote>
+<p>张量并行与流水线并行都属于模型并行，区别在于对模型参数的切分“方向”不同：张量并行把模型的每层进行切分
+(intra-layer)，而流水线并行则按层进行切分 (inter-layer)
+并在不同设备处理。张量并行可以降低单机内存使用到模型大小的1/N，存储效率较高，但在每次前向和后向计算时会引入额外的通信开销。</p>
+<p>示意图来自 <a
+target="_blank" rel="noopener" href="https://colossalai.org/docs/concepts/paradigms_of_parallelism/">ColossalAI</a>:</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/tensorparallelism.png" /></p>
+<h1 id="流水线并行-pipeline-parallelism">流水线并行 (Pipeline
+Parallelism)</h1>
+<blockquote>
+<p>Pipeline model parallelism divides the layers of the model into
+stages that can be processed in parallel.</p>
+</blockquote>
+<p>流水线并行按模型的不同层进行切分并在不同设备处理。模型越深，流水线并行越能降低内存使用，但是每层的计算量不变。由于通信只发生在阶段的边界，流水线并行也是三种并行策略中通信开销最小的一个。不过流水线并行并不能无限扩展，它的并行度受到模型深度的限制。此外，不同阶段的计算量需要比较均衡，否则并行效率会降低。</p>
+<p>示意图来自 <a
+target="_blank" rel="noopener" href="https://developer.nvidia.com/blog/scaling-language-model-training-to-a-trillion-parameters-using-megatron/">NVIDIA</a>:</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/pipelineparallelism.png" /></p>
+<p>流水线并行原理与计算机体系结构中的指令并行非常类似，上图中把每个batch切分成了8个microbatch并在四个设备上并行计算。图中灰色的区域称为气泡
+(bubble)，即设备空闲的时间。流水线并行的设计就导致不可能达到100%的GPU利用率，因此，有不少后续工作如
+PipeDream-Flush 对GPU使用率进行优化，就像这样：</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/pipedreamschedule.png" /></p>
+<h1 id="d并行-3d-parallelism">3D并行 (3D Parallelism)</h1>
+<p>3D并行，或者混合并行 (Hybrid
+Parallelism)，则是将以上三种策略结合起来使用，达到同时提升存储和计算效率的目的。<code>Megatron-Turing NLG</code>
+就是先将 Transformer block 使用流水线和张量 2D
+并行，然后再加上数据并行，将训练扩展到更多的GPU。</p>
+<blockquote>
+<p>For example, each 530 billion parameter model replica spans 280
+NVIDIA A100 GPUs, with 8-way tensor-slicing within a node and 35-way
+pipeline parallelism across nodes. We then use data parallelism to scale
+out further to thousands of GPUs.</p>
 </blockquote>
 
     </div>
@@ -286,21 +364,21 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Thoughts/" rel="tag"># Thoughts</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/delayautoadsloading.en/" rel="prev" title="Delay Loading Google Auto Ads">
-                  <i class="fa fa-chevron-left"></i> Delay Loading Google Auto Ads
+                <a href="/chatgpt-plus/" rel="prev" title="ChatGPT推出了收费版，每月20刀">
+                  <i class="fa fa-chevron-left"></i> ChatGPT推出了收费版，每月20刀
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/commonmarktostandardmarkdown/" rel="next" title="段落和列表中间添加空行的脚本">
-                  段落和列表中间添加空行的脚本 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -365,7 +443,7 @@
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/zichao/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/how-to-train-large-language-model/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
