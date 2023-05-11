@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="f6d91994ba785a63">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="安装 text-generation-webui ~&#x2F;text-generation-webui$ pip install -r requirements.txt 遇到错误：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="升级gcc解决编译llama-cpp-python错误">
+<meta property="og:url" content="https://finisky.github.io/build-llama-cpp-python-error-solution/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="安装 text-generation-webui ~&#x2F;text-generation-webui$ pip install -r requirements.txt 遇到错误：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-11T09:18:39.000Z">
+<meta property="article:modified_time" content="2023-05-11T09:21:29.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/build-llama-cpp-python-error-solution/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/build-llama-cpp-python-error-solution/","path":"build-llama-cpp-python-error-solution/","title":"升级gcc解决编译llama-cpp-python错误"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>升级gcc解决编译llama-cpp-python错误 | Finisky Garden</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://comments.finisky.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Finisky Garden</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, 软件工程, 产品设计</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li><li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>友链</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ubuntu-18.04%E5%AE%89%E8%A3%85ggcc-11"><span class="nav-number">1.</span> <span class="nav-text">Ubuntu 18.04安装g++&#x2F;gcc 11</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name" itemprop="name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">222</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/09/01/perlcgi.en/" rel="bookmark">
+        <time class="popular-posts-time">2020-09-01</time>
+        <br>
+      Can't locate CGI.pm in @INC
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/en/could-not-find-a-version-that-satisfies-the-requirement-solution/" rel="bookmark">
+        <time class="popular-posts-time">2023-05-10</time>
+        <br>
+      ERROR: Could not find a version that satisfies the requirement Solution
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/01/03/cudnnstatusexecutionfailed/" rel="bookmark">
+        <time class="popular-posts-time">2020-01-03</time>
+        <br>
+      RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/09/06/ubuntudisableipv6.en/" rel="bookmark">
+        <time class="popular-posts-time">2020-09-06</time>
+        <br>
+      Permanantly Disable ipv6 on Ubuntu
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2019/11/24/updatehexo/" rel="bookmark">
+        <time class="popular-posts-time">2019-11-24</time>
+        <br>
+      How to Update Hexo?
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/build-llama-cpp-python-error-solution/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="升级gcc解决编译llama-cpp-python错误 | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          升级gcc解决编译llama-cpp-python错误
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-05-11 17:18:39 / 修改时间：17:21:29" itemprop="dateCreated datePublished" datetime="2023-05-11T17:18:39+08:00">2023-05-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/build-llama-cpp-python-error-solution/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/build-llama-cpp-python-error-solution/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/build-llama-cpp-python-error-solution/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>安装 <a
+target="_blank" rel="noopener" href="https://github.com/oobabooga/text-generation-webui">text-generation-webui</a></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">~/text-generation-webui$ pip <span class="token function">install</span> <span class="token parameter variable">-r</span> requirements.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>遇到错误：</p>
+<span id="more"></span>
+<pre class="line-numbers language-none"><code class="language-none">...
+Building wheels for collected packages: llama-cpp-python, peft
+  Building wheel for llama-cpp-python (pyproject.toml) ... error
+  error: subprocess-exited-with-error
+
+  × Building wheel for llama-cpp-python (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─&gt; [131 lines of output]
+
+...
+
+      -- Configuring done (0.3s)
+      -- Generating done (0.0s)
+      -- Build files have been written to: &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55&#x2F;_skbuild&#x2F;linux-x86_64-3.9&#x2F;cmake-build
+      [1&#x2F;2] Generating &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55&#x2F;vendor&#x2F;llama.cpp&#x2F;libllama.so
+      FAILED: &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55&#x2F;vendor&#x2F;llama.cpp&#x2F;libllama.so
+      cd &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55&#x2F;vendor&#x2F;llama.cpp &amp;&amp; make libllama.so
+      I llama.cpp build info:
+      I UNAME_S:  Linux
+      I UNAME_P:  x86_64
+      I UNAME_M:  x86_64
+      I CFLAGS:   -I.              -O3 -std&#x3D;c11   -fPIC -DNDEBUG -Wall -Wextra -Wpedantic -Wcast-qual -Wdouble-promotion -Wshadow -Wstrict-prototypes -Wpointer-arith -pthread -march&#x3D;native -mtune&#x3D;native
+      I CXXFLAGS: -I. -I.&#x2F;examples -O3 -std&#x3D;c++11 -fPIC -DNDEBUG -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread -march&#x3D;native -mtune&#x3D;native
+      I LDFLAGS:
+      I CC:       cc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+      I CXX:      g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+
+      g++ -I. -I.&#x2F;examples -O3 -std&#x3D;c++11 -fPIC -DNDEBUG -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread -march&#x3D;native -mtune&#x3D;native -c llama.cpp -o llama.o
+      llama.cpp: In function ‘size_t llama_set_state_data(llama_context*, const uint8_t*)’:
+      llama.cpp:2610:36: warning: cast from type ‘const uint8_t* &#123;aka const unsigned char*&#125;’ to type ‘void*’ casts away qualifiers [-Wcast-qual]
+                   kin3d-&gt;data &#x3D; (void *) in;
+                                          ^~
+      llama.cpp:2614:36: warning: cast from type ‘const uint8_t* &#123;aka const unsigned char*&#125;’ to type ‘void*’ casts away qualifiers [-Wcast-qual]
+                   vin3d-&gt;data &#x3D; (void *) in;
+                                          ^~
+      cc  -I.              -O3 -std&#x3D;c11   -fPIC -DNDEBUG -Wall -Wextra -Wpedantic -Wcast-qual -Wdouble-promotion -Wshadow -Wstrict-prototypes -Wpointer-arith -pthread -march&#x3D;native -mtune&#x3D;native   -c ggml.c -o ggml.o
+      ggml.c: In function ‘ggml_vec_dot_q4_2_q8_0’:
+      ggml.c:3253:40: warning: implicit declaration of function ‘_mm256_set_m128’; did you mean ‘_mm256_set_epi8’? [-Wimplicit-function-declaration]
+               const __m256 d &#x3D; _mm256_mul_ps(_mm256_set_m128(d1, d0), _mm256_broadcast_ss(&amp;y[i].d));
+                                              ^~~~~~~~~~~~~~~
+                                              _mm256_set_epi8
+      ggml.c:3253:40: error: incompatible type for argument 1 of ‘_mm256_mul_ps’
+      In file included from &#x2F;usr&#x2F;lib&#x2F;gcc&#x2F;x86_64-linux-gnu&#x2F;7&#x2F;include&#x2F;immintrin.h:41:0,
+                       from ggml.c:189:
+      &#x2F;usr&#x2F;lib&#x2F;gcc&#x2F;x86_64-linux-gnu&#x2F;7&#x2F;include&#x2F;avxintrin.h:318:1: note: expected ‘__m256 &#123;aka __vector(8) float&#125;’ but argument is of type ‘int’
+       _mm256_mul_ps (__m256 __A, __m256 __B)
+       ^~~~~~~~~~~~~
+      ggml.c:3257:22: warning: implicit declaration of function ‘_mm256_set_m128i’; did you mean ‘_mm256_set_epi8’? [-Wimplicit-function-declaration]
+               __m256i bx &#x3D; _mm256_set_m128i(bx1, bx0);
+                            ^~~~~~~~~~~~~~~~
+                            _mm256_set_epi8
+      ggml.c:3257:22: error: incompatible types when initializing type ‘__m256i &#123;aka __vector(4) long long int&#125;’ using type ‘int’
+      Makefile:185: recipe for target &#39;ggml.o&#39; failed
+      make: *** [ggml.o] Error 1
+      ninja: build stopped: subcommand failed.
+      Traceback (most recent call last):
+        File &quot;&#x2F;tmp&#x2F;pip-build-env-cm_vdfny&#x2F;overlay&#x2F;lib&#x2F;python3.9&#x2F;site-packages&#x2F;skbuild&#x2F;setuptools_wrap.py&quot;, line 674, in setup
+          cmkr.make(make_args, install_target&#x3D;cmake_install_target, env&#x3D;env)
+        File &quot;&#x2F;tmp&#x2F;pip-build-env-cm_vdfny&#x2F;overlay&#x2F;lib&#x2F;python3.9&#x2F;site-packages&#x2F;skbuild&#x2F;cmaker.py&quot;, line 696, in make
+          self.make_impl(clargs&#x3D;clargs, config&#x3D;config, source_dir&#x3D;source_dir, install_target&#x3D;install_target, env&#x3D;env)
+        File &quot;&#x2F;tmp&#x2F;pip-build-env-cm_vdfny&#x2F;overlay&#x2F;lib&#x2F;python3.9&#x2F;site-packages&#x2F;skbuild&#x2F;cmaker.py&quot;, line 741, in make_impl
+          raise SKBuildError(msg)
+
+      An error occurred while building with CMake.
+        Command:
+          &#x2F;tmp&#x2F;pip-build-env-cm_vdfny&#x2F;overlay&#x2F;lib&#x2F;python3.9&#x2F;site-packages&#x2F;cmake&#x2F;data&#x2F;bin&#x2F;cmake --build . --target install --config Release --
+        Install target:
+          install
+        Source directory:
+          &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55
+        Working directory:
+          &#x2F;tmp&#x2F;pip-install-rzg2ayje&#x2F;llama-cpp-python_ae749d81f3f74840a75abef221510a55&#x2F;_skbuild&#x2F;linux-x86_64-3.9&#x2F;cmake-build
+      Please check the install target is valid and see CMake&#39;s output for more information.
+
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for llama-cpp-python
+  Building wheel for peft (pyproject.toml) ... done
+  Created wheel for peft: filename&#x3D;peft-0.4.0.dev0-py3-none-any.whl size&#x3D;56306 sha256&#x3D;aeadc3499eecab0d78df3bb60230221046062dd49030b88f0f36d154a1b01fcd
+  Stored in directory: &#x2F;tmp&#x2F;pip-ephem-wheel-cache-x1u8mjti&#x2F;wheels&#x2F;45&#x2F;06&#x2F;33&#x2F;0048c03714539b315d99beef9ea6b6dad0fd5750105e221583
+Successfully built peft
+Failed to build llama-cpp-python
+ERROR: Could not build wheels for llama-cpp-python, which is required to install pyproject.toml-based projects<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>发现是gcc/g++版本过低所致，Ubuntu
+18.04默认的gcc版本为<code>cc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0</code>，通过apt无法直接升级至gcc
+11。</p>
+<h2 id="ubuntu-18.04安装ggcc-11">Ubuntu 18.04安装g++/gcc 11</h2>
+<p>首先增加ppa:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ add-apt-repository ppa:ubuntu-toolchain-r/test<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>如下载原始国外源<code>http://ppa.launchpad.net/</code>很慢，则修改<code>/etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-bionic.list</code>为中科大镜像(https)：</p>
+<pre class="line-numbers language-none"><code class="language-none">deb https:&#x2F;&#x2F;launchpad.proxy.ustclug.org&#x2F;ubuntu-toolchain-r&#x2F;test&#x2F;ubuntu bionic main
+#deb http:&#x2F;&#x2F;ppa.launchpad.net&#x2F;ubuntu-toolchain-r&#x2F;test&#x2F;ubuntu bionic main
+# deb-src http:&#x2F;&#x2F;ppa.launchpad.net&#x2F;ubuntu-toolchain-r&#x2F;test&#x2F;ubuntu bionic main<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>不幸<code>apt update</code>又遇到问题：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> update
+Hit:1 http://mirrors.cloud.aliyuncs.com/ubuntu bionic InRelease
+Hit:2 http://mirrors.cloud.aliyuncs.com/ubuntu bionic-updates InRelease
+Hit:3 http://mirrors.cloud.aliyuncs.com/ubuntu bionic-backports InRelease
+Hit:4 http://mirrors.cloud.aliyuncs.com/ubuntu bionic-security InRelease
+Hit:5 https://packagecloud.io/github/git-lfs/ubuntu bionic InRelease
+Err:6 http://launchpad.proxy.ustclug.org/ubuntu-toolchain-r/test/ubuntu bionic InRelease
+  Connection failed <span class="token punctuation">[</span>IP: <span class="token number">103.88</span>.47.230 <span class="token number">80</span><span class="token punctuation">]</span>
+Reading package lists<span class="token punctuation">..</span>. Done
+Building dependency tree
+Reading state information<span class="token punctuation">..</span>. Done
+<span class="token number">267</span> packages can be upgraded. Run <span class="token string">'apt list --upgradable'</span> to see them.
+W: Failed to fetch http://launchpad.proxy.ustclug.org/ubuntu-toolchain-r/test/ubuntu/dists/bionic/InRelease  Connection failed <span class="token punctuation">[</span>IP: <span class="token number">103.88</span>.47.230 <span class="token number">80</span><span class="token punctuation">]</span>
+W: Some index files failed to download. They have been ignored, or old ones used instead.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>证书验证不过，安装如下包：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> ca-certificates
+Reading package lists<span class="token punctuation">..</span>. Done
+Building dependency tree
+Reading state information<span class="token punctuation">..</span>. Done
+The following packages will be upgraded:
+  ca-certificates
+<span class="token number">1</span> upgraded, <span class="token number">0</span> newly installed, <span class="token number">0</span> to remove and <span class="token number">266</span> not upgraded.
+Need to get <span class="token number">140</span> kB of archives.
+After this operation, <span class="token number">15.4</span> kB disk space will be freed.
+Get:1 http://mirrors.cloud.aliyuncs.com/ubuntu bionic-updates/main amd64 ca-certificates all 20211016ubuntu0.18.04.1 <span class="token punctuation">[</span><span class="token number">140</span> kB<span class="token punctuation">]</span>
+Fetched <span class="token number">140</span> kB <span class="token keyword">in</span> 0s <span class="token punctuation">(</span><span class="token number">1,482</span> kB/s<span class="token punctuation">)</span>
+Preconfiguring packages <span class="token punctuation">..</span>.
+<span class="token punctuation">(</span>Reading database <span class="token punctuation">..</span>. <span class="token number">157674</span> files and directories currently installed.<span class="token punctuation">)</span>
+Preparing to unpack <span class="token punctuation">..</span>./ca-certificates_20211016ubuntu0.18.04.1_all.deb <span class="token punctuation">..</span>.
+Unpacking ca-certificates <span class="token punctuation">(</span>20211016ubuntu0.18.04.1<span class="token punctuation">)</span> over <span class="token punctuation">(</span><span class="token number">20210119</span>~18.04.1<span class="token punctuation">)</span> <span class="token punctuation">..</span>.
+Setting up ca-certificates <span class="token punctuation">(</span>20211016ubuntu0.18.04.1<span class="token punctuation">)</span> <span class="token punctuation">..</span>.
+Updating certificates <span class="token keyword">in</span> /etc/ssl/certs<span class="token punctuation">..</span>.
+rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+<span class="token number">7</span> added, <span class="token number">12</span> removed<span class="token punctuation">;</span> done.
+Processing triggers <span class="token keyword">for</span> man-db <span class="token punctuation">(</span><span class="token number">2.8</span>.3-2ubuntu0.1<span class="token punctuation">)</span> <span class="token punctuation">..</span>.
+Processing triggers <span class="token keyword">for</span> ca-certificates <span class="token punctuation">(</span>20211016ubuntu0.18.04.1<span class="token punctuation">)</span> <span class="token punctuation">..</span>.
+Updating certificates <span class="token keyword">in</span> /etc/ssl/certs<span class="token punctuation">..</span>.
+<span class="token number">0</span> added, <span class="token number">0</span> removed<span class="token punctuation">;</span> done.
+Running hooks <span class="token keyword">in</span> /etc/ca-certificates/update.d<span class="token punctuation">..</span>.
+
+done.
+done.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>此时，可以顺利安装gcc 11:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> gcc-11 g++11<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>查看gcc版本，还没变：</p>
+<p>$ gcc --version gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0 Copyright (C)
+2017 Free Software Foundation, Inc. This is free software; see the
+source for copying conditions. There is NO warranty; not even for
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
+<p>用<code>update-alternatives</code>更新默认<code>gcc/g++</code>版本：</p>
+<pre class="line-numbers language-none"><code class="language-none">$ sudo update-alternatives --install &#x2F;usr&#x2F;bin&#x2F;gcc gcc &#x2F;usr&#x2F;bin&#x2F;gcc-7 1
+$ sudo update-alternatives --install &#x2F;usr&#x2F;bin&#x2F;gcc gcc &#x2F;usr&#x2F;bin&#x2F;gcc-11 10
+
+$ sudo update-alternatives --install &#x2F;usr&#x2F;bin&#x2F;g++ g++ &#x2F;usr&#x2F;bin&#x2F;g++-7 1
+$ sudo update-alternatives --install &#x2F;usr&#x2F;bin&#x2F;g++ g++ &#x2F;usr&#x2F;bin&#x2F;g++-11 10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>再检查gcc版本：</p>
+<pre class="line-numbers language-none"><code class="language-none">$ gcc --version
+gcc (Ubuntu 11.1.0-1ubuntu1~18.04.1) 11.1.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>再次pip安装<code>text-generation-webui</code>即可，编译<code>llama-cpp-python</code>成功。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/could-not-find-a-version-that-satisfies-the-requirement-solution/" rel="prev" title="ERROR: Could not find a version that satisfies the requirement Solution">
+                  <i class="fa fa-chevron-left"></i> ERROR: Could not find a version that satisfies the requirement Solution
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div><div><span class="post-meta-item-icon"><i class="far fa-eye"></i></span><span><a href="https://finicounter.eu.org/" target="_blank">Total Views</a>:</span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/finisky" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/build-llama-cpp-python-error-solution/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script></body>
+</html>
