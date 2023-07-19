@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/decodetopp.png">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/decodetemper.png">
 <meta property="article:published_time" content="2023-07-19T01:46:22.000Z">
-<meta property="article:modified_time" content="2023-07-19T09:47:39.000Z">
+<meta property="article:modified_time" content="2023-07-19T09:59:34.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
@@ -184,17 +184,17 @@
       </a>
     </li>
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/toolformer-summary/" rel="bookmark">
-        <time class="popular-posts-time">2023-07-16</time>
-        <br>
-      使LLM善假于物: Toolformer
-      </a>
-    </li>
-    <li class="popular-posts-item">
       <a class="popular-posts-link" href="/whynncanrepresentlm.en/" rel="bookmark">
         <time class="popular-posts-time">2022-04-07</time>
         <br>
       Why Neural Networks Can Represent Lanugage Models
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/toolformer-summary/" rel="bookmark">
+        <time class="popular-posts-time">2023-07-16</time>
+        <br>
+      使LLM善假于物: Toolformer
       </a>
     </li>
     <li class="popular-posts-item">
@@ -254,7 +254,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-07-19 09:46:22 / 修改时间：17:47:39" itemprop="dateCreated datePublished" datetime="2023-07-19T09:46:22+08:00">2023-07-19</time>
+      <time title="创建时间：2023-07-19 09:46:22 / 修改时间：17:59:34" itemprop="dateCreated datePublished" datetime="2023-07-19T09:46:22+08:00">2023-07-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -369,6 +369,19 @@ V_l}exp(u_i/t)}\]</span></p>
 <p><img src="https://coriva.eu.org/images/nlp/decodetemper.png"
 alt="温度采样" /></p>
 <p>由上图可见，原始的10个候选词的概率分布差异性较大，明显倾向于选择第7个词。而使用温度采样重缩放之后，10个候选词的概率分布均匀了很多，选词的多样性得到了明显提升。而概率分布的差异程度可以通过超参数T进行控制：T越大，概率分布越接近均匀分布，也就是模型越倾向于选择偏门的词汇；反之，T越小，概率分布越不均匀，模型越倾向于选择出现概率大的词汇。一般来说，温度对生成效果有如下影响：温度小可能会导致生成重复的内容，而温度大时可能导致生成不连贯或不合逻辑的内容。</p>
+<p>读到这里，就可以理解OpenAI
+API中<code>temperature</code>和<code>top_p</code>参数的意义了：</p>
+<blockquote>
+<p>temperature: What sampling temperature to use, between 0 and 2.
+Higher values like 0.8 will make the output more random, while lower
+values like 0.2 will make it more focused and deterministic. We
+generally recommend altering this or <code>top_p</code> but not
+both.</p>
+<p>top_p: An alternative to sampling with temperature, called nucleus
+sampling, where the model considers the results of the tokens with top_p
+probability mass. So 0.1 means only the tokens comprising the top 10%
+probability mass are considered.</p>
+</blockquote>
 <h1 id="总结">总结</h1>
 <p>本质上，几种不同的解码策略都是优化解码词概率分布，通过缩放，增加可选词的多样性，同时不损失通顺度。但它们都引入了一个新的超参数，在实际应用中，还需要进一步的启发式调优。</p>
 <p>此外，解码策略的选择不是非黑即白的问题，需要在不同场景下具体分析和选择。贪心搜索和集束搜索虽然简单，但并不意味着它们的效果总是较差。有研究证明，训练合适的情况下，它们能生成比核采样更好的文本序列。</p>
