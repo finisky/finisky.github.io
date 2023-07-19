@@ -22,33 +22,38 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="# The Curious Case of Neural Text Degeneration 这篇ICLR 2020年的文章我很喜欢，因为它简洁直观。文章首先提出一个有意思的发现：人说的自然语言常常出人意料，即说出的并不总是语言模型中概率最大的词，而Beam Search会总会选择最符合语言模型的词汇，因此生成的文本没有新意(less surprising)。之后提出了一种top-k sampli">
+    <meta name="description" content="之前写过 # Nucleus Sampling与文本生成中的不同解码策略比较，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。  对于文本生成任务，语言模型如何做到对同一个输入生成不同的输出？问题的关键在于解码策略。无论是自编码模型还是自回归模型，都是在解码阶段的每个时间步逐个生成最终文本。所谓解码，就是按照某种策略从候选词表中选择合适的词输出。除了对于模型本身的改进，不同解">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nucleus Sampling与文本生成中的不同解码策略比较">
-<meta property="og:url" content="https://finisky.github.io/nucleussampling/index.html">
+<meta property="og:title" content="图说文本生成解码策略">
+<meta property="og:url" content="https://finisky.github.io/illustrated-decoding-strategies/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="# The Curious Case of Neural Text Degeneration 这篇ICLR 2020年的文章我很喜欢，因为它简洁直观。文章首先提出一个有意思的发现：人说的自然语言常常出人意料，即说出的并不总是语言模型中概率最大的词，而Beam Search会总会选择最符合语言模型的词汇，因此生成的文本没有新意(less surprising)。之后提出了一种top-k sampli">
+<meta property="og:description" content="之前写过 # Nucleus Sampling与文本生成中的不同解码策略比较，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。  对于文本生成任务，语言模型如何做到对同一个输入生成不同的输出？问题的关键在于解码策略。无论是自编码模型还是自回归模型，都是在解码阶段的每个时间步逐个生成最终文本。所谓解码，就是按照某种策略从候选词表中选择合适的词输出。除了对于模型本身的改进，不同解">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/decodegreedy.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/decodebeamsearch.png">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/beamsearchprob.png">
-<meta property="article:published_time" content="2021-11-25T10:26:48.000Z">
-<meta property="article:modified_time" content="2022-08-29T03:55:42.000Z">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/decodetopk.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/decodetopp.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/decodetemper.png">
+<meta property="article:published_time" content="2023-07-19T01:46:22.000Z">
+<meta property="article:modified_time" content="2023-07-19T09:47:39.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
 <meta property="article:tag" content="NLG">
 <meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/beamsearchprob.png">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/decodegreedy.png">
 
 
-<link rel="canonical" href="https://finisky.github.io/nucleussampling/">
+<link rel="canonical" href="https://finisky.github.io/illustrated-decoding-strategies/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/nucleussampling/","path":"nucleussampling/","title":"Nucleus Sampling与文本生成中的不同解码策略比较"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/illustrated-decoding-strategies/","path":"illustrated-decoding-strategies/","title":"图说文本生成解码策略"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Nucleus Sampling与文本生成中的不同解码策略比较 | Finisky Garden</title>
+<title>图说文本生成解码策略 | Finisky Garden</title>
   
 
 
@@ -122,8 +127,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#top-k-sampling"><span class="nav-number">1.</span> <span class="nav-text">Top-k Sampling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nucleus-sampling-top-p-sampling"><span class="nav-number">2.</span> <span class="nav-text">Nucleus Sampling (Top-p
-Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#temperature-sampling"><span class="nav-number">3.</span> <span class="nav-text">Temperature Sampling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#summary"><span class="nav-number">4.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E6%90%9C%E7%B4%A2"><span class="nav-number">1.</span> <span class="nav-text">贪心搜索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E6%9D%9F%E6%90%9C%E7%B4%A2"><span class="nav-number">2.</span> <span class="nav-text">集束搜索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#top-k%E9%87%87%E6%A0%B7"><span class="nav-number">3.</span> <span class="nav-text">Top-K采样</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B8%E9%87%87%E6%A0%B7top-p%E9%87%87%E6%A0%B7"><span class="nav-number">4.</span> <span class="nav-text">核采样(Top-p采样)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B8%A9%E5%BA%A6%E9%87%87%E6%A0%B7"><span class="nav-number">5.</span> <span class="nav-text">温度采样</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -166,17 +170,24 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
   </div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/illustrated-decoding-strategies/" rel="bookmark">
-        <time class="popular-posts-time">2023-07-19</time>
+      <a class="popular-posts-link" href="/nucleussampling/" rel="bookmark">
+        <time class="popular-posts-time">2021-11-25</time>
         <br>
-      图说文本生成解码策略
+      Nucleus Sampling与文本生成中的不同解码策略比较
       </a>
     </li>
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/nlmpowerlaw/" rel="bookmark">
-        <time class="popular-posts-time">2022-01-05</time>
+      <a class="popular-posts-link" href="/whynncanrepresentlm/" rel="bookmark">
+        <time class="popular-posts-time">2022-04-07</time>
         <br>
-      Scaling Laws for Neural Language Models简读
+      神经网络为什么可以表示语言模型
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/toolformer-summary/" rel="bookmark">
+        <time class="popular-posts-time">2023-07-16</time>
+        <br>
+      使LLM善假于物: Toolformer
       </a>
     </li>
     <li class="popular-posts-item">
@@ -187,17 +198,10 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
       </a>
     </li>
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/sqlservercleanupqueries.en/" rel="bookmark">
-        <time class="popular-posts-time">2021-05-02</time>
+      <a class="popular-posts-link" href="/autoencodervsautoregressive/" rel="bookmark">
+        <time class="popular-posts-time">2021-07-18</time>
         <br>
-      SQL Server CleanUp Database Queries
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2020/02/24/pointtohyperplane/" rel="bookmark">
-        <time class="popular-posts-time">2020-02-24</time>
-        <br>
-      点到超平面距离推导
+      Autoencoding和Autoregressive的区别
       </a>
     </li>
   </ul>
@@ -220,7 +224,7 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/nucleussampling/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/illustrated-decoding-strategies/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -233,12 +237,12 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Nucleus Sampling与文本生成中的不同解码策略比较 | Finisky Garden">
+      <meta itemprop="name" content="图说文本生成解码策略 | Finisky Garden">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Nucleus Sampling与文本生成中的不同解码策略比较
+          图说文本生成解码策略
         </h1>
 
         <div class="post-meta-container">
@@ -248,15 +252,9 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-11-25 18:26:48" itemprop="dateCreated datePublished" datetime="2021-11-25T18:26:48+08:00">2021-11-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-29 11:55:42" itemprop="dateModified" datetime="2022-08-29T11:55:42+08:00">2022-08-29</time>
+      <time title="创建时间：2023-07-19 09:46:22 / 修改时间：17:47:39" itemprop="dateCreated datePublished" datetime="2023-07-19T09:46:22+08:00">2023-07-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,8 +275,8 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
     </span>
     <span class="post-meta-item-text">评论：</span>
   
-    <a title="waline" href="/nucleussampling/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/nucleussampling/" itemprop="commentCount"></span>
+    <a title="waline" href="/illustrated-decoding-strategies/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/illustrated-decoding-strategies/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -288,7 +286,7 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/nucleussampling/"></span>
+      <span class="waline-pageview-count" data-path="/illustrated-decoding-strategies/"></span>
     </span>
   
 </div>
@@ -300,59 +298,80 @@ Sampling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" hr
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.09751"># The Curious Case of
-Neural Text Degeneration</a></p>
-<p>这篇ICLR
-2020年的文章我很喜欢，因为它简洁直观。文章首先提出一个有意思的发现：人说的自然语言常常出人意料，即说出的并不总是语言模型中概率最大的词，而Beam
-Search会总会选择最符合语言模型的词汇，因此生成的文本没有新意(<code>less surprising</code>)。之后提出了一种top-k
-sampling的改进方案来解决问题：nucleus sampling (top-p sampling)。</p>
+        <p>之前写过 <a href="/nucleussampling/"># Nucleus
+Sampling与文本生成中的不同解码策略比较</a>，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。</p>
+<hr />
+<p>对于文本生成任务，语言模型如何做到对同一个输入生成不同的输出？问题的关键在于解码策略。无论是自编码模型还是自回归模型，都是在解码阶段的每个时间步逐个生成最终文本。所谓解码，就是按照某种策略从候选词表中选择合适的词输出。除了对于模型本身的改进，不同解码策略也对文本生成质量起到重要作用。</p>
 <span id="more"></span>
+<p>不失一般性，语言模型的解码过程可被描述为：给定m个文本序列<span
+class="math inline">\(x_1,x_2, \ldots
+x_m\)</span>作为上下文，生成下n个连续单词从而得到完整的文本序列<span
+class="math inline">\(x_1,x_2, \ldots x_m,x_{m+1}, \ldots,
+x_{m+n}\)</span>，生成完整文本序列的概率为：</p>
+<p><span
+class="math display">\[P(x_1,x_2,\ldots,x_{m+n})=\prod_{i=1}^{m+n}{P(x_i|x_1,x_2,\ldots,x_{i-1})}\]</span></p>
+<p>最符合直觉的解码策略显然是最大化文本序列概率的方案。假设词表大小为<span
+class="math inline">\(V\)</span>，最大文本序列长度为<span
+class="math inline">\(L\)</span>, 则整个搜索空间是<span
+class="math inline">\(V^L\)</span>，计算复杂度过高，实践中不可行。容易证明，在词表中找到最可能出现的文本序列是个NP难问题。因此，我们需要用启发式算法来逼近最优解。</p>
+<h1 id="贪心搜索">贪心搜索</h1>
+<p>一个直观的简化方案是贪心搜索（Greedy
+Search），即在每个时间步，都选择最大概率出现的词汇作为下一个词。虽然看上去合理，但它有可能会陷入到不断重复的死循环中。此外，每次选择最高概率单词作为结果的贪心策略，有可能不是全局最优解：即每步都选择了最大概率出现的单词，但生成的句子并不是最合理的。</p>
+<p><img src="https://coriva.eu.org/images/nlp/decodegreedy.png"
+alt="贪心搜索" /></p>
+<p>如上图，举例说明贪心搜索的过程：在第一个时间步选择概率最大的单词”你”，在第二个时间步选择概率最大的单词“好”，在给定“你好”的条件下，在第三时间步选择最大概率出现的单词“吗”，最终生成文本”你好吗”，整个句子的生成概率为0.7<em>0.8</em>0.6=0.336。</p>
+<h1 id="集束搜索">集束搜索</h1>
+<p>前面分析过，如果想找到最优解，需要对整个搜索空间进行遍历，计算量巨大。为解决这个问题，集束搜索（Beam
+Search）应运而生。它的核心思想是在每个时间步，用上一步K个概率最大的文本序列，与词表中的每个词汇进行组合，并保留前K个生成概率最大的文本序列，为下一步生成做准备。不断重复这个过程，直到遇到终止符或达到最大生成长度为止。相比于贪心搜索，集束搜索通过保留K个文本序列（实践中常用堆进行实现），一定程度上扩大了搜索空间，生成更好的结果。贪心搜索是集束搜索在K=1时的特例。</p>
+<p><img src="https://coriva.eu.org/images/nlp/decodebeamsearch.png"
+alt="集束搜索" /></p>
+<p>如上图，举例说明K=2时集束搜索的过程：第一个时间步保留两个候选结果“你”和“好”，第二个时间步也保留两个最优结果“你好”和“好吗”，第三个时间步，输出最终结果“你好吗”。</p>
+<h1 id="top-k采样">Top-K采样</h1>
+<p>集束搜索和贪心搜索的思想都是生成最大出现概率的句子。但这样生成的结果可能是短小常见的句子，缺乏信息量。有研究发现：真人说的自然语言常常出人意料，即说出的并不总是语言模型中概率最大的单词。考虑到集束搜索总是选择最大概率出现的单词，因此生成的文本没有新意。</p>
 <p><img src="https://coriva.eu.org/images/nlp/beamsearchprob.png"
 alt="Beam Search Text is Less Surprising" /></p>
-<p>这张图很好地说明了Beam Search与真人说话之间的区别，Beam
-Search生成的句子虽然可以令其的概率最大，但用词总是比较普通，可人的语言往往不是令语言模型概率最大化的那个词，每个词出现的概率更有节奏。</p>
-<h1 id="top-k-sampling">Top-k Sampling</h1>
-<p>解决这个问题最简单的方案就是引入Sampling，既然Beam
-Search每次会选择在Beam中最大概率的词汇，那我们是否可以有一定机率不选最大概率的词就能达到用词出人意料的效果呢？这就是top-k
-sampling：在解码的每个时间步从前k个概率最大的词中按它们的概率进行采样。</p>
-<p>但top-k
-sampling中k的选择是个难题，选大了可能会采样出长尾词，导致语句不通顺，选小了又退化成了Beam
-Search。</p>
-<h1 id="nucleus-sampling-top-p-sampling">Nucleus Sampling (Top-p
-Sampling)</h1>
-<p>为解决这个问题，Nucleus sampling应运而生：</p>
-<blockquote>
-<p>The key intuition of Nucleus Sampling is that the vast majority of
-probability mass at each time step is concentrated in the nucleus, a
-small subset of the vocabulary that tends to range between one and a
-thousand candidates.</p>
-</blockquote>
-<p>在每个时间步，解码词的概率分布满足80/20原则或者说长尾分布（个人解读），头部的几个词的出现概率已经占据了绝大部分概率空间，把这部分核心词叫做<code>nucleus</code>。</p>
-<p>其实Nucleus
-Sampling这个名字起得有点唬人，叫<code>Core Sampling</code>可能更直观些
-(但不fancy) :-)。</p>
-<p>基于这样的观察，提出nucleus
-sampling：给定一个概率阈值p，从解码词候选集中选择一个最小集<span
-class="math inline">\(V_p\)</span>，使得它们出现的概率和大于等于p。然后再对<span
-class="math inline">\(Vp\)</span>做一次re-scaling，本时间步仅从Vp集合中解码。</p>
-<p><span class="math display">\[\sum_{x \in V_p}P(x|x_{1:i-1}) \ge
-p\]</span></p>
-<p>这样的好处在于在不同时间步，随着解码词的概率分布不同，候选词集合的大小会动态变化，不像top-k
-sampling是一个固定的窗口大小。由于解码词还是从头部候选集中筛选，这样的动态调整可以使生成的句子在满足多样性的同时又保持通顺。</p>
-<h1 id="temperature-sampling">Temperature Sampling</h1>
-<p>Temperature
-Sampling看名字就更摸不着头脑，实际上思路非常简单，就是直接re-scale原有的解码词分布：</p>
-<p><span
-class="math display">\[p(x=u_l|x_{1:i-1})=\frac{exp(u_l/t)}{\sum_{i \in
+<p>上图很好地说明了集束搜索与真人说话之间的区别，集束搜索生成的句子用词较为常见，但真人的语言所用词汇出现的概率更富有多样性。具体来说，在几个连续时间步里，真人语言所用的词汇很少一直使用高频常见词，而可能会突然转向使用低频但更富有信息量的词汇，这也是真人语言的一个内在属性。当然，这只是后验观察，很难用确定性算法进行精确刻画。不过可以确定，使用集束搜索生成的文本与真人所说文本的概率分布有很大差异，真人语言不是通过最大化句子出现概率的方式产生的。</p>
+<p>解决这个问题最直接的方案就是引入采样机制增加随机性，既然集束搜索每次仅关注最好的一个选项，那我们是否可以增加候选词集合的大小，从而达到用词更多样的效果？这就是Top-K采样：在解码的每个时间步取前k个概率最大的词，将它们的概率缩放调整，并按缩放后的概率分布采样得到生成的单词。</p>
+<p>本节的Top-K采样和下节介绍的核采样，本质上都是<strong>舍弃长尾词并重缩放头部词概率分布</strong>的方案。</p>
+<p>给定概率分布<span class="math inline">\(P(x|
+x_1,x_2,\ldots,x_{i-1})\)</span>，定义它的Top-K词表为<span
+class="math inline">\(V^{(K)} \subset V\)</span>，且<span
+class="math inline">\(V^{(K)}\)</span>中的词出现的概率是最大的K个。令<span
+class="math inline">\(p&#39;=\sum_{x \in V^{(K)}}P(x|x_1,x_2, \ldots
+x_{i-1})\)</span>，如果<span class="math inline">\(x \in
+V^{(K)}\)</span>，则将可选词的概率分布重缩放为：</p>
+<p><span class="math display">\[P^\prime(x|
+x_1,x_2,\ldots,x_{i-1})=P^\prime(x|
+x_1,x_2,\ldots,x_{i-1})/p^\prime\]</span></p>
+<p>否则，令<span class="math inline">\(P^\prime(x|
+x_1,x_2,\ldots,x_{i-1})=0\)</span>。</p>
+<p><img src="https://coriva.eu.org/images/nlp/decodetopk.png"
+alt="Top-K采样" /></p>
+<p>如上图K=3的情况，则在此时间步的可选词将由10个变为概率最高的3个，将它们的概率分布重缩放后进行采样，其他时间步也类似。</p>
+<h1 id="核采样top-p采样">核采样(Top-p采样)</h1>
+<p>但在实践中由于k是个固定值，top-k
+采样k的选择是个难题，有时前k个词的概率分布较为均匀，有时概率分布又集中在很少的一些词中，导致有时会生成一些比较通用的词汇，有时会增加采样长尾词的概率，导致语句不通顺。于是，核采样（nucleus
+sampling，也称Top-p采样）解码策略被提出。它的主要思想是在每个时间步，概率分布总集中在少数关键的“核”词集合，因此我们可以利用概率分布的不同，动态地调整采样集合的大小。即给定一个概率阈值p，从解码词候选集中选择一个最小词表<span
+class="math inline">\(V^{(p)}\)</span>，使得它们出现的概率和大于等于p:</p>
+<p><span class="math display">\[\sum_{x \in V^{(p)}}P(x|
+x_1,x_2,\ldots,x_{i-1}) \ge p\]</span></p>
+<p>然后与Top-K采样方式一样，针对这个词表对概率分布进行缩放，当前时间步仅从这个词表中解码。这样就实现了在不同时间步，随着解码词的概率分布不同，候选词集合的大小动态变化的效果。由于解码词还是从头部候选集中筛选，这样的动态调整可以使生成的句子在满足多样性的同时又保持通顺。</p>
+<p><img src="https://coriva.eu.org/images/nlp/decodetopp.png"
+alt="Top-p采样" /></p>
+<p>如上图示例，选择p=0.92，第一时间步，候选词集合由10个变为3个；第二时间步，候选词集合由10个变为8个，由于不同时间步之间随候选词概率分布不同，候选词集合的大小也随之动态调整。</p>
+<h1 id="温度采样">温度采样</h1>
+<p>除了上述几种策略外，温度采样（Temperature
+Sampling）也是一种常见的解码策略，思路很简单，直接缩放原有的解码词分布，略微修改下softmax函数：</p>
+<p><span class="math display">\[p(x=V_l|
+x_1,x_2,\ldots,x_{i-1})=\frac{exp(u_l/t)}{\sum_{i \in
 V_l}exp(u_i/t)}\]</span></p>
-<p>其中t是一个超参数，取值范围[0,1)，t的取值不同，解码词的概率分布也就更平缓或更两极分化。一定程度上也能通过设置不同的t达到与top-k
-sampling一样的效果。</p>
-<h1 id="summary">Summary</h1>
-<p>论文先指出Beam Search在做文本生成解码时退化问题，然后提出nucleus
-sampling的方案来让生成的文本更多样化。</p>
-<p>本质上，无论top-k/top-p还是temprature
-sampling都是在优化解码词概率分布，通过re-scaling，尽量让生成的句子多样性更好，同时不损失通顺度。但无论哪种方式，都引入了一个新的超参数
-(k/p/t)，还需要进一步的启发式选择。</p>
+<p>其中u是logits，T即温度，是一个超参数，取值范围[0,1)，T的取值不同，解码词的概率分布也就更平缓或更两极分化。可以通过设置不同的T达到与top-k和top-p采样类似的效果。</p>
+<p><img src="https://coriva.eu.org/images/nlp/decodetemper.png"
+alt="温度采样" /></p>
+<p>由上图可见，原始的10个候选词的概率分布差异性较大，明显倾向于选择第7个词。而使用温度采样重缩放之后，10个候选词的概率分布均匀了很多，选词的多样性得到了明显提升。而概率分布的差异程度可以通过超参数T进行控制：T越大，概率分布越接近均匀分布，也就是模型越倾向于选择偏门的词汇；反之，T越小，概率分布越不均匀，模型越倾向于选择出现概率大的词汇。一般来说，温度对生成效果有如下影响：温度小可能会导致生成重复的内容，而温度大时可能导致生成不连贯或不合逻辑的内容。</p>
+<h1 id="总结">总结</h1>
+<p>本质上，几种不同的解码策略都是优化解码词概率分布，通过缩放，增加可选词的多样性，同时不损失通顺度。但它们都引入了一个新的超参数，在实际应用中，还需要进一步的启发式调优。</p>
+<p>此外，解码策略的选择不是非黑即白的问题，需要在不同场景下具体分析和选择。贪心搜索和集束搜索虽然简单，但并不意味着它们的效果总是较差。有研究证明，训练合适的情况下，它们能生成比核采样更好的文本序列。</p>
 
     </div>
 
@@ -372,14 +391,11 @@ sampling都是在优化解码词概率分布，通过re-scaling，尽量让生�
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/preventpodrestart/" rel="prev" title="避免Pod反复自动重启">
-                  <i class="fa fa-chevron-left"></i> 避免Pod反复自动重启
+                <a href="/toolformer-summary/" rel="prev" title="使LLM善假于物: Toolformer">
+                  <i class="fa fa-chevron-left"></i> 使LLM善假于物: Toolformer
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/cbchengdu/" rel="next" title="十月川北自驾游记——成都">
-                  十月川北自驾游记——成都 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -444,7 +460,7 @@ sampling都是在优化解码词概率分布，通过re-scaling，尽量让生�
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/nucleussampling/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/illustrated-decoding-strategies/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
