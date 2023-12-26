@@ -22,28 +22,33 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Today I found that some pods in kubernetes cluster are failed, the status is Waiting: ContainerCreating. The pod events: MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&amp;quot">
+    <meta name="description" content="一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MountVolume.SetUp failed for volume secret not found Issue">
-<meta property="og:url" content="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/index.html">
+<meta property="og:title" content="ChatGPT一周年：开源大模型迎头赶上？">
+<meta property="og:url" content="https://finisky.github.io/open-source-llm-vs-chatgpt/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="Today I found that some pods in kubernetes cluster are failed, the status is Waiting: ContainerCreating. The pod events: MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&amp;quot">
+<meta property="og:description" content="一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-05-21T09:05:20.000Z">
-<meta property="article:modified_time" content="2022-08-18T04:18:46.000Z">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/opensourcellmgeneral.png">
+<meta property="article:published_time" content="2023-12-26T01:59:45.000Z">
+<meta property="article:modified_time" content="2023-12-26T02:08:38.000Z">
 <meta property="article:author" content="finisky">
-<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="NLG">
+<meta property="article:tag" content="Language Model">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/opensourcellmgeneral.png">
 
 
-<link rel="canonical" href="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/">
+<link rel="canonical" href="https://finisky.github.io/open-source-llm-vs-chatgpt/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/2020/05/21/kubernetesrecoversecret/","path":"/2020/05/21/kubernetesrecoversecret/","title":"MountVolume.SetUp failed for volume secret not found Issue"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/open-source-llm-vs-chatgpt/","path":"open-source-llm-vs-chatgpt/","title":"ChatGPT一周年：开源大模型迎头赶上？"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>MountVolume.SetUp failed for volume secret not found Issue | Finisky Garden</title>
+<title>ChatGPT一周年：开源大模型迎头赶上？ | Finisky Garden</title>
   
 
 
@@ -104,7 +109,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -117,6 +122,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E5%A4%A7%E6%A8%A1%E5%9E%8B-vs-chatgpt"><span class="nav-number">2.</span> <span class="nav-text">开源大模型 vs ChatGPT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E8%83%BD%E5%8A%9B"><span class="nav-number">2.1.</span> <span class="nav-text">通用能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#agent%E8%83%BD%E5%8A%9B"><span class="nav-number">2.2.</span> <span class="nav-text">Agent能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E6%8E%A8%E7%90%86%E8%83%BD%E5%8A%9B"><span class="nav-number">2.3.</span> <span class="nav-text">逻辑推理能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E8%83%BD%E5%8A%9B"><span class="nav-number">2.4.</span> <span class="nav-text">长上下文能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E4%BF%A1%E8%83%BD%E5%8A%9B"><span class="nav-number">2.5.</span> <span class="nav-text">可信能力</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="nav-number">3.</span> <span class="nav-text">大模型的发展趋势</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -159,38 +165,10 @@
   </div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/createstorageclassinaks.en/" rel="bookmark">
-        <time class="popular-posts-time">2021-11-05</time>
+      <a class="popular-posts-link" href="/chatgpt-plus/" rel="bookmark">
+        <time class="popular-posts-time">2023-02-02</time>
         <br>
-      Create Storage Class in Azure Kubernetes Cluster
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/deployhugofromprivaterepo.en/" rel="bookmark">
-        <time class="popular-posts-time">2022-04-26</time>
-        <br>
-      Deploy Hugo From Private Repository to GitHub Pages
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2020/12/19/mongodbopsmanager.en/" rel="bookmark">
-        <time class="popular-posts-time">2020-12-19</time>
-        <br>
-      MongoDB Cluster In Kubernetes(1): Install MongoDB Ops Manager
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/preventpodrestart.en/" rel="bookmark">
-        <time class="popular-posts-time">2021-09-18</time>
-        <br>
-      Prevent Pod From Endless Restart
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2021/03/21/migrateopsmanager.en/" rel="bookmark">
-        <time class="popular-posts-time">2021-03-21</time>
-        <br>
-      Migrate Ops Manager to a new Kubernetes Cluster
+      ChatGPT推出了收费版，每月20刀
       </a>
     </li>
   </ul>
@@ -213,7 +191,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/05/21/kubernetesrecoversecret/">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/open-source-llm-vs-chatgpt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/qrcode.jpg">
@@ -226,12 +204,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="MountVolume.SetUp failed for volume secret not found Issue | Finisky Garden">
+      <meta itemprop="name" content="ChatGPT一周年：开源大模型迎头赶上？ | Finisky Garden">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MountVolume.SetUp failed for volume secret not found Issue
+          ChatGPT一周年：开源大模型迎头赶上？
         </h1>
 
         <div class="post-meta-container">
@@ -241,15 +219,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-05-21 17:05:20" itemprop="dateCreated datePublished" datetime="2020-05-21T17:05:20+08:00">2020-05-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+      <time title="创建时间：2023-12-26 09:59:45 / 修改时间：10:08:38" itemprop="dateCreated datePublished" datetime="2023-12-26T09:59:45+08:00">2023-12-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -257,7 +229,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Misc/" itemprop="url" rel="index"><span itemprop="name">Misc</span></a>
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
         </span>
     </span>
 
@@ -270,8 +242,8 @@
     </span>
     <span class="post-meta-item-text">评论：</span>
   
-    <a title="waline" href="/2020/05/21/kubernetesrecoversecret/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/05/21/kubernetesrecoversecret/" itemprop="commentCount"></span>
+    <a title="waline" href="/open-source-llm-vs-chatgpt/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/open-source-llm-vs-chatgpt/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -281,7 +253,7 @@
         <i class="far fa-eye"></i>
       </span>
       <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/2020/05/21/kubernetesrecoversecret/"></span>
+      <span class="waline-pageview-count" data-path="/open-source-llm-vs-chatgpt/"></span>
     </span>
   
 </div>
@@ -293,46 +265,56 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Today I found that some pods in kubernetes cluster are failed, the
-status is <code>Waiting: ContainerCreating</code>. The pod events:
-<pre class="line-numbers language-none"><code class="language-none">MountVolume.SetUp failed for volume &quot;xxxxx&quot; : secret &quot;xxxxx&quot; not found
-kubelet aks-agentpool-xxx-vmss000001
-
-Unable to attach or mount volumes: unmounted volumes&#x3D;[xxxxx], unattached volumes&#x3D;[xxxxx]: timed out waiting for the condition<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></p>
+        <p>一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方面的挑战和应对措施。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2311.16989"># ChatGPT's One-year
+Anniversary: Are Open-Source Large Language Models Catching up?</a></p>
 <span id="more"></span>
-<p>I remember that about one week ago I delete some secretes in this
-cluster. Therefore, the problem becomes how to recover the deleted
-secret "xxxxx"?</p>
-<p>Refer the following documents: <a
-target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#to-create-additional-api-tokens">#
-To create additional API tokens</a></p>
-<p>According to <a
-target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#service-account-admission-controller">#
-Service Account Admission Controller</a>: <pre class="line-numbers language-none"><code class="language-none">if the pod does not have a ServiceAccount set, it sets the ServiceAccount to default.<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Since the missing secret format is "default-token-xxxxx", the
-<code>ServiceAccount</code> must be <code>default</code>.</p>
-<p>Then we create a service.json file: <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
-    <span class="token property">"kind"</span><span class="token operator">:</span> <span class="token string">"Secret"</span><span class="token punctuation">,</span>
-    <span class="token property">"apiVersion"</span><span class="token operator">:</span> <span class="token string">"v1"</span><span class="token punctuation">,</span>
-    <span class="token property">"metadata"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
-        <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"default-token-xxxxx"</span><span class="token punctuation">,</span>
-        <span class="token property">"annotations"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
-            <span class="token property">"kubernetes.io/service-account.name"</span><span class="token operator">:</span> <span class="token string">"default"</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"kubernetes.io/service-account-token"</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> There are two
-fields in metadata need to be modified:</p>
+<h1 id="简介">简介</h1>
+<p>2022年11月，OpenAI发布了ChatGPT，这一事件在AI社区甚至全世界引起了轰动。首次，一个基于应用的AI聊天机器人能够提供有帮助、安全和有用的答案，遵循人类指令，甚至承认并纠正之前的错误。作为第一个这样的应用，ChatGPT在其推出仅两个月内，用户数量就达到了1亿，远远快于其他流行应用如TikTok或YouTube。因此，它也吸引了巨额的商业投资，因为它有望降低劳动成本，自动化工作流程，甚至为客户带来新的体验。</p>
+<p>但ChatGPT的闭源特性可能引发诸多问题。首先，由于不了解内部细节，比如预训练和微调过程，很难正确评估其潜在风险，尤其是考虑到大模型可能生成有害、不道德和虚假的内容。其次，有报道称ChatGPT的性能随时间变化，妨碍了可重复的结果。第三，ChatGPT经历了多次故障，仅在2023年11月就发生了两次重大故障，期间无法访问ChatGPT网站及其API。最后，采用ChatGPT的企业可能会关注API调用的高成本、服务中断、数据所有权和隐私问题，以及其他不可预测的事件，比如最近有关CEO
+Sam Altman被解雇并最终回归的董事会闹剧。</p>
+<p>此时，开源大模型应运而生，社区一直在积极推动将高性能的大模型保持开源。然而，截至2023年末，大家还普遍认为类似Llama-2或Falcon这样的开源大模型在性能上落后于它们的闭源模型，如OpenAI的GPT3.5（ChatGPT）和GPT-4，Anthropic的Claude2或Google的Bard3，其中GPT-4通常被认为是最出色的。然而，令人鼓舞的是差距正在变得越来越小，开源大模型正在迅速赶上。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmbenchmark.png"
+alt="Overview of different open-source LLMs on various general benchmarks." /></p>
+<p>实际上，如图所示，最好的开源大模型在一些标准基准测试上已经优于GPT-3.5-turbo。然而，对于开源大模型来说，并不是一劳永逸的：闭源模型定期通过对新数据进行重新训练而进行更新，开源大模型也在不断发布新版本，同时有大量的评估数据集和基准用于评估大模型性能，找出最佳大模型是件有挑战的事情。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmbestperform.png"
+alt="Best performing open-LLMs." /></p>
+<h1 id="开源大模型-vs-chatgpt">开源大模型 vs ChatGPT</h1>
+<h2 id="通用能力">通用能力</h2>
+<p>随着无数大模型每周发布，都声称在某些任务上表现更优越，要识别真正领先的模型变得愈发具有挑战性。因此，全面评估这些模型的性能至关重要。</p>
+<p><img src="https://coriva.eu.org/images/nlp/opensourcellmgeneral.png"
+alt="Best performing open-LLMs." /></p>
+<h2 id="agent能力">Agent能力</h2>
+<p>随着模型规模不断扩大，Agent能力成为大模型的重要能力之一。目前，根据所需的技能，现有的基准测试主要可分为四类:</p>
 <ul>
-<li>name: change to your missing secret name which is included in the
-warning message</li>
-<li>kubernetes.io/service-account.name: <code>default</code></li>
+<li>使用工具：一些基准测试旨在评估LLMs的工具使用能力。</li>
+<li>自我调试：用于评估大模型进行自我调试的能力。</li>
+<li>自然语言反馈：用于测量大模型利用自然语言反馈的能力，通过GPT-4模拟人类用户。</li>
+<li>探索环境：评估基于大模型的代理是否能够从环境中收集信息并做出决策。</li>
 </ul>
-<p>Execute the following command: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl create <span class="token parameter variable">-f</span> ./secret.json<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Check if the secret is there: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl get secrets<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Done. Waiting for the pod to start!</p>
-<p>If you deleted the default kubernetes secret by mistake, hope this
-artible helps. :-)</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmagent.png" /></p>
+<h2 id="逻辑推理能力">逻辑推理能力</h2>
+<p>问题解决和逻辑推理是高层次能力的体现，如编程、定理证明以及算术推理。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmlogic.png" /></p>
+<h2 id="长上下文能力">长上下文能力</h2>
+<p>长序列处理仍是大模型的关键技术瓶颈之一，因为所有模型都受到有限的最大上下文窗口的限制，通常长度为2k到8k个词元。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmlong.png" /></p>
+<h2 id="可信能力">可信能力</h2>
+<p>模型生成回复的可信性直接影响它们的可用性，需要评估模型hallucination的程度。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmhallucination.png" /></p>
+<h1 id="大模型的发展趋势">大模型的发展趋势</h1>
+<p><img
+src="https://coriva.eu.org/images/nlp/opensourcellmtimeline.png" /></p>
+<p>自2020年GPT-3展示了它的零样本能力之后，大模型研究取得显著的进展。一个方向集中在扩大模型参数，包括Gopher，GLaM，LaMDA，MT-NLG和PaLM，最终参数达到了540B。尽管它们能力突出，但由于其闭源性质，限制了它们的广泛应用，因此引起了对开源大模型发展的日益关注。另一个研究方向通过探索更好的策略，预训练较小的模型，如Chinchilla和UL2。</p>
+<p>一年前OpenAI的ChatGPT的出现极大改变了NLP社区的研究方向。为了迎头赶上OpenAI，Google和Anthropic分别推出了Bard和Claude。虽然它们在许多任务上显示出与ChatGPT差不多的性能，但它们与最新的OpenAI模型GPT-4之间仍存在性能差距。由于这些模型的成功主要归因于从人类反馈中进行的强化学习（RLHF），研究者已经探索了各种改进RLHF的方法。</p>
+<p>为了推动开源大模型研究，Meta发布了Llama系列模型。从那时起，基于Llama的开源模型开始大量涌现。一个代表性的研究方向是使用指令数据对Llama进行微调。例如，Alpaca是从LLaMA微调而来，使用OpenAI的text-davinci-003生成的52K个指令进行微调。Vicuna是一个从LLaMA微调而来的开源聊天机器人，使用从ShareGPT收集的70K用户共享的对话进行微调。Lima演示了仅使用少量精心注释的指令样本就足以充分展示LLMs的潜在能力。通过利用Evol-Instruct使用LLMs生成大量具有多样性的指令数据，WizardLM达到了与ChatGPT相当的性能。</p>
+<p>还有一些研究探索了改进基于Llama的开源大模型Agent、逻辑推理和长文本建模能力。此外，还有许多致力于从头开始训练强大的大模型，包括通用大模型（例如MPT，Falcon，XGen，Phi，Baichuan，Mistral，Grok和Yi）和领域特定的大模型（例如，Bloomberggpt，FinGPT和InstructRetro）。因此，研发更强大和高效的开源大模型以使闭源大模型的能力普及应是一个有前途的方向。</p>
 
     </div>
 
@@ -342,21 +324,21 @@ artible helps. :-)</p>
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/NLG/" rel="tag"># NLG</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/05/03/simplicity/" rel="prev" title="简约的哲学">
-                  <i class="fa fa-chevron-left"></i> 简约的哲学
+                <a href="/phi2-the-surprising-power-summary/" rel="prev" title="小模型的惊人能力: Phi-2">
+                  <i class="fa fa-chevron-left"></i> 小模型的惊人能力: Phi-2
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/05/22/findpeakelement/" rel="next" title="Find Peak Element 寻找峰值">
-                  Find Peak Element 寻找峰值 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -421,7 +403,7 @@ artible helps. :-)</p>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
-<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/2020/05/21/kubernetesrecoversecret/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/open-source-llm-vs-chatgpt/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
