@@ -22,23 +22,23 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="之前写过深度检索模型的介绍：# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT，今天来看看DeepMind在NeurIPS 2024上的文章，对ColBERT进行了改进： Rethinking the Role of Token Retrieval in Multi-Vector Retrieval 多向量检索模型（Multi-Vector Retrieva">
+    <meta name="description" content="之前写过深度检索模型的介绍：# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT，今天来看看DeepMind在NeurIPS 2024上的文章，对多向量检索模型（Multi-Vector Retrieval）ColBERT进行了改进： Rethinking the Role of Token Retrieval in Multi-Vector Retrieva">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rethinking the Role of Token Retrieval in Multi-Vector Retrieval简读">
 <meta property="og:url" content="https://finisky.github.io/xtr-summary/index.html">
 <meta property="og:site_name" content="Finisky Garden">
-<meta property="og:description" content="之前写过深度检索模型的介绍：# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT，今天来看看DeepMind在NeurIPS 2024上的文章，对ColBERT进行了改进： Rethinking the Role of Token Retrieval in Multi-Vector Retrieval 多向量检索模型（Multi-Vector Retrieva">
+<meta property="og:description" content="之前写过深度检索模型的介绍：# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT，今天来看看DeepMind在NeurIPS 2024上的文章，对多向量检索模型（Multi-Vector Retrieval）ColBERT进行了改进： Rethinking the Role of Token Retrieval in Multi-Vector Retrieva">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/xtroverview.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/xtrdensity.png">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/xtrmissing.png">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/xtrresult1.png">
 <meta property="og:image" content="https://coriva.eu.org/images/nlp/xtrresult2.png">
 <meta property="article:published_time" content="2024-06-30T10:58:25.000Z">
-<meta property="article:modified_time" content="2024-06-30T10:54:49.000Z">
+<meta property="article:modified_time" content="2024-06-30T12:02:06.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="NLP">
-<meta property="article:tag" content="Transformer">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://coriva.eu.org/images/nlp/xtroverview.png">
 
@@ -124,8 +124,8 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%85%E9%80%9A%E8%BF%87token-retrieval%E6%98%AF%E5%90%A6%E5%B0%B1%E8%B6%B3%E4%BB%A5%E5%AE%9E%E7%8E%B0%E5%87%BA%E8%89%B2%E7%9A%84%E6%A3%80%E7%B4%A2%E6%95%88%E6%9E%9C"><span class="nav-number">1.</span> <span class="nav-text">仅通过Token
-retrieval是否就足以实现出色的检索效果？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#colbert%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%95%88"><span class="nav-number">2.</span> <span class="nav-text">ColBERT为什么会失效？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#in-batch-token-retrieval"><span class="nav-number">3.</span> <span class="nav-text">In-Batch Token Retrieval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">4.</span> <span class="nav-text">实验结果</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%85%E9%80%9A%E8%BF%87token-retrieval%E6%98%AF%E5%90%A6%E5%B0%B1%E8%B6%B3%E4%BB%A5%E5%AE%9E%E7%8E%B0%E5%87%BA%E8%89%B2%E7%9A%84%E6%A3%80%E7%B4%A2%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">仅通过Token
+retrieval是否就足以实现出色的检索效果？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#colbert%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%95%88"><span class="nav-number">3.</span> <span class="nav-text">ColBERT为什么会失效？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#in-batch-token-retrieval"><span class="nav-number">4.</span> <span class="nav-text">In-Batch Token Retrieval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">5.</span> <span class="nav-text">实验结果</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -224,7 +224,7 @@ retrieval是否就足以实现出色的检索效果？</span></a></li><li class=
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-06-30 18:58:25 / 修改时间：18:54:49" itemprop="dateCreated datePublished" datetime="2024-06-30T18:58:25+08:00">2024-06-30</time>
+      <time title="创建时间：2024-06-30 18:58:25 / 修改时间：20:02:06" itemprop="dateCreated datePublished" datetime="2024-06-30T18:58:25+08:00">2024-06-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -271,22 +271,23 @@ retrieval是否就足以实现出色的检索效果？</span></a></li><li class=
         <p>之前写过深度检索模型的介绍：<a href="/retrievermodels/">#
 深度文本检索模型：DPR, PolyEncoders, DCBERT,
 ColBERT</a>，今天来看看DeepMind在NeurIPS
-2024上的文章，对ColBERT进行了改进：</p>
+2024上的文章，对多向量检索模型（Multi-Vector
+Retrieval）ColBERT进行了改进：</p>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2304.01982">Rethinking the Role of
 Token Retrieval in Multi-Vector Retrieval</a></p>
-<p>多向量检索模型（Multi-Vector Retrieval），如
-ColBERT，由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了最先进的水平。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR
+<p>多向量检索模型由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了SOTA。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR
 引入了新的目标函数，鼓励模型首先检索最重要的文档词元，对词元检索的改进使得
 XTR
 可以仅使用检索到的词元来对候选文档排序，而不是文档中的所有词元，因此其成本比
 ColBERT 低两到三个数量级。在流行的 BEIR 基准测试中，XTR
 在没有任何蒸馏的情况下，将 NDCG@10 提升了 2.8。</p>
-<p>主要改进：</p>
+<p>主要改进点：</p>
 <ul>
 <li>仅使用检索到的doc token而非全部doc token进行相似度计算</li>
 <li>解决了检索训练和推理之间的gap</li>
 </ul>
 <span id="more"></span>
+<h2 id="简介">简介</h2>
 <p>密集检索模型的关键在于如何定义query和doc的表示，以及它是否能够利用它们进行高效检索和评分。例如，双编码器模型将查询和文档编码为单个向量，并使用点积计算query-doc相似度。虽然这些模型在检索方面非常高效，但由于缺乏基于标记级别的建模进行评分，其表达能力有限。相比之下，多向量模型则直接设计用于捕捉token级别的交互。通过非线性评分函数对所有查询和文档标记表示进行操作，多向量模型享有更好的模型表达能力，并且通常在各种基准测试中取得更好的结果。</p>
 <p>然而，增强的模型表达能力却带来了巨大的推理复杂性。与双编码器不同，多向量检索模型中的非线性评分函数禁止使用高效的最大内积搜索（MIPS）来查找评分最高的文档。因此，诸如ColBERT之类的模型采用了复杂且资源密集的推理流程，通常包括三个阶段：</p>
 <ul>
@@ -299,14 +300,14 @@ embedding的非线性函数对候选文档进行排名</li>
 </ul>
 <p>这个过程导致两个主要问题。首先，与标记检索阶段相比，聚集所有文档token
 embedding并重新评分可能会使数据加载和浮点计算成本成数量级增加，使多向量模型的部署极其昂贵。其次，虽然候选文档是在Token
-retrieval阶段决定的，但之前的训练目标却是为评分阶段设计。这个设计的训练和推理之间存在差距，使多向量模型只能达到次优（且通常较差）的召回性能。那么，问题来了。</p>
+retrieval阶段决定的，但之前的训练目标却是为评分阶段设计。这个设计的训练和推理之间存在差距，使多向量模型只能达到次优（且通常较差）的召回性能。</p>
 <h2 id="仅通过token-retrieval是否就足以实现出色的检索效果">仅通过Token
 retrieval是否就足以实现出色的检索效果？</h2>
 <p>答案当然是肯定的，XTR（ContXextualized Token
 Retriever）的出现一举攻克了这个难题。XTR的核心思想在于：多向量模型中的token
 retrieval应该被训练成检索最有用的token，从而可以仅使用检索到的内容计算query-doc之间的分数，就像单向量检索模型一样。通过这种方式，可以完全去掉Gathering步骤，并且由于只需考虑一部分标记且可以重用标记检索的点积，使得评分成本大大降低。为了提高token
-retrieval的质量，XTR提出了一种新颖而简单的训练目标，大幅提高了检索准确性，使golden
-token在前k个结果中被检索到的概率增加了一倍。此外，尽管标记检索质量得到了提升，一些相关标记仍可能被遗漏。为了解决这个问题，XTR提出了一种缺失相似度补全的方法，考虑了missing
+retrieval的质量，XTR提出了一种简单的训练目标，大幅提高了检索准确性，使golden
+token在前k个结果中被检索到的概率增加了一倍。此外，尽管标记检索质量得到了提升，一些相关token仍可能被遗漏。为了解决这个问题，XTR提出了一种缺失相似度补全的方法，考虑了missing
 token对整体分数的贡献。</p>
 <p><img src="https://coriva.eu.org/images/nlp/xtroverview.png"
 alt="XTR Overview" /></p>
@@ -316,15 +317,15 @@ embedding匹配，然后通过Gathering得到Doc1和Doc2的所有token embedding
 （最右侧所有深蓝色的token），并与query
 embedding进行计算。XTR则去掉了第二步的Gathering环节，仅计算query与检索到的token
 embedding之间的得分，从而提高了检索效率，同时避免了训练与推理之间的gap。</p>
-<h2 id="colbert为什么会失效">ColBERT为什么会失效？</h2>
-<p>简而言之，是由于sum-of-max算符所致。论文举了一个ColBERT失效（比较极端的）例子：</p>
-<p>考虑一个查询 <span class="math inline">\(Q =
-\{q_i\}_{i=1}^{n}\)</span> 和一个文档 <span class="math inline">\(D =
+<p>考虑一个query <span class="math inline">\(Q =
+\{q_i\}_{i=1}^{n}\)</span> 和一个doc <span class="math inline">\(D =
 \{d_j\}_{j=1}^{m}\)</span>，其中 <span
 class="math inline">\(q_i\)</span> 和 <span
 class="math inline">\(d_j\)</span> 分别表示 <span
 class="math inline">\(d\)</span> 维的查询标记向量和文档标记向量。</p>
-<p>多向量检索模型计算查询-文档相似度如下：</p>
+<h2 id="colbert为什么会失效">ColBERT为什么会失效？</h2>
+<p>简而言之，是由于sum-of-max算符所致。</p>
+<p>首先给出一些定义，多向量检索模型计算query-doc相似度的公式：</p>
 <p><span class="math display">\[f(Q,D) = \sum_{i=1}^{n} \sum_{j=1}^{m}
 A_{ij} P_{ij}\]</span></p>
 <p>其中，</p>
@@ -341,6 +342,7 @@ class="math inline">\(f_{\text{ColBERT}}(Q,D)\)</span> 定义如下：</p>
 <p><span class="math display">\[f_{\text{ColBERT}}(Q, D) = \frac{1}{n}
 \sum_{i=1}^{n} \sum_{j=1}^{m} A_{ij} P_{ij} = \frac{1}{n} \sum_{i=1}^{n}
 \max_{1 \leq j \leq m} \mathbf{q}_i^\top \mathbf{d}_j\]</span></p>
+<p>论文举了一个ColBERT失效（比较极端的）例子：</p>
 <p>假设Q是Query，D+是正文档，D-为负文档，q和d分别代表Q和D中的某个token。假如f(Q,D+)=0.8，其中所有<span
 class="math inline">\(A_{ij}=1\)</span>的<span
 class="math inline">\(q_{i}^{T}d_{j}^{+} =
@@ -349,10 +351,16 @@ class="math inline">\(q_{i}^{T}d_{j}^{+} =
 的峰值相似度（highly peaked token similarity），同时其他 <span
 class="math inline">\(q_{i}^Td_{j}^{-} \rightarrow 0\)</span>
 。在这种情况下，由于sum-of-max算符仅在乎文档级别的分数，将导致训练时的交叉熵损失趋近于0。但在推理时，考虑到实际情况中token
-retrieval的k'=1，此时正文档将不会被检索。因此，ColBERT不能降低某些高分negative
+retrieval的k'=1，此时正文档却不能被检索出来。</p>
+<p><img src="https://coriva.eu.org/images/nlp/xtrdensity.png"
+alt="XTR Score Distribtuion" /></p>
+<p>上图显示了 sum-of-max 训练导致许多doc
+token具有不合理的高分，无论它们与query
+token的实际相关性如何。ColBERT的sum-of-max训练不能降低某些高分negative
 tokens的分数。</p>
 <h2 id="in-batch-token-retrieval">In-Batch Token Retrieval</h2>
-<p>为让多向量检索模型可以直接检索相关文档的token，训练过程模拟了token检索的过程。</p>
+<p>为让多向量检索模型可以直接检索相关文档的token，训练过程模拟了token检索的过程，仅需要对对齐矩阵<span
+class="math inline">\(\hat{A}\)</span>稍做修改：</p>
 <p><span class="math display">\[f_{\text{XTR}}(Q, D) = \frac{1}{Z}
 \sum_{i=1}^{n} \max_{1 \leq j \leq m} \hat{A}_{ij} \mathbf{q}_i^\top
 \mathbf{d}_j\]</span></p>
@@ -360,7 +368,7 @@ tokens的分数。</p>
 class="math inline">\(1 \le j&#39; \le
 m\)</span>），而XTR中的argmax是对于一个mini-batch中所有文档的token（<span
 class="math inline">\(1 \le j&#39; \le
-mB\)</span>）。此处思想是：仅考虑在一个文档中相似度能排到mini-batch中前k名的token。Z是个归一化指数，可检索到至少一个doc
+mB\)</span>）。此处思想是：仅考虑在一个文档中相似度能排到mini-batch中前k名的token。Z是归一化指数，指可检索到至少一个doc
 token的query token的总数，若为0，则设为一个较小的数。</p>
 <p>XTR不会给负文档分配高相似度，因为正文档的token并不能被检索出来参与计算。在之前的失败案例中，尽管正文档
 D+不能被检索出来，ColBERT
@@ -383,23 +391,26 @@ class="math inline">\(\hat{A}_{ij}=1\)</span>时，可复用检索阶段的<span
 class="math inline">\(\mathbf{q}_i^\top
 \mathbf{d}_j\)</span>值，而当<span
 class="math inline">\(\hat{A}_{ij}=0\)</span>时，用<span
-class="math inline">\(m_i\)</span>近似sum-of-max的结果。</p>
+class="math inline">\(m_i\)</span>近似sum-of-max的结果。论文采用了一个简单的策略确定缺失相似度的值：<span
+class="math inline">\(m_i=\mathbf{q}_i^\top
+\mathbf{d}_{k&#39;}\)</span>。</p>
 <p><img src="https://coriva.eu.org/images/nlp/xtrmissing.png"
 alt="XTR Missing similarity imputation" /></p>
-<p>上图中，假设 <span class="math inline">\(D_a\)</span> 和 <span
-class="math inline">\(D_b\)</span>​ 被选为token
-retrieval的初始候选文档。ColBERT​ 加载了 <span
-class="math inline">\(D_a\)</span> 和 <span
-class="math inline">\(D_b\)</span>​
-的所有token向量，并计算相似度的最大值（红框）。而XTR不加载doc
+<p>上图中，假设<span class="math inline">\(D_a\)</span>和<span
+class="math inline">\(D_b\)</span>被选为token
+retrieval的初始候选文档，此时<span
+class="math inline">\(k&#39;=2\)</span>。ColBERT 加载了<span
+class="math inline">\(D_a\)</span>和<span
+class="math inline">\(D_b\)</span>的所有token向量，并计算相似度的最大值（红框）。而XTR不加载doc
 token向量，并重用第一阶段token
-retrieval的分数。假设在top-2标记检索结果中，第一行的query token检索到了
-<span class="math inline">\(D_a\)</span> 和 <span
-class="math inline">\(D_b\)</span> 的最大值，但第二行的query token只从
-<span class="math inline">\(D_a\)</span>
-检索到了两个token​。我们通过使用第二行query token的top-2得分 s2​
-作为上界来补全 <span class="math inline">\(D_b\)</span> 的缺失相似度
-m（黄框），其中 m &lt;= s2 &lt;= s1​。</p>
+retrieval的分数。假设在top-2标记检索结果中，第一行的query
+token检索到了<span class="math inline">\(D_a\)</span>和 <span
+class="math inline">\(D_b\)</span>的最大值，但第二行的query
+token只从<span
+class="math inline">\(D_a\)</span>检索到了两个token。我们通过使用第二行query
+token的top-2得分 s2作为上界来补全<span
+class="math inline">\(D_b\)</span>的缺失相似度 m（黄框），其中 m &lt;=
+s2 &lt;= s1。</p>
 <h2 id="实验结果">实验结果</h2>
 <p>在 MS MARCO数据集上用 RocketQA 的固定负样本微调
 XTR。XTR在域内、零样本和多语言情况下（mXTR），都展示了较好的效果。</p>
@@ -408,8 +419,7 @@ alt="XTR Result" /></p>
 <p><img src="https://coriva.eu.org/images/nlp/xtrresult2.png"
 alt="XTR Result" /></p>
 <p>XTR简化了推理，使其更接近于双编码器的简洁流程，同时保持并增强了多向量检索模型的表达评分功能。在BEIR
-和LoTTE基准测试中，XTR达到了最先进的性能，既不需要蒸馏也不需要硬负采样。值得注意的是，我们的模型在没有任何额外训练数据的情况下，超过了最先进的双编码器GTR在BEIR上的nDCG@10得分3.6。在EntityQuestions基准测试中，XTR在前20个检索准确性上比之前的最先进水平高出4.1分。XTR也不需要任何二次预训练就能进行检索，并且在MIRACL上大大超过了mContriever
-，该基准测试包含18种语言的多语言检索任务。实验证明XTR确实得益于检索更多上下文相关的标记，同时使评分阶段的成本降低了两个到三个数量级。</p>
+和LoTTE基准测试中，XTR达到了最先进的性能，既不需要蒸馏也不需要硬负采样。值得注意的是，XTR在没有任何额外训练数据的情况下，超过了最先进的双编码器GTR在BEIR上的nDCG@10得分3.6。在EntityQuestions基准测试中，XTR在前20个检索准确性上比之前的最先进水平高出4.1分。XTR也不需要二次预训练就能进行检索，并且在MIRACL上大大超过了mContriever，该基准测试包含18种语言的多语言检索任务。实验证明XTR确实得益于检索更多上下文相关的标记，同时使评分阶段的成本降低了两个到三个数量级。</p>
 
     </div>
 
@@ -421,7 +431,6 @@ alt="XTR Result" /></p>
           <div class="post-tags">
               <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
               <a href="/tags/NLP/" rel="tag"># NLP</a>
-              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
           </div>
 
         

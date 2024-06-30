@@ -195,7 +195,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-06-30 18:58:25 / 修改时间：18:54:49" itemprop="dateCreated datePublished" datetime="2024-06-30T18:58:25+08:00">2024-06-30</time>
+      <time title="创建时间：2024-06-30 18:58:25 / 修改时间：20:02:06" itemprop="dateCreated datePublished" datetime="2024-06-30T18:58:25+08:00">2024-06-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -242,17 +242,17 @@
           <p>之前写过深度检索模型的介绍：<a href="/retrievermodels/">#
 深度文本检索模型：DPR, PolyEncoders, DCBERT,
 ColBERT</a>，今天来看看DeepMind在NeurIPS
-2024上的文章，对ColBERT进行了改进：</p>
+2024上的文章，对多向量检索模型（Multi-Vector
+Retrieval）ColBERT进行了改进：</p>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2304.01982">Rethinking the Role of
 Token Retrieval in Multi-Vector Retrieval</a></p>
-<p>多向量检索模型（Multi-Vector Retrieval），如
-ColBERT，由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了最先进的水平。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR
+<p>多向量检索模型由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了SOTA。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR
 引入了新的目标函数，鼓励模型首先检索最重要的文档词元，对词元检索的改进使得
 XTR
 可以仅使用检索到的词元来对候选文档排序，而不是文档中的所有词元，因此其成本比
 ColBERT 低两到三个数量级。在流行的 BEIR 基准测试中，XTR
 在没有任何蒸馏的情况下，将 NDCG@10 提升了 2.8。</p>
-<p>主要改进：</p>
+<p>主要改进点：</p>
 <ul>
 <li>仅使用检索到的doc token而非全部doc token进行相似度计算</li>
 <li>解决了检索训练和推理之间的gap</li>
