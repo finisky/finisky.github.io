@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。 微软（Bing搜索组）在SIGIR&#39;24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于LLM评估搜索系统">
+<meta property="og:url" content="https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。 微软（Bing搜索组）在SIGIR&#39;24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/llmlabelingcost.png">
+<meta property="og:image" content="https://coriva.eu.org/images/nlp/llmlabelingprompt.png">
+<meta property="article:published_time" content="2024-08-29T00:30:26.000Z">
+<meta property="article:modified_time" content="2024-08-29T08:34:46.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Language Model">
+<meta property="article:tag" content="Search">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://coriva.eu.org/images/nlp/llmlabelingcost.png">
+
+
+<link rel="canonical" href="https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/","path":"llm-can-accurately-predict-searcher-preferences/","title":"基于LLM评估搜索系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于LLM评估搜索系统 | Finisky Garden</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://comments.finisky.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Finisky Garden</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, 软件工程, 产品设计</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li><li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>友链</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8llm%E7%94%9F%E6%88%90%E6%A0%87%E6%B3%A8"><span class="nav-number">2.</span> <span class="nav-text">用LLM生成标注</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE%E8%AF%84%E4%BC%B0%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">标签评估与结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#prompt-feature%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">3.1.</span> <span class="nav-text">Prompt Feature的效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prompt%E6%94%B9%E5%86%99%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">3.2.</span> <span class="nav-text">Prompt改写的影响</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bing%E7%9A%84%E5%AE%9E%E8%B7%B5"><span class="nav-number">4.</span> <span class="nav-text">Bing的实践</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name" itemprop="name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">244</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/briefintrotoprompt.en/" rel="bookmark">
+        <time class="popular-posts-time">2021-12-15</time>
+        <br>
+      Brief Introduction to NLP Prompting
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于LLM评估搜索系统 | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于LLM评估搜索系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-08-29 08:30:26 / 修改时间：16:34:46" itemprop="dateCreated datePublished" datetime="2024-08-29T08:30:26+08:00">2024-08-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/llm-can-accurately-predict-searcher-preferences/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/llm-can-accurately-predict-searcher-preferences/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/llm-can-accurately-predict-searcher-preferences/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。</p>
+<p>微软（Bing搜索组）在SIGIR'24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选择一个与之相符的LLM及其提示词，然后令该LLM大规模地产生标签。实验表明，LLM的准确性与人工标注者相当，并且在找到最佳系统和最难的查询方面同样有用。</p>
+<p>[SIGIR2024][# Large Language Models can Accurately Predict Searcher
+Preferences](https://www.microsoft.com/en-us/research/publication/large-language-models-can-accurately-predict-searcher-preferences/)</p>
+<span id="more"></span>
+<h1 id="简介">简介</h1>
+<p>相关性标签，也就是标注某个结果是否满足搜索用户需求，对于搜索排序模型至关重要。黄金标签可能源自一个相关性评估员，他们自己开发查询主题并对结果进行标注。更理想的情况是标签的来自真实的搜索用户，他们在实际场景中进行了查询，准确知道自己想要找到什么，并对什么是相关内容提供了准确反馈。</p>
+<p>第三方评估员可能会因为误解搜索者的偏好而与黄金标签产生分歧。如果评估人员系统性地误解了搜索者的需求（即标签有偏差），那么增加数据量也无法解决这一问题。人工标注，尤其是与众包标注还可能导致其他众所周知的问题，包括错误、其他偏见、串通，以及恶意或“垃圾”工人。这些标签可能质量低下，如果将其用于训练或决策，将会导致检索系统学习到错误的方向。</p>
+<p>获得更高质量标签的标准路径涉及多个步骤。首先是通过访谈、用户研究、直接反馈他们的偏好以及点击等隐性反馈来了解真实的搜索者。研究相关的相关性标签，并寻找系统性错误，可以发现标注员的偏差。最后一步是通过参考指南或示例来培训标注员，以尽量减少未来的错误。例如，Google使用超过170页的指南来培训标注人员，让他们了解什么是一个好的Google搜索结果。</p>
+<p><img src="https://coriva.eu.org/images/nlp/llmlabelingcost.png"
+alt="Labeling Options" /></p>
+<p>上图是几种方案开销和效果的对比：真实用户生成的黄金标签最好，但开销也最大；传统方案开销一般，但效果也一般；本文提出的方案效果很好，且开销很低。优化目标就是往左上方来：高准确率低开销。</p>
+<p>本文提出的方案是先取少量样本的反馈，让它们先反映真实搜索者的偏好。然后选择一个LLM提示词来生成标签，以使这些标签与真实数据最为匹配。</p>
+<h1 id="用llm生成标注">用LLM生成标注</h1>
+<p>论文首先使用TREC-Robust 2004数据集验证了想法，看LLM
+是否能够复现由专家标注员生成的原始 TREC 标签，然后主要问题就在于Prompt
+Tuning。</p>
+<p><img src="https://coriva.eu.org/images/nlp/llmlabelingprompt.png"
+alt="Prompt Template" /></p>
+<p>上图展示了Prompt的整体结构。斜体字是占位符，每个主题和文档的内容会有所不同，或根据提示的其余部分进行调整，阴影部分的文字是可选内容。</p>
+<p><strong>Instrctions,
+role</strong>：提示词分为四个部分。第一部分给出任务指令。这些指令基于给
+TREC 评估员的指令进行了调整，主要有两处变化：首先，TREC
+指令中包含的关于标签一致性的内容与 LLM
+场景无关，因此在此省略。其次，短语“you are a search engine quality
+rater.……”替换了 TREC 文本中一些讨论评估员过去开发 TREC
+轨道经验的内容。网页质量是一个复杂的概念，但搜索提供商经常发布他们在寻找什么的提示。特别是，Google
+的标注指南使用了“搜索质量评估员”这个短语。因此，提示中有一半包含了“你是一名搜索质量评估员，负责评估网页的相关性”这个短语，作为参考指南和相关讨论的缩写。</p>
+<p><strong>Context, description,
+narrative</strong>：提示的第二部分提供了要标注的查询/文档对。始终包含查询，在某些配置中，也包含了来自
+TREC 描述和叙述字段的更详细版本，并提供了文档本身的文本。</p>
+<p>单独的查询是信息需求的不完整表示，但 TREC
+主题还包含描述查询含义的额外文本描述（description）以及哪些文档应被视为回复（narrative）的说明。例如，对于查询“哈勃望远镜的成就”，描述重申该查询是关于自
+1991
+年发射以来的空间望远镜的成就，叙述澄清这指的是科学成就，因此仅谈论缺陷和维修的结果将被视为不相关。在某些提示中，论文将这些文本写在“description””和“narrative”字段。</p>
+<p><strong>Further instructions, aspects, multiple
+judges</strong>：提示的第三部分重述了任务，包括指令“将这个问题分解为多步”，使用了“思维链”的方法明确考虑搜索者的意图以及文档。在某些变体中，除了总体评分外，还可以明确要求对主题性和可信度进行评分。此外，还可以要求模型模拟几个人工评审员，并给出每个评审员的评分。</p>
+<p>一种直接的方法是对每对（查询，文档）请求一个总体标签。根据经验，作者发现将几个方面详细列出，并对这些方面进行评分，再要求总体标签效果更好，这种思路与思维链方法不谋而合。受到这些想法的启发，在一些提示变体中，可以要求对“相关性”的多个方面进行标注，最终给出一个总体标签。</p>
+<p>为了降低不同标注员的标注差异，可以要求模型模拟多个评审员，从一个 LLM
+调用中模拟生成五个评审员的输出。虽然它们实际上并不是独立的标注者，但作者们发现这种方法有效。</p>
+<p><strong>Output</strong>：提示的最后指定了输出格式，并包括一个 JSON
+片段以鼓励生成正确的格式。</p>
+<h1 id="标签评估与结果">标签评估与结果</h1>
+<p>标签评估的逻辑简单来说，就是要与人类的打标一致。可以通过混淆矩阵来总结机器和人工标签之间的差异。如果为两个级别分配
+0 和 1
+的分数，则可以进一步计算人工和机器标签之间的平均差异。论文用平均绝对误差
+(MAE) 来报告准确性，其中 0 表示两个来源的标签始终一致，1
+表示它们最大程度上不同。</p>
+<p>之前的研究中，使用 TREC 评估员与 GPT-3.5 和 YouChat LLM 之间的
+Cohen's 𝜅 系数，这里也用同样的指标。𝜅 的范围从 1（完全一致）到
+0（仅偶然一致）再到 -1（完全不一致）。</p>
+<h2 id="prompt-feature的效果">Prompt Feature的效果</h2>
+<p>用上节的Prompt对数据集进行打分并取平均，如果结果不可解析（占比90/96000），则直接丢弃。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/llmlabelingresult1.png" /></p>
+<p>上图显示了实验结果，其中<code>R = include role, D = include description, N = include narrative, A = include aspects, M = include multiple “judges”</code>。共有32种prompt的排列组合，例如，<code>--N-M</code>代表使用<code>narrative</code>和<code>multiple judges</code>的方案，最优结果用星号标了出来。可见，最优prompt包括<code>description</code>,
+<code>narrative</code>和<code>aspects</code>三个部分。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/llmlabelingresult2.png" /></p>
+<p>这些prompt
+feature的效果如上图所示。与预期相反，由于R和M因素的影响，导致了显著的负面效果：𝜅
+分别平均下降了 0.04 和 0.13。添加D仅微幅提升（仅增加 0.01 𝜅
+分值）。添加N带来了 0.06 的提升；虽然提升不大，但可能是因为 LLM
+的背景知识（尤其是在公共数据上）足够丰富，因此叙述内容除了查询词之外并没有带来太多额外帮助。上面这些分析都是孤立的，但实际上某些组合也可能带来效果提升，如上面的最优方案<code>-DNA-</code>。</p>
+<h2 id="prompt改写的影响">Prompt改写的影响</h2>
+<p>Prompt本身对效果也会有影响，比如对其措辞稍加改动：<code>assume that you are writing a report</code>
+-&gt;
+<code>pretend you are collecting information for a report</code>，或
+<code>you are collecting reading material before writing a report</code>，打标效果是否会变化？</p>
+<p>在上面最优的<code>-DNA-</code>提示上生成了42种关于<code>Given a query and a web page . . . Otherwise, mark it 0</code>的不同改写，结果如下：</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/llmlabelingresult3.png" /></p>
+<p>可以看出，即使没有改变提示的总体设计，仅对措辞进行小幅调整也可能导致明显不同的性能。其次，明智的做法是先固定总体设计，然后再探索重构措辞和其他选项。</p>
+<h1 id="bing的实践">Bing的实践</h1>
+<p>Bing多年来大量使用众包工人，以应对所需的标签数量、语言和市场的规模。尽管有系统来检测低质量的标签和工人，但这种规模带来了偏见、错误以及对抗性工人的成本。</p>
+<p><img
+src="https://coriva.eu.org/images/nlp/llmlabelingresult4.png" /></p>
+<p>上图可见，LLM
+表现得非常出色。它们比任何第三方标注者（包括员工）都更准确；与任何人类评审员（包括众包工人）相比，它们的端到端速度更快；它们的吞吐量更高；而且当然成本要低得多。端到端速度的显著提升也帮助
+Bing 的工程师们能够尝试更多方案，完成更多工作。自 2022
+年底以来，Bing一直在将 LLM
+与专家人类标注者结合使用，用于大部分的离线指标评估。</p>
+<p>作为额外的安全检查，Bing每周都会从模型中抽取近期标签的分层样本。由训练有素的评估人员重新标注这些样本，并监控分歧率或分歧模式的变化；任何变化都由熟悉众包和
+LLM 过程的指标团队进行调查。实际上，出现重大变化的情况很少，而且支持 LLM
+的解决方案和支持人类的解决方案比例相当。</p>
+<p>除了对基于 LLM
+的标签进行人工监督外，还定期重新标注一大批查询，旨在监控标注系统的健康状况。</p>
+<p>因此，Bing的系统介于 Clarke
+等人提出的“人工验证”和“完全自动化”选项之间，既具有自动化的规模，也通过人工验证进行了一些控制和质量保证。分歧及其分析为未来的指标开发、黄金集以及
+LLM 标注器的发展提供了信息。</p>
+<p>结论：使用 LLM
+来标注文档的相关性，并因此评估搜索系统是可行的。其性能可以与 TREC
+评委相媲美，明显优于众包评委。这种方法在 Bing
+中被证明有效，并且已经用于提高速度、降低成本，显著改进了系统。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+              <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+              <a href="/tags/Search/" rel="tag"># Search</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/is-chatgpt-good-at-search-ranking/" rel="prev" title="ChatGPT擅长搜索排序吗？">
+                  <i class="fa fa-chevron-left"></i> ChatGPT擅长搜索排序吗？
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div><div><span class="post-meta-item-icon"><i class="far fa-eye"></i></span><span><a href="https://finicounter.eu.org/" target="_blank">Total Views</a>:</span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/finisky" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/llm-can-accurately-predict-searcher-preferences/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script></body>
+</html>
