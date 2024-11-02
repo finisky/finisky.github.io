@@ -134,7 +134,7 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">247</span>
+          <span class="site-state-item-count">249</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -300,28 +300,28 @@ shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="
         <h1 id="bashrc不起作用">.bashrc不起作用</h1>
 <p>按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动<code>source .bashrc</code>，在<code>~/</code>目录增加.bash_profile或.profile解决：</p>
 <span id="more"></span>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"> ~&#x2F;.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~&#x2F;.bash_profile or ~&#x2F;.bash_login
-# exists.
-# see &#x2F;usr&#x2F;share&#x2F;doc&#x2F;bash&#x2F;examples&#x2F;startup-files for examples.
-# the files are located in the bash-doc package.
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"> ~/.profile: executed by the <span class="token builtin class-name">command</span> interpreter <span class="token keyword">for</span> login shells.
+<span class="token comment"># This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login</span>
+<span class="token comment"># exists.</span>
+<span class="token comment"># see /usr/share/doc/bash/examples/startup-files for examples.</span>
+<span class="token comment"># the files are located in the bash-doc package.</span>
 
-# the default umask is set in &#x2F;etc&#x2F;profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
+<span class="token comment"># the default umask is set in /etc/profile; for setting the umask</span>
+<span class="token comment"># for ssh logins, install and configure the libpam-umask package.</span>
+<span class="token comment">#umask 022</span>
 
-# if running bash
-if [ -n &quot;$BASH_VERSION&quot; ]; then
-    # include .bashrc if it exists
-    if [ -f &quot;$HOME&#x2F;.bashrc&quot; ]; then
-        . &quot;$HOME&#x2F;.bashrc&quot;
-    fi
-fi
+<span class="token comment"># if running bash</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token string">"<span class="token environment constant">$BASH_VERSION</span>"</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+    <span class="token comment"># include .bashrc if it exists</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-f</span> <span class="token string">"<span class="token environment constant">$HOME</span>/.bashrc"</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+        <span class="token builtin class-name">.</span> <span class="token string">"<span class="token environment constant">$HOME</span>/.bashrc"</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">fi</span>
 
-# set PATH so it includes user&#39;s private bin if it exists
-if [ -d &quot;$HOME&#x2F;bin&quot; ] ; then
-    PATH&#x3D;&quot;$HOME&#x2F;bin:$PATH&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># set PATH so it includes user's private bin if it exists</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-d</span> <span class="token string">"<span class="token environment constant">$HOME</span>/bin"</span> <span class="token punctuation">]</span> <span class="token punctuation">;</span> <span class="token keyword">then</span>
+    <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token string">"<span class="token environment constant">$HOME</span>/bin:<span class="token environment constant">$PATH</span>"</span>
+<span class="token keyword">fi</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>但问题的根源在于.bash_profile .bashrc .bash_login
 .profile几个文件的执行顺序。</p>
 <h1 id="bash_profile-.bashrc-.bash_login-.profile执行顺序">.bash_profile
@@ -369,7 +369,7 @@ shell</a></p>
 <li>non-interactive non-login shell: 运行脚本</li>
 <li>non-interactive login shell: 少见</li>
 </ul>
-<p>可以用如下命令测试当前环境是什么样的bash: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: echo $-; shopt login_shell
+<p>可以用如下命令测试当前环境是什么样的bash: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">~$: <span class="token builtin class-name">echo</span> $-<span class="token punctuation">;</span> <span class="token builtin class-name">shopt</span> login_shell
 himBHs
 login_shell     on<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 第一行中如果含有字母i则是iteractive
