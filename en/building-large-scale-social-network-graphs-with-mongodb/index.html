@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!-- hexo injector head_begin start --><!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-K4DEGPDYSW"); </script><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+  <meta name="google-site-verification" content="oFhcvcGsjsTY5AFUaI-ezbn7-bel9NrdUNpeQfwZSwI">
+  <meta name="msvalidate.01" content="F8E2F274161B653649F8818FD127CE87">
+  <meta name="yandex-verification" content="ff1f79abcbf80d7e">
+  <meta name="baidu-site-verification" content="code-nNL5JO7sPl">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"finisky.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no smal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Building Large-Scale Social Network Graphs with MongoDB">
+<meta property="og:url" content="https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/index.html">
+<meta property="og:site_name" content="Finisky Garden">
+<meta property="og:description" content="Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no smal">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-04T16:59:12.000Z">
+<meta property="article:modified_time" content="2024-11-04T17:29:24.000Z">
+<meta property="article:author" content="finisky">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="MongoDB">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/","path":"/en/building-large-scale-social-network-graphs-with-mongodb/","title":"Building Large-Scale Social Network Graphs with MongoDB"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Building Large-Scale Social Network Graphs with MongoDB | Finisky Garden</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://comments.finisky.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><script type="text/javascript"> function downloadJsAtOnload() { setTimeout(function downloadJs() { var element = document.createElement("script"); element.setAttribute("data-ad-client", "ca-pub-2660281922577700"); element.async = true; element.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"; document.body.appendChild(element); }, 5000); }; if (window.addEventListener) window.addEventListener("load", downloadJsAtOnload, false); else if (window.attachEvent) window.attachEvent("onload", downloadJsAtOnload); else window.onload = downloadJsAtOnload; </script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Finisky Garden" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Finisky Garden</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">NLP, 软件工程, 产品设计</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href="/tags/NLP/" rel="section"><i class="fa fa-language fa-fw"></i>NLP</a></li><li class="menu-item menu-item-mongodb"><a href="/categories/MongoDB/" rel="section"><i class="fas fa-database fa-fw"></i>MongoDB</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/links/" rel="section"><i class="fas fa-link fa-fw"></i>友链</a></li><li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#problem-description-and-challenges"><span class="nav-number">1.</span> <span class="nav-text">Problem Description and
+Challenges</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#data-modeling-and-scalability"><span class="nav-number">2.</span> <span class="nav-text">Data Modeling and
+Scalability</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#system-implementation"><span class="nav-number">3.</span> <span class="nav-text">System Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#follow-api"><span class="nav-number">3.1.</span> <span class="nav-text">Follow API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#follow-api-1"><span class="nav-number">3.2.</span> <span class="nav-text">Follow API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getfollowers-api"><span class="nav-number">3.3.</span> <span class="nav-text">GetFollowers API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getfollowercount-api"><span class="nav-number">3.4.</span> <span class="nav-text">GetFollowerCount API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#indexes-and-shard-keys"><span class="nav-number">3.5.</span> <span class="nav-text">Indexes and Shard Keys</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#test-code"><span class="nav-number">4.</span> <span class="nav-text">Test Code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#discussion-and-optimization"><span class="nav-number">5.</span> <span class="nav-text">Discussion and Optimization</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-demo"><span class="nav-number">6.</span> <span class="nav-text">Full Demo</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="finisky"
+      src="/images/qrcode.jpg">
+  <p class="site-author-name" itemprop="name">扫码关注公众号</p>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">251</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    Related Posts
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/building-large-scale-social-network-graphs-with-mongodb/" rel="bookmark">
+        <time class="popular-posts-time">2024-11-04</time>
+        <br>
+      用MongoDB构建大规模社交网络关系链
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/mongodbgetchunksize.en/" rel="bookmark">
+        <time class="popular-posts-time">2021-10-22</time>
+        <br>
+      How to Get the MongoDB Chunk Size
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/08/26/efcoregetsqlquery.en/" rel="bookmark">
+        <time class="popular-posts-time">2020-08-26</time>
+        <br>
+      Get SQL Query in Entity Framework Core
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/mongodbendlessretry.en/" rel="bookmark">
+        <time class="popular-posts-time">2021-12-16</time>
+        <br>
+      MongoDB Transaction BulkWrite Endless Retry
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2020/11/30/mongodbcertpermission.en/" rel="bookmark">
+        <time class="popular-posts-time">2020-11-30</time>
+        <br>
+      MongoDB Certificate Key File Ownership And Permission
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Building Large-Scale Social Network Graphs with MongoDB | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Building Large-Scale Social Network Graphs with MongoDB
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-11-05 00:59:12 / Modified: 01:29:24" itemprop="dateCreated datePublished" datetime="2024-11-05T00:59:12+08:00">2024-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论: </span>
+  
+    <a title="waline" href="/en/building-large-scale-social-network-graphs-with-mongodb/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/en/building-large-scale-social-network-graphs-with-mongodb/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="waline-pageview-count" data-path="/en/building-large-scale-social-network-graphs-with-mongodb/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Nowadays, many popular apps incorporate social network features, such
+as Twitter, WhatsApp, and Facebook. These platforms need to scale to
+accommodate billions of users (graph nodes), which is no small feat.
+Building and maintaining a scalable social network infrastructure
+requires careful planning and strategic data modeling. In fact,
+specialized social networking applications like Facebook have dedicated
+teams focusing solely on optimizing their performance to the highest
+level. However, for smaller apps or startup projects looking to add
+social networking capabilities, creating a full team to handle such
+architecture is often impractical and unnecessary.</p>
+<p>So, is it possible to build a high-performance, scalable social
+network using the right data modeling and storage solutions? The answer
+is yes. Early versions of Facebook used MySQL as the underlying storage
+to construct their social network, but today we have more advanced and
+efficient storage options available: MongoDB.</p>
+<h1 id="problem-description-and-challenges">Problem Description and
+Challenges</h1>
+<p>To begin, let’s outline and simplify the problem. Our goal is to
+build a social network where any user can follow other users. Each user
+should be able to view whom they are following, who follows them, and
+the counts for both. For example, on Twitter, Elon Musk’s profile shows
+that he follows 800 people and has 202.8M followers.</p>
+<p><img
+src="https://coriva.eu.org/images/followmodeling_musk.png" /></p>
+<p>By opening his followers' page, you can see detailed information
+about each follower, such as Dr. Jordan B. Peterson and others.</p>
+<p><img
+src="https://coriva.eu.org/images/followmodeling_musk.png" /></p>
+<p>After simplifying the problem, we need to support the following core
+functionalities: following and unfollowing users, viewing the count of
+followers and following, and viewing the list of followers or the people
+a user follows. It's worth noting that since many celebrities have an
+enormous number of followers, Twitter only allows viewing a limited
+number of follower profiles.</p>
+<p>While these features may seem straightforward, scaling them to handle
+billions of users presents significant challenges. Reading and updating
+the social relationships between users becomes an extremely frequent
+operation, raising the question: can the data model and underlying
+storage support such massive data volume and the high QPS (queries per
+second) required for a high-concurrency environment?</p>
+<h1 id="data-modeling-and-scalability">Data Modeling and
+Scalability</h1>
+<p>To achieve the above functionalities, data modeling is the key. The
+following six APIs are needed:</p>
+<pre class="line-numbers language-none"><code class="language-none">api&#x2F;Follow
+api&#x2F;Unfollow
+api&#x2F;GetFollowers
+api&#x2F;GetFollowings
+api&#x2F;GetFollowerCount
+api&#x2F;GetFollowingCount<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Assuming each user is represented by a UUID, a straightforward data
+modeling approach would be to store two records for each relationship.
+Each record represents a directional relationship, such as:</p>
+<table>
+<thead>
+<tr class="header">
+<th>SrcUuid</th>
+<th>DstUuid</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>u1</td>
+<td>u2</td>
+<td>Follow</td>
+<td>u1关注了u2</td>
+</tr>
+<tr class="even">
+<td>u2</td>
+<td>u1</td>
+<td>Follow</td>
+<td>u2关注了u1</td>
+</tr>
+<tr class="odd">
+<td>u3</td>
+<td>u4</td>
+<td>Follow</td>
+<td>u3关注了u4</td>
+</tr>
+</tbody>
+</table>
+<p>Since <strong>u1</strong> follows <strong>u2</strong>, and
+<strong>u2</strong> follows <strong>u1</strong>, <strong>u1</strong> and
+<strong>u2</strong> have a mutual following relationship. On the other
+hand, if <strong>u3</strong> follows <strong>u4</strong> and there's
+only one record, then it represents a one-way following
+relationship.</p>
+<p>With this type of data modeling, implementing follow and unfollow
+operations becomes straightforward, as it only involves inserting or
+deleting a record. Retrieving a user's followers can be accomplished
+using a query like <code>DstUuid == x</code>, while counting the number
+of followers can be done with <code>Count(DstUuid == x)</code>. The same
+applies for finding who a user is following.</p>
+<p>Thus, a single table can be used to store the relationship data
+between users, defined as follows:</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FollowEntry</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> SrcUuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> DstUuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token return-type class-name">FollowStatus</span> Status <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token return-type class-name">DateTime</span> CreateTime <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token return-type class-name">DateTime</span> UpdateTime <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">FollowStatus</span>
+<span class="token punctuation">&#123;</span>
+    None <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    Follow <span class="token operator">=</span> <span class="token number">1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>How Can This Data Model Scale to Millions of Users?</p>
+<p>The answer lies in leveraging <strong>sharding</strong> and
+<strong>replicaset nodes</strong> for scalability. Sharding enhances
+write capabilities by distributing data across multiple shards, while
+adding replicaset nodes increases read capacity. This scaling approach
+is transparent to the upper-layer application, unlike MySQL's sharding
+and partitioning, which can impose constraints on application queries.
+This is one of the advantages of using MongoDB.</p>
+<h1 id="system-implementation">System Implementation</h1>
+<p>In this section, we will implement each API and identify the required
+indexes and shard keys based on actual read patterns.</p>
+<h2 id="follow-api">Follow API</h2>
+<p>The implementation of the Follow API is straightforward: it involves
+an upsert operation to insert or update a follow record, regardless of
+whether the record previously existed or its status:</p>
+<h2 id="follow-api-1">Follow API</h2>
+<p>The implementation of the Follow API is quite simple. It involves
+performing an upsert operation to insert or update a follow record,
+regardless of whether the record already exists or its previous
+status:</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">FollowAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> srcUuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> dstUuid<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> update <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>FollowEntry<span class="token operator">></span><span class="token punctuation">.</span>Update
+                    <span class="token punctuation">.</span><span class="token function">Set</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Status<span class="token punctuation">,</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">Set</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>UpdateTime<span class="token punctuation">,</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>SrcUuid<span class="token punctuation">,</span> srcUuid<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid<span class="token punctuation">,</span> dstUuid<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>CreateTime<span class="token punctuation">,</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> option <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">UpdateOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">UpdateOneAsync</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>SrcUuid <span class="token operator">==</span> srcUuid <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> dstUuid<span class="token punctuation">,</span> update<span class="token punctuation">,</span> option<span class="token punctuation">,</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The implementation of the Unfollow API is similar to the Follow API,
+with the only difference being that the <code>FollowStatus</code> is set
+to <code>None</code> to indicate that the user has unfollowed.</p>
+<p>Both the Follow and Unfollow APIs require an index:
+<code>(SrcUuid, DstUuid)</code>.</p>
+<h2 id="getfollowers-api">GetFollowers API</h2>
+<p>The implementation of the GetFollowers API needs to consider
+pagination and a maximum return limit. Here’s a straightforward approach
+that returns the earliest <code>n</code> followers based on their
+creation timestamp:</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task<span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>FollowEntry<span class="token punctuation">></span><span class="token punctuation">></span></span> <span class="token function">GetFollowersAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> n <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> result <span class="token operator">=</span> <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">Find</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> uuid <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>Status <span class="token operator">==</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">SortBy</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>CreateTime<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Limit</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span>cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The implementation of the GetFollowings API is similar to the
+GetFollowers API: Simply replace <code>DstUuid</code> with
+<code>SrcUuid</code>.</p>
+<p>These two APIs require indexes:
+<code>(DstUuid, FlowStatus, CreateTime)</code> and
+<code>(SrcUuid, FlowStatus, CreateTime)</code>. The inclusion of the low
+cardinality field <code>FollowStatus</code> in the indexes is beneficial
+because, over time, there may be many unfollow entries present in the
+dataset. By indexing this field, query performance can improve,
+especially when filtering for active relationships. However, it's
+important to choose indexes based on the specific application scenarios,
+as unnecessary indexes can lead to increased overhead during write
+operations.</p>
+<h2 id="getfollowercount-api">GetFollowerCount API</h2>
+<p>The implementation of the GetFollowerCount API:</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task<span class="token punctuation">&lt;</span><span class="token keyword">long</span><span class="token punctuation">></span></span> <span class="token function">GetFollowerCountAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> result <span class="token operator">=</span> <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">CountDocumentsAsync</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> uuid
+                                                    <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>Status <span class="token operator">==</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The implementation of the GetFollowingCount API is similar. Simply
+replace <code>DstUuid</code> with <code>SrcUuid</code>.</p>
+<p>These two APIs can reuse the indexes established for the GetFollowers
+and GetFollowings APIs.</p>
+<h2 id="indexes-and-shard-keys">Indexes and Shard Keys</h2>
+<p>Based on the above implementations and considering the leftmost
+prefix matching principle, we need three indexes:</p>
+<ul>
+<li>(SrcUuid, DstUuid)</li>
+<li>(DstUuid, FlowStatus, CreateTime)</li>
+<li>(SrcUuid, FlowStatus, CreateTime)</li>
+</ul>
+<p>At the same time, these indexes can also support APIs such as
+"GetTwoUserRelationship()", which will not be elaborated on further.</p>
+<p>Considering that user IDs use UUIDs, which are already uniformly
+distributed, there is no need to use hashed sharding. We only need to
+consider which is more commonly used in the application context:
+GetFollowers or GetFollowings. Assuming GetFollowings is more commonly
+used, we can choose <code>SrcUuid</code> as the shard key. This ensures
+that all users followed by a given user reside in the same shard,
+improving read efficiency.</p>
+<p>Sharding can be executed in the MongoDB shell with:
+<code>sh.shardCollection("Test.Test", &#123; "SrcUuid": 1 &#125;)</code></p>
+<p>Sharded clusters can significantly increase the upper limits of the
+system, and they do not require code modifications; the capacity of the
+system can be expanded online.</p>
+<h1 id="test-code">Test Code</h1>
+<p>Randomly generate 1,000 users and 2,000 follow relationships, and
+print the follower information for one user who has more than 5
+followers.</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RunAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token class-name"><span class="token keyword">var</span></span> rand <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">Random</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name"><span class="token keyword">var</span></span> userList <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">List<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// Generate 1000 users</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">1000</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        userList<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>Guid<span class="token punctuation">.</span><span class="token function">NewGuid</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token string">"N"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToUpper</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">// Generate 2000 relationships</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">2000</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> src <span class="token operator">=</span> userList<span class="token punctuation">[</span>rand<span class="token punctuation">.</span><span class="token function">Next</span><span class="token punctuation">(</span>userList<span class="token punctuation">.</span>Count<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> dst <span class="token operator">=</span> userList<span class="token punctuation">[</span>rand<span class="token punctuation">.</span><span class="token function">Next</span><span class="token punctuation">(</span>userList<span class="token punctuation">.</span>Count<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>src <span class="token operator">==</span> dst<span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token keyword">await</span> <span class="token function">FollowAsync</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> dst<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> user <span class="token keyword">in</span> userList<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token keyword">var</span></span> followerCount <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">GetFollowerCountAsync</span><span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>followerCount <span class="token operator">></span> <span class="token number">5</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> followers <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">GetFollowersAsync</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> entry <span class="token keyword">in</span> followers<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">entry<span class="token punctuation">.</span>SrcUuid</span><span class="token punctuation">&#125;</span></span><span class="token string"> follows </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">user</span><span class="token punctuation">&#125;</span></span><span class="token string"> at </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">entry<span class="token punctuation">.</span>CreateTime</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">user</span><span class="token punctuation">&#125;</span></span><span class="token string"> followers: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">followerCount</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The results:</p>
+<blockquote>
+<p>7289820430DA4BCD930CFE1067A3DC89 follows
+5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:41:57 PM
+F2E95841840C45B496C6629181DD2C77 follows
+5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:05 PM
+7FFB5DE3E3A94AFF8AB487EA82DA2A68 follows
+5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:07 PM
+AE9D38F638C145848997F2E0E8BF62DF follows
+5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:09 PM
+4E15001E616E441395FBC04CA0F3F36E follows
+5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:10 PM
+5798C300560A4C09B35F7B48AF57ACF5 followers: 8 Done</p>
+</blockquote>
+<p>Connect to the database deployed on MongoDB Atlas using MongoDB
+Compass:</p>
+<p><img
+src="https://coriva.eu.org/images/followmodeling_compass.png" /></p>
+<h1 id="discussion-and-optimization">Discussion and Optimization</h1>
+<p>The social relationship data modeling introduced in this article is a
+simplified design aimed at demonstrating how to utilize MongoDB's
+sharded cluster to build a large-scale social network graph. In a real
+production environment, there are several issues that need to be
+considered and optimized:</p>
+<ul>
+<li><p>Write-heavy or Read-heavy: Here, we use user IDs to represent
+users, concealing user information. The actual implementation would
+require APIs for bulk reading of user information. If user details are
+included in the <code>FollowEntry</code>, it would improve read
+efficiency but significantly lower update efficiency (Write-heavy). The
+current design transitions a write-heavy model into a read-heavy model
+by fetching the latest user information in real-time.</p></li>
+<li><p>Caching: Although MongoDB offers excellent performance, front-end
+caching (such as Redis) is still essential and can greatly enhance
+system throughput. This is particularly important for APIs like
+<code>GetFollowersCount</code>, where caching an approximate count is
+crucial for efficiency.</p></li>
+<li><p>Support for Complex Business Logic: The scenarios for platforms
+like Twitter are much more complex than those described here. They must
+consider not only social relationships but also the read/write
+interactions of each tweet and the integration with recommendation
+systems. Due to space limitations, a deeper discussion on this topic is
+not provided.</p></li>
+</ul>
+<p>Load testing confirms that the optimized social relationship system
+can support 100,000+ or even higher QPS, demonstrating excellent
+performance and throughput. This makes it very suitable for startups
+looking to rapidly develop and iterate their products.</p>
+<h1 id="full-demo">Full Demo</h1>
+<p>Fill the <code>ConnectionString</code>:</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Bson<span class="token punctuation">.</span>Serialization<span class="token punctuation">.</span>Conventions</span><span class="token punctuation">;</span>
+<span class="token keyword">using</span> <span class="token namespace">MongoDB<span class="token punctuation">.</span>Driver</span><span class="token punctuation">;</span>
+
+<span class="token keyword">namespace</span> <span class="token namespace">MongoTest</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">class</span> <span class="token class-name">Program</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">static</span> <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Main</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span><span class="token punctuation">[</span><span class="token punctuation">]</span></span> args<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> model <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">RelModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            model<span class="token punctuation">.</span><span class="token function">RunAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Wait</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token string">"Done"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FollowEntry</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> SrcUuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+        <span class="token keyword">public</span> <span class="token return-type class-name"><span class="token keyword">string</span></span> DstUuid <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+        <span class="token keyword">public</span> <span class="token return-type class-name">FollowStatus</span> Status <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+        <span class="token keyword">public</span> <span class="token return-type class-name">DateTime</span> CreateTime <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+        <span class="token keyword">public</span> <span class="token return-type class-name">DateTime</span> UpdateTime <span class="token punctuation">&#123;</span> <span class="token keyword">get</span><span class="token punctuation">;</span> <span class="token keyword">set</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">FollowStatus</span>
+    <span class="token punctuation">&#123;</span>
+        None <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+        Follow <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        Deleted <span class="token operator">=</span> <span class="token number">2</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RelModel</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">private</span> <span class="token keyword">readonly</span> <span class="token class-name">IMongoClient</span> _mongoClient<span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token keyword">readonly</span> <span class="token class-name">IMongoCollection<span class="token punctuation">&lt;</span>FollowEntry<span class="token punctuation">></span></span> _followCollection<span class="token punctuation">;</span>
+
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> DatabaseName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> CollectionName <span class="token operator">=</span> <span class="token string">"Test"</span><span class="token punctuation">;</span>
+        <span class="token keyword">public</span> <span class="token keyword">const</span> <span class="token class-name"><span class="token keyword">string</span></span> ConnectionString <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">public</span> <span class="token function">RelModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            _mongoClient <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">MongoClient</span><span class="token punctuation">(</span>ConnectionString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> database <span class="token operator">=</span> _mongoClient<span class="token punctuation">.</span><span class="token function">GetDatabase</span><span class="token punctuation">(</span>DatabaseName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token class-name"><span class="token keyword">var</span></span> ignoreExtraElementsConvention <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">ConventionPack</span> <span class="token punctuation">&#123;</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">IgnoreExtraElementsConvention</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+            ConventionRegistry<span class="token punctuation">.</span><span class="token function">Register</span><span class="token punctuation">(</span><span class="token string">"IgnoreExtraElements"</span><span class="token punctuation">,</span> ignoreExtraElementsConvention<span class="token punctuation">,</span> type <span class="token operator">=></span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            _followCollection <span class="token operator">=</span> database<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">GetCollection</span><span class="token generic class-name"><span class="token punctuation">&lt;</span>FollowEntry<span class="token punctuation">></span></span></span><span class="token punctuation">(</span>CollectionName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RunAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> rand <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">Random</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name"><span class="token keyword">var</span></span> userList <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">List<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment">// Generate 1000 users</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">1000</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                userList<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>Guid<span class="token punctuation">.</span><span class="token function">NewGuid</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToString</span><span class="token punctuation">(</span><span class="token string">"N"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToUpper</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token comment">// Generate 2000 relationships</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">2000</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> src <span class="token operator">=</span> userList<span class="token punctuation">[</span>rand<span class="token punctuation">.</span><span class="token function">Next</span><span class="token punctuation">(</span>userList<span class="token punctuation">.</span>Count<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> dst <span class="token operator">=</span> userList<span class="token punctuation">[</span>rand<span class="token punctuation">.</span><span class="token function">Next</span><span class="token punctuation">(</span>userList<span class="token punctuation">.</span>Count<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>src <span class="token operator">==</span> dst<span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
+                <span class="token keyword">await</span> <span class="token function">FollowAsync</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> dst<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> user <span class="token keyword">in</span> userList<span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> followerCount <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">GetFollowerCountAsync</span><span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>followerCount <span class="token operator">></span> <span class="token number">5</span><span class="token punctuation">)</span>
+                <span class="token punctuation">&#123;</span>
+                    <span class="token class-name"><span class="token keyword">var</span></span> followers <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">GetFollowersAsync</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> entry <span class="token keyword">in</span> followers<span class="token punctuation">)</span>
+                    <span class="token punctuation">&#123;</span>
+                        Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">entry<span class="token punctuation">.</span>SrcUuid</span><span class="token punctuation">&#125;</span></span><span class="token string"> follows </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">user</span><span class="token punctuation">&#125;</span></span><span class="token string"> at </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">entry<span class="token punctuation">.</span>CreateTime</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">&#125;</span>
+
+                    Console<span class="token punctuation">.</span><span class="token function">WriteLine</span><span class="token punctuation">(</span><span class="token interpolation-string"><span class="token string">$"</span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">user</span><span class="token punctuation">&#125;</span></span><span class="token string"> followers: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token expression language-csharp">followerCount</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">FollowAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> srcUuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">string</span></span> dstUuid<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> update <span class="token operator">=</span> Builders<span class="token operator">&lt;</span>FollowEntry<span class="token operator">></span><span class="token punctuation">.</span>Update
+                            <span class="token punctuation">.</span><span class="token function">Set</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>Status<span class="token punctuation">,</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">Set</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>UpdateTime<span class="token punctuation">,</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>SrcUuid<span class="token punctuation">,</span> srcUuid<span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid<span class="token punctuation">,</span> dstUuid<span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">SetOnInsert</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>CreateTime<span class="token punctuation">,</span> DateTime<span class="token punctuation">.</span>UtcNow<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> option <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">UpdateOptions</span> <span class="token punctuation">&#123;</span> IsUpsert <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+                <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">UpdateOneAsync</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>SrcUuid <span class="token operator">==</span> srcUuid <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> dstUuid<span class="token punctuation">,</span> update<span class="token punctuation">,</span> option<span class="token punctuation">,</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task<span class="token punctuation">&lt;</span>List<span class="token punctuation">&lt;</span>FollowEntry<span class="token punctuation">></span><span class="token punctuation">></span></span> <span class="token function">GetFollowersAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> n <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> result <span class="token operator">=</span> <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">Find</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> uuid <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>Status <span class="token operator">==</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">SortBy</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>CreateTime<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Limit</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ToListAsync</span><span class="token punctuation">(</span>cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task<span class="token punctuation">&lt;</span><span class="token keyword">long</span><span class="token punctuation">></span></span> <span class="token function">GetFollowerCountAsync</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">string</span></span> uuid<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">var</span></span> cts <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">CancellationTokenSource</span><span class="token punctuation">(</span>TimeSpan<span class="token punctuation">.</span><span class="token function">FromSeconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token class-name"><span class="token keyword">var</span></span> result <span class="token operator">=</span> <span class="token keyword">await</span> _followCollection<span class="token punctuation">.</span><span class="token function">CountDocumentsAsync</span><span class="token punctuation">(</span>x <span class="token operator">=></span> x<span class="token punctuation">.</span>DstUuid <span class="token operator">==</span> uuid
+                                                            <span class="token operator">&amp;&amp;</span> x<span class="token punctuation">.</span>Status <span class="token operator">==</span> FollowStatus<span class="token punctuation">.</span>Follow<span class="token punctuation">,</span> <span class="token named-parameter punctuation">cancellationToken</span><span class="token punctuation">:</span> cts<span class="token punctuation">.</span>Token<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/building-large-scale-social-network-graphs-with-mongodb/" rel="prev" title="用MongoDB构建大规模社交网络关系链">
+                  <i class="fa fa-chevron-left"></i> 用MongoDB构建大规模社交网络关系链
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">finisky</span>
+</div><div><span class="post-meta-item-icon"><i class="far fa-eye"></i></span><span><a href="https://finicounter.eu.org/" target="_blank">Total Views</a>:</span><span id="finicount_views" style="display:inline;padding-left:5px;"></span><div> <script async src="//finicounter.eu.org/finicounter.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/finisky" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://comments.finisky.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":true,"pageSize":10,"el":"#waline","comment":true,"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","path":"/en/building-large-scale-social-network-graphs-with-mongodb/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script></body>
+</html>
