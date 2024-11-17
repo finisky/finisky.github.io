@@ -195,7 +195,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-11-17 13:03:35 / 修改时间：13:04:44" itemprop="dateCreated datePublished" datetime="2024-11-17T13:03:35+08:00">2024-11-17</time>
+      <time title="创建时间：2024-11-17 13:03:35 / 修改时间：13:09:13" itemprop="dateCreated datePublished" datetime="2024-11-17T13:03:35+08:00">2024-11-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -254,111 +254,14 @@ only issues certificates and doesn’t pose any threat to the website
 itself.</p>
 <p>Here are the configuration steps for Certbot. In fact, it’s very
 simple and only requires running a few commands.</p>
-<h2 id="installing-certbot">Installing Certbot</h2>
-<p>Here, I chose to install Certbot using <code>apt</code> instead of
-the recommended <code>snap</code>. Personally, I find <code>snap</code>
-to be too heavy compared to the lightweight nature of <code>apt</code>.
-I also prefer not to see a bunch of unnecessary <code>snap</code>
-entries cluttering the output of <code>df -lh</code>.</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> update
-$ <span class="token function">apt</span> <span class="token function">install</span> certbot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<h2 id="obtaining-a-certificate">Obtaining a Certificate</h2>
-<p>The command to obtain a certificate is straightforward:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-The requested nginx plugin does not appear to be installed
-Ask <span class="token keyword">for</span> <span class="token builtin class-name">help</span> or search <span class="token keyword">for</span> solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with <span class="token parameter variable">-v</span> <span class="token keyword">for</span> <span class="token function">more</span> details.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>If you encounter the error:
-<code>The requested nginx plugin does not appear to be installed</code>,
-you need to install the following package:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> python3-certbot-nginx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>Afterward, simply repeat the command:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Enter email address <span class="token punctuation">(</span>used <span class="token keyword">for</span> urgent renewal and security notices<span class="token punctuation">)</span>
- <span class="token punctuation">(</span>Enter <span class="token string">'c'</span> to cancel<span class="token punctuation">)</span>: xx@gmail.com
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Please <span class="token builtin class-name">read</span> the Terms of Service at
-https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree <span class="token keyword">in</span>
-order to register with the ACME server. Do you agree?
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o:
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: Y
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Would you be willing, once your first certificate is successfully issued, to
-share your email address with the Electronic Frontier Foundation, a founding
-partner of the Let<span class="token string">'s Encrypt project and the non-profit organization that
-develops Certbot? We'</span>d like to send you email about our work encrypting the web,
-EFF news, campaigns, and ways to support digital freedom.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: N
-Account registered.
-Requesting a certificate <span class="token keyword">for</span> yourdomain.com
-
-Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
-Key is saved at:         /etc/letsencrypt/live/yourdomain.com/privkey.pem
-This certificate expires on <span class="token number">2025</span>-02-15.
-These files will be updated when the certificate renews.
-Certbot has <span class="token builtin class-name">set</span> up a scheduled task to automatically renew this certificate <span class="token keyword">in</span> the background.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-If you like Certbot, please consider supporting our work by:
- * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
- * Donating to EFF:                    https://eff.org/donate-le
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Since this is the first time running Certbot, you’ll need to answer a
-few questions, such as providing an emergency email and agreeing to the
-terms of service. Once completed, the certificate files will be stored
-in the <code>/etc/letsencrypt/live/yourdomain.com/</code> directory.</p>
-<p>For subsequent renewals, these questions won’t be asked again, and
-the process can be completed with a single command:</p>
-<pre class="line-numbers language-none"><code class="language-none">$ certbot certonly --nginx -d yourdomain.com
-Saving debug log to &#x2F;var&#x2F;log&#x2F;letsencrypt&#x2F;letsencrypt.log
-Requesting a certificate for yourdomain.com
-
-Successfully received certificate.
-Certificate is saved at: &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;fullchain.pem
-Key is saved at:         &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;privkey.pem
-This certificate expires on 2025-02-15.
-These files will be updated when the certificate renews.
-Certbot has set up a scheduled task to automatically renew this certificate in the background.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-If you like Certbot, please consider supporting our work by:
- * Donating to ISRG &#x2F; Let&#39;s Encrypt:   https:&#x2F;&#x2F;letsencrypt.org&#x2F;donate
- * Donating to EFF:                    https:&#x2F;&#x2F;eff.org&#x2F;donate-le
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="updating-the-websites-certificate-file-path">Updating the
-Website's Certificate File Path</h2>
-<p>The website's certificate configuration is located at
-<code>/etc/nginx/sites-available/yourdomain.com</code>. Update the
-following two lines:</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">server <span class="token punctuation">&#123;</span>
-    server_name yourdomain.com;
-    listen <span class="token number">443</span> ssl;
-
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    ...
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>After making the changes, test the Nginx configuration to ensure it’s
-correct:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-t</span>
-nginx: the configuration <span class="token function">file</span> /etc/nginx/nginx.conf syntax is ok
-nginx: configuration <span class="token function">file</span> /etc/nginx/nginx.conf <span class="token builtin class-name">test</span> is successful<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>Restart Nginx to apply the changes:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-s</span> reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h2 id="configuring-automatic-certificate-renewal">Configuring Automatic
-Certificate Renewal</h2>
-<p>Create a new cron job:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">sudo</span> <span class="token function">crontab</span> <span class="token parameter variable">-e</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>Add an entry to execute the certificate renewal every day at
-<code>3:28 AM</code>:</p>
-<pre class="line-numbers language-none"><code class="language-none">28 3 * * * certbot renew --nginx --quiet<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/en/certbot-automating-nginx-ssl-renewal/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -414,7 +317,7 @@ Certificate Renewal</h2>
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-11-17 12:56:40 / 修改时间：13:04:44" itemprop="dateCreated datePublished" datetime="2024-11-17T12:56:40+08:00">2024-11-17</time>
+      <time title="创建时间：2024-11-17 12:56:40 / 修改时间：13:09:13" itemprop="dateCreated datePublished" datetime="2024-11-17T12:56:40+08:00">2024-11-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -465,94 +368,14 @@ Certificate Renewal</h2>
 <p>考虑到一直是手动更新证书，如果三个月手动操作一次还是挺费劲的。于是研究Let's
 Encrypt的certbot，唯一的顾虑是如何证明自己对二级域名的所有权问题。实践之后发现此问题并不存在，因为certbot仅是签发一个证书而已，并不存在对网站本身的威胁。</p>
 <p>下面是certbot的配置步骤，其实仅需要执行几个命令，非常简单。</p>
-<h2 id="安装certbot">安装certbot</h2>
-<p>这里安装使用<code>apt</code>而不是推荐的<code>snap</code>，个人认为<code>snap</code>太重，不如apt轻量。不喜欢在<code>df -lh</code>时看到一堆无用的<code>snap</code>项。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> update
-$ <span class="token function">apt</span> <span class="token function">install</span> certbot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<h2 id="获取证书">获取证书</h2>
-<p>获取证书的命令很简单：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-The requested nginx plugin does not appear to be installed
-Ask <span class="token keyword">for</span> <span class="token builtin class-name">help</span> or search <span class="token keyword">for</span> solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with <span class="token parameter variable">-v</span> <span class="token keyword">for</span> <span class="token function">more</span> details.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>如果遇到这个错误：<code>The requested nginx plugin does not appear to be installed</code>，需要安装这个包：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> python3-certbot-nginx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>然后重复命令即可：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Enter email address <span class="token punctuation">(</span>used <span class="token keyword">for</span> urgent renewal and security notices<span class="token punctuation">)</span>
- <span class="token punctuation">(</span>Enter <span class="token string">'c'</span> to cancel<span class="token punctuation">)</span>: xx@gmail.com
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Please <span class="token builtin class-name">read</span> the Terms of Service at
-https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree <span class="token keyword">in</span>
-order to register with the ACME server. Do you agree?
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o:
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: Y
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Would you be willing, once your first certificate is successfully issued, to
-share your email address with the Electronic Frontier Foundation, a founding
-partner of the Let<span class="token string">'s Encrypt project and the non-profit organization that
-develops Certbot? We'</span>d like to send you email about our work encrypting the web,
-EFF news, campaigns, and ways to support digital freedom.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: N
-Account registered.
-Requesting a certificate <span class="token keyword">for</span> yourdomain.com
-
-Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
-Key is saved at:         /etc/letsencrypt/live/yourdomain.com/privkey.pem
-This certificate expires on <span class="token number">2025</span>-02-15.
-These files will be updated when the certificate renews.
-Certbot has <span class="token builtin class-name">set</span> up a scheduled task to automatically renew this certificate <span class="token keyword">in</span> the background.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-If you like Certbot, please consider supporting our work by:
- * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
- * Donating to EFF:                    https://eff.org/donate-le
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>由于是第一次执行certbot，所以需要回答一些问题，例如紧急邮箱和服务协议等。执行完毕后证书文件存在<code>/etc/letsencrypt/live/yourdomain.com/</code>目录中。</p>
-<p>之后再更新证书就不会再问一堆问题了，一键完成： <pre class="line-numbers language-none"><code class="language-none">$ certbot certonly --nginx -d yourdomain.com
-Saving debug log to &#x2F;var&#x2F;log&#x2F;letsencrypt&#x2F;letsencrypt.log
-Requesting a certificate for yourdomain.com
-
-Successfully received certificate.
-Certificate is saved at: &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;fullchain.pem
-Key is saved at:         &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;privkey.pem
-This certificate expires on 2025-02-15.
-These files will be updated when the certificate renews.
-Certbot has set up a scheduled task to automatically renew this certificate in the background.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-If you like Certbot, please consider supporting our work by:
- * Donating to ISRG &#x2F; Let&#39;s Encrypt:   https:&#x2F;&#x2F;letsencrypt.org&#x2F;donate
- * Donating to EFF:                    https:&#x2F;&#x2F;eff.org&#x2F;donate-le
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<h2 id="修改网站证书文件路径">修改网站证书文件路径</h2>
-<p>网站证书文件位于<code>/etc/nginx/sites-available/yourdomain.com</code>，修改下面两行：</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">server <span class="token punctuation">&#123;</span>
-    server_name yourdomain.com;
-    listen <span class="token number">443</span> ssl;
-
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    ...
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后测试nginx的配置是否正确：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-t</span>
-nginx: the configuration <span class="token function">file</span> /etc/nginx/nginx.conf syntax is ok
-nginx: configuration <span class="token function">file</span> /etc/nginx/nginx.conf <span class="token builtin class-name">test</span> is successful<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>重启nginx，浏览器中查看证书是否已经生效：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-s</span> reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h2 id="配置证书自动更新">配置证书自动更新</h2>
-<p>新建一个cron job：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">sudo</span> <span class="token function">crontab</span> <span class="token parameter variable">-e</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>增加一个条目，每天3:28执行更新证书：</p>
-<pre class="line-numbers language-none"><code class="language-none">28 3 * * * certbot renew --nginx --quiet<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/certbot-automating-nginx-ssl-renewal/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
