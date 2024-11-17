@@ -128,7 +128,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">252</span>
+          <span class="site-state-item-count">254</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -156,6 +156,419 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/en/certbot-automating-nginx-ssl-renewal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/en/certbot-automating-nginx-ssl-renewal/" class="post-title-link" itemprop="url">Certbot: Automating Nginx SSL Renewal</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-11-17 13:03:35 / 修改时间：13:04:44" itemprop="dateCreated datePublished" datetime="2024-11-17T13:03:35+08:00">2024-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/en/certbot-automating-nginx-ssl-renewal/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/en/certbot-automating-nginx-ssl-renewal/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/en/certbot-automating-nginx-ssl-renewal/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Received a certificate renewal notification from Tencent Cloud, but
+when applying for a new certificate, I found out that Tencent Cloud no
+longer offers free one-year certificates:</p>
+<blockquote>
+<p>Starting from April 25, 2024, the validity period of new free
+certificates issued by Tencent Cloud will be adjusted to 90 days.</p>
+</blockquote>
+<p>Since I’ve always updated certificates manually, doing it every three
+months feels quite tedious. So, I decided to explore Certbot from Let's
+Encrypt. My only concern was how to prove ownership of a subdomain.
+After trying it out, I realized this wasn’t an issue at all, as Certbot
+only issues certificates and doesn’t pose any threat to the website
+itself.</p>
+<p>Here are the configuration steps for Certbot. In fact, it’s very
+simple and only requires running a few commands.</p>
+<h2 id="installing-certbot">Installing Certbot</h2>
+<p>Here, I chose to install Certbot using <code>apt</code> instead of
+the recommended <code>snap</code>. Personally, I find <code>snap</code>
+to be too heavy compared to the lightweight nature of <code>apt</code>.
+I also prefer not to see a bunch of unnecessary <code>snap</code>
+entries cluttering the output of <code>df -lh</code>.</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> update
+$ <span class="token function">apt</span> <span class="token function">install</span> certbot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h2 id="obtaining-a-certificate">Obtaining a Certificate</h2>
+<p>The command to obtain a certificate is straightforward:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+The requested nginx plugin does not appear to be installed
+Ask <span class="token keyword">for</span> <span class="token builtin class-name">help</span> or search <span class="token keyword">for</span> solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with <span class="token parameter variable">-v</span> <span class="token keyword">for</span> <span class="token function">more</span> details.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>If you encounter the error:
+<code>The requested nginx plugin does not appear to be installed</code>,
+you need to install the following package:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> python3-certbot-nginx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Afterward, simply repeat the command:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Enter email address <span class="token punctuation">(</span>used <span class="token keyword">for</span> urgent renewal and security notices<span class="token punctuation">)</span>
+ <span class="token punctuation">(</span>Enter <span class="token string">'c'</span> to cancel<span class="token punctuation">)</span>: xx@gmail.com
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please <span class="token builtin class-name">read</span> the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree <span class="token keyword">in</span>
+order to register with the ACME server. Do you agree?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o:
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: Y
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing, once your first certificate is successfully issued, to
+share your email address with the Electronic Frontier Foundation, a founding
+partner of the Let<span class="token string">'s Encrypt project and the non-profit organization that
+develops Certbot? We'</span>d like to send you email about our work encrypting the web,
+EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: N
+Account registered.
+Requesting a certificate <span class="token keyword">for</span> yourdomain.com
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/yourdomain.com/privkey.pem
+This certificate expires on <span class="token number">2025</span>-02-15.
+These files will be updated when the certificate renews.
+Certbot has <span class="token builtin class-name">set</span> up a scheduled task to automatically renew this certificate <span class="token keyword">in</span> the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Since this is the first time running Certbot, you’ll need to answer a
+few questions, such as providing an emergency email and agreeing to the
+terms of service. Once completed, the certificate files will be stored
+in the <code>/etc/letsencrypt/live/yourdomain.com/</code> directory.</p>
+<p>For subsequent renewals, these questions won’t be asked again, and
+the process can be completed with a single command:</p>
+<pre class="line-numbers language-none"><code class="language-none">$ certbot certonly --nginx -d yourdomain.com
+Saving debug log to &#x2F;var&#x2F;log&#x2F;letsencrypt&#x2F;letsencrypt.log
+Requesting a certificate for yourdomain.com
+
+Successfully received certificate.
+Certificate is saved at: &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;fullchain.pem
+Key is saved at:         &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;privkey.pem
+This certificate expires on 2025-02-15.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG &#x2F; Let&#39;s Encrypt:   https:&#x2F;&#x2F;letsencrypt.org&#x2F;donate
+ * Donating to EFF:                    https:&#x2F;&#x2F;eff.org&#x2F;donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="updating-the-websites-certificate-file-path">Updating the
+Website's Certificate File Path</h2>
+<p>The website's certificate configuration is located at
+<code>/etc/nginx/sites-available/yourdomain.com</code>. Update the
+following two lines:</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json">server <span class="token punctuation">&#123;</span>
+    server_name yourdomain.com;
+    listen <span class="token number">443</span> ssl;
+
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ...
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>After making the changes, test the Nginx configuration to ensure it’s
+correct:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-t</span>
+nginx: the configuration <span class="token function">file</span> /etc/nginx/nginx.conf syntax is ok
+nginx: configuration <span class="token function">file</span> /etc/nginx/nginx.conf <span class="token builtin class-name">test</span> is successful<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>Restart Nginx to apply the changes:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-s</span> reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="configuring-automatic-certificate-renewal">Configuring Automatic
+Certificate Renewal</h2>
+<p>Create a new cron job:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">sudo</span> <span class="token function">crontab</span> <span class="token parameter variable">-e</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Add an entry to execute the certificate renewal every day at
+<code>3:28 AM</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">28 3 * * * certbot renew --nginx --quiet<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/certbot-automating-nginx-ssl-renewal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/certbot-automating-nginx-ssl-renewal/" class="post-title-link" itemprop="url">Cerbot自动化管理Nginx网站证书</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-11-17 12:56:40 / 修改时间：13:04:44" itemprop="dateCreated datePublished" datetime="2024-11-17T12:56:40+08:00">2024-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/certbot-automating-nginx-ssl-renewal/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/certbot-automating-nginx-ssl-renewal/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/certbot-automating-nginx-ssl-renewal/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>收到腾讯云的证书续期通知，结果在申请新证书时发现，腾讯云不再支持一年的免费证书：</p>
+<blockquote>
+<p>2024年4月25日起，腾讯云新签发的免费证书有效期调整为 90 天</p>
+</blockquote>
+<p>考虑到一直是手动更新证书，如果三个月手动操作一次还是挺费劲的。于是研究Let's
+Encrypt的certbot，唯一的顾虑是如何证明自己对二级域名的所有权问题。实践之后发现此问题并不存在，因为certbot仅是签发一个证书而已，并不存在对网站本身的威胁。</p>
+<p>下面是certbot的配置步骤，其实仅需要执行几个命令，非常简单。</p>
+<h2 id="安装certbot">安装certbot</h2>
+<p>这里安装使用<code>apt</code>而不是推荐的<code>snap</code>，个人认为<code>snap</code>太重，不如apt轻量。不喜欢在<code>df -lh</code>时看到一堆无用的<code>snap</code>项。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> update
+$ <span class="token function">apt</span> <span class="token function">install</span> certbot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h2 id="获取证书">获取证书</h2>
+<p>获取证书的命令很简单：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+The requested nginx plugin does not appear to be installed
+Ask <span class="token keyword">for</span> <span class="token builtin class-name">help</span> or search <span class="token keyword">for</span> solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with <span class="token parameter variable">-v</span> <span class="token keyword">for</span> <span class="token function">more</span> details.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>如果遇到这个错误：<code>The requested nginx plugin does not appear to be installed</code>，需要安装这个包：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">apt</span> <span class="token function">install</span> python3-certbot-nginx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>然后重复命令即可：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ certbot certonly <span class="token parameter variable">--nginx</span> <span class="token parameter variable">-d</span> yourdomain.com
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Enter email address <span class="token punctuation">(</span>used <span class="token keyword">for</span> urgent renewal and security notices<span class="token punctuation">)</span>
+ <span class="token punctuation">(</span>Enter <span class="token string">'c'</span> to cancel<span class="token punctuation">)</span>: xx@gmail.com
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please <span class="token builtin class-name">read</span> the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree <span class="token keyword">in</span>
+order to register with the ACME server. Do you agree?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o:
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: Y
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing, once your first certificate is successfully issued, to
+share your email address with the Electronic Frontier Foundation, a founding
+partner of the Let<span class="token string">'s Encrypt project and the non-profit organization that
+develops Certbot? We'</span>d like to send you email about our work encrypting the web,
+EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<span class="token punctuation">(</span>Y<span class="token punctuation">)</span>es/<span class="token punctuation">(</span>N<span class="token punctuation">)</span>o: N
+Account registered.
+Requesting a certificate <span class="token keyword">for</span> yourdomain.com
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/yourdomain.com/privkey.pem
+This certificate expires on <span class="token number">2025</span>-02-15.
+These files will be updated when the certificate renews.
+Certbot has <span class="token builtin class-name">set</span> up a scheduled task to automatically renew this certificate <span class="token keyword">in</span> the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>由于是第一次执行certbot，所以需要回答一些问题，例如紧急邮箱和服务协议等。执行完毕后证书文件存在<code>/etc/letsencrypt/live/yourdomain.com/</code>目录中。</p>
+<p>之后再更新证书就不会再问一堆问题了，一键完成： <pre class="line-numbers language-none"><code class="language-none">$ certbot certonly --nginx -d yourdomain.com
+Saving debug log to &#x2F;var&#x2F;log&#x2F;letsencrypt&#x2F;letsencrypt.log
+Requesting a certificate for yourdomain.com
+
+Successfully received certificate.
+Certificate is saved at: &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;fullchain.pem
+Key is saved at:         &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;yourdomain.com&#x2F;privkey.pem
+This certificate expires on 2025-02-15.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG &#x2F; Let&#39;s Encrypt:   https:&#x2F;&#x2F;letsencrypt.org&#x2F;donate
+ * Donating to EFF:                    https:&#x2F;&#x2F;eff.org&#x2F;donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="修改网站证书文件路径">修改网站证书文件路径</h2>
+<p>网站证书文件位于<code>/etc/nginx/sites-available/yourdomain.com</code>，修改下面两行：</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json">server <span class="token punctuation">&#123;</span>
+    server_name yourdomain.com;
+    listen <span class="token number">443</span> ssl;
+
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ...
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后测试nginx的配置是否正确：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-t</span>
+nginx: the configuration <span class="token function">file</span> /etc/nginx/nginx.conf syntax is ok
+nginx: configuration <span class="token function">file</span> /etc/nginx/nginx.conf <span class="token builtin class-name">test</span> is successful<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>重启nginx，浏览器中查看证书是否已经生效：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ nginx <span class="token parameter variable">-s</span> reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="配置证书自动更新">配置证书自动更新</h2>
+<p>新建一个cron job：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">sudo</span> <span class="token function">crontab</span> <span class="token parameter variable">-e</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>增加一个条目，每天3:28执行更新证书：</p>
+<pre class="line-numbers language-none"><code class="language-none">28 3 * * * certbot renew --nginx --quiet<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1092,237 +1505,6 @@ alpha   Linux            VM running    <span class="token number">11.1</span>.11
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/en/use-az-cli-to-query-multiple-fields/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.jpg">
-      <meta itemprop="name" content="finisky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Finisky Garden">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/llm-can-accurately-predict-searcher-preferences/" class="post-title-link" itemprop="url">基于LLM评估搜索系统</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2024-08-29 08:30:26 / 修改时间：16:39:21" itemprop="dateCreated datePublished" datetime="2024-08-29T08:30:26+08:00">2024-08-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">评论：</span>
-  
-    <a title="waline" href="/llm-can-accurately-predict-searcher-preferences/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/llm-can-accurately-predict-searcher-preferences/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/llm-can-accurately-predict-searcher-preferences/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。</p>
-<p>微软（Bing搜索组）在SIGIR'24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选择一个与之相符的LLM及其提示词，然后令该LLM大规模地产生标签。实验表明，LLM的准确性与人工标注者相当，并且在找到最佳系统和最难的查询方面同样有用。</p>
-<p>[SIGIR2024] <a
-target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/large-language-models-can-accurately-predict-searcher-preferences/">#
-Large Language Models can Accurately Predict Searcher
-Preferences</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/llm-can-accurately-predict-searcher-preferences/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/is-chatgpt-good-at-search-ranking/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.jpg">
-      <meta itemprop="name" content="finisky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Finisky Garden">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/is-chatgpt-good-at-search-ranking/" class="post-title-link" itemprop="url">ChatGPT擅长搜索排序吗？</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-07-21 22:15:25" itemprop="dateCreated datePublished" datetime="2024-07-21T22:15:25+08:00">2024-07-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-07-22 00:11:06" itemprop="dateModified" datetime="2024-07-22T00:11:06+08:00">2024-07-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">评论：</span>
-  
-    <a title="waline" href="/is-chatgpt-good-at-search-ranking/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/is-chatgpt-good-at-search-ranking/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/is-chatgpt-good-at-search-ranking/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>大语言模型在各种与语言相关的任务中表现出了显著的零样本泛化能力，包括搜索引擎。然而，现有的工作主要利用LLM的生成能力进行信息检索，而不是直接进行段落排序。这篇EMNLP2023的论文(Outstanding
-Paper)研究了LLM是否擅长搜索排序的问题。</p>
-<p><a target="_blank" rel="noopener" href="https://aclanthology.org/2023.emnlp-main.923/"># Is ChatGPT
-Good at Search? Investigating Large Language Models as Re-Ranking
-Agents</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/is-chatgpt-good-at-search-ranking/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
