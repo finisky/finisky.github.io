@@ -128,7 +128,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">259</span>
+          <span class="site-state-item-count">261</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -156,6 +156,251 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/11/30/mongodbcertpermission/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/11/30/mongodbcertpermission/" class="post-title-link" itemprop="url">MongoDB证书所有者和文件权限</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-30 23:37:32" itemprop="dateCreated datePublished" datetime="2020-11-30T23:37:32+08:00">2020-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/2020/11/30/mongodbcertpermission/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/11/30/mongodbcertpermission/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2020/11/30/mongodbcertpermission/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>如果你按官方文档 <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>
+配置MongoDB证书，可能会遇到如下问题：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
+&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>真难伺候，一会儿没权限读证书，一会儿权限太开放了，到底证书要什么权限？官方文档没加个tips解释这些细节，可能假设用户对PKI和证书这套东西非常熟悉。</p>
+<p>运行mongod的用户是<code>mongodb</code>，所以看起来证书权限需要是：<strong>能让用户<code>mongodb</code>读此证书但不能修改</strong>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/30/mongodbcertpermission/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/11/30/mongodbcertpermission.en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/qrcode.jpg">
+      <meta itemprop="name" content="finisky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Finisky Garden">
+      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Finisky Garden">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/11/30/mongodbcertpermission.en/" class="post-title-link" itemprop="url">MongoDB Certificate Key File Ownership And Permission</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-30 23:30:42" itemprop="dateCreated datePublished" datetime="2020-11-30T23:30:42+08:00">2020-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-01-24 22:30:12" itemprop="dateModified" datetime="2023-01-24T22:30:12+08:00">2023-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">评论：</span>
+  
+    <a title="waline" href="/2020/11/30/mongodbcertpermission.en/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2020/11/30/mongodbcertpermission.en/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2020/11/30/mongodbcertpermission.en/"></span>
+    </span>
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>When you setup TLS/SSL for MongoDB <a
+target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/tutorial/configure-ssl/">Configure
+mongod and mongos for TLS/SSL</a>, you might encounter the following
+errors:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;E&quot;,  &quot;c&quot;:&quot;NETWORK&quot;,  &quot;id&quot;:23248,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Cannot read certificate file&quot;,&quot;attr&quot;:&#123;&quot;keyFile&quot;:&quot;&#x2F;etc&#x2F;ssl&#x2F;testserver1.pem&quot;,&quot;error&quot;:&quot;error:0200100D:system library:fopen:Permission denied&quot;&#125;&#125;
+&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:02:19.406+00:00&quot;&#125;,&quot;s&quot;:&quot;F&quot;,  &quot;c&quot;:&quot;CONTROL&quot;,  &quot;id&quot;:20574,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Error during global initialization&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:140,&quot;codeName&quot;:&quot;InvalidSSLConfiguration&quot;,&quot;errmsg&quot;:&quot;Can not set up PEM key file.&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>or <pre class="line-numbers language-none"><code class="language-none">&#123;&quot;t&quot;:&#123;&quot;$date&quot;:&quot;2020-11-30T08:01:14.545+00:00&quot;&#125;,&quot;s&quot;:&quot;I&quot;,  &quot;c&quot;:&quot;ACCESS&quot;,   &quot;id&quot;:20254,   &quot;ctx&quot;:&quot;main&quot;,&quot;msg&quot;:&quot;Read security file failed&quot;,&quot;attr&quot;:&#123;&quot;error&quot;:&#123;&quot;code&quot;:30,&quot;codeName&quot;:&quot;InvalidPath&quot;,&quot;errmsg&quot;:&quot;permissions on &#x2F; are too open&quot;&#125;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<p>So what's the right ownership and permission for the certificate pem
+file? The answer is: <strong>the pem file should have read access but no
+write access for the user <code>mongodb</code></strong>.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/30/mongodbcertpermission.en/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1139,253 +1384,8 @@ sugar.</p>
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/09/01/perlcgi.en/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.jpg">
-      <meta itemprop="name" content="finisky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Finisky Garden">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/09/01/perlcgi.en/" class="post-title-link" itemprop="url">Can't locate CGI.pm in @INC</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-09-01 00:58:20" itemprop="dateCreated datePublished" datetime="2020-09-01T00:58:20+08:00">2020-09-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-24 22:30:12" itemprop="dateModified" datetime="2023-01-24T22:30:12+08:00">2023-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">评论：</span>
-  
-    <a title="waline" href="/2020/09/01/perlcgi.en/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/09/01/perlcgi.en/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/2020/09/01/perlcgi.en/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Install an old library <a
-target="_blank" rel="noopener" href="http://lightsquid.sourceforge.net/">lightsquid</a> on Ubuntu
-20.04. When visit the cgi, internal server error pops up.</p>
-<p>Debug the cgi by directly run it in
-<code>/var/www/lightsquid</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">/var/www/lightsquid$ perl index.cgi
-Can't <span class="token function">locate</span> CGI.pm <span class="token keyword">in</span> @INC <span class="token punctuation">(</span>you may need to <span class="token function">install</span> the CGI module<span class="token punctuation">)</span> <span class="token punctuation">(</span>@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base<span class="token punctuation">)</span> at index.cgi line <span class="token number">19</span>.
-BEGIN failed--compilation aborted at index.cgi line <span class="token number">19</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>Seems that some modules are missing, after several search: <a
-target="_blank" rel="noopener" href="https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm">https://packages.ubuntu.com/search?suite=trusty&amp;arch=any&amp;mode=filename&amp;searchon=contents&amp;keywords=cgi.pm</a></p>
-<p>Combined with the error message: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">$ <span class="token function">apt</span> <span class="token function">install</span> libcgi-pm-perl<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
-<p>Then it works: <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">/var/www/lightsquid$ perl index.cgi
-```html
-<span class="token operator">&lt;</span><span class="token operator">!</span>DOCTYPE html PUBLIC <span class="token string">"-//W3C//DTD HTML 4.01 Transitional//EN"</span><span class="token operator">></span>
-
-<span class="token operator">&lt;</span>HTML<span class="token operator">></span>
-<span class="token operator">&lt;</span>HEAD<span class="token operator">></span>
-  <span class="token operator">&lt;</span>META <span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"robots"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"noindex,nofollow"</span><span class="token operator">></span>
-  <span class="token operator">&lt;</span>META <span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"generator"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"LightSquid - http://lightsquid.sf.net"</span><span class="token operator">></span>
-  <span class="token operator">&lt;</span>META http-equiv<span class="token operator">=</span><span class="token string">"Content-Type"</span> <span class="token assign-left variable">content</span><span class="token operator">=</span><span class="token string">"text/html; charset=US-ASCII"</span><span class="token operator">></span>
-  <span class="token operator">&lt;</span>META HTTP-EQUIV<span class="token operator">=</span><span class="token string">"REFRESH"</span> <span class="token assign-left variable">CONTENT</span><span class="token operator">=</span><span class="token string">"600"</span><span class="token operator">></span>
-<span class="token punctuation">..</span>.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://finisky.github.io/2020/08/29/googlebbr/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/qrcode.jpg">
-      <meta itemprop="name" content="finisky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Finisky Garden">
-      <meta itemprop="description" content="互联网那些事儿：NLP, 软件工程, 产品设计">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Finisky Garden">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/29/googlebbr/" class="post-title-link" itemprop="url">Linux服务器使用BBR提升网速</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-29 12:36:25" itemprop="dateCreated datePublished" datetime="2020-08-29T12:36:25+08:00">2020-08-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-18 12:18:46" itemprop="dateModified" datetime="2022-08-18T12:18:46+08:00">2022-08-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Networking/" itemprop="url" rel="index"><span itemprop="name">Networking</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">评论：</span>
-  
-    <a title="waline" href="/2020/08/29/googlebbr/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2020/08/29/googlebbr/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-item" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="waline-pageview-count" data-path="/2020/08/29/googlebbr/"></span>
-    </span>
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a
-target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/gcp/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster">BBR</a>
-是Google 2016年提出的TCP
-拥塞控制算法，可以显著地提升Server的吞吐率并降低延迟。在VPS上实测效果非常明显，将VPS的下载速度由10Mbps左右提升至约50Mbps，自动视频质量也由240p升至1080p。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/29/googlebbr/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/18/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/20/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/18/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/20/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1397,7 +1397,7 @@ target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/gcp/
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
