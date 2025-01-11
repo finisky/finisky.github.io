@@ -29,8 +29,8 @@
 <meta property="og:site_name" content="Finisky Garden">
 <meta property="og:description" content="The double-spending problem is a critical challenge in transaction systems, especially when managing account balances or funds. It occurs when a system allows the same funds to be spent multiple times">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-01-01T01:36:01.000Z">
-<meta property="article:modified_time" content="2025-01-11T01:39:08.000Z">
+<meta property="article:published_time" content="2025-01-01T01:36:52.000Z">
+<meta property="article:modified_time" content="2025-01-11T01:47:02.000Z">
 <meta property="article:author" content="finisky">
 <meta property="article:tag" content="C#">
 <meta property="article:tag" content="MongoDB">
@@ -119,7 +119,7 @@
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
             <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#problem-overview"><span class="nav-number">1.</span> <span class="nav-text">Problem Overview</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#approach-1-using-transactions"><span class="nav-number">2.</span> <span class="nav-text">Approach 1: Using
-Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#implementation"><span class="nav-number">2.1.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works"><span class="nav-number">2.2.</span> <span class="nav-text">How It Works</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#approach-2-using-versioning"><span class="nav-number">3.</span> <span class="nav-text">Approach 2: Using Versioning</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#implementation-1"><span class="nav-number">3.1.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works-1"><span class="nav-number">3.2.</span> <span class="nav-text">How It Works</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-demo"><span class="nav-number">6.</span> <span class="nav-text">Full Demo</span></a></li></ol></div>
+Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#implementation"><span class="nav-number">2.1.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works"><span class="nav-number">2.2.</span> <span class="nav-text">How It Works</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#approach-2-using-versioning"><span class="nav-number">3.</span> <span class="nav-text">Approach 2: Using Versioning</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#implementation-1"><span class="nav-number">3.1.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-it-works-1"><span class="nav-number">3.2.</span> <span class="nav-text">How It Works</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#test-code"><span class="nav-number">4.</span> <span class="nav-text">Test Code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#full-demo"><span class="nav-number">6.</span> <span class="nav-text">Full Demo</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -245,14 +245,14 @@ Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2025-01-01 09:36:01" itemprop="dateCreated datePublished" datetime="2025-01-01T09:36:01+08:00">2025-01-01</time>
+      <time title="Created: 2025-01-01 09:36:52" itemprop="dateCreated datePublished" datetime="2025-01-01T09:36:52+08:00">2025-01-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-01-11 09:39:08" itemprop="dateModified" datetime="2025-01-11T09:39:08+08:00">2025-01-11</time>
+      <time title="Modified: 2025-01-11 09:47:02" itemprop="dateModified" datetime="2025-01-11T09:47:02+08:00">2025-01-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -306,6 +306,7 @@ handling</strong>.</p>
 <p>This post is an in-depth discussion of the double-spending problem
 from the <a href="/building-a-transaction-system-with-mongodb/">Building
 a Transaction System with MongoDB</a> blog.</p>
+<span id="more"></span>
 <h1 id="problem-overview">Problem Overview</h1>
 <p>Consider a system where users can initiate transactions like
 purchases. If two requests attempt to spend the same funds concurrently,
@@ -325,8 +326,9 @@ Transactions</h1>
 atomicity, ensuring that a sequence of operations either completes
 entirely or not at all. This is particularly useful for managing funds
 across multiple operations.</p>
-<p><a href="/building-a-transaction-system-with-mongodb/">The previous
-post</a> uses this approach to prevent the double-spending issue.</p>
+<p><a href="/en/building-a-transaction-system-with-mongodb/">The
+previous post</a> uses this approach to prevent the double-spending
+issue.</p>
 <p>The <code>AccountEntry</code> definition:</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AccountEntry</span>
 <span class="token punctuation">&#123;</span>
@@ -453,7 +455,7 @@ returns a conflict response.</li>
 balance is returned to the caller, reflecting the result of the
 operation.</li>
 </ul>
-<h1 id="测试代码">测试代码</h1>
+<h1 id="test-code">Test Code</h1>
 <p>Concurrently run 5 threads to make transactions on the same
 account.</p>
 <pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">public</span> <span class="token keyword">async</span> <span class="token return-type class-name">Task</span> <span class="token function">RunAsync</span><span class="token punctuation">(</span><span class="token class-name">Func<span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">,</span> <span class="token keyword">decimal</span><span class="token punctuation">,</span> Task<span class="token punctuation">&lt;</span>TransResult<span class="token punctuation">></span><span class="token punctuation">></span></span> func<span class="token punctuation">)</span>
@@ -754,14 +756,11 @@ transaction systems.</p>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/en/how-to-fix-win11-rdp-black-screen/" rel="prev" title="How to Fix Windows 11 RDP Black Screen After Windows Update">
-                  <i class="fa fa-chevron-left"></i> How to Fix Windows 11 RDP Black Screen After Windows Update
+                <a href="/solving-double-spending-with-mongodb/" rel="prev" title="用MongoDB解决双花问题: 基于事务还是基于版本">
+                  <i class="fa fa-chevron-left"></i> 用MongoDB解决双花问题: 基于事务还是基于版本
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/solving-double-spending-with-mongodb/" rel="next" title="用MongoDB解决双花问题: 基于事务还是基于版本">
-                  用MongoDB解决双花问题: 基于事务还是基于版本 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
