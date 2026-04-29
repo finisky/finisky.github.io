@@ -1,0 +1,639 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Solving Double-Spending with MongoDB: Transactions vs. Versioning"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,C#"><meta property="og:type" content="article"><meta property="og:title" content="Solving Double-Spending with MongoDB: Transactions vs. Versioning"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/solving-double-spending-with-mongodb/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2025-01-01 09:36:52 +0800 CST"><meta property="article:modified_time" content="2025-01-01 09:36:52 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/solving-double-spending-with-mongodb/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/solving-double-spending-with-mongodb/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Solving Double-Spending with MongoDB: Transactions vs. Versioning - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#problem-overview>Problem Overview</a></li><li><a href=#approach-1-using-transactions>Approach 1: Using Transactions</a><ul><li><a href=#implementation>Implementation</a></li><li><a href=#how-it-works>How It Works</a></li></ul></li><li><a href=#approach-2-using-versioning>Approach 2: Using Versioning</a><ul><li><a href=#implementation-1>Implementation</a></li><li><a href=#how-it-works-1>How It Works</a></li></ul></li><li><a href=#test-code>Test Code</a></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#full-demo>Full Demo</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/building-a-transaction-system-with-mongodb/>Building a Transaction System with MongoDB</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/building-large-scale-social-network-graphs-with-mongodb/>Building Large-Scale Social Network Graphs with MongoDB</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-endless-retry/>MongoDB Transaction BulkWrite Endless Retry</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-slave-sync/>MongoDB Master-Slave Replication by Change Stream</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-strongly-typed-collection-example/>MongoDB Strongly-Typed Collection Usage Example</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/solving-double-spending-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Solving Double-Spending with MongoDB: Transactions vs. Versioning"><meta itemprop=description content="The double-spending problem is a critical challenge in transaction systems, especially when managing account balances or funds. It occurs when a system allows the same funds to be spent multiple times due to concurrent operations or race conditions. In this article, we explore two approaches to resolving this issue using MongoDB: transaction-based handling and versioning-based handling.
+This post is an in-depth discussion of the double-spending problem from the 
+
+    Building a Transaction System with MongoDB
+    
+ blog."></span><header class=post-header><h1 class=post-title itemprop="name headline">Solving Double-Spending with MongoDB: Transactions vs. Versioning</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2025-01-01 09:36:52 +08:00" itemprop="dateCreated datePublished" datetime="2025-01-01 09:36:52 +0800 CST">2025-01-01
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>10min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/solving-double-spending-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/solving-double-spending-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>The double-spending problem is a critical challenge in transaction systems, especially when managing account balances or funds. It occurs when a system allows the same funds to be spent multiple times due to concurrent operations or race conditions. In this article, we explore two approaches to resolving this issue using MongoDB: <strong>transaction-based handling</strong> and <strong>versioning-based handling</strong>.</p><p>This post is an in-depth discussion of the double-spending problem from the
+<a href=/building-a-transaction-system-with-mongodb/ title="Building a Transaction System with MongoDB">Building a Transaction System with MongoDB
+</a>blog.</p><a id=more></a><h1 id=problem-overview>Problem Overview
+<a class=header-anchor href=#problem-overview></a></h1><p>Consider a system where users can initiate transactions like purchases. If two requests attempt to spend the same funds concurrently, the system may incorrectly process both, leading to an invalid state. For example:</p><ul><li>User A has $100 in their account.</li><li>Two concurrent processes try to deduct $60 each.</li><li>Without safeguards, the system might process both, resulting in a balance of $-20.</li></ul><p>MongoDB provides tools to prevent such issues, ensuring consistency and correctness in concurrent environments.</p><h1 id=approach-1-using-transactions>Approach 1: Using Transactions
+<a class=header-anchor href=#approach-1-using-transactions></a></h1><p>MongoDB’s <strong>multi-document transactions</strong> enable atomicity, ensuring that a sequence of operations either completes entirely or not at all. This is particularly useful for managing funds across multiple operations.</p><p><a href=/en/building-a-transaction-system-with-mongodb/ title="The previous post">The previous post
+</a>uses this approach to prevent the double-spending issue.</p><p>The <code>AccountEntry</code> definition:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>AccountEntry</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Balance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=implementation>Implementation
+<a class=header-anchor href=#implementation></a></h2><p>Below is a step-by-step implementation of a DecreaseBalance API using transactions to prevent double-spending.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>accountEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>accountEntry</span><span class=p>.</span><span class=n>Balance</span> <span class=p>&lt;</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Gte</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span>  <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>result</span><span class=p>.</span><span class=n>Balance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=how-it-works>How It Works
+<a class=header-anchor href=#how-it-works></a></h2><ul><li><strong>Balance Check</strong>: The account&rsquo;s current balance is retrieved within the transaction to ensure it is sufficient for the deduction.</li><li><strong>Conditional Update</strong>: A filter ensures the account exists and has a balance greater than or equal to the requested amount. The <code>Inc</code> operator atomically deducts the balance, while the <code>UpdateTime</code> field is updated for auditing purposes.</li><li><strong>Concurrency Control</strong>: The transaction ensures that balance updates are safe from race conditions and double-spending.</li></ul><h1 id=approach-2-using-versioning>Approach 2: Using Versioning
+<a class=header-anchor href=#approach-2-using-versioning></a></h1><p>Versioning uses an optimistic concurrency control mechanism. Every document includes a version field, which is incremented with each update. Concurrent updates check the version to ensure no other process has modified the document, thus avoiding conflicts.</p><p>Add a version field to <code>AccountEntry</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5>5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6>6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7>7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>AccountEntry</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Balance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>int</span> <span class=n>Version</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=implementation-1>Implementation
+<a class=header-anchor href=#implementation-1></a></h2><p>The following is an implementation of a <code>DecreaseBalance</code> API using an optimistic locking mechanism with a <code>Version</code> field:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span><span class=lnt id=hl-3-18><a class=lnlinks href=#hl-3-18>18</a>
+</span><span class=lnt id=hl-3-19><a class=lnlinks href=#hl-3-19>19</a>
+</span><span class=lnt id=hl-3-20><a class=lnlinks href=#hl-3-20>20</a>
+</span><span class=lnt id=hl-3-21><a class=lnlinks href=#hl-3-21>21</a>
+</span><span class=lnt id=hl-3-22><a class=lnlinks href=#hl-3-22>22</a>
+</span><span class=lnt id=hl-3-23><a class=lnlinks href=#hl-3-23>23</a>
+</span><span class=lnt id=hl-3-24><a class=lnlinks href=#hl-3-24>24</a>
+</span><span class=lnt id=hl-3-25><a class=lnlinks href=#hl-3-25>25</a>
+</span><span class=lnt id=hl-3-26><a class=lnlinks href=#hl-3-26>26</a>
+</span><span class=lnt id=hl-3-27><a class=lnlinks href=#hl-3-27>27</a>
+</span><span class=lnt id=hl-3-28><a class=lnlinks href=#hl-3-28>28</a>
+</span><span class=lnt id=hl-3-29><a class=lnlinks href=#hl-3-29>29</a>
+</span><span class=lnt id=hl-3-30><a class=lnlinks href=#hl-3-30>30</a>
+</span><span class=lnt id=hl-3-31><a class=lnlinks href=#hl-3-31>31</a>
+</span><span class=lnt id=hl-3-32><a class=lnlinks href=#hl-3-32>32</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceWithVersionAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>accountEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>accountEntry</span><span class=p>.</span><span class=n>Balance</span> <span class=p>&lt;</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Version</span><span class=p>,</span> <span class=n>accountEntry</span><span class=p>.</span><span class=n>Version</span><span class=p>)</span> <span class=c1>// Match the current version</span>
+</span></span><span class=line><span class=cl>    <span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Version</span><span class=p>,</span> <span class=m>1</span><span class=p>)</span>    <span class=c1>// Increment version</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>result</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>ConcurrentUpdateFailure</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>result</span><span class=p>.</span><span class=n>Balance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=how-it-works-1>How It Works
+<a class=header-anchor href=#how-it-works-1></a></h2><ul><li><strong>Retrieve Account</strong>: The API retrieves the <code>AccountEntry</code> by <code>Uuid</code> to get the current balance and version, ensuring it has the latest data for validation.</li><li><strong>Validate Balance</strong>: Checks if the current balance is sufficient to cover the deduction amount before proceeding.</li><li><strong>Build Optimistic Locking Filter</strong>: Combines the account ID and version in a filter to ensure that the account has not been updated by another operation since retrieval.</li><li><strong>Update Atomically</strong>: Uses MongoDB&rsquo;s <code>FindOneAndUpdate</code> with atomic operations to deduct the balance, increment the version, and update the timestamp in a single step.</li><li><strong>Handle Conflicts</strong>: If the update fails because of a version mismatch, it indicates a concurrent modification, and the API returns a conflict response.</li><li><strong>Return Updated Balance</strong>: If successful, the updated balance is returned to the caller, reflecting the result of the operation.</li></ul><h1 id=test-code>Test Code
+<a class=header-anchor href=#test-code></a></h1><p>Concurrently run 5 threads to make transactions on the same account.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span><span class=lnt id=hl-4-11><a class=lnlinks href=#hl-4-11>11</a>
+</span><span class=lnt id=hl-4-12><a class=lnlinks href=#hl-4-12>12</a>
+</span><span class=lnt id=hl-4-13><a class=lnlinks href=#hl-4-13>13</a>
+</span><span class=lnt id=hl-4-14><a class=lnlinks href=#hl-4-14>14</a>
+</span><span class=lnt id=hl-4-15><a class=lnlinks href=#hl-4-15>15</a>
+</span><span class=lnt id=hl-4-16><a class=lnlinks href=#hl-4-16>16</a>
+</span><span class=lnt id=hl-4-17><a class=lnlinks href=#hl-4-17>17</a>
+</span><span class=lnt id=hl-4-18><a class=lnlinks href=#hl-4-18>18</a>
+</span><span class=lnt id=hl-4-19><a class=lnlinks href=#hl-4-19>19</a>
+</span><span class=lnt id=hl-4-20><a class=lnlinks href=#hl-4-20>20</a>
+</span><span class=lnt id=hl-4-21><a class=lnlinks href=#hl-4-21>21</a>
+</span><span class=lnt id=hl-4-22><a class=lnlinks href=#hl-4-22>22</a>
+</span><span class=lnt id=hl-4-23><a class=lnlinks href=#hl-4-23>23</a>
+</span><span class=lnt id=hl-4-24><a class=lnlinks href=#hl-4-24>24</a>
+</span><span class=lnt id=hl-4-25><a class=lnlinks href=#hl-4-25>25</a>
+</span><span class=lnt id=hl-4-26><a class=lnlinks href=#hl-4-26>26</a>
+</span><span class=lnt id=hl-4-27><a class=lnlinks href=#hl-4-27>27</a>
+</span><span class=lnt id=hl-4-28><a class=lnlinks href=#hl-4-28>28</a>
+</span><span class=lnt id=hl-4-29><a class=lnlinks href=#hl-4-29>29</a>
+</span><span class=lnt id=hl-4-30><a class=lnlinks href=#hl-4-30>30</a>
+</span><span class=lnt id=hl-4-31><a class=lnlinks href=#hl-4-31>31</a>
+</span><span class=lnt id=hl-4-32><a class=lnlinks href=#hl-4-32>32</a>
+</span><span class=lnt id=hl-4-33><a class=lnlinks href=#hl-4-33>33</a>
+</span><span class=lnt id=hl-4-34><a class=lnlinks href=#hl-4-34>34</a>
+</span><span class=lnt id=hl-4-35><a class=lnlinks href=#hl-4-35>35</a>
+</span><span class=lnt id=hl-4-36><a class=lnlinks href=#hl-4-36>36</a>
+</span><span class=lnt id=hl-4-37><a class=lnlinks href=#hl-4-37>37</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>(</span><span class=n>Func</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>,</span> <span class=kt>decimal</span><span class=p>,</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;&gt;</span> <span class=n>func</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>tasks</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>string</span> <span class=n>accountId</span> <span class=p>=</span> <span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=m>100</span><span class=n>m</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>5</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>cur</span> <span class=p>=</span> <span class=n>i</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>tasks</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>Task</span><span class=p>.</span><span class=n>Run</span><span class=p>(</span><span class=kd>async</span> <span class=p>()</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>r</span> <span class=p>=</span> <span class=k>await</span> <span class=n>func</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=m>60</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Task {cur}: code: {r.Code.ToString()}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>WhenAll</span><span class=p>(</span><span class=n>tasks</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>updatedAccount</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Account {accountId} Final Balance: {updatedAccount.Balance}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>model</span> <span class=p>=</span> <span class=k>new</span> <span class=n>DoubleSpendDemo</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Transaction Approach:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>(</span><span class=n>model</span><span class=p>.</span><span class=n>DecreaseBalanceAsync</span><span class=p>).</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;----------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Versioning Approach:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>(</span><span class=n>model</span><span class=p>.</span><span class=n>DecreaseBalanceWithVersionAsync</span><span class=p>).</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Done&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Results:</p><blockquote><p>Transaction Approach:
+Task 4: code: Success
+Task 3: code: InsufficientBalance
+Task 0: code: InsufficientBalance
+Task 1: code: InsufficientBalance
+Task 2: code: InsufficientBalance
+Account 41806960-abf8-4765-9834-36af015c2fa9 Final Balance: 40</p><p>Versioning Approach:
+Task 4: code: ConcurrentUpdateFailure
+Task 1: code: ConcurrentUpdateFailure
+Task 3: code: ConcurrentUpdateFailure
+Task 2: code: Success
+Task 0: code: ConcurrentUpdateFailure
+Account 72820bfc-d9b8-4a66-8c7c-3eb5c2efe340 Final Balance: 40
+Done</p></blockquote><p>It can be seen that the two approaches solve the problem in different ways: the transaction-based approach uses locking, so only one Task can intervene and execute at a time, while the other Tasks return <code>InsufficientBalance</code>; on the other hand, with the versioning-based approach, all Tasks can intervene, but only one Task will succeed in the final update, so the other Tasks return <code>ConcurrentUpdateFailure</code>.</p><h1 id=conclusion>Conclusion
+<a class=header-anchor href=#conclusion></a></h1><p>Comparison of the Two Approaches：</p><table><thead><tr><th style=text-align:center>Feature</th><th style=text-align:center>Transactions</th><th style=text-align:center>Versioning</th></tr></thead><tbody><tr><td style=text-align:center>Concurrency Control</td><td style=text-align:center>Locks multiple documents in a session</td><td style=text-align:center>Relies on optimistic concurrency</td></tr><tr><td style=text-align:center>Development Efficiency</td><td style=text-align:center>High, directly using transactions</td><td style=text-align:center>Relatively complex to implement, prone to errors</td></tr><tr><td style=text-align:center>Performance</td><td style=text-align:center>Slightly slower due to locking</td><td style=text-align:center>Faster in high-concurrency scenarios</td></tr></tbody></table><p>Both transactions and versioning are effective tools for addressing the double-spending problem in MongoDB.</p><ul><li><strong>Transactions</strong> offer strong guarantees for complex operations but come with a performance cost.</li><li><strong>Versioning</strong> provides a lightweight solution suitable for scenarios with high concurrency and simpler data dependencies. To further improve the performance, solutions such as asynchronous message processing can be introduced, though this also increases system complexity.</li></ul><p>By choosing the right approach based on system requirements, developers can ensure consistency, reliability, and scalability in their transaction systems.</p><h1 id=full-demo>Full Demo
+<a class=header-anchor href=#full-demo></a></h1><p>Fill the <code>ConnectionString</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>  1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>  2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>  3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>  4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5>  5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6>  6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7>  7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8>  8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9>  9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10> 10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11> 11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12> 12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13> 13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14> 14</a>
+</span><span class=lnt id=hl-5-15><a class=lnlinks href=#hl-5-15> 15</a>
+</span><span class=lnt id=hl-5-16><a class=lnlinks href=#hl-5-16> 16</a>
+</span><span class=lnt id=hl-5-17><a class=lnlinks href=#hl-5-17> 17</a>
+</span><span class=lnt id=hl-5-18><a class=lnlinks href=#hl-5-18> 18</a>
+</span><span class=lnt id=hl-5-19><a class=lnlinks href=#hl-5-19> 19</a>
+</span><span class=lnt id=hl-5-20><a class=lnlinks href=#hl-5-20> 20</a>
+</span><span class=lnt id=hl-5-21><a class=lnlinks href=#hl-5-21> 21</a>
+</span><span class=lnt id=hl-5-22><a class=lnlinks href=#hl-5-22> 22</a>
+</span><span class=lnt id=hl-5-23><a class=lnlinks href=#hl-5-23> 23</a>
+</span><span class=lnt id=hl-5-24><a class=lnlinks href=#hl-5-24> 24</a>
+</span><span class=lnt id=hl-5-25><a class=lnlinks href=#hl-5-25> 25</a>
+</span><span class=lnt id=hl-5-26><a class=lnlinks href=#hl-5-26> 26</a>
+</span><span class=lnt id=hl-5-27><a class=lnlinks href=#hl-5-27> 27</a>
+</span><span class=lnt id=hl-5-28><a class=lnlinks href=#hl-5-28> 28</a>
+</span><span class=lnt id=hl-5-29><a class=lnlinks href=#hl-5-29> 29</a>
+</span><span class=lnt id=hl-5-30><a class=lnlinks href=#hl-5-30> 30</a>
+</span><span class=lnt id=hl-5-31><a class=lnlinks href=#hl-5-31> 31</a>
+</span><span class=lnt id=hl-5-32><a class=lnlinks href=#hl-5-32> 32</a>
+</span><span class=lnt id=hl-5-33><a class=lnlinks href=#hl-5-33> 33</a>
+</span><span class=lnt id=hl-5-34><a class=lnlinks href=#hl-5-34> 34</a>
+</span><span class=lnt id=hl-5-35><a class=lnlinks href=#hl-5-35> 35</a>
+</span><span class=lnt id=hl-5-36><a class=lnlinks href=#hl-5-36> 36</a>
+</span><span class=lnt id=hl-5-37><a class=lnlinks href=#hl-5-37> 37</a>
+</span><span class=lnt id=hl-5-38><a class=lnlinks href=#hl-5-38> 38</a>
+</span><span class=lnt id=hl-5-39><a class=lnlinks href=#hl-5-39> 39</a>
+</span><span class=lnt id=hl-5-40><a class=lnlinks href=#hl-5-40> 40</a>
+</span><span class=lnt id=hl-5-41><a class=lnlinks href=#hl-5-41> 41</a>
+</span><span class=lnt id=hl-5-42><a class=lnlinks href=#hl-5-42> 42</a>
+</span><span class=lnt id=hl-5-43><a class=lnlinks href=#hl-5-43> 43</a>
+</span><span class=lnt id=hl-5-44><a class=lnlinks href=#hl-5-44> 44</a>
+</span><span class=lnt id=hl-5-45><a class=lnlinks href=#hl-5-45> 45</a>
+</span><span class=lnt id=hl-5-46><a class=lnlinks href=#hl-5-46> 46</a>
+</span><span class=lnt id=hl-5-47><a class=lnlinks href=#hl-5-47> 47</a>
+</span><span class=lnt id=hl-5-48><a class=lnlinks href=#hl-5-48> 48</a>
+</span><span class=lnt id=hl-5-49><a class=lnlinks href=#hl-5-49> 49</a>
+</span><span class=lnt id=hl-5-50><a class=lnlinks href=#hl-5-50> 50</a>
+</span><span class=lnt id=hl-5-51><a class=lnlinks href=#hl-5-51> 51</a>
+</span><span class=lnt id=hl-5-52><a class=lnlinks href=#hl-5-52> 52</a>
+</span><span class=lnt id=hl-5-53><a class=lnlinks href=#hl-5-53> 53</a>
+</span><span class=lnt id=hl-5-54><a class=lnlinks href=#hl-5-54> 54</a>
+</span><span class=lnt id=hl-5-55><a class=lnlinks href=#hl-5-55> 55</a>
+</span><span class=lnt id=hl-5-56><a class=lnlinks href=#hl-5-56> 56</a>
+</span><span class=lnt id=hl-5-57><a class=lnlinks href=#hl-5-57> 57</a>
+</span><span class=lnt id=hl-5-58><a class=lnlinks href=#hl-5-58> 58</a>
+</span><span class=lnt id=hl-5-59><a class=lnlinks href=#hl-5-59> 59</a>
+</span><span class=lnt id=hl-5-60><a class=lnlinks href=#hl-5-60> 60</a>
+</span><span class=lnt id=hl-5-61><a class=lnlinks href=#hl-5-61> 61</a>
+</span><span class=lnt id=hl-5-62><a class=lnlinks href=#hl-5-62> 62</a>
+</span><span class=lnt id=hl-5-63><a class=lnlinks href=#hl-5-63> 63</a>
+</span><span class=lnt id=hl-5-64><a class=lnlinks href=#hl-5-64> 64</a>
+</span><span class=lnt id=hl-5-65><a class=lnlinks href=#hl-5-65> 65</a>
+</span><span class=lnt id=hl-5-66><a class=lnlinks href=#hl-5-66> 66</a>
+</span><span class=lnt id=hl-5-67><a class=lnlinks href=#hl-5-67> 67</a>
+</span><span class=lnt id=hl-5-68><a class=lnlinks href=#hl-5-68> 68</a>
+</span><span class=lnt id=hl-5-69><a class=lnlinks href=#hl-5-69> 69</a>
+</span><span class=lnt id=hl-5-70><a class=lnlinks href=#hl-5-70> 70</a>
+</span><span class=lnt id=hl-5-71><a class=lnlinks href=#hl-5-71> 71</a>
+</span><span class=lnt id=hl-5-72><a class=lnlinks href=#hl-5-72> 72</a>
+</span><span class=lnt id=hl-5-73><a class=lnlinks href=#hl-5-73> 73</a>
+</span><span class=lnt id=hl-5-74><a class=lnlinks href=#hl-5-74> 74</a>
+</span><span class=lnt id=hl-5-75><a class=lnlinks href=#hl-5-75> 75</a>
+</span><span class=lnt id=hl-5-76><a class=lnlinks href=#hl-5-76> 76</a>
+</span><span class=lnt id=hl-5-77><a class=lnlinks href=#hl-5-77> 77</a>
+</span><span class=lnt id=hl-5-78><a class=lnlinks href=#hl-5-78> 78</a>
+</span><span class=lnt id=hl-5-79><a class=lnlinks href=#hl-5-79> 79</a>
+</span><span class=lnt id=hl-5-80><a class=lnlinks href=#hl-5-80> 80</a>
+</span><span class=lnt id=hl-5-81><a class=lnlinks href=#hl-5-81> 81</a>
+</span><span class=lnt id=hl-5-82><a class=lnlinks href=#hl-5-82> 82</a>
+</span><span class=lnt id=hl-5-83><a class=lnlinks href=#hl-5-83> 83</a>
+</span><span class=lnt id=hl-5-84><a class=lnlinks href=#hl-5-84> 84</a>
+</span><span class=lnt id=hl-5-85><a class=lnlinks href=#hl-5-85> 85</a>
+</span><span class=lnt id=hl-5-86><a class=lnlinks href=#hl-5-86> 86</a>
+</span><span class=lnt id=hl-5-87><a class=lnlinks href=#hl-5-87> 87</a>
+</span><span class=lnt id=hl-5-88><a class=lnlinks href=#hl-5-88> 88</a>
+</span><span class=lnt id=hl-5-89><a class=lnlinks href=#hl-5-89> 89</a>
+</span><span class=lnt id=hl-5-90><a class=lnlinks href=#hl-5-90> 90</a>
+</span><span class=lnt id=hl-5-91><a class=lnlinks href=#hl-5-91> 91</a>
+</span><span class=lnt id=hl-5-92><a class=lnlinks href=#hl-5-92> 92</a>
+</span><span class=lnt id=hl-5-93><a class=lnlinks href=#hl-5-93> 93</a>
+</span><span class=lnt id=hl-5-94><a class=lnlinks href=#hl-5-94> 94</a>
+</span><span class=lnt id=hl-5-95><a class=lnlinks href=#hl-5-95> 95</a>
+</span><span class=lnt id=hl-5-96><a class=lnlinks href=#hl-5-96> 96</a>
+</span><span class=lnt id=hl-5-97><a class=lnlinks href=#hl-5-97> 97</a>
+</span><span class=lnt id=hl-5-98><a class=lnlinks href=#hl-5-98> 98</a>
+</span><span class=lnt id=hl-5-99><a class=lnlinks href=#hl-5-99> 99</a>
+</span><span class=lnt id=hl-5-100><a class=lnlinks href=#hl-5-100>100</a>
+</span><span class=lnt id=hl-5-101><a class=lnlinks href=#hl-5-101>101</a>
+</span><span class=lnt id=hl-5-102><a class=lnlinks href=#hl-5-102>102</a>
+</span><span class=lnt id=hl-5-103><a class=lnlinks href=#hl-5-103>103</a>
+</span><span class=lnt id=hl-5-104><a class=lnlinks href=#hl-5-104>104</a>
+</span><span class=lnt id=hl-5-105><a class=lnlinks href=#hl-5-105>105</a>
+</span><span class=lnt id=hl-5-106><a class=lnlinks href=#hl-5-106>106</a>
+</span><span class=lnt id=hl-5-107><a class=lnlinks href=#hl-5-107>107</a>
+</span><span class=lnt id=hl-5-108><a class=lnlinks href=#hl-5-108>108</a>
+</span><span class=lnt id=hl-5-109><a class=lnlinks href=#hl-5-109>109</a>
+</span><span class=lnt id=hl-5-110><a class=lnlinks href=#hl-5-110>110</a>
+</span><span class=lnt id=hl-5-111><a class=lnlinks href=#hl-5-111>111</a>
+</span><span class=lnt id=hl-5-112><a class=lnlinks href=#hl-5-112>112</a>
+</span><span class=lnt id=hl-5-113><a class=lnlinks href=#hl-5-113>113</a>
+</span><span class=lnt id=hl-5-114><a class=lnlinks href=#hl-5-114>114</a>
+</span><span class=lnt id=hl-5-115><a class=lnlinks href=#hl-5-115>115</a>
+</span><span class=lnt id=hl-5-116><a class=lnlinks href=#hl-5-116>116</a>
+</span><span class=lnt id=hl-5-117><a class=lnlinks href=#hl-5-117>117</a>
+</span><span class=lnt id=hl-5-118><a class=lnlinks href=#hl-5-118>118</a>
+</span><span class=lnt id=hl-5-119><a class=lnlinks href=#hl-5-119>119</a>
+</span><span class=lnt id=hl-5-120><a class=lnlinks href=#hl-5-120>120</a>
+</span><span class=lnt id=hl-5-121><a class=lnlinks href=#hl-5-121>121</a>
+</span><span class=lnt id=hl-5-122><a class=lnlinks href=#hl-5-122>122</a>
+</span><span class=lnt id=hl-5-123><a class=lnlinks href=#hl-5-123>123</a>
+</span><span class=lnt id=hl-5-124><a class=lnlinks href=#hl-5-124>124</a>
+</span><span class=lnt id=hl-5-125><a class=lnlinks href=#hl-5-125>125</a>
+</span><span class=lnt id=hl-5-126><a class=lnlinks href=#hl-5-126>126</a>
+</span><span class=lnt id=hl-5-127><a class=lnlinks href=#hl-5-127>127</a>
+</span><span class=lnt id=hl-5-128><a class=lnlinks href=#hl-5-128>128</a>
+</span><span class=lnt id=hl-5-129><a class=lnlinks href=#hl-5-129>129</a>
+</span><span class=lnt id=hl-5-130><a class=lnlinks href=#hl-5-130>130</a>
+</span><span class=lnt id=hl-5-131><a class=lnlinks href=#hl-5-131>131</a>
+</span><span class=lnt id=hl-5-132><a class=lnlinks href=#hl-5-132>132</a>
+</span><span class=lnt id=hl-5-133><a class=lnlinks href=#hl-5-133>133</a>
+</span><span class=lnt id=hl-5-134><a class=lnlinks href=#hl-5-134>134</a>
+</span><span class=lnt id=hl-5-135><a class=lnlinks href=#hl-5-135>135</a>
+</span><span class=lnt id=hl-5-136><a class=lnlinks href=#hl-5-136>136</a>
+</span><span class=lnt id=hl-5-137><a class=lnlinks href=#hl-5-137>137</a>
+</span><span class=lnt id=hl-5-138><a class=lnlinks href=#hl-5-138>138</a>
+</span><span class=lnt id=hl-5-139><a class=lnlinks href=#hl-5-139>139</a>
+</span><span class=lnt id=hl-5-140><a class=lnlinks href=#hl-5-140>140</a>
+</span><span class=lnt id=hl-5-141><a class=lnlinks href=#hl-5-141>141</a>
+</span><span class=lnt id=hl-5-142><a class=lnlinks href=#hl-5-142>142</a>
+</span><span class=lnt id=hl-5-143><a class=lnlinks href=#hl-5-143>143</a>
+</span><span class=lnt id=hl-5-144><a class=lnlinks href=#hl-5-144>144</a>
+</span><span class=lnt id=hl-5-145><a class=lnlinks href=#hl-5-145>145</a>
+</span><span class=lnt id=hl-5-146><a class=lnlinks href=#hl-5-146>146</a>
+</span><span class=lnt id=hl-5-147><a class=lnlinks href=#hl-5-147>147</a>
+</span><span class=lnt id=hl-5-148><a class=lnlinks href=#hl-5-148>148</a>
+</span><span class=lnt id=hl-5-149><a class=lnlinks href=#hl-5-149>149</a>
+</span><span class=lnt id=hl-5-150><a class=lnlinks href=#hl-5-150>150</a>
+</span><span class=lnt id=hl-5-151><a class=lnlinks href=#hl-5-151>151</a>
+</span><span class=lnt id=hl-5-152><a class=lnlinks href=#hl-5-152>152</a>
+</span><span class=lnt id=hl-5-153><a class=lnlinks href=#hl-5-153>153</a>
+</span><span class=lnt id=hl-5-154><a class=lnlinks href=#hl-5-154>154</a>
+</span><span class=lnt id=hl-5-155><a class=lnlinks href=#hl-5-155>155</a>
+</span><span class=lnt id=hl-5-156><a class=lnlinks href=#hl-5-156>156</a>
+</span><span class=lnt id=hl-5-157><a class=lnlinks href=#hl-5-157>157</a>
+</span><span class=lnt id=hl-5-158><a class=lnlinks href=#hl-5-158>158</a>
+</span><span class=lnt id=hl-5-159><a class=lnlinks href=#hl-5-159>159</a>
+</span><span class=lnt id=hl-5-160><a class=lnlinks href=#hl-5-160>160</a>
+</span><span class=lnt id=hl-5-161><a class=lnlinks href=#hl-5-161>161</a>
+</span><span class=lnt id=hl-5-162><a class=lnlinks href=#hl-5-162>162</a>
+</span><span class=lnt id=hl-5-163><a class=lnlinks href=#hl-5-163>163</a>
+</span><span class=lnt id=hl-5-164><a class=lnlinks href=#hl-5-164>164</a>
+</span><span class=lnt id=hl-5-165><a class=lnlinks href=#hl-5-165>165</a>
+</span><span class=lnt id=hl-5-166><a class=lnlinks href=#hl-5-166>166</a>
+</span><span class=lnt id=hl-5-167><a class=lnlinks href=#hl-5-167>167</a>
+</span><span class=lnt id=hl-5-168><a class=lnlinks href=#hl-5-168>168</a>
+</span><span class=lnt id=hl-5-169><a class=lnlinks href=#hl-5-169>169</a>
+</span><span class=lnt id=hl-5-170><a class=lnlinks href=#hl-5-170>170</a>
+</span><span class=lnt id=hl-5-171><a class=lnlinks href=#hl-5-171>171</a>
+</span><span class=lnt id=hl-5-172><a class=lnlinks href=#hl-5-172>172</a>
+</span><span class=lnt id=hl-5-173><a class=lnlinks href=#hl-5-173>173</a>
+</span><span class=lnt id=hl-5-174><a class=lnlinks href=#hl-5-174>174</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson.Serialization.Conventions</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>MongoTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>model</span> <span class=p>=</span> <span class=k>new</span> <span class=n>DoubleSpendDemo</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Transaction Approach:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>(</span><span class=n>model</span><span class=p>.</span><span class=n>DecreaseBalanceAsync</span><span class=p>).</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;----------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Versioning Approach:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>(</span><span class=n>model</span><span class=p>.</span><span class=n>DecreaseBalanceWithVersionAsync</span><span class=p>).</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Done&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>AccountEntry</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Balance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>int</span> <span class=n>Version</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>TransResult</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>NewBalance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>TransCode</span> <span class=n>Code</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>enum</span> <span class=n>TransCode</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Success</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>ConcurrentUpdateFailure</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>InsufficientBalance</span> <span class=p>=</span> <span class=m>2</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>DoubleSpendDemo</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoClient</span> <span class=n>_mongoClient</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoCollection</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>_accountCollection</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Transaction&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>AccountCollectionName</span> <span class=p>=</span> <span class=s>&#34;Account&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DoubleSpendDemo</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>_mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>database</span> <span class=p>=</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>ignoreExtraElementsConvention</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConventionPack</span> <span class=p>{</span> <span class=k>new</span> <span class=n>IgnoreExtraElementsConvention</span><span class=p>(</span><span class=kc>true</span><span class=p>)</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=n>ConventionRegistry</span><span class=p>.</span><span class=n>Register</span><span class=p>(</span><span class=s>&#34;IgnoreExtraElements&#34;</span><span class=p>,</span> <span class=n>ignoreExtraElementsConvention</span><span class=p>,</span> <span class=n>type</span> <span class=p>=&gt;</span> <span class=kc>true</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>_accountCollection</span> <span class=p>=</span> <span class=n>database</span><span class=p>.</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;(</span><span class=n>AccountCollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>static</span> <span class=kt>string</span> <span class=n>GenerateAccountUuid</span><span class=p>()</span> <span class=p>=&gt;</span> <span class=s>$&#34;Acc_{Guid.NewGuid().ToString(&#34;</span><span class=n>N</span><span class=s>&#34;).ToUpper()}&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>initBalance</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newAccount</span> <span class=p>=</span> <span class=k>new</span> <span class=n>AccountEntry</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Uuid</span> <span class=p>=</span> <span class=n>uuid</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Balance</span> <span class=p>=</span> <span class=n>initBalance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>newAccount</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>newAccount</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>accountEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>accountEntry</span><span class=p>.</span><span class=n>Balance</span> <span class=p>&lt;</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Gte</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span>  <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>result</span><span class=p>.</span><span class=n>Balance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                    <span class=p>},</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceWithVersionAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>accountEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>accountEntry</span><span class=p>.</span><span class=n>Balance</span> <span class=p>&lt;</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Version</span><span class=p>,</span> <span class=n>accountEntry</span><span class=p>.</span><span class=n>Version</span><span class=p>)</span> <span class=c1>// Match the current version</span>
+</span></span><span class=line><span class=cl>            <span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Version</span><span class=p>,</span> <span class=m>1</span><span class=p>)</span>    <span class=c1>// Increment version</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>result</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>ConcurrentUpdateFailure</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>result</span><span class=p>.</span><span class=n>Balance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>(</span><span class=n>Func</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>,</span> <span class=kt>decimal</span><span class=p>,</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;&gt;</span> <span class=n>func</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>tasks</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>string</span> <span class=n>accountId</span> <span class=p>=</span> <span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=m>100</span><span class=n>m</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>5</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>cur</span> <span class=p>=</span> <span class=n>i</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=n>tasks</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>Task</span><span class=p>.</span><span class=n>Run</span><span class=p>(</span><span class=kd>async</span> <span class=p>()</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>var</span> <span class=n>r</span> <span class=p>=</span> <span class=k>await</span> <span class=n>func</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=m>60</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Task {cur}: code: {r.Code.ToString()}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}));</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>WhenAll</span><span class=p>(</span><span class=n>tasks</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>updatedAccount</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Account {accountId} Final Balance: {updatedAccount.Balance}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/c/>C#</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/switchyomega-no-longer-be-supported-solution/ rel=next title="SwitchyOmega No Longer Be Supported Solution"><i class="fa fa-chevron-left"></i> SwitchyOmega No Longer Be Supported Solution</a></div><div class="post-nav-prev post-nav-item"><a href=/en/how-to-fix-win11-rdp-black-screen/ rel=prev title="How to Fix Windows 11 RDP Black Screen After Windows Update">How to Fix Windows 11 RDP Black Screen After Windows Update
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/solving-double-spending-with-mongodb/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"solving-double-spending-with-mongodb","permalink":"https://finisky.github.io/en/solving-double-spending-with-mongodb/","title":"Solving Double-Spending with MongoDB: Transactions vs. Versioning","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

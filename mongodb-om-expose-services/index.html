@@ -1,0 +1,232 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS"><meta property="og:type" content="article"><meta property="og:title" content="Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-om-expose-services/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-12 23:30:38 +0800 CST"><meta property="article:modified_time" content="2020-12-12 23:30:38 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-expose-services/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-expose-services/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#命令行创建loadbalancer-service>命令行创建LoadBalancer Service</a></li><li><a href=#通过yaml创建service>通过yaml创建Service</a></li><li><a href=#客户端访问和getaddrinfo-enotfound错误>客户端访问和<code>getaddrinfo ENOTFOUND</code>错误</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-sharded-cluster/>部署Kubernetes MongoDB Sharded Cluster</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-tls-auth/>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-self-signed-certificates/>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-user-db/>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-ops-manager/>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-om-expose-services/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问"><meta itemprop=description content="本文为系列第三部分，使用第二部分创建好的userdb可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。"></span><header class=post-header><h1 class=post-title itemprop="name headline">Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-12-12 23:30:38 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-12 23:30:38 +0800 CST">2020-12-12
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-om-expose-services/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-om-expose-services/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>本文为系列第三部分，使用第二部分创建好的<code>userdb</code>可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。</p><a id=more></a><p>整个系列：</p><ol><li><a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager</a></li><li><a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)</a></li><li><a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问</a></li><li><a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></li><li><a href=/mongodb-om-tls-auth/ title=打开用户数据库TLS通信加密和Auth授权>打开用户数据库TLS通信加密和Auth授权</a></li></ol><p>官方文档是通过NodePort的方式暴露给公网，而我们这里是通过创建service的方式完成，好处是这种方式不必管理pod和node之间的端口映射，也不必担心pod被调度到不同node上之后IP的改变。不知道官方使用NodePort进行服务暴露是基于怎样的考虑。
+<a href=https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/ title="# Connect to a MongoDB Database Resource from Outside Kubernetes" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Connect to a MongoDB Database Resource from Outside Kubernetes
+<i class="fa fa-external-link-alt"></i></a></p><p>在此之前，先保证replicaset中<code>spec.security.tls.enabled</code>为false，否则各server之间的auth可能会让配置变得复杂。</p><h1 id=命令行创建loadbalancer-service>命令行创建LoadBalancer Service
+<a class=header-anchor href=#%e5%91%bd%e4%bb%a4%e8%a1%8c%e5%88%9b%e5%bb%baloadbalancer-service></a></h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl expose pod/userdb-0 --type=&#34;LoadBalancer&#34; --port 27017 -n mongodb
+</span></span><span class=line><span class=cl>service/userdb-0 exposed
+</span></span><span class=line><span class=cl>$ kubectl expose pod/userdb-1 --type=&#34;LoadBalancer&#34; --port 27017 -n mongodb
+</span></span><span class=line><span class=cl>service/userdb-1 exposed
+</span></span><span class=line><span class=cl>$ kubectl expose pod/userdb-2 --type=&#34;LoadBalancer&#34; --port 27017 -n mongodb
+</span></span><span class=line><span class=cl>service/userdb-2 exposed</span></span></code></pre></td></tr></table></div></div><p>可以在kubernetes dashboard看到我们创建了三个service: userdb-0, userdb-1, userdb-2，同时有三个公网IP。</p><p>这种暴露方式在pod更新之后可能会出现service匹配不到pod的情况，因为statefulset是用<code>controller-revision-hash</code>来标记pod的版本。所以要编辑一下这几个service中spec.selector部分，把<code>controller-revision-hash</code>一行去掉：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>nodePort</span><span class=p>:</span><span class=w> </span><span class=m>30560</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>userdb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller-revision-hash</span><span class=p>:</span><span class=w> </span><span class=l>userdb-676c9c444 </span><span class=w> </span><span class=c># DELETE THIS LINE!</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>pod-anti-affinity</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>userdb-0</span></span></span></code></pre></td></tr></table></div></div><h1 id=通过yaml创建service>通过yaml创建Service
+<a class=header-anchor href=#%e9%80%9a%e8%bf%87yaml%e5%88%9b%e5%bb%baservice></a></h1><p>新建userdb0service.yaml文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Service</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>userdb-0-svc-ext</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>userdb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>pod-anti-affinity</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>userdb-0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>LoadBalancer</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>userdb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>pod-anti-affinity</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>userdb-0</span></span></span></code></pre></td></tr></table></div></div><p>直接apply:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ kubectl apply -f userdb0service.yaml
+</span></span><span class=line><span class=cl>service/userdb-0-svc-ext created</span></span></code></pre></td></tr></table></div></div><p>过一会儿，<code>userdb-0-svc-ext</code>就会被分配一个公网IP，然后可以在域名服务商那里将此IP绑定到域名。此处假设域名为<code>userdb&lt;X>.com</code>。同理，我们将另外两个pod <code>userdb1</code>和<code>userdb2</code>也通过LoadBalancer暴露给公网。</p><h1 id=客户端访问和getaddrinfo-enotfound错误>客户端访问和<code>getaddrinfo ENOTFOUND</code>错误
+<a class=header-anchor href=#%e5%ae%a2%e6%88%b7%e7%ab%af%e8%ae%bf%e9%97%ae%e5%92%8cgetaddrinfo-enotfound%e9%94%99%e8%af%af></a></h1><p>至此，我们可以通过mongo shell来访问<code>userdb</code>了，查看下三个service的IP（以<code>&lt;ip0>``&lt;ip1>``&lt;ip2></code>代替）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span><span class=lnt id=hl-4-11><a class=lnlinks href=#hl-4-11>11</a>
+</span><span class=lnt id=hl-4-12><a class=lnlinks href=#hl-4-12>12</a>
+</span><span class=lnt id=hl-4-13><a class=lnlinks href=#hl-4-13>13</a>
+</span><span class=lnt id=hl-4-14><a class=lnlinks href=#hl-4-14>14</a>
+</span><span class=lnt id=hl-4-15><a class=lnlinks href=#hl-4-15>15</a>
+</span><span class=lnt id=hl-4-16><a class=lnlinks href=#hl-4-16>16</a>
+</span><span class=lnt id=hl-4-17><a class=lnlinks href=#hl-4-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ mongo &#34;mongodb://&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017/&#34;
+</span></span><span class=line><span class=cl>MongoDB shell version v4.4.2
+</span></span><span class=line><span class=cl>connecting to: mongodb://&lt;ip0&gt;:27017,&lt;ip1&gt;:27017,&lt;ip2&gt;:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
+</span></span><span class=line><span class=cl>Implicit session: session { &#34;id&#34; : UUID(&#34;6b780874-6ecb-4510-b7e9-61bff04a4711&#34;) }
+</span></span><span class=line><span class=cl>MongoDB server version: 4.2.2
+</span></span><span class=line><span class=cl>WARNING: shell and server versions do not match
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>The server generated these startup warnings when booting:
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten]
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.037+0000 I  STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+</span></span><span class=line><span class=cl>2020-12-10T08:32:10.848+0000 I  CONTROL  [initandlisten]
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>MongoDB Enterprise userdb:SECONDARY&gt;</span></span></code></pre></td></tr></table></div></div><p>似乎有些问题，为什么connect的是SECONDARY节点？mongo默认的readPreference是primary。如果用MongoDB Compass连接，则会出现连接失败的问题，错误是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>getaddrinfo ENOTFOUND userdb-0.userdb-svc.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>搜索了很久，这篇文章
+<a href=https://stackoverflow.com/questions/63597279/connecting-from-external-sources-to-mongodb-replica-set-in-kubernetes-fails-with title="# Connecting from external sources to MongoDB replica set in Kubernetes fails with getaddrinfo ENOTFOUND error but standalone works" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Connecting from external sources to MongoDB replica set in Kubernetes fails with getaddrinfo ENOTFOUND error but standalone works
+<i class="fa fa-external-link-alt"></i>
+</a>解释了这种现象。</p><p>client会逐个连接connectionstring指定的这三个<code>ip:port</code>地址（种子列表）直到成功，然后使用<code>isMaster</code>确定这个节点他是否是master，并且得到replica set的成员列表。然后，client会弃用connectionstring中的种子列表，而使用获取的成员列表连接到每个成员。这个成员列表一般来说与<code>rs.conf()</code>命令获取的列表一致。而在Kubernetes集群中，获取的地址都是内网地址（<code>xxx.svc.cluster.local</code>），因此client连接不成功，会报错<code>getaddrinfo ENOTFOUND</code>。在登入的shell中运行<code>rs.conf()</code>印证了这一点：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25>25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26>26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27>27</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>MongoDB Enterprise userdb:SECONDARY&gt; rs.conf()
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>        &#34;_id&#34; : &#34;userdb&#34;,
+</span></span><span class=line><span class=cl>        &#34;version&#34; : 1,
+</span></span><span class=line><span class=cl>        &#34;protocolVersion&#34; : NumberLong(1),
+</span></span><span class=line><span class=cl>        &#34;writeConcernMajorityJournalDefault&#34; : true,
+</span></span><span class=line><span class=cl>        &#34;members&#34; : [
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 0,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 1,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-1.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 2,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-2.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                }
+</span></span><span class=line><span class=cl>        ],
+</span></span><span class=line><span class=cl>        &#34;settings&#34; : {
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>}</span></span></code></pre></td></tr></table></div></div><p>此外，从client的行为分析，Linux下的mongo shell和MongoDB Compass的实现行为不一致：mongo shell可以连接MongoDB成功，但可能显示为<code>SECONDARY</code>；而MongoDB Compass会报错，连接失败。</p><p>解决这个问题，需要在userdb.yaml中使用
+<a href=https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons title=spec.connectivity.replicaSetHorizons rel="noopener external nofollow noreferrer" target=_blank class=exturl><code>spec.connectivity.replicaSetHorizons</code>
+<i class="fa fa-external-link-alt"></i>
+</a>指定公网访问的地址。而使用此选项又必须打开<code>spec.security.tls</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3>3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4>4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5>5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6>6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7>7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>connectivity</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>replicaSetHorizons</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb0.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb1.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb2.com:27017&#34;</span></span></span></code></pre></td></tr></table></div></div><p>打开<code>spec.security.tls</code>比较麻烦，需要先生成每个server的证书，证书上绑定了自己的域名或IP，然后才能再更新userdb replicaset的yaml文件打开TLS。</p><p>我们先来生成MongoDB所需要的证书：
+<a href=/mongodb-om-self-signed-certificates/ title=Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/kubernetes/>Kubernetes
+</a><a href=/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/tags/tls/>TLS</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/mongodb-om-self-signed-certificates/ rel=next title=Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书><i class="fa fa-chevron-left"></i> Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></div><div class="post-nav-prev post-nav-item"><a href=/mongodb-om-create-user-db/ rel=prev title=Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-om-expose-services/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-expose-services","permalink":"https://finisky.github.io/mongodb-om-expose-services/","title":"Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

@@ -1,0 +1,179 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="C++ priority_queue Example"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="Coding Interview"><meta property="og:type" content="article"><meta property="og:title" content="C++ priority_queue Example"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/priority-queue-example/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2022-01-05 01:15:36 +0800 CST"><meta property="article:modified_time" content="2022-01-05 01:15:36 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/priority-queue-example/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/priority-queue-example/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>C++ priority_queue Example - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#overload-operator>Overload Operator</a></li><li><a href=#lambda-function>lambda Function</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/priority-queue-example/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="C++ priority_queue Example"><meta itemprop=description content="LeetCode 
+
+    Top K Frequent Words
+    
+    
+    
+ need to use STL priority_queue to solve the problem.
+
+
+    priority_queue definition
+    
+    
+    
+:
+
+
+
+1
+2
+3
+4
+5
+
+
+template<
+    class T,
+    class Container = std::vector<T>,
+    class Compare = std::less<typename Container::value_type>
+> class priority_queue;
+
+
+
+There are two ways to implement the priority_queue compare function of customized type.
+
+Overload Operator
+
+Define a struct Cmp and overload operator ():
+
+
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+
+struct Cmp {
+    bool operator()(const pair<string, int> &amp;a, const pair<string, int> &amp;b)
+    {
+        if (a.second == b.second) return a.first < b.first;
+        return a.second > b.second;
+    };
+};
+
+priority_queue<pair<string, int>, vector<pair<string, int>>, Cmp> pq;
+
+
+
+lambda Function
+
+It would be simpler to implement the compare function using lambda. No extra struct is needed:"></span><header class=post-header><h1 class=post-title itemprop="name headline">C++ priority_queue Example</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2022-01-05 01:15:36 +08:00" itemprop="dateCreated datePublished" datetime="2022-01-05 01:15:36 +0800 CST">2022-01-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/coding-interview/ itemprop=url rel=index><span itemprop=name>Coding Interview</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>3min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/priority-queue-example/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/priority-queue-example/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>LeetCode
+<a href=https://leetcode.com/problems/top-k-frequent-words/ title="Top K Frequent Words" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Top K Frequent Words
+<i class="fa fa-external-link-alt"></i>
+</a>need to use STL priority_queue to solve the problem.</p><p><a href=https://en.cppreference.com/w/cpp/container/priority_queue title="priority_queue definition" rel="noopener external nofollow noreferrer" target=_blank class=exturl>priority_queue definition
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=k>template</span><span class=o>&lt;</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>T</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Container</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>vector</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Compare</span> <span class=o>=</span> <span class=n>std</span><span class=o>::</span><span class=n>less</span><span class=o>&lt;</span><span class=k>typename</span> <span class=n>Container</span><span class=o>::</span><span class=n>value_type</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;</span> <span class=k>class</span> <span class=nc>priority_queue</span><span class=p>;</span></span></span></code></pre></td></tr></table></div></div><p>There are two ways to implement the priority_queue compare function of customized type.</p><h1 id=overload-operator>Overload Operator
+<a class=header-anchor href=#overload-operator></a></h1><p>Define a struct <code>Cmp</code> and overload operator <code>()</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2>2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3>3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4>4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5>5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6>6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7>7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8>8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=k>struct</span> <span class=nc>Cmp</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>bool</span> <span class=nf>operator</span><span class=p>()(</span><span class=k>const</span> <span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>,</span> <span class=k>const</span> <span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>second</span> <span class=o>==</span> <span class=n>b</span><span class=p>.</span><span class=n>second</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>.</span><span class=n>first</span> <span class=o>&lt;</span> <span class=n>b</span><span class=p>.</span><span class=n>first</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>a</span><span class=p>.</span><span class=n>second</span> <span class=o>&gt;</span> <span class=n>b</span><span class=p>.</span><span class=n>second</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>priority_queue</span><span class=o>&lt;</span><span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span><span class=p>,</span> <span class=n>vector</span><span class=o>&lt;</span><span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;&gt;</span><span class=p>,</span> <span class=n>Cmp</span><span class=o>&gt;</span> <span class=n>pq</span><span class=p>;</span></span></span></code></pre></td></tr></table></div></div><h1 id=lambda-function>lambda Function
+<a class=header-anchor href=#lambda-function></a></h1><p>It would be simpler to implement the compare function using lambda. No extra struct is needed:</p><a id=more></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5>5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=k>auto</span> <span class=n>cmp</span> <span class=o>=</span> <span class=p>[](</span><span class=k>const</span> <span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>a</span><span class=p>,</span> <span class=k>const</span> <span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>second</span> <span class=o>==</span> <span class=n>b</span><span class=p>.</span><span class=n>second</span><span class=p>)</span> <span class=k>return</span> <span class=n>a</span><span class=p>.</span><span class=n>first</span> <span class=o>&lt;</span> <span class=n>b</span><span class=p>.</span><span class=n>first</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>a</span><span class=p>.</span><span class=n>second</span> <span class=o>&gt;</span> <span class=n>b</span><span class=p>.</span><span class=n>second</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=n>priority_queue</span><span class=o>&lt;</span><span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span><span class=p>,</span> <span class=n>vector</span><span class=o>&lt;</span><span class=n>pair</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;&gt;</span><span class=p>,</span> <span class=k>decltype</span><span class=p>(</span><span class=n>cmp</span><span class=p>)</span><span class=o>&gt;</span> <span class=n>pq</span><span class=p>(</span><span class=n>cmp</span><span class=p>);</span></span></span></code></pre></td></tr></table></div></div><p>Notice: the priority_queue constructor here is different with overloading operator. <strong>The compare function <code>cmp</code> MUST be passed into the constructor.</strong> Otherwise, compile error occurs:</p><blockquote><p>Line 16: Char 85: error: no matching constructor for initialization of &lsquo;priority_queue&lt;pair&lt;std::string, int>, vector&lt;pair&lt;std::string, int&#187;, decltype(cmp)>&rsquo; (aka &lsquo;priority_queue&lt;pair&lt;basic_string<char>, int>, vector&lt;pair&lt;basic_string<char>, int&#187;, (lambda at solution.cpp:20:20)>&rsquo;)
+priority_queue&lt;pair&lt;string, int>, vector&lt;pair&lt;string, int&#187;, decltype(cmp)> pq;
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:501:2: note: candidate template ignored: requirement &lsquo;_<em>and</em>&lt;std::is_default_constructible&lt;(lambda at prog_joined.cpp:20:20)>, std::is_default_constructible&lt;std::vector&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>>, int>, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits<char>, std::allocator<char>>, int&#187;&#187;>::value&rsquo; was not satisfied [with _Seq = std::vector&lt;std::pair&lt;std::__cxx11::basic_string<char>, int>, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string<char>, int&#187;>]
+priority_queue()
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:516:2: note: candidate constructor template not viable: requires single argument &lsquo;__a&rsquo;, but no arguments were provided
+priority_queue(const _Alloc& __a)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 0 were provided
+class priority_queue
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:443:11: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 0 were provided
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:505:7: note: candidate constructor not viable: requires 2 arguments, but 0 were provided
+priority_queue(const _Compare& __x, const _Sequence& __s)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:510:7: note: candidate constructor not viable: requires at least argument &lsquo;__x&rsquo;, but no arguments were provided
+priority_queue(const _Compare& __x, _Sequence&& __s = _Sequence())
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:520:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided
+priority_queue(const _Compare& __x, const _Alloc& __a)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:537:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided
+priority_queue(const priority_queue& __q, const _Alloc& __a)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:541:2: note: candidate constructor template not viable: requires 2 arguments, but 0 were provided
+priority_queue(priority_queue&& __q, const _Alloc& __a)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:526:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided
+priority_queue(const _Compare& __x, const _Sequence& __c,
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:532:2: note: candidate constructor template not viable: requires 3 arguments, but 0 were provided
+priority_queue(const _Compare& __x, _Sequence&& __c, const _Alloc& __a)
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:573:2: note: candidate constructor template not viable: requires 4 arguments, but 0 were provided
+priority_queue(_InputIterator __first, _InputIterator __last,
+^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/stl_queue.h:584:2: note: candidate constructor template not viable: requires at least 2 arguments, but 0 were provided
+priority_queue(_InputIterator __first, _InputIterator __last,
+^
+1 error generated.</p></blockquote></div><footer class=post-footer><div class=post-tags><a href=/en/tags/coding-interview/>Coding Interview</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/why-nn-can-represent-lm/ rel=next title="Why Neural Networks Can Represent Lanugage Models"><i class="fa fa-chevron-left"></i> Why Neural Networks Can Represent Lanugage Models</a></div><div class="post-nav-prev post-nav-item"><a href=/en/speedup-github-by-cdn/ rel=prev title="Speed Up Github Image Hosting By Jsdelivr CDN">Speed Up Github Image Hosting By Jsdelivr CDN
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/priority-queue-example/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"priority-queue-example","permalink":"https://finisky.github.io/en/priority-queue-example/","title":"C++ priority_queue Example","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

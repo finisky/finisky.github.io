@@ -1,0 +1,353 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS"><meta property="og:type" content="article"><meta property="og:title" content="Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-om-tls-auth/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-12 23:30:40 +0800 CST"><meta property="article:modified_time" content="2020-12-12 23:30:40 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-tls-auth/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-tls-auth/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#理解不同层面的tls加密>理解不同层面的TLS加密</a></li><li><a href=#上传证书到kubernetes集群>上传证书到Kubernetes集群</a><ul><li><a href=#创建secret存储server证书>创建Secret存储Server证书</a></li><li><a href=#创建configmap存储ca证书>创建ConfigMap存储CA证书</a></li></ul></li><li><a href=#更新cluster的replicasethorizons>更新cluster的replicaSetHorizons</a><ul><li><a href=#error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up错误><code>Error calling ComputeState</code>, <code>Error dialing to connParams</code>, <code>Error checking if rs member is up</code>错误</a></li></ul></li><li><a href=#mongo-client连接userdb>Mongo Client连接UserDB</a></li><li><a href=#打开auth>打开AUTH</a></li><li><a href=#总结>总结</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-sharded-cluster/>部署Kubernetes MongoDB Sharded Cluster</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-self-signed-certificates/>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-expose-services/>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-user-db/>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-ops-manager/>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-om-tls-auth/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权"><meta itemprop=description content="本文为系列第五部分，用生成的自签名证书打开userdb的TLS和AUTH，并且完成userdb的公网域名访问。
+整个系列：
+
+
+
+    安装MongoDB Ops Manager
+    
+
+
+
+    创建用户数据库(replicaset)
+    
+
+
+
+    用户数据库服务配置公网访问
+    
+
+
+
+    openssl生成自签名CA证书和server证书
+    
+
+
+
+    打开用户数据库TLS通信加密和Auth授权
+    
+
+
+
+理解不同层面的TLS加密
+
+开始之前，先解释下部署中不同层面的TLS加密：Secure Connections to Ops Manager, Secure Connections to Application Database, Secure Connections to MongoDB Deployments，我们需要的是最后一个，Enable TLS to MongoDB Deployments。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到userdb的每个server上，然后才能配置这些证书所在的路径。"></span><header class=post-header><h1 class=post-title itemprop="name headline">Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-12-12 23:30:40 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-12 23:30:40 +0800 CST">2020-12-12
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>6分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-om-tls-auth/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-om-tls-auth/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>本文为系列第五部分，用生成的自签名证书打开userdb的TLS和AUTH，并且完成userdb的公网域名访问。</p><p>整个系列：</p><ol><li><a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager</a></li><li><a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)</a></li><li><a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问</a></li><li><a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></li><li><a href=/mongodb-om-tls-auth/ title=打开用户数据库TLS通信加密和Auth授权>打开用户数据库TLS通信加密和Auth授权</a></li></ol><h1 id=理解不同层面的tls加密>理解不同层面的TLS加密
+<a class=header-anchor href=#%e7%90%86%e8%a7%a3%e4%b8%8d%e5%90%8c%e5%b1%82%e9%9d%a2%e7%9a%84tls%e5%8a%a0%e5%af%86></a></h1><p>开始之前，先解释下部署中不同层面的TLS加密：<code>Secure Connections to Ops Manager</code>, <code>Secure Connections to Application Database</code>, <code>Secure Connections to MongoDB Deployments</code>，我们需要的是最后一个，<code>Enable TLS to MongoDB Deployments</code>。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到<code>userdb</code>的每个server上，然后才能配置这些证书所在的路径。</p><a id=more></a><p>用一张图解释：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/securedifferentconnections.png alt="Different Level of Security"></p><p>如果你读Ops Manager的文档
+<a href=https://docs.opsmanager.mongodb.com/current/tutorial/enable-ssl-for-a-deployment/#get-and-install-the-tls-certificate-on-each-mongodb-host title="# Enable TLS for a Deployment" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Enable TLS for a Deployment
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><blockquote><p>Get and Install the TLS Certificate on Each MongoDB Host</p><p>Acquire a TLS certificate for each host serving a MongoDB process. This certificate must include the FQDN for the hostname of this MongoDB host. The FQDN can be the Common Name or the Subject Alternative Name of this host. You must install this TLS certificate on the MongoDB host.</p></blockquote><p>读完一头雾水，到底怎么安装这些证书到pod上呢？实际上，应该通过MongoDB Kubernetes Operator的
+<a href=https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/ title="# Secure Deployments using TLS" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Secure Deployments using TLS
+<i class="fa fa-external-link-alt"></i>
+</a>打开TLS。</p><p>一个小插曲，开始做到这一步时，考虑直接把证书通过<code>kubectl cp</code>拷贝到statefulset pod上去。先用<code>kubectl exec</code> 进到pod中查看：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>groups: cannot find name for group ID 2000
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$ cat &gt; ca.crt
+</span></span><span class=line><span class=cl>bash: ca.crt: Permission denied
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$ whoami
+</span></span><span class=line><span class=cl>whoami: cannot find name for user ID 2000
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$ </span></span></code></pre></td></tr></table></div></div><p>发现这个pod非常奇怪，没有用户，user和group都是<code>2000</code>这么个诡异的东西。再后来考虑过通过Mount Volume的方式将其加入到pod上，都不是正确的打开方式。</p><p>另一篇文章供参考：
+<a href=https://developer.ibm.com/technologies/databases/tutorials/secure-mongo-db-enterprise-on-red-hat-openshift/ title="# Secure MongoDB Enterprise on Red Hat OpenShift" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Secure MongoDB Enterprise on Red Hat OpenShift
+<i class="fa fa-external-link-alt"></i></a></p><h1 id=上传证书到kubernetes集群>上传证书到Kubernetes集群
+<a class=header-anchor href=#%e4%b8%8a%e4%bc%a0%e8%af%81%e4%b9%a6%e5%88%b0kubernetes%e9%9b%86%e7%be%a4></a></h1><h2 id=创建secret存储server证书>创建Secret存储Server证书
+<a class=header-anchor href=#%e5%88%9b%e5%bb%basecret%e5%ad%98%e5%82%a8server%e8%af%81%e4%b9%a6></a></h2><p>将第四部分生成的几个证书另存为：</p><table><thead><tr><th></th><th>Save As</th></tr></thead><tbody><tr><td>rootca.crt</td><td>ca-pem</td></tr><tr><td>userdbX.pem</td><td>userdb-X-pem</td></tr></tbody></table><p>其中X取值0,1,2，加上rootca共四个文件。注意此处重命名后的文件没有后缀。三个userdb的pem文件为如下格式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-----BEGIN CERTIFICATE-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your TLS certificate
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END CERTIFICATE-----
+</span></span><span class=line><span class=cl>-----BEGIN RSA PRIVATE KEY-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your private key
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END RSA PRIVATE KEY----</span></span></code></pre></td></tr></table></div></div><p>而rootca.crt中只有证书段，没有私钥：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-----BEGIN CERTIFICATE-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your TLS certificate
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END CERTIFICATE-----</span></span></code></pre></td></tr></table></div></div><p>创建存储三个server证书的Secret:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic userdb-cert --from-file=userdb-0-pem --from-file=userdb-1-pem  --from-file=userdb-2-pem -n mongodb
+</span></span><span class=line><span class=cl>secret/userdb-cert created</span></span></code></pre></td></tr></table></div></div><h2 id=创建configmap存储ca证书>创建ConfigMap存储CA证书
+<a class=header-anchor href=#%e5%88%9b%e5%bb%baconfigmap%e5%ad%98%e5%82%a8ca%e8%af%81%e4%b9%a6></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create configmap custom-ca --from-file=ca-pem -n mongodb
+</span></span><span class=line><span class=cl>configmap/custom-ca created</span></span></code></pre></td></tr></table></div></div><h1 id=更新cluster的replicasethorizons>更新cluster的replicaSetHorizons
+<a class=header-anchor href=#%e6%9b%b4%e6%96%b0cluster%e7%9a%84replicasethorizons></a></h1><p>回顾第三部分
+<a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问
+</a>的最后：</p><p>需要在userdb.yaml中使用
+<a href=https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons title=spec.connectivity.replicaSetHorizons rel="noopener external nofollow noreferrer" target=_blank class=exturl><code>spec.connectivity.replicaSetHorizons</code>
+<i class="fa fa-external-link-alt"></i>
+</a>指定公网访问的地址。而使用此选项又必须打开<code>spec.security.tls</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5>5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6>6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7>7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>connectivity</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>replicaSetHorizons</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb0.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb1.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb2.com:27017&#34;</span></span></span></code></pre></td></tr></table></div></div><p>终于来到打开TLS的最后一步，回到userdb.yaml，加入上面security的部分：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>members</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ReplicaSet</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-admin-key</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ca</span><span class=p>:</span><span class=w> </span><span class=l>custom-ca</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>connectivity</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>replicaSetHorizons</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb0.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb1.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb2.com:27017&#34;</span></span></span></code></pre></td></tr></table></div></div><p><strong>注意</strong>: <code>replicaSetHorizons</code>下面每行中的<code>userdb</code>，即每行的key并不重要，只要保证三行的key string是相同的即可。</p><p>应用userdb.yaml:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl apply -f userdb.yaml -n mongodb
+</span></span><span class=line><span class=cl>mongodb.mongodb.com/userdb configured</span></span></code></pre></td></tr></table></div></div><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttls.png alt="Updating UserDB Deployment"></p><p>具体更新的Details:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttlsdetails.png alt="Updating Deployment Details">
+可见为了保证服务不中断，TLS的更新需要经过多步完成：<code>disabled -> sslAllowed -> sslPreferred -> sslRequired</code>。</p><p>这步更新需要一些时间，要重启多次，中间DB对应的statefulset <code>userdb</code>还会重启。如果出现service匹配不到pod的情况，参考
+<a href=/mongodb-om-expose-services/ title=第三部分>第三部分
+</a>提到暴露service之后要把<code>controller-revision-hash</code>从service的<code>spec.selector中</code>删除。</p><p>完毕之后，Processes的界面TLS会变为Enabled。如果<code>kubectl exec</code>查看<code>userdb</code>对应的pod，可以发现证书保存在<code>/mongodb-automation/</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1>1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2>2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3>3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4>4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5>5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>I have no name!@userdb-0:/$ ls -l /mongodb-automation/
+</span></span><span class=line><span class=cl>total <span class=m>8</span>
+</span></span><span class=line><span class=cl>lrwxrwxrwx <span class=m>1</span> <span class=m>2000</span> root   <span class=m>45</span> Dec <span class=m>11</span> 06:25 ca.pem -&gt; /var/lib/mongodb-automation/secrets/ca/ca-pem
+</span></span><span class=line><span class=cl>drwxr-xr-x <span class=m>2</span> <span class=m>2000</span> root <span class=m>4096</span> Dec <span class=m>11</span> 06:25 files
+</span></span><span class=line><span class=cl>-rw-r--r-- <span class=m>1</span> <span class=m>2000</span> root    <span class=m>3</span> Dec <span class=m>11</span> 06:25 mongodb-mms-automation-agent.pid
+</span></span><span class=line><span class=cl>lrwxrwxrwx <span class=m>1</span> <span class=m>2000</span> root   <span class=m>54</span> Dec <span class=m>11</span> 06:25 server.pem -&gt; /var/lib/mongodb-automation/secrets/certs/userdb-0-pem</span></span></code></pre></td></tr></table></div></div><h2 id=error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up错误><code>Error calling ComputeState</code>, <code>Error dialing to connParams</code>, <code>Error checking if rs member is up</code>错误
+<a class=header-anchor href=#error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up%e9%94%99%e8%af%af></a></h2><p>如果这步一直更新不成功，看Ops Manager的Agent Log出现如下错误，大概率是证书有问题，虽然看起来跟证书没什么关系：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4>4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;userdb-1&gt; [03:29:59.660] Failed to compute states : &lt;userdb-1&gt; [03:29:59.660] Error calling ComputeState : &lt;userdb-1&gt; [03:29:59.660] Error getting fickle state for current state : &lt;userdb-1&gt; [03:29:59.660] Error checking if rs member = userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 is up : &lt;userdb-1&gt; [03:29:59.660] Error executing WithClientFor() for cp=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connec tMode=SingleConnect : &lt;userdb-1&gt; [03:29:59.660] Error checking out client (0x0) for connParam=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [03:29:59.659] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Error checking out client (0x0) for connParam=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [03:32:57.470] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Error getting client ready for conn params = userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false). Informing all requests and disposing of client (0x0). requests=[ 0xc001e58780 ] : [03:32:57.470] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )</span></span></code></pre></td></tr></table></div></div><p>大概率是因为在生成证书的时候，DNS里没有加入<code>私网域名</code>：userdb-0.userdb-svc.mongodb.svc.cluster.local。此时只能回到第四部分
+<a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书
+</a>，修改<code>userdb&lt;X>.cnf</code>中的<code>[ alt_names ]</code>段，加入私网域名，重新生成server证书，再更新userdb。</p><h1 id=mongo-client连接userdb>Mongo Client连接UserDB
+<a class=header-anchor href=#mongo-client%e8%bf%9e%e6%8e%a5userdb></a></h1><p>成功的话，现在再用mongo shell连接数据库，注意要打开TLS并指定<code>--tlsCAFile</code>。这里也有一点小技巧，mongodb的connection string不支持指定<code>tlsCAFile</code>，所以要采用命令行和connection string相结合的用法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1> 1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2> 2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3> 3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4> 4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5> 5</a>
+</span><span class=lnt id=hl-10-6><a class=lnlinks href=#hl-10-6> 6</a>
+</span><span class=lnt id=hl-10-7><a class=lnlinks href=#hl-10-7> 7</a>
+</span><span class=lnt id=hl-10-8><a class=lnlinks href=#hl-10-8> 8</a>
+</span><span class=lnt id=hl-10-9><a class=lnlinks href=#hl-10-9> 9</a>
+</span><span class=lnt id=hl-10-10><a class=lnlinks href=#hl-10-10>10</a>
+</span><span class=lnt id=hl-10-11><a class=lnlinks href=#hl-10-11>11</a>
+</span><span class=lnt id=hl-10-12><a class=lnlinks href=#hl-10-12>12</a>
+</span><span class=lnt id=hl-10-13><a class=lnlinks href=#hl-10-13>13</a>
+</span><span class=lnt id=hl-10-14><a class=lnlinks href=#hl-10-14>14</a>
+</span><span class=lnt id=hl-10-15><a class=lnlinks href=#hl-10-15>15</a>
+</span><span class=lnt id=hl-10-16><a class=lnlinks href=#hl-10-16>16</a>
+</span><span class=lnt id=hl-10-17><a class=lnlinks href=#hl-10-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
+</span></span><span class=line><span class=cl>MongoDB shell version v4.4.2
+</span></span><span class=line><span class=cl>connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class=o>=</span>disabled<span class=p>&amp;</span><span class=nv>gssapiServiceName</span><span class=o>=</span>mongodb
+</span></span><span class=line><span class=cl>Implicit session: session <span class=o>{</span> <span class=s2>&#34;id&#34;</span> : UUID<span class=o>(</span><span class=s2>&#34;fcbaa78a-21dd-472f-a84f-bf3435bf9088&#34;</span><span class=o>)</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>MongoDB server version: 4.2.2
+</span></span><span class=line><span class=cl>WARNING: shell and server versions <span class=k>do</span> not match
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>The server generated these startup warnings when booting:
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span> ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span> **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span> ** WARNING: Access control is not enabled <span class=k>for</span> the database.
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span> **          Read and write access to data and configuration is unrestricted.
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt;</span></span></code></pre></td></tr></table></div></div><p>最后的<code>PRIMARY</code>说明cluster配置成功！用<code>rs.conf()</code>确认一下horizons:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1> 1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2> 2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3> 3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4> 4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5> 5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6> 6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7> 7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8> 8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9> 9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10>10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11>11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12>12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13>13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14>14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15>15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16>16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17>17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18>18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19>19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20>20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21>21</a>
+</span><span class=lnt id=hl-11-22><a class=lnlinks href=#hl-11-22>22</a>
+</span><span class=lnt id=hl-11-23><a class=lnlinks href=#hl-11-23>23</a>
+</span><span class=lnt id=hl-11-24><a class=lnlinks href=#hl-11-24>24</a>
+</span><span class=lnt id=hl-11-25><a class=lnlinks href=#hl-11-25>25</a>
+</span><span class=lnt id=hl-11-26><a class=lnlinks href=#hl-11-26>26</a>
+</span><span class=lnt id=hl-11-27><a class=lnlinks href=#hl-11-27>27</a>
+</span><span class=lnt id=hl-11-28><a class=lnlinks href=#hl-11-28>28</a>
+</span><span class=lnt id=hl-11-29><a class=lnlinks href=#hl-11-29>29</a>
+</span><span class=lnt id=hl-11-30><a class=lnlinks href=#hl-11-30>30</a>
+</span><span class=lnt id=hl-11-31><a class=lnlinks href=#hl-11-31>31</a>
+</span><span class=lnt id=hl-11-32><a class=lnlinks href=#hl-11-32>32</a>
+</span><span class=lnt id=hl-11-33><a class=lnlinks href=#hl-11-33>33</a>
+</span><span class=lnt id=hl-11-34><a class=lnlinks href=#hl-11-34>34</a>
+</span><span class=lnt id=hl-11-35><a class=lnlinks href=#hl-11-35>35</a>
+</span><span class=lnt id=hl-11-36><a class=lnlinks href=#hl-11-36>36</a>
+</span><span class=lnt id=hl-11-37><a class=lnlinks href=#hl-11-37>37</a>
+</span><span class=lnt id=hl-11-38><a class=lnlinks href=#hl-11-38>38</a>
+</span><span class=lnt id=hl-11-39><a class=lnlinks href=#hl-11-39>39</a>
+</span><span class=lnt id=hl-11-40><a class=lnlinks href=#hl-11-40>40</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt; rs.conf()
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>        &#34;_id&#34; : &#34;userdb&#34;,
+</span></span><span class=line><span class=cl>        &#34;version&#34; : 2,
+</span></span><span class=line><span class=cl>        &#34;protocolVersion&#34; : NumberLong(1),
+</span></span><span class=line><span class=cl>        &#34;writeConcernMajorityJournalDefault&#34; : true,
+</span></span><span class=line><span class=cl>        &#34;members&#34; : [
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 0,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb0.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 1,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-1.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb1.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 2,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-2.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb2.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                }
+</span></span><span class=line><span class=cl>        ],
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>}</span></span></code></pre></td></tr></table></div></div><h1 id=打开auth>打开AUTH
+<a class=header-anchor href=#%e6%89%93%e5%bc%80auth></a></h1><p>TLS设置成功之后打开AUTH就非常简单了，直接在Deployment的Processes界面中点AUTH的<code>Disabled</code>，按提示直接点下一步到最后Save，再点下界面上方的review & deploy即可。</p><p>一切完成之后的界面如下，可见TLS和AUTH都已变成了<code>Enabled</code>：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbreplicasetdone.png alt="UserDB Deployment Completed"></p><p>此时再用mongo shell登录不再有Startup Warnings:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-12-1><a class=lnlinks href=#hl-12-1>1</a>
+</span><span class=lnt id=hl-12-2><a class=lnlinks href=#hl-12-2>2</a>
+</span><span class=lnt id=hl-12-3><a class=lnlinks href=#hl-12-3>3</a>
+</span><span class=lnt id=hl-12-4><a class=lnlinks href=#hl-12-4>4</a>
+</span><span class=lnt id=hl-12-5><a class=lnlinks href=#hl-12-5>5</a>
+</span><span class=lnt id=hl-12-6><a class=lnlinks href=#hl-12-6>6</a>
+</span><span class=lnt id=hl-12-7><a class=lnlinks href=#hl-12-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
+</span></span><span class=line><span class=cl>MongoDB shell version v4.4.2
+</span></span><span class=line><span class=cl>connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class=o>=</span>disabled<span class=p>&amp;</span><span class=nv>gssapiServiceName</span><span class=o>=</span>mongodb
+</span></span><span class=line><span class=cl>Implicit session: session <span class=o>{</span> <span class=s2>&#34;id&#34;</span> : UUID<span class=o>(</span><span class=s2>&#34;5063023a-b76d-4d03-923f-18332e2e7cc9&#34;</span><span class=o>)</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>MongoDB server version: 4.2.2
+</span></span><span class=line><span class=cl>WARNING: shell and server versions <span class=k>do</span> not match
+</span></span><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt;</span></span></code></pre></td></tr></table></div></div><h1 id=总结>总结
+<a class=header-anchor href=#%e6%80%bb%e7%bb%93></a></h1><p>本系列文章描述了如何部署MongoDB Ops Manager，并使用Ops Manager搭建用户MongoDB数据库的详细流程。中间步骤繁多，细节之处难免有疏漏，可在评论中留言指出。</p><p>感谢阅读！</p></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/kubernetes/>Kubernetes
+</a><a href=/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/tags/tls/>TLS</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/mongodb-om-create-sharded-cluster/ rel=next title="部署Kubernetes MongoDB Sharded Cluster"><i class="fa fa-chevron-left"></i> 部署Kubernetes MongoDB Sharded Cluster</a></div><div class="post-nav-prev post-nav-item"><a href=/mongodb-om-self-signed-certificates/ rel=prev title=Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-om-tls-auth/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-tls-auth","permalink":"https://finisky.github.io/mongodb-om-tls-auth/","title":"Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

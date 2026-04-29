@@ -1,0 +1,427 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="拆解 Claude Code 的 RAG 机制"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="LLM,LLM Agent,NLP"><meta property="og:type" content="article"><meta property="og:title" content="拆解 Claude Code 的 RAG 机制"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/claude-code-rag/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2026-04-02 23:51:07 +0800 CST"><meta property="article:modified_time" content="2026-04-02 23:51:07 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/claude-code-rag/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/claude-code-rag/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>拆解 Claude Code 的 RAG 机制 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><ul><li><a href=#这不是你理解的-rag>这不是你理解的 RAG</a></li><li><a href=#四层检索架构>四层检索架构</a><ul><li><a href=#layer-0静态上下文>Layer 0：静态上下文</a></li><li><a href=#layer-1智能预注入>Layer 1：智能预注入</a></li><li><a href=#layer-2模型驱动的检索>Layer 2：模型驱动的检索</a></li><li><a href=#layer-3子-agent-委托检索>Layer 3：子 Agent 委托检索</a></li></ul></li><li><a href=#工程细节亮点>工程细节亮点</a><ul><li><a href=#搜索结果的-token-预算控制>搜索结果的 Token 预算控制</a></li><li><a href=#read-工具的去重优化>Read 工具的去重优化</a></li><li><a href=#路径相对化>路径相对化</a></li><li><a href=#system-prompt-的缓存分区>System Prompt 的缓存分区</a></li></ul></li><li><a href=#端到端流程>端到端流程</a></li><li><a href=#对比>对比</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/dive-into-claude-code/>Claude Code：1.6% 的 AI，98.4% 的脚手架</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/prompt-context-harness-engineering/>Agent 工程的三次进化</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/openclaw-vs-claude-code-agent-arch/>Claude Code 和 OpenClaw 的上下文管理对比</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/foundation-model-plateau-application-era/>基模到顶，应用起飞</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/claude-code-deferred-tools/>Claude Code 的工具按需加载</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/claude-code-rag/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="拆解 Claude Code 的 RAG 机制"><meta itemprop=description content="
+    Claude Code 没有向量数据库，没有 embedding 索引，但它能在百万行代码库里精准定位你需要的文件。这背后是一套完全不同于传统 RAG 的检索架构。
+
+  
+这不是你理解的 RAG
+
+用过 RAG 的人对这套流程应该很熟：离线建索引，用户提问，向量检索 Top-K，拼入 prompt，生成回答。一条直线，跑一次就完事。
+Claude Code 完全不是这么干的。它没有离线索引，检索过程由模型自己驱动。"></span><header class=post-header><h1 class=post-title itemprop="name headline">拆解 Claude Code 的 RAG 机制</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2026-04-02 23:51:07 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 23:51:07 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>6分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/claude-code-rag/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/claude-code-rag/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><blockquote><p>Claude Code 没有向量数据库，没有 embedding 索引，但它能在百万行代码库里精准定位你需要的文件。这背后是一套完全不同于传统 RAG 的检索架构。</p></blockquote><h2 id=这不是你理解的-rag>这不是你理解的 RAG
+<a class=header-anchor href=#%e8%bf%99%e4%b8%8d%e6%98%af%e4%bd%a0%e7%90%86%e8%a7%a3%e7%9a%84-rag></a></h2><p>用过 RAG 的人对这套流程应该很熟：离线建索引，用户提问，向量检索 Top-K，拼入 prompt，生成回答。一条直线，跑一次就完事。</p><p>Claude Code 完全不是这么干的。它没有离线索引，检索过程由模型自己驱动。</p><a id=more></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Traditional RAG:
+</span></span><span class=line><span class=cl>+--------+     +-----------+     +----------+     +--------+
+</span></span><span class=line><span class=cl>| Query  | --&gt; | Vector DB | --&gt; | Top-K    | --&gt; | LLM    |
+</span></span><span class=line><span class=cl>|        |     | (offline  |     | chunks   |     | answer |
+</span></span><span class=line><span class=cl>|        |     |  indexed) |     | injected |     |        |
+</span></span><span class=line><span class=cl>+--------+     +-----------+     +----------+     +--------+
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      One-shot: retrieve once, generate once.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Claude Code (Agentic RAG):
+</span></span><span class=line><span class=cl>+--------+     +------------------+     +--------+
+</span></span><span class=line><span class=cl>| Query  | --&gt; | LLM decides what | --&gt; | Tool   |
+</span></span><span class=line><span class=cl>|        |     | to search for    |     | result |
+</span></span><span class=line><span class=cl>+--------+     +-------+----------+     +---+----+
+</span></span><span class=line><span class=cl>                       ^                    |
+</span></span><span class=line><span class=cl>                       |   not enough?      |
+</span></span><span class=line><span class=cl>                       +--------------------+
+</span></span><span class=line><span class=cl>                       loop until satisfied
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      Multi-hop: model drives retrieval in a loop.</span></span></code></pre></td></tr></table></div></div><p>传统 RAG 的检索策略是固定的，写死在代码里。Claude Code 的检索策略是动态的：模型根据当前上下文自行决定搜什么、搜几次、用哪个工具。</p><h2 id=四层检索架构>四层检索架构
+<a class=header-anchor href=#%e5%9b%9b%e5%b1%82%e6%a3%80%e7%b4%a2%e6%9e%b6%e6%9e%84></a></h2><p>Claude Code 的上下文不是一次性拼好的，而是分四层递进注入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+===============================================================+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                     <span class=n>CONTEXT</span> <span class=n>WINDOW</span>                            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+===============================================================+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>0</span><span class=p>:</span> <span class=n>STATIC</span> <span class=n>CONTEXT</span> <span class=p>(</span><span class=n>loaded</span> <span class=n>once</span> <span class=n>at</span> <span class=n>session</span> <span class=n>start</span><span class=p>)</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>System</span> <span class=n>Prompt</span> <span class=o>|</span> <span class=n>CLAUDE</span><span class=o>.</span><span class=n>md</span> <span class=o>|</span> <span class=n>Git</span> <span class=n>Status</span> <span class=o>|</span> <span class=n>Memory</span> <span class=n>Index</span>   <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>1</span><span class=p>:</span> <span class=n>SMART</span> <span class=n>PRE</span><span class=o>-</span><span class=n>INJECTION</span> <span class=p>(</span><span class=n>before</span> <span class=n>model</span> <span class=n>sees</span> <span class=n>the</span> <span class=n>query</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Sonnet</span> <span class=n>Memory</span> <span class=n>Recall</span> <span class=o>|</span> <span class=err>@</span><span class=n>file</span> <span class=n>mentions</span> <span class=o>|</span> <span class=n>Skill</span> <span class=n>Discovery</span> <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>2</span><span class=p>:</span> <span class=n>MODEL</span><span class=o>-</span><span class=n>DRIVEN</span> <span class=n>RETRIEVAL</span> <span class=p>(</span><span class=k>tool</span> <span class=n>use</span> <span class=n>loop</span><span class=p>)</span>              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Glob</span> <span class=o>-&gt;</span> <span class=n>Grep</span> <span class=o>-&gt;</span> <span class=n>Read</span> <span class=o>-&gt;</span> <span class=o>...</span> <span class=p>(</span><span class=n>model</span> <span class=n>decides</span><span class=p>)</span>             <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>3</span><span class=p>:</span> <span class=n>DELEGATED</span> <span class=n>RETRIEVAL</span> <span class=p>(</span><span class=n>sub</span><span class=o>-</span><span class=n>agents</span><span class=p>)</span>                    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Explore</span> <span class=n>Agent</span> <span class=o>|</span> <span class=n>Fork</span> <span class=n>Agent</span> <span class=p>(</span><span class=n>parallel</span> <span class=n>research</span><span class=p>)</span>          <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+===============================================================+</span></span></span></code></pre></td></tr></table></div></div><h3 id=layer-0静态上下文>Layer 0：静态上下文
+<a class=header-anchor href=#layer-0%e9%9d%99%e6%80%81%e4%b8%8a%e4%b8%8b%e6%96%87></a></h3><p>每次会话开始时，系统自动加载一批常驻上下文：System Prompt（工具使用指南、行为规范、环境信息），CLAUDE.md（项目级配置），Git Status（当前分支、最近 5 条 commit），以及 MEMORY.md 索引文件。</p><p>这里有个关键设计：System Prompt 被分为静态区和动态区，中间用一个边界标记隔开。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>system_prompt</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=c1># --- Static (cross-session cacheable) ---</span>
+</span></span><span class=line><span class=cl>    <span class=n>intro_section</span><span class=p>,</span>          <span class=c1># identity &amp; rules</span>
+</span></span><span class=line><span class=cl>    <span class=n>system_section</span><span class=p>,</span>         <span class=c1># tool instructions</span>
+</span></span><span class=line><span class=cl>    <span class=n>doing_tasks_section</span><span class=p>,</span>    <span class=c1># task guidelines</span>
+</span></span><span class=line><span class=cl>    <span class=n>actions_section</span><span class=p>,</span>        <span class=c1># safety rules</span>
+</span></span><span class=line><span class=cl>    <span class=n>using_tools_section</span><span class=p>,</span>    <span class=c1># tool selection guide</span>
+</span></span><span class=line><span class=cl>    <span class=n>tone_and_style</span><span class=p>,</span>         <span class=c1># output style</span>
+</span></span><span class=line><span class=cl>    <span class=n>output_efficiency</span><span class=p>,</span>      <span class=c1># brevity rules</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__&#34;</span><span class=p>,</span>  <span class=c1># &lt;-- cache boundary</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># --- Dynamic (changes per session) ---</span>
+</span></span><span class=line><span class=cl>    <span class=n>session_guidance</span><span class=p>,</span>       <span class=c1># session-specific guidance</span>
+</span></span><span class=line><span class=cl>    <span class=n>memory_prompt</span><span class=p>,</span>          <span class=c1># persistent memory</span>
+</span></span><span class=line><span class=cl>    <span class=n>env_info</span><span class=p>,</span>               <span class=c1># environment info</span>
+</span></span><span class=line><span class=cl>    <span class=n>language</span><span class=p>,</span>               <span class=c1># language preference</span>
+</span></span><span class=line><span class=cl>    <span class=n>mcp_instructions</span><span class=p>,</span>       <span class=c1># MCP server instructions</span>
+</span></span><span class=line><span class=cl><span class=p>]</span></span></span></code></pre></td></tr></table></div></div><p>边界标记之前的内容可以跨会话共享 Prompt Cache，所有用户共用同一份缓存。之后的内容每个会话不同。静态部分几乎零成本。</p><h3 id=layer-1智能预注入>Layer 1：智能预注入
+<a class=header-anchor href=#layer-1%e6%99%ba%e8%83%bd%e9%a2%84%e6%b3%a8%e5%85%a5></a></h3><p>用户发送消息后、模型开始推理前，系统并行执行一批预检索操作：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>User sends message: &#34;Fix the auth bug in payment API&#34;
+</span></span><span class=line><span class=cl>                |
+</span></span><span class=line><span class=cl>                v  (parallel, before model sees anything)
+</span></span><span class=line><span class=cl>    +-----------+-----------+-----------+
+</span></span><span class=line><span class=cl>    |           |           |           |
+</span></span><span class=line><span class=cl>    v           v           v           v
+</span></span><span class=line><span class=cl> @mention   Memory      Skill       Agent
+</span></span><span class=line><span class=cl> file scan  Prefetch    Discovery   Listing
+</span></span><span class=line><span class=cl>    |           |           |           |
+</span></span><span class=line><span class=cl>    +-----+-----+-----+-----+-----+----+
+</span></span><span class=line><span class=cl>          |                        |
+</span></span><span class=line><span class=cl>          v                        v
+</span></span><span class=line><span class=cl>   [Attachment Messages injected into conversation]</span></span></code></pre></td></tr></table></div></div><p>其中最精妙的是 Memory Prefetch。它用 Sonnet 模型做一次轻量级 sideQuery，从持久化记忆中挑选最多 5 个相关文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>prefetch_relevant_memories</span><span class=p>(</span><span class=n>user_query</span><span class=p>,</span> <span class=n>messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>already_surfaced</span> <span class=o>=</span> <span class=n>collect_surfaced_memories</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>recent_tools</span> <span class=o>=</span> <span class=n>collect_recent_successful_tools</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>selected</span> <span class=o>=</span> <span class=n>sonnet_side_query</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>system</span><span class=o>=</span><span class=s2>&#34;Select up to 5 memories useful for the query&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>user</span><span class=o>=</span><span class=sa>f</span><span class=s2>&#34;Query: </span><span class=si>{</span><span class=n>user_query</span><span class=si>}</span><span class=se>\n</span><span class=s2>Available: </span><span class=si>{</span><span class=n>memory_manifest</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>recent_tools</span><span class=o>=</span><span class=n>recent_tools</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>load_selected_memories</span><span class=p>(</span><span class=n>selected</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><p>sideQuery 是 Claude Code 的一个关键模式：主循环之外，用一个较小的模型做辅助决策，结果作为 attachment 注入到下一轮对话中。成本极低（Sonnet 比 Opus 便宜很多），但上下文相关性大幅提升。</p><h3 id=layer-2模型驱动的检索>Layer 2：模型驱动的检索
+<a class=header-anchor href=#layer-2%e6%a8%a1%e5%9e%8b%e9%a9%b1%e5%8a%a8%e7%9a%84%e6%a3%80%e7%b4%a2></a></h3><p>这是 Agentic RAG 的核心。模型拥有三个搜索工具，自主决定调用顺序和次数：</p><table><thead><tr><th>工具</th><th>能力</th><th>典型用法</th></tr></thead><tbody><tr><td>Glob</td><td>按文件名模式匹配</td><td><code>src/**/*.ts</code>，找文件结构</td></tr><tr><td>Grep</td><td>按内容正则搜索</td><td><code>function handleAuth</code>，找实现</td></tr><tr><td>Read</td><td>读取文件内容</td><td>精确读取目标文件</td></tr></tbody></table><p>模型通常按 Glob → Grep → Read 的顺序漏斗式缩小范围：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Model thinks: &#34;I need to find the auth handler&#34;
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Glob(&#34;src/**/*auth*.ts&#34;)        --&gt; 8 files found
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Grep(&#34;handleAuth&#34;, path=&#34;src/&#34;) --&gt; 3 files match
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Read(&#34;src/api/auth/handler.ts&#34;) --&gt; full content
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>(enough context, start working)</span></span></code></pre></td></tr></table></div></div><p>关键在于这不是固定流程。模型可能直接 Read（用户给了文件路径），可能 Grep 多次（第一次没找到，换个关键词），也可能同时发起多个并行搜索。这种灵活性是传统 RAG 做不到的。</p><h3 id=layer-3子-agent-委托检索>Layer 3：子 Agent 委托检索
+<a class=header-anchor href=#layer-3%e5%ad%90-agent-%e5%a7%94%e6%89%98%e6%a3%80%e7%b4%a2></a></h3><p>当搜索任务较重时（比如"帮我理解这个项目的认证架构"），模型可以启动一个 Explore Agent 来代劳：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>Main</span> <span class=n>Agent</span> <span class=n>context</span><span class=p>:</span>                <span class=n>Explore</span> <span class=n>Agent</span> <span class=n>context</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=o>+---------------------------+</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>User</span> <span class=n>query</span>                <span class=o>|</span>      <span class=o>|</span> <span class=n>Search</span> <span class=n>directive</span>          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>valuable</span> <span class=n>context</span><span class=p>)</span>    <span class=o>|</span>      <span class=o>|</span> <span class=n>Glob</span><span class=p>,</span> <span class=n>Grep</span><span class=p>,</span> <span class=n>Read</span> <span class=n>results</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>raw</span> <span class=n>search</span> <span class=n>output</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>[</span><span class=n>Agent</span> <span class=k>tool</span> <span class=n>call</span><span class=p>]</span>  <span class=o>-------|----&gt;</span> <span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>lots</span> <span class=n>of</span> <span class=n>content</span><span class=p>)</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>[</span><span class=n>Agent</span> <span class=n>result</span><span class=p>:</span> <span class=n>summary</span><span class=p>]</span> <span class=o>&lt;-|----</span>  <span class=o>|</span> <span class=n>Final</span> <span class=n>summary</span> <span class=p>(</span><span class=n>concise</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>(</span><span class=n>context</span> <span class=n>stays</span> <span class=n>clean</span><span class=o>!</span><span class=p>)</span>    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+---------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>Explore Agent 的设计很克制：只读（不能创建、修改、删除任何文件），用 Haiku（最快的模型）运行，所有原始搜索结果留在子 Agent 的上下文里，只返回精炼的摘要，甚至不加载 CLAUDE.md（主 Agent 已经有了）。</p><p>这解决了 Agentic RAG 的一个核心问题：搜索过程本身会消耗大量上下文。如果所有 Glob/Grep/Read 结果都留在主上下文里，几轮搜索下来上下文就满了。子 Agent 充当了一个上下文防火墙。</p><h2 id=工程细节亮点>工程细节亮点
+<a class=header-anchor href=#%e5%b7%a5%e7%a8%8b%e7%bb%86%e8%8a%82%e4%ba%ae%e7%82%b9></a></h2><h3 id=搜索结果的-token-预算控制>搜索结果的 Token 预算控制
+<a class=header-anchor href=#%e6%90%9c%e7%b4%a2%e7%bb%93%e6%9e%9c%e7%9a%84-token-%e9%a2%84%e7%ae%97%e6%8e%a7%e5%88%b6></a></h3><p>每个搜索工具都有结果裁剪机制，防止单次搜索淹没上下文：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span><span class=lnt id=hl-7-18><a class=lnlinks href=#hl-7-18>18</a>
+</span><span class=lnt id=hl-7-19><a class=lnlinks href=#hl-7-19>19</a>
+</span><span class=lnt id=hl-7-20><a class=lnlinks href=#hl-7-20>20</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>+-- Search Result Budget Controls --+
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Grep:                            |
+</span></span><span class=line><span class=cl>|    Default head_limit = 250 lines |
+</span></span><span class=line><span class=cl>|    Max result size = 20KB chars   |
+</span></span><span class=line><span class=cl>|    Max line width = 500 chars     |
+</span></span><span class=line><span class=cl>|    (base64/minified auto-trimmed) |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Glob:                            |
+</span></span><span class=line><span class=cl>|    Max 100 files returned         |
+</span></span><span class=line><span class=cl>|    Sorted by mtime (newest first) |
+</span></span><span class=line><span class=cl>|    Paths relativized to save toks |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Read:                            |
+</span></span><span class=line><span class=cl>|    Max 25,000 tokens per read     |
+</span></span><span class=line><span class=cl>|    Max 256KB file size            |
+</span></span><span class=line><span class=cl>|    Default 2000 lines             |
+</span></span><span class=line><span class=cl>|    Supports offset + limit paging |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>+-----------------------------------+</span></span></code></pre></td></tr></table></div></div><p>Grep 的 head_limit=250 是一个很精妙的默认值：足够大，能覆盖绝大多数探索性搜索；足够小，不会一次灌入 6000+ token 的搜索结果。如果模型知道需要更多，可以传 head_limit=0（无限制）或用 offset 翻页。</p><h3 id=read-工具的去重优化>Read 工具的去重优化
+<a class=header-anchor href=#read-%e5%b7%a5%e5%85%b7%e7%9a%84%e5%8e%bb%e9%87%8d%e4%bc%98%e5%8c%96></a></h3><p>同一个文件被读两次很常见，先搜到，后编辑前再确认。Claude Code 会自动检测：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>read_file</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>existing</span> <span class=o>=</span> <span class=n>read_file_state</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>existing</span> <span class=ow>and</span> <span class=n>existing</span><span class=o>.</span><span class=n>offset</span> <span class=o>==</span> <span class=n>offset</span> <span class=ow>and</span> <span class=n>existing</span><span class=o>.</span><span class=n>limit</span> <span class=o>==</span> <span class=n>limit</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>mtime</span> <span class=o>=</span> <span class=n>get_file_mtime</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>mtime</span> <span class=o>==</span> <span class=n>existing</span><span class=o>.</span><span class=n>timestamp</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=s2>&#34;File unchanged since last read.&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=c1># saves ~25K tokens per hit</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=n>read_file_content</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>read_file_state</span><span class=o>.</span><span class=n>set</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>content</span><span class=p>,</span> <span class=n>mtime</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>content</span></span></span></code></pre></td></tr></table></div></div><p>大约 18% 的 Read 调用命中去重，每次节省一整个文件的 token 开销。</p><h3 id=路径相对化>路径相对化
+<a class=header-anchor href=#%e8%b7%af%e5%be%84%e7%9b%b8%e5%af%b9%e5%8c%96></a></h3><p>一个不起眼但无处不在的优化：所有搜索结果中的绝对路径都被转换为相对路径。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4>4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5>5</a>
+</span><span class=lnt id=hl-9-6><a class=lnlinks href=#hl-9-6>6</a>
+</span><span class=lnt id=hl-9-7><a class=lnlinks href=#hl-9-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># Before (absolute paths waste tokens):
+</span></span><span class=line><span class=cl>/Users/john/projects/my-app/src/components/auth/LoginForm.tsx
+</span></span><span class=line><span class=cl>/Users/john/projects/my-app/src/components/auth/AuthProvider.tsx
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># After (relative to cwd):
+</span></span><span class=line><span class=cl>src/components/auth/LoginForm.tsx
+</span></span><span class=line><span class=cl>src/components/auth/AuthProvider.tsx</span></span></code></pre></td></tr></table></div></div><p>看起来微不足道，但在一个包含几十次搜索的会话中，这能省下几千个 token。</p><h3 id=system-prompt-的缓存分区>System Prompt 的缓存分区
+<a class=header-anchor href=#system-prompt-%e7%9a%84%e7%bc%93%e5%ad%98%e5%88%86%e5%8c%ba></a></h3><p>前面提到的 <code>__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__</code> 配合 Anthropic API 的 scope: &lsquo;global&rsquo; 缓存策略，让静态部分在所有用户之间共享缓存：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1> 1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2> 2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3> 3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4> 4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5> 5</a>
+</span><span class=lnt id=hl-10-6><a class=lnlinks href=#hl-10-6> 6</a>
+</span><span class=lnt id=hl-10-7><a class=lnlinks href=#hl-10-7> 7</a>
+</span><span class=lnt id=hl-10-8><a class=lnlinks href=#hl-10-8> 8</a>
+</span><span class=lnt id=hl-10-9><a class=lnlinks href=#hl-10-9> 9</a>
+</span><span class=lnt id=hl-10-10><a class=lnlinks href=#hl-10-10>10</a>
+</span><span class=lnt id=hl-10-11><a class=lnlinks href=#hl-10-11>11</a>
+</span><span class=lnt id=hl-10-12><a class=lnlinks href=#hl-10-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>API</span> <span class=n>Request</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>0</span><span class=p>]:</span> <span class=n>intro</span> <span class=o>+</span> <span class=n>tools</span> <span class=o>+</span> <span class=n>rules</span>                 <span class=o>|</span>  <span class=n>scope</span><span class=p>:</span> <span class=s1>&#39;global&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>1</span><span class=p>]:</span> <span class=n>actions</span> <span class=o>+</span> <span class=n>style</span>                       <span class=o>|</span>  <span class=p>(</span><span class=n>shared</span> <span class=n>across</span> <span class=n>ALL</span> <span class=n>users</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>----</span> <span class=n>DYNAMIC</span> <span class=n>BOUNDARY</span> <span class=o>----</span>                      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>2</span><span class=p>]:</span> <span class=n>session</span> <span class=n>guidance</span>                      <span class=o>|</span>  <span class=n>scope</span><span class=p>:</span> <span class=s1>&#39;session&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>3</span><span class=p>]:</span> <span class=n>memory</span> <span class=o>+</span> <span class=n>env</span> <span class=n>info</span>                     <span class=o>|</span>  <span class=p>(</span><span class=n>per</span><span class=o>-</span><span class=n>user</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>messages</span><span class=p>:</span> <span class=p>[</span><span class=n>user</span><span class=p>,</span> <span class=n>assistant</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>边界之前的内容（工具描述、行为准则等）对所有用户完全相同，只需要 cache 一次。你的第一次请求可能就命中了别人已经缓存好的 system prompt 前缀。这是全局级别的去重。</p><h2 id=端到端流程>端到端流程
+<a class=header-anchor href=#%e7%ab%af%e5%88%b0%e7%ab%af%e6%b5%81%e7%a8%8b></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1> 1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2> 2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3> 3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4> 4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5> 5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6> 6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7> 7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8> 8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9> 9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10>10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11>11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12>12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13>13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14>14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15>15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16>16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17>17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18>18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19>19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20>20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21>21</a>
+</span><span class=lnt id=hl-11-22><a class=lnlinks href=#hl-11-22>22</a>
+</span><span class=lnt id=hl-11-23><a class=lnlinks href=#hl-11-23>23</a>
+</span><span class=lnt id=hl-11-24><a class=lnlinks href=#hl-11-24>24</a>
+</span><span class=lnt id=hl-11-25><a class=lnlinks href=#hl-11-25>25</a>
+</span><span class=lnt id=hl-11-26><a class=lnlinks href=#hl-11-26>26</a>
+</span><span class=lnt id=hl-11-27><a class=lnlinks href=#hl-11-27>27</a>
+</span><span class=lnt id=hl-11-28><a class=lnlinks href=#hl-11-28>28</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SESSION START
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- Load system prompt (static + dynamic)
+</span></span><span class=line><span class=cl>+-- Load CLAUDE.md into user context
+</span></span><span class=line><span class=cl>+-- Load MEMORY.md index
+</span></span><span class=line><span class=cl>+-- Snapshot git status + recent commits
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>USER SENDS: &#34;Fix the auth bug in payment API&#34;
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- [Parallel prefetch, before model runs]
+</span></span><span class=line><span class=cl>|   +-- Sonnet memory recall -&gt; api_gotchas.md, user_prefs.md
+</span></span><span class=line><span class=cl>|   +-- @file scan -&gt; (none mentioned)
+</span></span><span class=line><span class=cl>|   +-- Skill discovery -&gt; (no matching skills)
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- Prefetch results injected as attachment messages
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>MODEL TURN 1:
+</span></span><span class=line><span class=cl>|   Thinks: &#34;I need to find auth-related files&#34;
+</span></span><span class=line><span class=cl>|   +-- Grep(&#34;auth.*bug|payment.*auth&#34;, type=&#34;ts&#34;)    --&gt; 5 files
+</span></span><span class=line><span class=cl>|   +-- Read(&#34;src/api/payment/auth.ts&#34;)                --&gt; 800 lines
+</span></span><span class=line><span class=cl>|   +-- Read(&#34;src/api/payment/__tests__/auth.test.ts&#34;) --&gt; 400 lines
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>MODEL TURN 2:
+</span></span><span class=line><span class=cl>|   Thinks: &#34;Found the bug, now fix it&#34;
+</span></span><span class=line><span class=cl>|   +-- Edit(&#34;src/api/payment/auth.ts&#34;, ...)
+</span></span><span class=line><span class=cl>|   +-- Bash(&#34;npm test -- auth&#34;)
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>DONE (2 turns of retrieval + 1 turn of action)</span></span></code></pre></td></tr></table></div></div><h2 id=对比>对比
+<a class=header-anchor href=#%e5%af%b9%e6%af%94></a></h2><table><thead><tr><th>维度</th><th>传统 RAG</th><th>Claude Code</th></tr></thead><tbody><tr><td>索引</td><td>离线向量化</td><td>无索引，实时搜索</td></tr><tr><td>检索策略</td><td>固定（Top-K）</td><td>动态（模型决定）</td></tr><tr><td>检索轮次</td><td>单轮</td><td>多轮循环</td></tr><tr><td>检索粒度</td><td>固定 chunk</td><td>文件名 → 内容 → 行级</td></tr><tr><td>上下文保护</td><td>无</td><td>子 Agent 隔离</td></tr><tr><td>结果裁剪</td><td>截断</td><td>多层预算控制</td></tr><tr><td>缓存</td><td>向量缓存</td><td>Prompt Cache 分区 + Read 去重</td></tr></tbody></table><p>Claude Code 的 RAG 本质上不是"检索增强生成"，而是"生成驱动检索"：模型先理解需求，再决定搜什么，搜完判断够不够，不够再搜。牺牲了一点延迟，换来了远超传统 RAG 的精准度和灵活性。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/llm/>LLM
+</a><a href=/tags/llm-agent/>LLM Agent
+</a><a href=/tags/nlp/>NLP</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/claude-code-auto-mode-security/ rel=next title="深入 Claude Code 的 YOLO Classifier"><i class="fa fa-chevron-left"></i> 深入 Claude Code 的 YOLO Classifier</a></div><div class="post-nav-prev post-nav-item"><a href=/llm-infinite-monkeys/ rel=prev title=LLM就是那群终于打出莎士比亚的猴子>LLM就是那群终于打出莎士比亚的猴子
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/claude-code-rag/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"claude-code-rag","permalink":"https://finisky.github.io/claude-code-rag/","title":"拆解 Claude Code 的 RAG 机制","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

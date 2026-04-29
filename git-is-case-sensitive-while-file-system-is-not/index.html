@@ -1,0 +1,192 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Windows大小写不敏感导致的git冲突"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="Linux"><meta property="og:type" content="article"><meta property="og:title" content="Windows大小写不敏感导致的git冲突"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2022-11-15 19:01:30 +0800 CST"><meta property="article:modified_time" content="2022-11-15 19:01:30 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/git-is-case-sensitive-while-file-system-is-not/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Windows大小写不敏感导致的git冲突 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#解决方案>解决方案</a><ul><li><a href=#同名文件冲突>同名文件冲突</a></li><li><a href=#合并同名文件夹>合并同名文件夹</a></li></ul></li><li><a href=#demo>Demo</a></li><li><a href=#参考>参考</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/certbot-automating-nginx-ssl-renewal/>Cerbot自动化管理Nginx网站证书</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/argument-incorrect-type-expected-ndarray/>TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) 解决方案</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/build-llama-cpp-python-error-solution/>升级gcc解决编译llama-cpp-python错误</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/multiple-github-accounts-on-one-machine/>同一机器配置多个GitHub账号</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/cleanup-linux-disk/>清理Linux的磁盘使用空间</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Windows大小写不敏感导致的git冲突"><meta itemprop=description content="来个好玩的，遇到过 git reset --hard 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+
+
+D:\$ git clone https://github.com/finisky/git-case-demo.git
+Cloning into 'git-case-demo'...
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 11 (delta 0), reused 8 (delta 0), pack-reused 0
+Unpacking objects: 100% (11/11), 1.85 KiB | 126.00 KiB/s, done.
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
+
+  'File.txt'
+  'file.txt'
+
+
+
+然后就会发现刚拉的main分支都不干净(橙色)，而且git reset --hard也失效了，仔细看才发现，每reset一次，会在大写 File.txt 和小写 file.txt 之间切换，神奇不？"></span><header class=post-header><h1 class=post-title itemprop="name headline">Windows大小写不敏感导致的git冲突</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2022-11-15 19:01:30 +08:00" itemprop="dateCreated datePublished" datetime="2022-11-15 19:01:30 +0800 CST">2022-11-15
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>3分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/git-is-case-sensitive-while-file-system-is-not/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/git-is-case-sensitive-while-file-system-is-not/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>来个好玩的，遇到过 <code>git reset --hard</code> 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>D:<span class=se>\$</span> git clone https://github.com/finisky/git-case-demo.git
+</span></span><span class=line><span class=cl>Cloning into <span class=s1>&#39;git-case-demo&#39;</span>...
+</span></span><span class=line><span class=cl>remote: Enumerating objects: 11, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>remote: Counting objects: 100% <span class=o>(</span>11/11<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>remote: Compressing objects: 100% <span class=o>(</span>6/6<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>remote: Total <span class=m>11</span> <span class=o>(</span>delta 0<span class=o>)</span>, reused <span class=m>8</span> <span class=o>(</span>delta 0<span class=o>)</span>, pack-reused <span class=m>0</span>
+</span></span><span class=line><span class=cl>Unpacking objects: 100% <span class=o>(</span>11/11<span class=o>)</span>, 1.85 KiB <span class=p>|</span> 126.00 KiB/s, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>warning: the following paths have collided <span class=o>(</span>e.g. <span class=k>case</span>-sensitive paths
+</span></span><span class=line><span class=cl>on a <span class=k>case</span>-insensitive filesystem<span class=o>)</span> and only one from the same
+</span></span><span class=line><span class=cl>colliding group is in the working tree:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=s1>&#39;File.txt&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=s1>&#39;file.txt&#39;</span></span></span></code></pre></td></tr></table></div></div><p>然后就会发现刚拉的<code>main</code>分支都不干净(橙色)，而且<code>git reset --hard</code>也失效了，仔细看才发现，每reset一次，会在大写 <code>File.txt</code> 和小写 <code>file.txt</code> 之间切换，神奇不？</p><a id=more></a><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/gitresetnotworking.png alt></p><p>在github上浏览
+<a href=https://github.com/finisky/git-case-demo title=repo rel="noopener external nofollow noreferrer" target=_blank class=exturl>repo
+<i class="fa fa-external-link-alt"></i>
+</a>，会发现文件目录与本地的不同：</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/gitviewdiff.png alt></p><p>github上根目录有两个txt <code>File.txt</code> 和 <code>file.txt</code> ，两个文件夹 <code>Folder</code> 和 <code>folder</code>，而本地只有一个<code>file.txt</code> 和一个 <code>Folder</code> 。而这也是 <code>git reset --hard</code> 失效的根本原因：</p><p><strong>git是大小写敏感的，而Windows系统是大小写不敏感的</strong>。</p><p>所以这个问题只会出现在Windows上使用git的情况，Windows将 <code>File.txt</code> 和 <code>file.txt</code> 认为是同一文件，所以reset失效了。Linux/Mac与git一致，大小写敏感，所以不存在这样的问题。<code>Folder</code> 与 <code>folder</code> 也是同理，在Windows上这两个文件夹会被合并成同一个。</p><p>这个问题常常会在配置CICD时发现，本地是Windows环境，而部署编译的机器是Linux，会提示找不到文件，但在Windows环境中看文件明明是存在的……</p><h1 id=解决方案>解决方案
+<a class=header-anchor href=#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88></a></h1><p>在Linux/Mac上把文件统一当然可以解决问题，但如果手边没有Linux怎么办？</p><p>git是大小写敏感的，因此可以通过 <code>git mv</code> 解决问题。</p><h2 id=同名文件冲突>同名文件冲突
+<a class=header-anchor href=#%e5%90%8c%e5%90%8d%e6%96%87%e4%bb%b6%e5%86%b2%e7%aa%81></a></h2><p>假设保留小写文件，将大写文件覆盖之:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2>2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3>3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4>4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5>5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6>6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7>7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git mv File.txt file.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git status
+</span></span><span class=line><span class=cl>On branch fixconflicts
+</span></span><span class=line><span class=cl>Changes to be committed:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git restore --staged &lt;file&gt;...&#34;</span> to unstage<span class=o>)</span>
+</span></span><span class=line><span class=cl>        deleted:    File.txt
+</span></span><span class=line><span class=cl>        modified:   file.txt</span></span></code></pre></td></tr></table></div></div><p>注意，直接在Windows中删除 <code>File.txt</code> 是不行的，两个文件都会被删除:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5>5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6>6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7>7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8>8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git status
+</span></span><span class=line><span class=cl>On branch fixconflicts
+</span></span><span class=line><span class=cl>Changes not staged <span class=k>for</span> commit:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git add/rm &lt;file&gt;...&#34;</span> to update what will be committed<span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git restore &lt;file&gt;...&#34;</span> to discard changes in working directory<span class=o>)</span>
+</span></span><span class=line><span class=cl>        deleted:    File.txt
+</span></span><span class=line><span class=cl>        deleted:    file.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>no changes added to commit <span class=o>(</span>use <span class=s2>&#34;git add&#34;</span> and/or <span class=s2>&#34;git commit -a&#34;</span><span class=o>)</span></span></span></code></pre></td></tr></table></div></div><p>最后，commit change，分支上就干净了。</p><h2 id=合并同名文件夹>合并同名文件夹
+<a class=header-anchor href=#%e5%90%88%e5%b9%b6%e5%90%8c%e5%90%8d%e6%96%87%e4%bb%b6%e5%a4%b9></a></h2><p>可以通过两次 <code>git mv</code> 完成:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ git mv Folder temp
+</span></span><span class=line><span class=cl>$ git mv temp folder</span></span></code></pre></td></tr></table></div></div><p>先将其重命名成完全不同的文件夹，再合并文件夹内容即可：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span><span class=lnt id=hl-4-11><a class=lnlinks href=#hl-4-11>11</a>
+</span><span class=lnt id=hl-4-12><a class=lnlinks href=#hl-4-12>12</a>
+</span><span class=lnt id=hl-4-13><a class=lnlinks href=#hl-4-13>13</a>
+</span><span class=lnt id=hl-4-14><a class=lnlinks href=#hl-4-14>14</a>
+</span><span class=lnt id=hl-4-15><a class=lnlinks href=#hl-4-15>15</a>
+</span><span class=lnt id=hl-4-16><a class=lnlinks href=#hl-4-16>16</a>
+</span><span class=lnt id=hl-4-17><a class=lnlinks href=#hl-4-17>17</a>
+</span><span class=lnt id=hl-4-18><a class=lnlinks href=#hl-4-18>18</a>
+</span><span class=lnt id=hl-4-19><a class=lnlinks href=#hl-4-19>19</a>
+</span><span class=lnt id=hl-4-20><a class=lnlinks href=#hl-4-20>20</a>
+</span><span class=lnt id=hl-4-21><a class=lnlinks href=#hl-4-21>21</a>
+</span><span class=lnt id=hl-4-22><a class=lnlinks href=#hl-4-22>22</a>
+</span><span class=lnt id=hl-4-23><a class=lnlinks href=#hl-4-23>23</a>
+</span><span class=lnt id=hl-4-24><a class=lnlinks href=#hl-4-24>24</a>
+</span><span class=lnt id=hl-4-25><a class=lnlinks href=#hl-4-25>25</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git mv Folder temp
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git status
+</span></span><span class=line><span class=cl>On branch fixconflicts
+</span></span><span class=line><span class=cl>Changes to be committed:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git restore --staged &lt;file&gt;...&#34;</span> to unstage<span class=o>)</span>
+</span></span><span class=line><span class=cl>        renamed:    Folder/file2.txt -&gt; temp/file2.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Changes not staged <span class=k>for</span> commit:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git add/rm &lt;file&gt;...&#34;</span> to update what will be committed<span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git restore &lt;file&gt;...&#34;</span> to discard changes in working directory<span class=o>)</span>
+</span></span><span class=line><span class=cl>        deleted:    folder/file1.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Untracked files:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git add &lt;file&gt;...&#34;</span> to include in what will be committed<span class=o>)</span>
+</span></span><span class=line><span class=cl>        temp/file1.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git mv temp folder
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>(</span>fixconflicts -&gt; origin<span class=o>)</span>D:<span class=se>\g</span>it-case-demo$ git status
+</span></span><span class=line><span class=cl>On branch fixconflicts
+</span></span><span class=line><span class=cl>Changes to be committed:
+</span></span><span class=line><span class=cl>  <span class=o>(</span>use <span class=s2>&#34;git restore --staged &lt;file&gt;...&#34;</span> to unstage<span class=o>)</span>
+</span></span><span class=line><span class=cl>        renamed:    Folder/file2.txt -&gt; folder/file2.txt</span></span></code></pre></td></tr></table></div></div><h1 id=demo>Demo
+<a class=header-anchor href=#demo></a></h1><p>Demo Repo:
+<a href=https://github.com/finisky/git-case-demo title=https://github.com/finisky/git-case-demo rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/git-case-demo
+<i class="fa fa-external-link-alt"></i></a></p><p>其中fixconflicts分支已按本文解决了问题，供参考。</p><h1 id=参考>参考
+<a class=header-anchor href=#%e5%8f%82%e8%80%83></a></h1><p><a href=https://www.hanselman.com/blog/git-is-casesensitive-and-your-filesystem-may-not-be-weird-folder-merging-on-windows title="# Git is case-sensitive and your filesystem may not be - Weird folder merging on Windows" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Git is case-sensitive and your filesystem may not be - Weird folder merging on Windows
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://stackoverflow.com/questions/49804345/git-on-windows-merging-2-directories-with-the-same-name-but-different-case title="# Git on Windows: &ldquo;merging&rdquo; 2 directories with the same name but different case" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Git on Windows: &ldquo;merging&rdquo; 2 directories with the same name but different case
+<i class="fa fa-external-link-alt"></i></a></p><p><a href="https://learn.microsoft.com/en-us/azure/devops/repos/git/case-sensitivity?view=azure-devops" title="# Git case sensitivity" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Git case sensitivity
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/linux/>Linux</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/chrome-using-proxy-dns-is-done-client-side-or-proxy-side/ rel=next title=Chrome加代理使用本地DNS还是远程DNS？><i class="fa fa-chevron-left"></i> Chrome加代理使用本地DNS还是远程DNS？</a></div><div class="post-nav-prev post-nav-item"><a href=/migrate-github-pages-by-301-redirects/ rel=prev title="用301重定向迁移 GitHub Pages">用301重定向迁移 GitHub Pages
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/git-is-case-sensitive-while-file-system-is-not/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"git-is-case-sensitive-while-file-system-is-not","permalink":"https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/","title":"Windows大小写不敏感导致的git冲突","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

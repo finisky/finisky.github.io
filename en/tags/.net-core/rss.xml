@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>.NET Core on Finisky Garden</title><link>https://finisky.github.io/en/tags/.net-core/</link><description>Recent content in .NET Core on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Wed, 13 Jan 2021 23:38:36 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/.net-core/rss.xml" rel="self" type="application/rss+xml"/><item><title>Don't Use Load Balancer In front of Mongos</title><link>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</link><pubDate>Wed, 13 Jan 2021 23:38:36 +0800</pubDate><guid>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</guid><description>&lt;p&gt;When I execute MongoDB transactions in parallel, I encounter lots of &lt;code&gt;MongoCommandException&lt;/code&gt;: code 251, codename &lt;code&gt;NoSuchTransaction&lt;/code&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="problem-analysis"&gt;Problem Analysis
+&lt;a class="header-anchor" href="#problem-analysis"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;I performed some tests to pinpoint the issue:&lt;/p&gt;</description></item><item><title>AspNetCore Accept text/plain as applicatoin/json</title><link>https://finisky.github.io/en/aspnet-core-support-text-plain/</link><pubDate>Sun, 06 Sep 2020 12:19:12 +0800</pubDate><guid>https://finisky.github.io/en/aspnet-core-support-text-plain/</guid><description>&lt;p&gt;We developed a REST API long time ago and recently found that the released client has a flaw: the HttpRequestMessage is missing content-type &lt;code&gt;application/json&lt;/code&gt;. In earlier version we manually deserialize the request json by reading the request body but now we leverage AspNetCore framework to automatically get the request structure from the API parameter. However, the legacy client will not work: HTTP 415 &amp;ldquo;Unsupported Media Type&amp;rdquo; error happens.&lt;/p&gt;
+&lt;p&gt;Therefore, for backward compatibility, we need to make the server treat all coming requests as &lt;code&gt;application/json&lt;/code&gt; even it is a plain text (by default).&lt;/p&gt;</description></item><item><title>VS2017 .NET Core Projects Load Failed</title><link>https://finisky.github.io/en/vs-net-core-load-failed/</link><pubDate>Sat, 25 Jan 2020 12:29:58 +0800</pubDate><guid>https://finisky.github.io/en/vs-net-core-load-failed/</guid><description>&lt;p&gt;If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The current .NET SDK does not support targeting .NET Standard 2.0. Either target .NET Standard 1.6 or lower, or use a version of the .NET SDK that supports .NET Standard 2.0.	XXXProject	C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\Sdks\Microsoft.NET.Sdk\build\Microsoft.NET.TargetFrameworkInference.targets&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Another related issue is .NET Core project load failed. Both errors point out that the corresponding .NET SDK is missing.&lt;/p&gt;</description></item><item><title>Memory Related Metrics in C#</title><link>https://finisky.github.io/en/memory-metrics/</link><pubDate>Wed, 22 Jan 2020 19:41:32 +0800</pubDate><guid>https://finisky.github.io/en/memory-metrics/</guid><description>&lt;p&gt;Recently we use Grafana to monitor ASP.NET Core apps. We have an interesting observation that sometimes the &amp;ldquo;allocated memory&amp;rdquo; is larger than &amp;ldquo;working set&amp;rdquo;. After investigation, we found the root cause is that the app uses native dlls which operates on unmanaged memory which is not managed by GC. Therefore, how to correctly collect memory related metrics in C#?&lt;/p&gt;
+&lt;p&gt;We will explain these related concepts in this post.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="basic-concepts"&gt;Basic Concepts
+&lt;a class="header-anchor" href="#basic-concepts"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;h2 id="managed-vs-unmanaged-code"&gt;Managed vs Unmanaged Code
+&lt;a class="header-anchor" href="#managed-vs-unmanaged-code"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;
+&lt;a href="https://docs.microsoft.com/en-us/dotnet/standard/managed-code" title="# What is &amp;ldquo;managed code&amp;rdquo;?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # What is &amp;ldquo;managed code&amp;rdquo;?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

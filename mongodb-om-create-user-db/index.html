@@ -1,0 +1,222 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS"><meta property="og:type" content="article"><meta property="og:title" content="Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-om-create-user-db/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-12 23:30:37 +0800 CST"><meta property="article:modified_time" content="2020-12-12 23:30:37 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-create-user-db/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-create-user-db/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset) - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#官方方案>官方方案</a><ul><li><a href=#生成public-api-key>生成Public API Key</a></li><li><a href=#创建存储apikey的secret>创建存储APIkey的secret</a></li><li><a href=#创建连接ops-manager的configmap>创建连接Ops Manager的ConfigMap</a></li><li><a href=#创建用户数据库userdb>创建用户数据库userdb</a></li></ul></li><li><a href=#简单方案不推荐>简单方案（不推荐）</a></li><li><a href=#创建结果>创建结果</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-sharded-cluster/>部署Kubernetes MongoDB Sharded Cluster</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-tls-auth/>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-self-signed-certificates/>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-expose-services/>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-ops-manager/>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-om-create-user-db/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)"><meta itemprop=description content="本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。
+整个系列：
+
+
+
+    安装MongoDB Ops Manager
+    
+
+
+
+    创建用户数据库(replicaset)
+    
+
+
+
+    用户数据库服务配置公网访问
+    
+
+
+
+    openssl生成自签名CA证书和server证书
+    
+
+
+
+    打开用户数据库TLS通信加密和Auth授权
+    
+
+
+所谓的Application Database是MongoDB Ops Manager的后端DB，并不能用来存放用户数据，所以我们需要用Ops Manager创建用户数据库。使用Ops Manager创建的MongoDB叫做Deployment，注意此Deployment是MongoDB Deployment，与kubernetes的Deployment不是一码事。"></span><header class=post-header><h1 class=post-title itemprop="name headline">Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-12-12 23:30:37 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-12 23:30:37 +0800 CST">2020-12-12
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-om-create-user-db/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-om-create-user-db/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。</p><p>整个系列：</p><ol><li><a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager</a></li><li><a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)</a></li><li><a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问</a></li><li><a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></li><li><a href=/mongodb-om-tls-auth/ title=打开用户数据库TLS通信加密和Auth授权>打开用户数据库TLS通信加密和Auth授权</a></li></ol><p>所谓的<code>Application Database</code>是MongoDB Ops Manager的后端DB，并不能用来存放用户数据，所以我们需要用Ops Manager创建用户数据库。使用Ops Manager创建的MongoDB叫做<code>Deployment</code>，注意此<code>Deployment</code>是<code>MongoDB Deployment</code>，与kubernetes的<code>Deployment</code>不是一码事。</p><a id=more></a><p>简单起见，本文以创建一个3实例的MongoDB <code>userdb</code>为例，<code>Sharding Cluster</code>由于组件复杂，server数量更多，配置比<code>ReplicaSet</code>要麻烦些，但配置过程基本一致。可参考：
+<a href=/mongodb-om-create-sharded-cluster/ title="MongoDB Ops Manager部署Sharded Cluster">MongoDB Ops Manager部署Sharded Cluster</a></p><p><a href=https://www.mongodb.com/blog/post/running-mongodb-ops-manager-in-kubernetes title=官方文档 rel="noopener external nofollow noreferrer" target=_blank class=exturl>官方文档
+<i class="fa fa-external-link-alt"></i>
+</a>是要生成一个新的API Key创建用户数据库的，但后面会提到用这种方法可能会创建失败，采用<code>ops-manager-admin-key</code>进行创建可以绕过这个问题。因此下面提供两种方案。
+<strong>Update 2020-12-23</strong>: 找到了问题，创建API Key Secret时使用的用户名要与上节
+<a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager
+</a>中<code>ops-manager-admin-secret</code>保持一致（因为Key就是属于该用户的），否则会出现401 Unauthorized错误。</p><h1 id=官方方案>官方方案
+<a class=header-anchor href=#%e5%ae%98%e6%96%b9%e6%96%b9%e6%a1%88></a></h1><h2 id=生成public-api-key>生成Public API Key
+<a class=header-anchor href=#%e7%94%9f%e6%88%90public-api-key></a></h2><p>用户数据库需要有权限访问Ops Manager，所以要生成一个Key。</p><p>“UserName -> Account -> Public API Access”，点页面最右上角的用户名，弹出菜单中有"Account"。
+<img src=/imgs/img-lazy-loading.gif data-src=https://webassets.mongodb.com/_com_assets/cms/account_settings-fva9elw8gg.png alt="Generate Public API key"></p><p>注意这个<code>&lt;apikey></code>只显示一次，妥善保存。</p><h2 id=创建存储apikey的secret>创建存储APIkey的secret
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e5%ad%98%e5%82%a8apikey%e7%9a%84secret></a></h2><p>创建API Key Secret时使用的用户名<code>user</code>要与上节创建API Key的账户一致！</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic om-user-credentials --from-literal=&#34;user=xxx@xxx.com&#34; --from-literal=&#34;publicApiKey=&lt;apikey&gt;&#34; -n mongodb
+</span></span><span class=line><span class=cl>secret/om-user-credentials created</span></span></code></pre></td></tr></table></div></div><h2 id=创建连接ops-manager的configmap>创建连接Ops Manager的ConfigMap
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e8%bf%9e%e6%8e%a5ops-manager%e7%9a%84configmap></a></h2><p>先找到Ops Manager的URL:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl get om ops-manager -o jsonpath=&#39;{.status.opsManager.url}&#39; -n mongodb
+</span></span><span class=line><span class=cl>http://ops-manager-svc.mongodb.svc.cluster.local:8080</span></span></code></pre></td></tr></table></div></div><p>创建ops-manager-connection ConfigMap，写入上面得到的URL：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create configmap ops-manager-connection --from-literal=&#34;baseUrl=http://ops-manager-svc.mongodb.svc.cluster.local:8080&#34;  -n mongodb
+</span></span><span class=line><span class=cl>configmap/ops-manager-connection created</span></span></code></pre></td></tr></table></div></div><h2 id=创建用户数据库userdb>创建用户数据库userdb
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e7%94%a8%e6%88%b7%e6%95%b0%e6%8d%ae%e5%ba%93userdb></a></h2><p>可惜的是，创建用户数据库并不方便通过界面直接完成，如果你先新建一个Project，再创建Deployment，则在界面中需要你手动配置各种参数，而且由于Deployment对应的Server还没有创建，会出现找不到Agents的情况。这也是目前Ops Manager使用起来比较尴尬的地方：并不是所有操作都可以通过界面完成。原因应该是因为配置参数比较多，用配置文件管理更简单直接。不知道后续Ops Manager版本是否会改进此问题。</p><p>所以还是需要通过kubectl命令行创建用户数据库，编辑userdb.yaml如下，将opsManager部分的credential和configMap填入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>members</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ReplicaSet</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>om-user-credentials</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl apply -f userdb.yaml -n mongodb
+</span></span><span class=line><span class=cl>mongodb.mongodb.com/userdb created</span></span></code></pre></td></tr></table></div></div><h1 id=简单方案不推荐>简单方案（不推荐）
+<a class=header-anchor href=#%e7%ae%80%e5%8d%95%e6%96%b9%e6%a1%88%e4%b8%8d%e6%8e%a8%e8%8d%90></a></h1><p><strong>请使用上面的官方方案。</strong></p><p>上一步按照官方文档做法apply之后可能会失败：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14>14</a>
+</span><span class=lnt id=hl-5-15><a class=lnlinks href=#hl-5-15>15</a>
+</span><span class=lnt id=hl-5-16><a class=lnlinks href=#hl-5-16>16</a>
+</span><span class=lnt id=hl-5-17><a class=lnlinks href=#hl-5-17>17</a>
+</span><span class=lnt id=hl-5-18><a class=lnlinks href=#hl-5-18>18</a>
+</span><span class=lnt id=hl-5-19><a class=lnlinks href=#hl-5-19>19</a>
+</span><span class=lnt id=hl-5-20><a class=lnlinks href=#hl-5-20>20</a>
+</span><span class=lnt id=hl-5-21><a class=lnlinks href=#hl-5-21>21</a>
+</span><span class=lnt id=hl-5-22><a class=lnlinks href=#hl-5-22>22</a>
+</span><span class=lnt id=hl-5-23><a class=lnlinks href=#hl-5-23>23</a>
+</span><span class=lnt id=hl-5-24><a class=lnlinks href=#hl-5-24>24</a>
+</span><span class=lnt id=hl-5-25><a class=lnlinks href=#hl-5-25>25</a>
+</span><span class=lnt id=hl-5-26><a class=lnlinks href=#hl-5-26>26</a>
+</span><span class=lnt id=hl-5-27><a class=lnlinks href=#hl-5-27>27</a>
+</span><span class=lnt id=hl-5-28><a class=lnlinks href=#hl-5-28>28</a>
+</span><span class=lnt id=hl-5-29><a class=lnlinks href=#hl-5-29>29</a>
+</span><span class=lnt id=hl-5-30><a class=lnlinks href=#hl-5-30>30</a>
+</span><span class=lnt id=hl-5-31><a class=lnlinks href=#hl-5-31>31</a>
+</span><span class=lnt id=hl-5-32><a class=lnlinks href=#hl-5-32>32</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl get mdb -n mongodb
+</span></span><span class=line><span class=cl>NAME     TYPE         STATE    VERSION     AGE
+</span></span><span class=line><span class=cl>userdb   ReplicaSet   Failed   4.2.2-ent   86s
+</span></span><span class=line><span class=cl>$ kubectl describe mdb -n mongodb
+</span></span><span class=line><span class=cl>Name:         userdb
+</span></span><span class=line><span class=cl>Namespace:    mongodb
+</span></span><span class=line><span class=cl>Labels:       &lt;none&gt;
+</span></span><span class=line><span class=cl>Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+</span></span><span class=line><span class=cl>                {&#34;apiVersion&#34;:&#34;mongodb.com/v1&#34;,&#34;kind&#34;:&#34;MongoDB&#34;,&#34;metadata&#34;:{&#34;annotations&#34;:{},&#34;name&#34;:&#34;userdb&#34;,&#34;namespace&#34;:&#34;mongodb&#34;},&#34;spec&#34;:{&#34;credentials&#34;:...
+</span></span><span class=line><span class=cl>API Version:  mongodb.com/v1
+</span></span><span class=line><span class=cl>Kind:         MongoDB
+</span></span><span class=line><span class=cl>Metadata:
+</span></span><span class=line><span class=cl>  Creation Timestamp:  2020-12-10T08:19:02Z
+</span></span><span class=line><span class=cl>  Generation:          1
+</span></span><span class=line><span class=cl>  Resource Version:    52201207
+</span></span><span class=line><span class=cl>  Self Link:           /apis/mongodb.com/v1/namespaces/mongodb/mongodb/userdb
+</span></span><span class=line><span class=cl>  UID:                 8c04df70-5249-4c3b-8a28-3907890e4eb8
+</span></span><span class=line><span class=cl>Spec:
+</span></span><span class=line><span class=cl>  Credentials:  om-user-credentials
+</span></span><span class=line><span class=cl>  Members:      3
+</span></span><span class=line><span class=cl>  Ops Manager:
+</span></span><span class=line><span class=cl>    Config Map Ref:
+</span></span><span class=line><span class=cl>      Name:  ops-manager-connection
+</span></span><span class=line><span class=cl>  Type:      ReplicaSet
+</span></span><span class=line><span class=cl>  Version:   4.2.2-ent
+</span></span><span class=line><span class=cl>Status:
+</span></span><span class=line><span class=cl>  Last Transition:      2020-12-10T08:20:33Z
+</span></span><span class=line><span class=cl>  Message:              Failed to prepare Ops Manager connection: Error reading or creating project in Ops Manager: Status: 401 (Unauthorized), Detail: You are not authorized for this resource.
+</span></span><span class=line><span class=cl>  Observed Generation:  1
+</span></span><span class=line><span class=cl>  Phase:                Failed
+</span></span><span class=line><span class=cl>  Version:
+</span></span><span class=line><span class=cl>Events:                 &lt;none&gt;</span></span></code></pre></td></tr></table></div></div><p>401 (Unauthorized)错误，也就是说生成的API Key无效。</p><p>没有想到特别好的方法，但在<code>Public API access</code>页面中发现默认是有一个API Key的，虽然在Ops Manager中不显示，但可以从kubernetes dashboard的secret中找到：<code>ops-manager-admin-key</code>，也就是说不必生成新的APIkey和创建<code>om-user-credentials</code>了。查看<code>ops-manager-admin-key</code>的最末几位:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/generateapikey.png alt="OpsManager Public API Key"></p><p>修改userdb.yaml如下（只修改最后一行）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>members</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ReplicaSet</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-admin-key</span></span></span></code></pre></td></tr></table></div></div><p>然后再apply即可创建成功。</p><h1 id=创建结果>创建结果
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e7%bb%93%e6%9e%9c></a></h1><p>之后一个新的statefulset <code>userdb</code>会创建，等待它创建完毕即可：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl get mdb -n mongodb
+</span></span><span class=line><span class=cl>NAME     TYPE         STATE     VERSION     AGE
+</span></span><span class=line><span class=cl>userdb   ReplicaSet   Running   4.2.2-ent   13m</span></span></code></pre></td></tr></table></div></div><p>命令执行完毕之后，刷新All Clusters界面就有两个cluster了，同时对应的context和Project也自动创建好了，其中<code>userdb</code>就是创建好的用户数据库：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/allclusters.png alt="MongoDB Ops Manager All Clusters"></p><p>查看userdb processes:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbprocesses.png alt="UserDB Processes">
+发现TLS和AUTH都是Disabled。也就是说DB的通信没有加密，访问也没有用户名密码。</p><p>查看userdb servers:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png alt="UserDB Servers">
+注意三个server的地址都是类似：<code>userdb-0.userdb-svc.mongodb.svc.cluster.local</code>，也就是内网地址，因此此时我们并不能通过mongo client连接到这些MongoDB Instance。</p><p>不过现在用户数据库已经创建完成！</p><p>下一部分我们会暴露UserDB Service使其可以从公网访问。
+<a href=/mongodb-om-expose-services/ title=Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/kubernetes/>Kubernetes
+</a><a href=/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/tags/tls/>TLS</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/mongodb-om-expose-services/ rel=next title=Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问><i class="fa fa-chevron-left"></i> Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></div><div class="post-nav-prev post-nav-item"><a href=/mongodb-ops-manager/ rel=prev title="Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager">Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-om-create-user-db/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-create-user-db","permalink":"https://finisky.github.io/mongodb-om-create-user-db/","title":"Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

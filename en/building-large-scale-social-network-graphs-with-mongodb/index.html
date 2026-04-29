@@ -1,0 +1,469 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Building Large-Scale Social Network Graphs with MongoDB"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,C#"><meta property="og:type" content="article"><meta property="og:title" content="Building Large-Scale Social Network Graphs with MongoDB"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2024-11-05 00:59:12 +0800 CST"><meta property="article:modified_time" content="2024-11-05 00:59:12 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/building-large-scale-social-network-graphs-with-mongodb/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Building Large-Scale Social Network Graphs with MongoDB - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#problem-description-and-challenges>Problem Description and Challenges</a></li><li><a href=#data-modeling-and-scalability>Data Modeling and Scalability</a></li><li><a href=#system-implementation>System Implementation</a><ul><li><a href=#follow-api>Follow API</a></li><li><a href=#follow-api-1>Follow API</a></li><li><a href=#getfollowers-api>GetFollowers API</a></li><li><a href=#getfollowercount-api>GetFollowerCount API</a></li><li><a href=#indexes-and-shard-keys>Indexes and Shard Keys</a></li></ul></li><li><a href=#test-code>Test Code</a></li><li><a href=#discussion-and-optimization>Discussion and Optimization</a></li><li><a href=#full-demo>Full Demo</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/building-a-transaction-system-with-mongodb/>Building a Transaction System with MongoDB</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/solving-double-spending-with-mongodb/>Solving Double-Spending with MongoDB: Transactions vs. Versioning</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-endless-retry/>MongoDB Transaction BulkWrite Endless Retry</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-slave-sync/>MongoDB Master-Slave Replication by Change Stream</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-strongly-typed-collection-example/>MongoDB Strongly-Typed Collection Usage Example</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Building Large-Scale Social Network Graphs with MongoDB"><meta itemprop=description content="Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no small feat. Building and maintaining a scalable social network infrastructure requires careful planning and strategic data modeling. In fact, specialized social networking applications like Facebook have dedicated teams focusing solely on optimizing their performance to the highest level. However, for smaller apps or startup projects looking to add social networking capabilities, creating a full team to handle such architecture is often impractical and unnecessary.
+So, is it possible to build a high-performance, scalable social network using the right data modeling and storage solutions? The answer is yes. Early versions of Facebook used MySQL as the underlying storage to construct their social network, but today we have more advanced and efficient storage options available: MongoDB."></span><header class=post-header><h1 class=post-title itemprop="name headline">Building Large-Scale Social Network Graphs with MongoDB</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-05 00:59:12 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-05 00:59:12 +0800 CST">2024-11-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>5min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/building-large-scale-social-network-graphs-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/building-large-scale-social-network-graphs-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no small feat. Building and maintaining a scalable social network infrastructure requires careful planning and strategic data modeling. In fact, specialized social networking applications like Facebook have dedicated teams focusing solely on optimizing their performance to the highest level. However, for smaller apps or startup projects looking to add social networking capabilities, creating a full team to handle such architecture is often impractical and unnecessary.</p><p>So, is it possible to build a high-performance, scalable social network using the right data modeling and storage solutions? The answer is yes. Early versions of Facebook used MySQL as the underlying storage to construct their social network, but today we have more advanced and efficient storage options available: MongoDB.</p><a id=more></a><h1 id=problem-description-and-challenges>Problem Description and Challenges
+<a class=header-anchor href=#problem-description-and-challenges></a></h1><p>To begin, let’s outline and simplify the problem. Our goal is to build a social network where any user can follow other users. Each user should be able to view whom they are following, who follows them, and the counts for both. For example, on Twitter, Elon Musk’s profile shows that he follows 800 people and has 202.8M followers.</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/followmodeling_musk.png alt></p><p>By opening his followers&rsquo; page, you can see detailed information about each follower, such as Dr. Jordan B. Peterson and others.</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/followmodeling_musk_followers.png alt></p><p>After simplifying the problem, we need to support the following core functionalities: following and unfollowing users, viewing the count of followers and following, and viewing the list of followers or the people a user follows. It&rsquo;s worth noting that since many celebrities have an enormous number of followers, Twitter only allows viewing a limited number of follower profiles.</p><p>While these features may seem straightforward, scaling them to handle billions of users presents significant challenges. Reading and updating the social relationships between users becomes an extremely frequent operation, raising the question: can the data model and underlying storage support such massive data volume and the high QPS (queries per second) required for a high-concurrency environment?</p><h1 id=data-modeling-and-scalability>Data Modeling and Scalability
+<a class=header-anchor href=#data-modeling-and-scalability></a></h1><p>To achieve the above functionalities, data modeling is the key. The following six APIs are needed:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>api/Follow
+</span></span><span class=line><span class=cl>api/Unfollow
+</span></span><span class=line><span class=cl>api/GetFollowers
+</span></span><span class=line><span class=cl>api/GetFollowings
+</span></span><span class=line><span class=cl>api/GetFollowerCount
+</span></span><span class=line><span class=cl>api/GetFollowingCount</span></span></code></pre></td></tr></table></div></div><p>Assuming each user is represented by a UUID, a straightforward data modeling approach would be to store two records for each relationship. Each record represents a directional relationship, such as:</p><table><thead><tr><th>SrcUuid</th><th>DstUuid</th><th>Status</th><th>Notes</th></tr></thead><tbody><tr><td>u1</td><td>u2</td><td>Follow</td><td>u1关注了u2</td></tr><tr><td>u2</td><td>u1</td><td>Follow</td><td>u2关注了u1</td></tr><tr><td>u3</td><td>u4</td><td>Follow</td><td>u3关注了u4</td></tr></tbody></table><p>Since <strong>u1</strong> follows <strong>u2</strong>, and <strong>u2</strong> follows <strong>u1</strong>, <strong>u1</strong> and <strong>u2</strong> have a mutual following relationship. On the other hand, if <strong>u3</strong> follows <strong>u4</strong> and there&rsquo;s only one record, then it represents a one-way following relationship.</p><p>With this type of data modeling, implementing follow and unfollow operations becomes straightforward, as it only involves inserting or deleting a record. Retrieving a user&rsquo;s followers can be accomplished using a query like <code>DstUuid == x</code>, while counting the number of followers can be done with <code>Count(DstUuid == x)</code>. The same applies for finding who a user is following.</p><p>Thus, a single table can be used to store the relationship data between users, defined as follows:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>FollowEntry</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>SrcUuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>DstUuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>FollowStatus</span> <span class=n>Status</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>FollowStatus</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>None</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>Follow</span> <span class=p>=</span> <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>How Can This Data Model Scale to Millions of Users?</p><p>The answer lies in leveraging <strong>sharding</strong> and <strong>replicaset nodes</strong> for scalability. Sharding enhances write capabilities by distributing data across multiple shards, while adding replicaset nodes increases read capacity. This scaling approach is transparent to the upper-layer application, unlike MySQL&rsquo;s sharding and partitioning, which can impose constraints on application queries. This is one of the advantages of using MongoDB.</p><h1 id=system-implementation>System Implementation
+<a class=header-anchor href=#system-implementation></a></h1><p>In this section, we will implement each API and identify the required indexes and shard keys based on actual read patterns.</p><h2 id=follow-api>Follow API
+<a class=header-anchor href=#follow-api></a></h2><p>The implementation of the Follow API is straightforward: it involves an upsert operation to insert or update a follow record, regardless of whether the record previously existed or its status:</p><h2 id=follow-api-1>Follow API
+<a class=header-anchor href=#follow-api-1></a></h2><p>The implementation of the Follow API is quite simple. It involves performing an upsert operation to insert or update a follow record, regardless of whether the record already exists or its previous status:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>FollowAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>srcUuid</span><span class=p>,</span> <span class=kt>string</span> <span class=n>dstUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span><span class=p>,</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>SrcUuid</span><span class=p>,</span> <span class=n>srcUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span><span class=p>,</span> <span class=n>dstUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>option</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UpdateOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>UpdateOneAsync</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>SrcUuid</span> <span class=p>==</span> <span class=n>srcUuid</span> <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>dstUuid</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>option</span><span class=p>,</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>The implementation of the Unfollow API is similar to the Follow API, with the only difference being that the <code>FollowStatus</code> is set to <code>None</code> to indicate that the user has unfollowed.</p><p>Both the Follow and Unfollow APIs require an index: <code>(SrcUuid, DstUuid)</code>.</p><h2 id=getfollowers-api>GetFollowers API
+<a class=header-anchor href=#getfollowers-api></a></h2><p>The implementation of the GetFollowers API needs to consider pagination and a maximum return limit. Here’s a straightforward approach that returns the earliest <code>n</code> followers based on their creation timestamp:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3>3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4>4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5>5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6>6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7>7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;&gt;</span> <span class=n>GetFollowersAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span> <span class=p>=</span> <span class=m>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>uuid</span> <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span> <span class=p>==</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>).</span><span class=n>SortBy</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>).</span><span class=n>Limit</span><span class=p>(</span><span class=n>n</span><span class=p>).</span><span class=n>ToListAsync</span><span class=p>(</span><span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>The implementation of the GetFollowings API is similar to the GetFollowers API: Simply replace <code>DstUuid</code> with <code>SrcUuid</code>.</p><p>These two APIs require indexes: <code>(DstUuid, FlowStatus, CreateTime)</code> and <code>(SrcUuid, FlowStatus, CreateTime)</code>. The inclusion of the low cardinality field <code>FollowStatus</code> in the indexes is beneficial because, over time, there may be many unfollow entries present in the dataset. By indexing this field, query performance can improve, especially when filtering for active relationships. However, it&rsquo;s important to choose indexes based on the specific application scenarios, as unnecessary indexes can lead to increased overhead during write operations.</p><h2 id=getfollowercount-api>GetFollowerCount API
+<a class=header-anchor href=#getfollowercount-api></a></h2><p>The implementation of the GetFollowerCount API:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7>7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8>8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=kt>long</span><span class=p>&gt;</span> <span class=n>GetFollowerCountAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>CountDocumentsAsync</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>uuid</span>
+</span></span><span class=line><span class=cl>                                                    <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span> <span class=p>==</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>The implementation of the GetFollowingCount API is similar. Simply replace <code>DstUuid</code> with <code>SrcUuid</code>.</p><p>These two APIs can reuse the indexes established for the GetFollowers and GetFollowings APIs.</p><h2 id=indexes-and-shard-keys>Indexes and Shard Keys
+<a class=header-anchor href=#indexes-and-shard-keys></a></h2><p>Based on the above implementations and considering the leftmost prefix matching principle, we need three indexes:</p><ul><li>(SrcUuid, DstUuid)</li><li>(DstUuid, FlowStatus, CreateTime)</li><li>(SrcUuid, FlowStatus, CreateTime)</li></ul><p>At the same time, these indexes can also support APIs such as &ldquo;GetTwoUserRelationship()&rdquo;, which will not be elaborated on further.</p><p>Considering that user IDs use UUIDs, which are already uniformly distributed, there is no need to use hashed sharding. We only need to consider which is more commonly used in the application context: GetFollowers or GetFollowings. Assuming GetFollowings is more commonly used, we can choose <code>SrcUuid</code> as the shard key. This ensures that all users followed by a given user reside in the same shard, improving read efficiency.</p><p>Sharding can be executed in the MongoDB shell with: <code>sh.shardCollection("Test.Test", { "SrcUuid": 1 })</code></p><p>Sharded clusters can significantly increase the upper limits of the system, and they do not require code modifications; the capacity of the system can be expanded online.</p><h1 id=test-code>Test Code
+<a class=header-anchor href=#test-code></a></h1><p>Randomly generate 1,000 users and 2,000 follow relationships, and print the follower information for one user who has more than 5 followers.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14>14</a>
+</span><span class=lnt id=hl-5-15><a class=lnlinks href=#hl-5-15>15</a>
+</span><span class=lnt id=hl-5-16><a class=lnlinks href=#hl-5-16>16</a>
+</span><span class=lnt id=hl-5-17><a class=lnlinks href=#hl-5-17>17</a>
+</span><span class=lnt id=hl-5-18><a class=lnlinks href=#hl-5-18>18</a>
+</span><span class=lnt id=hl-5-19><a class=lnlinks href=#hl-5-19>19</a>
+</span><span class=lnt id=hl-5-20><a class=lnlinks href=#hl-5-20>20</a>
+</span><span class=lnt id=hl-5-21><a class=lnlinks href=#hl-5-21>21</a>
+</span><span class=lnt id=hl-5-22><a class=lnlinks href=#hl-5-22>22</a>
+</span><span class=lnt id=hl-5-23><a class=lnlinks href=#hl-5-23>23</a>
+</span><span class=lnt id=hl-5-24><a class=lnlinks href=#hl-5-24>24</a>
+</span><span class=lnt id=hl-5-25><a class=lnlinks href=#hl-5-25>25</a>
+</span><span class=lnt id=hl-5-26><a class=lnlinks href=#hl-5-26>26</a>
+</span><span class=lnt id=hl-5-27><a class=lnlinks href=#hl-5-27>27</a>
+</span><span class=lnt id=hl-5-28><a class=lnlinks href=#hl-5-28>28</a>
+</span><span class=lnt id=hl-5-29><a class=lnlinks href=#hl-5-29>29</a>
+</span><span class=lnt id=hl-5-30><a class=lnlinks href=#hl-5-30>30</a>
+</span><span class=lnt id=hl-5-31><a class=lnlinks href=#hl-5-31>31</a>
+</span><span class=lnt id=hl-5-32><a class=lnlinks href=#hl-5-32>32</a>
+</span><span class=lnt id=hl-5-33><a class=lnlinks href=#hl-5-33>33</a>
+</span><span class=lnt id=hl-5-34><a class=lnlinks href=#hl-5-34>34</a>
+</span><span class=lnt id=hl-5-35><a class=lnlinks href=#hl-5-35>35</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>rand</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Random</span><span class=p>(</span><span class=m>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userList</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Generate 1000 users</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>1000</span><span class=p>;</span> <span class=p>++</span><span class=n>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>userList</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>(</span><span class=s>&#34;N&#34;</span><span class=p>).</span><span class=n>ToUpper</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// Generate 2000 relationships</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>2000</span><span class=p>;</span> <span class=p>++</span><span class=n>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>src</span> <span class=p>=</span> <span class=n>userList</span><span class=p>[</span><span class=n>rand</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=n>userList</span><span class=p>.</span><span class=n>Count</span><span class=p>)];</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>dst</span> <span class=p>=</span> <span class=n>userList</span><span class=p>[</span><span class=n>rand</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=n>userList</span><span class=p>.</span><span class=n>Count</span><span class=p>)];</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>src</span> <span class=p>==</span> <span class=n>dst</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>FollowAsync</span><span class=p>(</span><span class=n>src</span><span class=p>,</span> <span class=n>dst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>user</span> <span class=k>in</span> <span class=n>userList</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>followerCount</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetFollowerCountAsync</span><span class=p>(</span><span class=n>user</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>followerCount</span> <span class=p>&gt;</span> <span class=m>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>followers</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetFollowersAsync</span><span class=p>(</span><span class=n>user</span><span class=p>,</span> <span class=m>5</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>entry</span> <span class=k>in</span> <span class=n>followers</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;{entry.SrcUuid} follows {user} at {entry.CreateTime}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;{user} followers: {followerCount}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>The results:</p><blockquote><p>7289820430DA4BCD930CFE1067A3DC89 follows 5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:41:57 PM
+F2E95841840C45B496C6629181DD2C77 follows 5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:05 PM
+7FFB5DE3E3A94AFF8AB487EA82DA2A68 follows 5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:07 PM
+AE9D38F638C145848997F2E0E8BF62DF follows 5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:09 PM
+4E15001E616E441395FBC04CA0F3F36E follows 5798C300560A4C09B35F7B48AF57ACF5 at 11/4/2024 1:42:10 PM
+5798C300560A4C09B35F7B48AF57ACF5 followers: 8
+Done</p></blockquote><p>Connect to the database deployed on MongoDB Atlas using MongoDB Compass:</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/followmodeling_compass.png alt></p><h1 id=discussion-and-optimization>Discussion and Optimization
+<a class=header-anchor href=#discussion-and-optimization></a></h1><p>The social relationship data modeling introduced in this article is a simplified design aimed at demonstrating how to utilize MongoDB&rsquo;s sharded cluster to build a large-scale social network graph. In a real production environment, there are several issues that need to be considered and optimized:</p><ul><li><p>Write-heavy or Read-heavy: Here, we use user IDs to represent users, concealing user information. The actual implementation would require APIs for bulk reading of user information. If user details are included in the <code>FollowEntry</code>, it would improve read efficiency but significantly lower update efficiency (Write-heavy). The current design transitions a write-heavy model into a read-heavy model by fetching the latest user information in real-time.</p></li><li><p>Caching: Although MongoDB offers excellent performance, front-end caching (such as Redis) is still essential and can greatly enhance system throughput. This is particularly important for APIs like <code>GetFollowersCount</code>, where caching an approximate count is crucial for efficiency.</p></li><li><p>Support for Complex Business Logic: The scenarios for platforms like Twitter are much more complex than those described here. They must consider not only social relationships but also the read/write interactions of each tweet and the integration with recommendation systems. Due to space limitations, a deeper discussion on this topic is not provided.</p></li></ul><p>Load testing confirms that the optimized social relationship system can support 100,000+ or even higher QPS, demonstrating excellent performance and throughput. This makes it very suitable for startups looking to rapidly develop and iterate their products.</p><h1 id=full-demo>Full Demo
+<a class=header-anchor href=#full-demo></a></h1><p>Fill the <code>ConnectionString</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1>  1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2>  2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3>  3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4>  4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5>  5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6>  6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7>  7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8>  8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9>  9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10> 10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11> 11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12> 12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13> 13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14> 14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15> 15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16> 16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17> 17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18> 18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19> 19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20> 20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21> 21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22> 22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23> 23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24> 24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25> 25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26> 26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27> 27</a>
+</span><span class=lnt id=hl-6-28><a class=lnlinks href=#hl-6-28> 28</a>
+</span><span class=lnt id=hl-6-29><a class=lnlinks href=#hl-6-29> 29</a>
+</span><span class=lnt id=hl-6-30><a class=lnlinks href=#hl-6-30> 30</a>
+</span><span class=lnt id=hl-6-31><a class=lnlinks href=#hl-6-31> 31</a>
+</span><span class=lnt id=hl-6-32><a class=lnlinks href=#hl-6-32> 32</a>
+</span><span class=lnt id=hl-6-33><a class=lnlinks href=#hl-6-33> 33</a>
+</span><span class=lnt id=hl-6-34><a class=lnlinks href=#hl-6-34> 34</a>
+</span><span class=lnt id=hl-6-35><a class=lnlinks href=#hl-6-35> 35</a>
+</span><span class=lnt id=hl-6-36><a class=lnlinks href=#hl-6-36> 36</a>
+</span><span class=lnt id=hl-6-37><a class=lnlinks href=#hl-6-37> 37</a>
+</span><span class=lnt id=hl-6-38><a class=lnlinks href=#hl-6-38> 38</a>
+</span><span class=lnt id=hl-6-39><a class=lnlinks href=#hl-6-39> 39</a>
+</span><span class=lnt id=hl-6-40><a class=lnlinks href=#hl-6-40> 40</a>
+</span><span class=lnt id=hl-6-41><a class=lnlinks href=#hl-6-41> 41</a>
+</span><span class=lnt id=hl-6-42><a class=lnlinks href=#hl-6-42> 42</a>
+</span><span class=lnt id=hl-6-43><a class=lnlinks href=#hl-6-43> 43</a>
+</span><span class=lnt id=hl-6-44><a class=lnlinks href=#hl-6-44> 44</a>
+</span><span class=lnt id=hl-6-45><a class=lnlinks href=#hl-6-45> 45</a>
+</span><span class=lnt id=hl-6-46><a class=lnlinks href=#hl-6-46> 46</a>
+</span><span class=lnt id=hl-6-47><a class=lnlinks href=#hl-6-47> 47</a>
+</span><span class=lnt id=hl-6-48><a class=lnlinks href=#hl-6-48> 48</a>
+</span><span class=lnt id=hl-6-49><a class=lnlinks href=#hl-6-49> 49</a>
+</span><span class=lnt id=hl-6-50><a class=lnlinks href=#hl-6-50> 50</a>
+</span><span class=lnt id=hl-6-51><a class=lnlinks href=#hl-6-51> 51</a>
+</span><span class=lnt id=hl-6-52><a class=lnlinks href=#hl-6-52> 52</a>
+</span><span class=lnt id=hl-6-53><a class=lnlinks href=#hl-6-53> 53</a>
+</span><span class=lnt id=hl-6-54><a class=lnlinks href=#hl-6-54> 54</a>
+</span><span class=lnt id=hl-6-55><a class=lnlinks href=#hl-6-55> 55</a>
+</span><span class=lnt id=hl-6-56><a class=lnlinks href=#hl-6-56> 56</a>
+</span><span class=lnt id=hl-6-57><a class=lnlinks href=#hl-6-57> 57</a>
+</span><span class=lnt id=hl-6-58><a class=lnlinks href=#hl-6-58> 58</a>
+</span><span class=lnt id=hl-6-59><a class=lnlinks href=#hl-6-59> 59</a>
+</span><span class=lnt id=hl-6-60><a class=lnlinks href=#hl-6-60> 60</a>
+</span><span class=lnt id=hl-6-61><a class=lnlinks href=#hl-6-61> 61</a>
+</span><span class=lnt id=hl-6-62><a class=lnlinks href=#hl-6-62> 62</a>
+</span><span class=lnt id=hl-6-63><a class=lnlinks href=#hl-6-63> 63</a>
+</span><span class=lnt id=hl-6-64><a class=lnlinks href=#hl-6-64> 64</a>
+</span><span class=lnt id=hl-6-65><a class=lnlinks href=#hl-6-65> 65</a>
+</span><span class=lnt id=hl-6-66><a class=lnlinks href=#hl-6-66> 66</a>
+</span><span class=lnt id=hl-6-67><a class=lnlinks href=#hl-6-67> 67</a>
+</span><span class=lnt id=hl-6-68><a class=lnlinks href=#hl-6-68> 68</a>
+</span><span class=lnt id=hl-6-69><a class=lnlinks href=#hl-6-69> 69</a>
+</span><span class=lnt id=hl-6-70><a class=lnlinks href=#hl-6-70> 70</a>
+</span><span class=lnt id=hl-6-71><a class=lnlinks href=#hl-6-71> 71</a>
+</span><span class=lnt id=hl-6-72><a class=lnlinks href=#hl-6-72> 72</a>
+</span><span class=lnt id=hl-6-73><a class=lnlinks href=#hl-6-73> 73</a>
+</span><span class=lnt id=hl-6-74><a class=lnlinks href=#hl-6-74> 74</a>
+</span><span class=lnt id=hl-6-75><a class=lnlinks href=#hl-6-75> 75</a>
+</span><span class=lnt id=hl-6-76><a class=lnlinks href=#hl-6-76> 76</a>
+</span><span class=lnt id=hl-6-77><a class=lnlinks href=#hl-6-77> 77</a>
+</span><span class=lnt id=hl-6-78><a class=lnlinks href=#hl-6-78> 78</a>
+</span><span class=lnt id=hl-6-79><a class=lnlinks href=#hl-6-79> 79</a>
+</span><span class=lnt id=hl-6-80><a class=lnlinks href=#hl-6-80> 80</a>
+</span><span class=lnt id=hl-6-81><a class=lnlinks href=#hl-6-81> 81</a>
+</span><span class=lnt id=hl-6-82><a class=lnlinks href=#hl-6-82> 82</a>
+</span><span class=lnt id=hl-6-83><a class=lnlinks href=#hl-6-83> 83</a>
+</span><span class=lnt id=hl-6-84><a class=lnlinks href=#hl-6-84> 84</a>
+</span><span class=lnt id=hl-6-85><a class=lnlinks href=#hl-6-85> 85</a>
+</span><span class=lnt id=hl-6-86><a class=lnlinks href=#hl-6-86> 86</a>
+</span><span class=lnt id=hl-6-87><a class=lnlinks href=#hl-6-87> 87</a>
+</span><span class=lnt id=hl-6-88><a class=lnlinks href=#hl-6-88> 88</a>
+</span><span class=lnt id=hl-6-89><a class=lnlinks href=#hl-6-89> 89</a>
+</span><span class=lnt id=hl-6-90><a class=lnlinks href=#hl-6-90> 90</a>
+</span><span class=lnt id=hl-6-91><a class=lnlinks href=#hl-6-91> 91</a>
+</span><span class=lnt id=hl-6-92><a class=lnlinks href=#hl-6-92> 92</a>
+</span><span class=lnt id=hl-6-93><a class=lnlinks href=#hl-6-93> 93</a>
+</span><span class=lnt id=hl-6-94><a class=lnlinks href=#hl-6-94> 94</a>
+</span><span class=lnt id=hl-6-95><a class=lnlinks href=#hl-6-95> 95</a>
+</span><span class=lnt id=hl-6-96><a class=lnlinks href=#hl-6-96> 96</a>
+</span><span class=lnt id=hl-6-97><a class=lnlinks href=#hl-6-97> 97</a>
+</span><span class=lnt id=hl-6-98><a class=lnlinks href=#hl-6-98> 98</a>
+</span><span class=lnt id=hl-6-99><a class=lnlinks href=#hl-6-99> 99</a>
+</span><span class=lnt id=hl-6-100><a class=lnlinks href=#hl-6-100>100</a>
+</span><span class=lnt id=hl-6-101><a class=lnlinks href=#hl-6-101>101</a>
+</span><span class=lnt id=hl-6-102><a class=lnlinks href=#hl-6-102>102</a>
+</span><span class=lnt id=hl-6-103><a class=lnlinks href=#hl-6-103>103</a>
+</span><span class=lnt id=hl-6-104><a class=lnlinks href=#hl-6-104>104</a>
+</span><span class=lnt id=hl-6-105><a class=lnlinks href=#hl-6-105>105</a>
+</span><span class=lnt id=hl-6-106><a class=lnlinks href=#hl-6-106>106</a>
+</span><span class=lnt id=hl-6-107><a class=lnlinks href=#hl-6-107>107</a>
+</span><span class=lnt id=hl-6-108><a class=lnlinks href=#hl-6-108>108</a>
+</span><span class=lnt id=hl-6-109><a class=lnlinks href=#hl-6-109>109</a>
+</span><span class=lnt id=hl-6-110><a class=lnlinks href=#hl-6-110>110</a>
+</span><span class=lnt id=hl-6-111><a class=lnlinks href=#hl-6-111>111</a>
+</span><span class=lnt id=hl-6-112><a class=lnlinks href=#hl-6-112>112</a>
+</span><span class=lnt id=hl-6-113><a class=lnlinks href=#hl-6-113>113</a>
+</span><span class=lnt id=hl-6-114><a class=lnlinks href=#hl-6-114>114</a>
+</span><span class=lnt id=hl-6-115><a class=lnlinks href=#hl-6-115>115</a>
+</span><span class=lnt id=hl-6-116><a class=lnlinks href=#hl-6-116>116</a>
+</span><span class=lnt id=hl-6-117><a class=lnlinks href=#hl-6-117>117</a>
+</span><span class=lnt id=hl-6-118><a class=lnlinks href=#hl-6-118>118</a>
+</span><span class=lnt id=hl-6-119><a class=lnlinks href=#hl-6-119>119</a>
+</span><span class=lnt id=hl-6-120><a class=lnlinks href=#hl-6-120>120</a>
+</span><span class=lnt id=hl-6-121><a class=lnlinks href=#hl-6-121>121</a>
+</span><span class=lnt id=hl-6-122><a class=lnlinks href=#hl-6-122>122</a>
+</span><span class=lnt id=hl-6-123><a class=lnlinks href=#hl-6-123>123</a>
+</span><span class=lnt id=hl-6-124><a class=lnlinks href=#hl-6-124>124</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson.Serialization.Conventions</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>MongoTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>model</span> <span class=p>=</span> <span class=k>new</span> <span class=n>RelModel</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>().</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Done&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>FollowEntry</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>SrcUuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>DstUuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>FollowStatus</span> <span class=n>Status</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>enum</span> <span class=n>FollowStatus</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>None</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>Follow</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>Deleted</span> <span class=p>=</span> <span class=m>2</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>RelModel</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoClient</span> <span class=n>_mongoClient</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoCollection</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;</span> <span class=n>_followCollection</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>CollectionName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>RelModel</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>_mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>database</span> <span class=p>=</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>ignoreExtraElementsConvention</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConventionPack</span> <span class=p>{</span> <span class=k>new</span> <span class=n>IgnoreExtraElementsConvention</span><span class=p>(</span><span class=kc>true</span><span class=p>)</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=n>ConventionRegistry</span><span class=p>.</span><span class=n>Register</span><span class=p>(</span><span class=s>&#34;IgnoreExtraElements&#34;</span><span class=p>,</span> <span class=n>ignoreExtraElementsConvention</span><span class=p>,</span> <span class=n>type</span> <span class=p>=&gt;</span> <span class=kc>true</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>_followCollection</span> <span class=p>=</span> <span class=n>database</span><span class=p>.</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>rand</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Random</span><span class=p>(</span><span class=m>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>userList</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// Generate 1000 users</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>1000</span><span class=p>;</span> <span class=p>++</span><span class=n>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>userList</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>(</span><span class=s>&#34;N&#34;</span><span class=p>).</span><span class=n>ToUpper</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1>// Generate 2000 relationships</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>2000</span><span class=p>;</span> <span class=p>++</span><span class=n>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>src</span> <span class=p>=</span> <span class=n>userList</span><span class=p>[</span><span class=n>rand</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=n>userList</span><span class=p>.</span><span class=n>Count</span><span class=p>)];</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>dst</span> <span class=p>=</span> <span class=n>userList</span><span class=p>[</span><span class=n>rand</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=n>userList</span><span class=p>.</span><span class=n>Count</span><span class=p>)];</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>src</span> <span class=p>==</span> <span class=n>dst</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>FollowAsync</span><span class=p>(</span><span class=n>src</span><span class=p>,</span> <span class=n>dst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>user</span> <span class=k>in</span> <span class=n>userList</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>followerCount</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetFollowerCountAsync</span><span class=p>(</span><span class=n>user</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>followerCount</span> <span class=p>&gt;</span> <span class=m>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>var</span> <span class=n>followers</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetFollowersAsync</span><span class=p>(</span><span class=n>user</span><span class=p>,</span> <span class=m>5</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>entry</span> <span class=k>in</span> <span class=n>followers</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;{entry.SrcUuid} follows {user} at {entry.CreateTime}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;{user} followers: {followerCount}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>FollowAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>srcUuid</span><span class=p>,</span> <span class=kt>string</span> <span class=n>dstUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span><span class=p>,</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>SrcUuid</span><span class=p>,</span> <span class=n>srcUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span><span class=p>,</span> <span class=n>dstUuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                            <span class=p>.</span><span class=n>SetOnInsert</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>option</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UpdateOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>UpdateOneAsync</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>SrcUuid</span> <span class=p>==</span> <span class=n>srcUuid</span> <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>dstUuid</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>option</span><span class=p>,</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>FollowEntry</span><span class=p>&gt;&gt;</span> <span class=n>GetFollowersAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span> <span class=p>=</span> <span class=m>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>uuid</span> <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span> <span class=p>==</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>).</span><span class=n>SortBy</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>).</span><span class=n>Limit</span><span class=p>(</span><span class=n>n</span><span class=p>).</span><span class=n>ToListAsync</span><span class=p>(</span><span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=kt>long</span><span class=p>&gt;</span> <span class=n>GetFollowerCountAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_followCollection</span><span class=p>.</span><span class=n>CountDocumentsAsync</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>DstUuid</span> <span class=p>==</span> <span class=n>uuid</span>
+</span></span><span class=line><span class=cl>                                                            <span class=p>&amp;&amp;</span> <span class=n>x</span><span class=p>.</span><span class=n>Status</span> <span class=p>==</span> <span class=n>FollowStatus</span><span class=p>.</span><span class=n>Follow</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/c/>C#</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/certbot-automating-nginx-ssl-renewal/ rel=next title="Certbot: Automating Nginx SSL Renewal"><i class="fa fa-chevron-left"></i> Certbot: Automating Nginx SSL Renewal</a></div><div class="post-nav-prev post-nav-item"><a href=/en/argument-incorrect-type-expected-ndarray/ rel=prev title="TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) Solution">TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) Solution
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/building-large-scale-social-network-graphs-with-mongodb/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"building-large-scale-social-network-graphs-with-mongodb","permalink":"https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/","title":"Building Large-Scale Social Network Graphs with MongoDB","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

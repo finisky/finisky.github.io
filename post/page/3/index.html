@@ -1,0 +1,539 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Posts"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="NLP, LLM, LLM Agent, AI, 大语言模型, 机器学习, 软件工程, 系统设计, 互联网, 产品设计"><meta property="og:type" content="website"><meta property="og:title" content="Posts"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/post/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/post/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/post/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480352"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480352"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>post - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-overview-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner index posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/word-wildcard-replace-bug-when-track-changes/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Word追踪修订时通配符替换Bug"><meta itemprop=description content="没想到浓眉大眼的Office Word居然还有这种Bug：在追踪修订时，通配符不能正确替换。
+在处理一个大型文档时，需要批量将英文括号替换成中文括号，因此需要使用到通配符替换：
+
+
+
+1
+2
+3
+
+
+Find What: \((*)\)
+Options: Use Wildcards
+Replace With: （\1）
+
+
+
+预期行为是：将“(abc)”替换为“（abc）”，却没料到被替换成了“abc（）”。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/word-wildcard-replace-bug-when-track-changes/ itemprop=url class=post-title-link>Word追踪修订时通配符替换Bug</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2024-04-03 09:16:33 +08:00" itemprop="dateCreated datePublished" datetime="2024-04-03 09:16:33 +0800 CST">2024-04-03
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>1分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/word-wildcard-replace-bug-when-track-changes/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/word-wildcard-replace-bug-when-track-changes/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>没想到浓眉大眼的Office Word居然还有这种Bug：在追踪修订时，通配符不能正确替换。</p><p>在处理一个大型文档时，需要批量将英文括号替换成中文括号，因此需要使用到通配符替换：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Find What: \((*)\)
+</span></span><span class=line><span class=cl>Options: Use Wildcards
+</span></span><span class=line><span class=cl>Replace With: （\1）</span></span></code></pre></td></tr></table></div></div><p>预期行为是：将“(abc)”替换为“（abc）”，却没料到被替换成了“abc（）”。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/word-wildcard-replace-bug-when-track-changes/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/language-modeling-is-compression-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="为什么语言模型的本质是压缩器？"><meta itemprop=description content="最早听说语言模型的本质是压缩器的想法是在
+
+    黄仁勋和Ilya的围炉对谈
+    
+，当时只是直觉上觉得这个说法很有意思，但却没想明白原理是什么。2023年9月，DeepMind写论文进一步论证了语言建模与压缩的等价性：
+
+
+    # Language Modeling Is Compression
+    
+    
+    
+
+
+  
+    长期以来，人们已经确认预测模型可以转化为无损压缩器，反之亦然。值得注意的是，近年来，机器学习领域一直专注于训练规模越来越大且功能强大的自监督语言模型。由于这些大语言模型展示了很强的预测能力，它们自然而然地也被认为是强大的压缩器。文中研究者主张通过压缩的视角来审视预测问题，并依此评估大型基座模型的压缩能力。实验证明大语言模型也是强大的通用预测器，语言模型即压缩的视角为扩展定律和上下文学习提供了新的见解。例如，Chinchilla 70B虽然主要用文本训练，但却能将ImageNet patches和LibriSpeech样本压缩到其原始大小的43.4%和16.4%，分别超过了领域特定的压缩器，如PNG（58.5%）和FLAC（30.3%）。最后，研究者证实基于预测与压缩的等价性可以使用任何压缩器来构建条件生成模型。
+
+  
+本文试图用简洁的语言（无公式）来说明“语言建模即压缩”的思想。原论文的思路是借助算术编码的原理和过程，然后将语言模型建模的过程与算术编码过程进行映射并证明它们等价。这个思路有些类似于NP难问题的证明：将一个问题在多项式时间归约成已知的某个NP难问题。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/language-modeling-is-compression-summary/ itemprop=url class=post-title-link>为什么语言模型的本质是压缩器？</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2024-03-26 19:05:56 +08:00" itemprop="dateCreated datePublished" datetime="2024-03-26 19:05:56 +0800 CST">2024-03-26
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/language-modeling-is-compression-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/language-modeling-is-compression-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>最早听说语言模型的本质是压缩器的想法是在
+<a href=/fireside-talk-openai-ceo-summary/ title=黄仁勋和Ilya的围炉对谈>黄仁勋和Ilya的围炉对谈
+</a>，当时只是直觉上觉得这个说法很有意思，但却没想明白原理是什么。2023年9月，DeepMind写论文进一步论证了语言建模与压缩的等价性：</p><p><a href=https://arxiv.org/abs/2309.10668 title="# Language Modeling Is Compression" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Language Modeling Is Compression
+<i class="fa fa-external-link-alt"></i></a></p><blockquote><p>长期以来，人们已经确认预测模型可以转化为无损压缩器，反之亦然。值得注意的是，近年来，机器学习领域一直专注于训练规模越来越大且功能强大的自监督语言模型。由于这些大语言模型展示了很强的预测能力，它们自然而然地也被认为是强大的压缩器。文中研究者主张通过压缩的视角来审视预测问题，并依此评估大型基座模型的压缩能力。实验证明大语言模型也是强大的通用预测器，语言模型即压缩的视角为扩展定律和上下文学习提供了新的见解。例如，Chinchilla 70B虽然主要用文本训练，但却能将ImageNet patches和LibriSpeech样本压缩到其原始大小的43.4%和16.4%，分别超过了领域特定的压缩器，如PNG（58.5%）和FLAC（30.3%）。最后，研究者证实基于预测与压缩的等价性可以使用任何压缩器来构建条件生成模型。</p></blockquote><p>本文试图用简洁的语言（无公式）来说明“语言建模即压缩”的思想。原论文的思路是借助算术编码的原理和过程，然后将语言模型建模的过程与算术编码过程进行映射并证明它们等价。这个思路有些类似于NP难问题的证明：将一个问题在多项式时间归约成已知的某个NP难问题。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/language-modeling-is-compression-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/llm-emergent-ability-is-mirage-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="大模型的涌现能力是幻象？"><meta itemprop=description content="“涌现能力”可谓是大模型的神来之笔：这些能力在小规模模型中不存在，而仅在大规模模型中存在。涌现能力的神奇之处就在于两点：第一，锐利性，似乎它们瞬间从不存在变为存在；第二，不可预测性，不知道在什么规模的模型上就突现了。
+涌现能力相关的讨论在大模型出圈之后一直被津津乐道，尤其是在训练出的模型能力不达预期时，时常背锅：可能是模型不够大，所以不具备这样的能力。问题来了，涌现能力是否真的是大规模模型才拥有的魔法？
+NeurIPS 2023的Main Track Outstanding Paper的二者之一，提出了对涌现能力的一种解释：对于特定任务和模型，在分析模型输出时，涌现能力的出现是由于研究人员选择的衡量指标所致，而非模型行为随着规模扩大而发生了根本性变化。具体而言，非线性或不连续的衡量标准会产生明显的涌现能力，而线性或连续的度量标准会导致模型性能的平滑、连续、可预测的变化。
+
+
+    # Announcing the NeurIPS 2023 Paper Awards
+    
+    
+    
+
+
+
+    # Are Emergent Abilities of Large Language Models a Mirage?
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/llm-emergent-ability-is-mirage-summary/ itemprop=url class=post-title-link>大模型的涌现能力是幻象？</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2024-01-06 01:15:46 +08:00" itemprop="dateCreated datePublished" datetime="2024-01-06 01:15:46 +0800 CST">2024-01-06
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/llm-emergent-ability-is-mirage-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/llm-emergent-ability-is-mirage-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>“涌现能力”可谓是大模型的神来之笔：这些能力在小规模模型中不存在，而仅在大规模模型中存在。涌现能力的神奇之处就在于两点：第一，锐利性，似乎它们瞬间从不存在变为存在；第二，不可预测性，不知道在什么规模的模型上就突现了。</p><p>涌现能力相关的讨论在大模型出圈之后一直被津津乐道，尤其是在训练出的模型能力不达预期时，时常背锅：可能是模型不够大，所以不具备这样的能力。问题来了，涌现能力是否真的是大规模模型才拥有的魔法？</p><p>NeurIPS 2023的Main Track Outstanding Paper的二者之一，提出了对涌现能力的一种解释：对于特定任务和模型，在分析模型输出时，涌现能力的出现是由于研究人员选择的衡量指标所致，而非模型行为随着规模扩大而发生了根本性变化。具体而言，非线性或不连续的衡量标准会产生明显的涌现能力，而线性或连续的度量标准会导致模型性能的平滑、连续、可预测的变化。</p><p><a href=https://blog.neurips.cc/2023/12/11/announcing-the-neurips-2023-paper-awards/ title="# Announcing the NeurIPS 2023 Paper Awards" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Announcing the NeurIPS 2023 Paper Awards
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://arxiv.org/abs/2304.15004 title="# Are Emergent Abilities of Large Language Models a Mirage?" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Are Emergent Abilities of Large Language Models a Mirage?
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/llm-emergent-ability-is-mirage-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/open-source-llm-vs-chatgpt/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="ChatGPT一周年：开源大模型迎头赶上？"><meta itemprop=description content="一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方面的挑战和应对措施。
+
+
+    # ChatGPT&rsquo;s One-year Anniversary: Are Open-Source Large Language Models Catching up?
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/open-source-llm-vs-chatgpt/ itemprop=url class=post-title-link>ChatGPT一周年：开源大模型迎头赶上？</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-12-26 09:59:45 +08:00" itemprop="dateCreated datePublished" datetime="2023-12-26 09:59:45 +0800 CST">2023-12-26
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/open-source-llm-vs-chatgpt/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/open-source-llm-vs-chatgpt/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方面的挑战和应对措施。</p><p><a href=https://arxiv.org/abs/2311.16989 title="# ChatGPT&rsquo;s One-year Anniversary: Are Open-Source Large Language Models Catching up?" rel="noopener external nofollow noreferrer" target=_blank class=exturl># ChatGPT&rsquo;s One-year Anniversary: Are Open-Source Large Language Models Catching up?
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/open-source-llm-vs-chatgpt/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/phi2-the-surprising-power-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="小模型的惊人能力: Phi-2"><meta itemprop=description content="过去半年，MSR发布了一套名为Phi的小模型（SLMs），取得了卓越的性能表现。其中第一个模型，1.3B 的Phi-1，实现了在现有SLMs中对Python编码的最佳性能（在HumanEval和MBPP数据集上）。随后，他们将注意力扩展到常识推理和语言理解，并创建了一个新的 1.3B 模型，命名为Phi-1.5，其性能相当于规模更大5倍的模型。
+最近MSR发布了Phi-2，一个 2.7B 的语言模型，展示了卓越的推理和语言理解能力，表现出小于 13B 语言模型的最好效果。在各种测试中，Phi-2与规模大达25倍的模型差不多或获胜，主要归功于模型规模和训练数据方面的创新。MSR已经在Azure AI Studio模型目录中提供了Phi-2，以促进语言模型的研究和开发。
+Phi-2 未放出细节的技术报告，具体可参考原博客：
+
+
+    # Phi-2: The surprising power of small language models
+    
+    
+    
+
+第一代Phi-1解读：
+
+    数据为王: Textbooks Are All You Need
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/phi2-the-surprising-power-summary/ itemprop=url class=post-title-link>小模型的惊人能力: Phi-2</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-12-13 18:18:16 +08:00" itemprop="dateCreated datePublished" datetime="2023-12-13 18:18:16 +0800 CST">2023-12-13
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>3分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/phi2-the-surprising-power-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/phi2-the-surprising-power-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>过去半年，MSR发布了一套名为<code>Phi</code>的小模型（SLMs），取得了卓越的性能表现。其中第一个模型，1.3B 的<code>Phi-1</code>，实现了在现有SLMs中对Python编码的最佳性能（在HumanEval和MBPP数据集上）。随后，他们将注意力扩展到常识推理和语言理解，并创建了一个新的 1.3B 模型，命名为<code>Phi-1.5</code>，其性能相当于规模更大5倍的模型。</p><p>最近MSR发布了<code>Phi-2</code>，一个 2.7B 的语言模型，展示了卓越的推理和语言理解能力，表现出小于 13B 语言模型的最好效果。在各种测试中，<code>Phi-2</code>与规模大达25倍的模型差不多或获胜，主要归功于模型规模和训练数据方面的创新。MSR已经在Azure AI Studio模型目录中提供了Phi-2，以促进语言模型的研究和开发。</p><p><code>Phi-2</code> 未放出细节的技术报告，具体可参考原博客：</p><p><a href=https://www.microsoft.com/en-us/research/blog/phi-2-the-surprising-power-of-small-language-models/ title="# Phi-2: The surprising power of small language models" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Phi-2: The surprising power of small language models
+<i class="fa fa-external-link-alt"></i></a></p><p>第一代<code>Phi-1</code>解读：
+<a href=/textbooks-are-all-you-need-summary/ title="数据为王: Textbooks Are All You Need">数据为王: Textbooks Are All You Need</a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/phi2-the-surprising-power-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/skywork-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Skywork: A More Open Bilingual Foundation Model 简读"><meta itemprop=description content="昆仑的天工模型一直走开源路线，最近放出了技术报告，其中关于预训练模型刷榜作弊的部分引发了广泛的讨论，把大家心照不宣的事情首次放到了台面上 :-)。本文来看下这篇技术报告的亮点(非全文精读，仅摘要有趣的点，细节可阅读原论文)。
+
+
+    # Skywork: A More Open Bilingual Foundation Model
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/skywork-summary/ itemprop=url class=post-title-link>Skywork: A More Open Bilingual Foundation Model 简读</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-11-10 19:18:16 +08:00" itemprop="dateCreated datePublished" datetime="2023-11-10 19:18:16 +0800 CST">2023-11-10
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>4分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/skywork-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/skywork-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>昆仑的天工模型一直走开源路线，最近放出了技术报告，其中关于预训练模型刷榜作弊的部分引发了广泛的讨论，把大家心照不宣的事情首次放到了台面上 :-)。本文来看下这篇技术报告的亮点(非全文精读，仅摘要有趣的点，细节可阅读原论文)。</p><p><a href=https://arxiv.org/abs/2310.19341 title="# Skywork: A More Open Bilingual Foundation Model" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Skywork: A More Open Bilingual Foundation Model
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/skywork-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/luoyang/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="十一前洛阳自驾游记"><meta itemprop=description content="趁着十一前的假期，去神都洛阳逛逛。作为一个河南人，河南的景点却基本没怎么去过，这种感觉有点类似住的最近的人常常会迟到一样。
+没有太多规划，原计划是龙门石窟、白马寺和少林寺，不过后来因为一直下雨和略感疲倦，逛完白马寺直接回家。自驾往返共400公里整，大部分是高速，剩下几十公里国道。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/luoyang/ itemprop=url class=post-title-link>十一前洛阳自驾游记</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-09-28 17:49:43 +08:00" itemprop="dateCreated datePublished" datetime="2023-09-28 17:49:43 +0800 CST">2023-09-28
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/life/ itemprop=url rel=index><span itemprop=name>Life</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>7分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/luoyang/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/luoyang/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>趁着十一前的假期，去神都洛阳逛逛。作为一个河南人，河南的景点却基本没怎么去过，这种感觉有点类似住的最近的人常常会迟到一样。</p><p>没有太多规划，原计划是龙门石窟、白马寺和少林寺，不过后来因为一直下雨和略感疲倦，逛完白马寺直接回家。自驾往返共400公里整，大部分是高速，剩下几十公里国道。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/luoyang/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/lima-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="LIMA: Less Is More for Alignment 简读"><meta itemprop=description content="LIMA是五月份的一篇网红文，发表后引起了广泛的讨论。它用极致简约的SFT方案训练了一个不错的模型，希望证实表面对齐假设 (Superficial Alignment Hypothesis)：
+大模型中几乎所有知识都是在预训练中学习的，指令微调只是一个很简单的过程，让模型学到与用户交互的形式。
+为证明上述假设，作者们推测仅需要少量的指令微调数据(1000条)就可以教会模型产生高质量输出。此外，1000条SFT数据就达到了很好的指令微调效果，也说明了高质量数据对于模型的重要性，这一点与 
+
+    Textbooks Are All You Need
+    
+ 有异曲同工之妙。
+
+
+    # LIMA: Less Is More for Alignment
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/lima-summary/ itemprop=url class=post-title-link>LIMA: Less Is More for Alignment 简读</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-09-12 19:18:16 +08:00" itemprop="dateCreated datePublished" datetime="2023-09-12 19:18:16 +0800 CST">2023-09-12
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>4分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/lima-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/lima-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>LIMA是五月份的一篇网红文，发表后引起了广泛的讨论。它用极致简约的SFT方案训练了一个不错的模型，希望证实表面对齐假设 (Superficial Alignment Hypothesis)：</p><p><code>大模型中几乎所有知识都是在预训练中学习的，指令微调只是一个很简单的过程，让模型学到与用户交互的形式。</code></p><p>为证明上述假设，作者们推测仅需要少量的指令微调数据(1000条)就可以教会模型产生高质量输出。此外，1000条SFT数据就达到了很好的指令微调效果，也说明了高质量数据对于模型的重要性，这一点与
+<a href=/textbooks-are-all-you-need-summary/ title="Textbooks Are All You Need">Textbooks Are All You Need
+</a>有异曲同工之妙。</p><p><a href=https://arxiv.org/abs/2305.11206 title="# LIMA: Less Is More for Alignment" rel="noopener external nofollow noreferrer" target=_blank class=exturl># LIMA: Less Is More for Alignment
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/lima-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/lelocle-mainspring-suddenly-release/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="力洛克T41发条突然弹松问题"><meta itemprop=description content="
+
+    力洛克T41自行洗油保养实录
+    
+
+手动上弦的问题并未解决，保养后不久，问题更加严重，仅能上弦约10圈（走时约10小时），便开始不断打滑，同时发出“咔咔”的异响。如小心继续上弦，发条会突然弹松，直接停表。针对此问题搜了许多国内外论坛，都没找到合适的解决方案，此处记录以飨后人。
+前后花了约一个月，买了一根发条，两个发条盒总成件，捏断两根发条内钩，最终购买一套立轮和离合轮（合轮）彻底解决问题。
+先买了一根新发条，换上之后问题依然存在。
+由于出现突然弹松的现象，怀疑发条轴与发条内钩打滑所致，感觉是上链时二者一直打滑，出现“咔咔”的异响。打开看了看发条轴，似乎有一些磨损（它的凸起不太明显，不是非常有经验的老师傅不太容易看出是否磨损），干脆买了一个新的原装发条盒。换上之后问题依旧。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/lelocle-mainspring-suddenly-release/ itemprop=url class=post-title-link>力洛克T41发条突然弹松问题</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-07-29 18:00:05 +08:00" itemprop="dateCreated datePublished" datetime="2023-07-29 18:00:05 +0800 CST">2023-07-29
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/life/ itemprop=url rel=index><span itemprop=name>Life</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>3分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/lelocle-mainspring-suddenly-release/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/lelocle-mainspring-suddenly-release/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p><a href=/lelocle-maintain/ title=力洛克T41自行洗油保养实录>力洛克T41自行洗油保养实录</a></p><p>手动上弦的问题并未解决，保养后不久，问题更加严重，仅能上弦约10圈（走时约10小时），便开始不断打滑，同时发出“咔咔”的异响。如小心继续上弦，发条会突然弹松，直接停表。针对此问题搜了许多国内外论坛，都没找到合适的解决方案，此处记录以飨后人。</p><p>前后花了约一个月，买了一根发条，两个发条盒总成件，捏断两根发条内钩，最终购买一套立轮和离合轮（合轮）彻底解决问题。</p><p>先买了一根新发条，换上之后问题依然存在。</p><p>由于出现突然弹松的现象，怀疑发条轴与发条内钩打滑所致，感觉是上链时二者一直打滑，出现“咔咔”的异响。打开看了看发条轴，似乎有一些磨损（它的凸起不太明显，不是非常有经验的老师傅不太容易看出是否磨损），干脆买了一个新的原装发条盒。换上之后问题依旧。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/lelocle-mainspring-suddenly-release/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/illustrated-decoding-strategies/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="图说文本生成解码策略"><meta itemprop=description content="之前写过 
+
+    # Nucleus Sampling与文本生成中的不同解码策略比较
+    
+，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/illustrated-decoding-strategies/ itemprop=url class=post-title-link>图说文本生成解码策略</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-07-19 09:46:22 +08:00" itemprop="dateCreated datePublished" datetime="2023-07-19 09:46:22 +0800 CST">2023-07-19
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>7分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/illustrated-decoding-strategies/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/illustrated-decoding-strategies/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>之前写过
+<a href=/nucleussampling/ title="# Nucleus Sampling与文本生成中的不同解码策略比较"># Nucleus Sampling与文本生成中的不同解码策略比较
+</a>，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/illustrated-decoding-strategies/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/toolformer-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="使LLM善假于物: Toolformer"><meta itemprop=description content="大模型可以仅凭指令或几个示例就能解决各种新任务，但在一些看似简单的算术或搜索任务上却表现欠佳。俗话说得好，人和动物的区别就是人可以更好地使用工具。于是，Meta AI提出了Toolformer，让LLM善假于物，通过自学使用外部工具。
+Toolformer可以决定调用什么API、何时调用它们、传递什么参数及如何将API返回值融合。Toolformer以自监督方式训练，每个API仅需要几个示例。它在各种下游任务中显著提升了零样本性能，而不牺牲其核心语言模型能力。
+
+
+    # Toolformer: Language Models Can Teach Themselves to Use Tools
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/toolformer-summary/ itemprop=url class=post-title-link>使LLM善假于物: Toolformer</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-07-16 23:58:16 +08:00" itemprop="dateCreated datePublished" datetime="2023-07-16 23:58:16 +0800 CST">2023-07-16
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>6分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/toolformer-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/toolformer-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>大模型可以仅凭指令或几个示例就能解决各种新任务，但在一些看似简单的算术或搜索任务上却表现欠佳。俗话说得好，人和动物的区别就是人可以更好地使用工具。于是，Meta AI提出了<code>Toolformer</code>，让LLM<code>善假于物</code>，通过自学使用外部工具。</p><p><code>Toolformer</code>可以决定调用什么API、何时调用它们、传递什么参数及如何将API返回值融合。<code>Toolformer</code>以自监督方式训练，每个API仅需要几个示例。它在各种下游任务中显著提升了零样本性能，而不牺牲其核心语言模型能力。</p><p><a href=https://arxiv.org/abs/2302.04761 title="# Toolformer: Language Models Can Teach Themselves to Use Tools" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Toolformer: Language Models Can Teach Themselves to Use Tools
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/toolformer-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/textbooks-are-all-you-need-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="数据为王: Textbooks Are All You Need"><meta itemprop=description content="MSR使用“教科书”级的高质量数据训练了仅 1.3B 的面向代码任务的phi-1模型，在 HumanEval 和 MBPP 上取得了很高的准确率。
+根据模型扩展法则，为提升模型性能，需要从增大算量和模型规模入手。这里则另辟蹊径：从数据质量出发。之前的研究证实：提升数据质量会大幅改变扩展法则趋势，能让小模型达到大模型的效果。本文则在此结论上更进一步，打破了已有的模型扩展法则，证明高质量的数据甚至可以在使用更少的数据和算量条件下超越大模型的SOTA。
+具体来说，用约 7B token 训练8轮，然后在少于 200M token的数据上微调得到 1.3B 的模型  phi-1。
+
+
+    # Textbooks Are All You Need
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/textbooks-are-all-you-need-summary/ itemprop=url class=post-title-link>数据为王: Textbooks Are All You Need</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-07-09 19:48:00 +08:00" itemprop="dateCreated datePublished" datetime="2023-07-09 19:48:00 +0800 CST">2023-07-09
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>7分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/textbooks-are-all-you-need-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/textbooks-are-all-you-need-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>MSR使用“教科书”级的高质量数据训练了仅 1.3B 的面向代码任务的<code>phi-1</code>模型，在 HumanEval 和 MBPP 上取得了很高的准确率。</p><p>根据模型扩展法则，为提升模型性能，需要从增大算量和模型规模入手。这里则另辟蹊径：从数据质量出发。之前的研究证实：提升数据质量会大幅改变扩展法则趋势，能让小模型达到大模型的效果。本文则在此结论上更进一步，打破了已有的模型扩展法则，证明<strong>高质量的数据甚至可以在使用更少的数据和算量条件下超越大模型的SOTA</strong>。</p><p>具体来说，用约 7B token 训练8轮，然后在少于 200M token的数据上微调得到 1.3B 的模型 <code>phi-1</code>。</p><p><a href=https://arxiv.org/abs/2306.11644 title="# Textbooks Are All You Need" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Textbooks Are All You Need
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/textbooks-are-all-you-need-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/lawyer-llama-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="训练中文垂类大模型：Lawyer LLaMA"><meta itemprop=description content="开源的通用能力大模型越来越多，但真正有用和落地的是在某个领域专精的垂类模型。初看上去，似乎大模型仅需要少量prompt工作就可以很好地在垂类工作，可事实并非如此。不进行领域微调的通用模型可以很快地构建80分的应用，可是大部分的实用场景，需要95甚至98分的模型效果。这也是为什么在各个领域（如金融、车载、虚拟人）大家都在训练或微调自己大模型的原因。
+微调这件事看上去不难，但却有很多未解问题：
+
+如何基于英文大模型继续训练一个中文大模型？
+垂类数据应该在预训练阶段引入，还是指令微调时引入？
+通用指令数据与垂类任务数据的混合比例有什么讲究？
+
+上面的每个问题都有很多种不同的方案，但限于时间和成本，逐一实验是不可行的，AB测试也会带来额外的成本。所以有趣的事情出现了，各个玩家对自己训练时的细节都讳莫如深，自己训练的时候也都遇到过各种各样奇怪的坑。更有意思的是，即使别人提供了一些细节参考，自己在训练时未必能够复现 :-( 。
+代码库：
+
+    # Lawyer LLaMA
+    
+    
+    
+
+Lawyer LLaMA技术报告：
+
+    # Lawyer LLaMA Technical Report
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/lawyer-llama-summary/ itemprop=url class=post-title-link>训练中文垂类大模型：Lawyer LLaMA</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-06-19 19:20:16 +08:00" itemprop="dateCreated datePublished" datetime="2023-06-19 19:20:16 +0800 CST">2023-06-19
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>7分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/lawyer-llama-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/lawyer-llama-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>开源的通用能力大模型越来越多，但真正有用和落地的是在某个领域专精的垂类模型。初看上去，似乎大模型仅需要少量prompt工作就可以很好地在垂类工作，可事实并非如此。不进行领域微调的通用模型可以很快地构建80分的应用，可是大部分的实用场景，需要95甚至98分的模型效果。这也是为什么在各个领域（如金融、车载、虚拟人）大家都在训练或微调自己大模型的原因。</p><p>微调这件事看上去不难，但却有很多未解问题：</p><ul><li>如何基于英文大模型继续训练一个中文大模型？</li><li>垂类数据应该在预训练阶段引入，还是指令微调时引入？</li><li>通用指令数据与垂类任务数据的混合比例有什么讲究？</li></ul><p>上面的每个问题都有很多种不同的方案，但限于时间和成本，逐一实验是不可行的，AB测试也会带来额外的成本。所以有趣的事情出现了，各个玩家对自己训练时的细节都讳莫如深，自己训练的时候也都遇到过各种各样奇怪的坑。更有意思的是，即使别人提供了一些细节参考，自己在训练时未必能够复现 :-( 。</p><p>代码库：
+<a href=https://github.com/AndrewZhe/lawyer-llama title="# Lawyer LLaMA" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Lawyer LLaMA
+<i class="fa fa-external-link-alt"></i></a></p><p><code>Lawyer LLaMA</code>技术报告：
+<a href=https://arxiv.org/abs/2305.15062 title="# Lawyer LLaMA Technical Report" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Lawyer LLaMA Technical Report
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/lawyer-llama-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/process-supervision-reward-model/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="提升大模型数学推理能力: 过程监督"><meta itemprop=description content="思维链采用逐步推理的方式得到最终结果，如果模型在某一步出现幻想 (Hallucination)，则差之毫厘，谬以千里，后面的错误会被放大，导致错误结果。
+OpenAI最近提出使用过程监督 (Process Supervision) 减少大模型幻想并提升大模型的数学推理能力，所以什么是过程监督？
+过程监督 (Process Supervision) 是相对于之前的结果监督 (Outcome Supervison) 而言。众所周知，大模型基于人工反馈的强化学习部分需要用到奖励模型 (Reward Model, RM)，数学推理能力是基于思维链 (Chain of Thought)。传统的奖励模型采用的是结果监督的方式，仅使用思维链的最终结果进行判别与反馈，而过程监督则是对思维链的每步推理都进行反馈。因此，过程监督是针对思维链和奖励模型的一种改进方案。
+OpenAI开源了过程监督的数据集 PRM800K。论文的核心思想很直观，主要关注在实验设计。
+OpenAI 博客：
+
+    # Improving mathematical reasoning with process supervision
+    
+    
+    
+
+论文链接：
+
+    # Let&rsquo;s Verify Step by Step
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/process-supervision-reward-model/ itemprop=url class=post-title-link>提升大模型数学推理能力: 过程监督</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-06-06 10:18:23 +08:00" itemprop="dateCreated datePublished" datetime="2023-06-06 10:18:23 +0800 CST">2023-06-06
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>6分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/process-supervision-reward-model/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/process-supervision-reward-model/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>思维链采用逐步推理的方式得到最终结果，如果模型在某一步出现幻想 (Hallucination)，则差之毫厘，谬以千里，后面的错误会被放大，导致错误结果。</p><p>OpenAI最近提出使用过程监督 (Process Supervision) 减少大模型幻想并提升大模型的数学推理能力，所以什么是过程监督？</p><p>过程监督 (Process Supervision) 是相对于之前的结果监督 (Outcome Supervison) 而言。众所周知，大模型基于人工反馈的强化学习部分需要用到奖励模型 (Reward Model, RM)，数学推理能力是基于思维链 (Chain of Thought)。传统的奖励模型采用的是结果监督的方式，仅使用思维链的最终结果进行判别与反馈，而过程监督则是对思维链的每步推理都进行反馈。因此，过程监督是针对思维链和奖励模型的一种改进方案。</p><p>OpenAI开源了过程监督的数据集 PRM800K。论文的核心思想很直观，主要关注在实验设计。</p><p>OpenAI 博客：
+<a href=https://openai.com/research/improving-mathematical-reasoning-with-process-supervision title="# Improving mathematical reasoning with process supervision" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Improving mathematical reasoning with process supervision
+<i class="fa fa-external-link-alt"></i></a></p><p>论文链接：
+<a href=https://arxiv.org/abs/2305.20050 title="# Let&rsquo;s Verify Step by Step" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Let&rsquo;s Verify Step by Step
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/process-supervision-reward-model/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/build-llama-cpp-python-error-solution/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="升级gcc解决编译llama-cpp-python错误"><meta itemprop=description content="安装 
+
+    text-generation-webui
+    
+    
+    
+
+
+
+
+1
+
+
+~/text-generation-webui$ pip install -r requirements.txt
+
+
+
+遇到错误："></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/build-llama-cpp-python-error-solution/ itemprop=url class=post-title-link>升级gcc解决编译llama-cpp-python错误</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-05-11 17:18:39 +08:00" itemprop="dateCreated datePublished" datetime="2023-05-11 17:18:39 +0800 CST">2023-05-11
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>4分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/build-llama-cpp-python-error-solution/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/build-llama-cpp-python-error-solution/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>安装
+<a href=https://github.com/oobabooga/text-generation-webui title=text-generation-webui rel="noopener external nofollow noreferrer" target=_blank class=exturl>text-generation-webui
+<i class="fa fa-external-link-alt"></i></a></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>~/text-generation-webui$ pip install -r requirements.txt</span></span></code></pre></td></tr></table></div></div><p>遇到错误：</p></div><footer class=post-footer><div class=post-button><a class=btn href=/build-llama-cpp-python-error-solution/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/guizhou/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="贵州4月下旬自驾游记"><meta itemprop=description content="好久没出去看大好河山，五一前休假去贵州自驾游，云贵川算是都打了卡。按照惯例，还是提前简单做下攻略，本想将行程设置宽松些，后来发现贵州的大部分景点门票预订（进景区时间）都要精确到小时，才不得不把行程提前细化。
+贵州的主要景点也比较分散，不过都是以省会贵阳为中心放射状排列，本次自驾主要以黔东为主。之前找到一张不错的贵州景点分布图，记不清出处了："></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/guizhou/ itemprop=url class=post-title-link>贵州4月下旬自驾游记</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-05-04 09:12:01 +08:00" itemprop="dateCreated datePublished" datetime="2023-05-04 09:12:01 +0800 CST">2023-05-04
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/life/ itemprop=url rel=index><span itemprop=name>Life</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>17分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/guizhou/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/guizhou/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>好久没出去看大好河山，五一前休假去贵州自驾游，云贵川算是都打了卡。按照惯例，还是提前简单做下攻略，本想将行程设置宽松些，后来发现贵州的大部分景点门票预订（进景区时间）都要精确到小时，才不得不把行程提前细化。</p><p>贵州的主要景点也比较分散，不过都是以省会贵阳为中心放射状排列，本次自驾主要以黔东为主。之前找到一张不错的贵州景点分布图，记不清出处了：</p></div><footer class=post-footer><div class=post-button><a class=btn href=/guizhou/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/fireside-talk-openai-ceo-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="围炉对谈：OpenAI创始人对GPT-4和ChatGPT的理解"><meta itemprop=description content="3月22日，NVIDIA的CEO黄仁勋与OpenAI的创始人Ilya Sutskever进行了围炉对谈，通过视频可以更好地了解OpenAI是如何走到今天，又是如何理解ChatGPT和GPT-4这些大模型的。不过毕竟是非正式访谈，思路和观点略有发散，本文提取访谈中一些有意思的观点供参考。
+BTW，网上的中文完整字幕翻译对某些观点的翻译解读有误，建议看原视频。
+
+
+    # AI Opener: OpenAI’s Sutskever in Conversation With Jensen Huang
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/fireside-talk-openai-ceo-summary/ itemprop=url class=post-title-link>围炉对谈：OpenAI创始人对GPT-4和ChatGPT的理解</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-03-30 19:02:03 +08:00" itemprop="dateCreated datePublished" datetime="2023-03-30 19:02:03 +0800 CST">2023-03-30
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/fireside-talk-openai-ceo-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/fireside-talk-openai-ceo-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>3月22日，NVIDIA的CEO黄仁勋与OpenAI的创始人Ilya Sutskever进行了围炉对谈，通过视频可以更好地了解OpenAI是如何走到今天，又是如何理解ChatGPT和GPT-4这些大模型的。不过毕竟是非正式访谈，思路和观点略有发散，本文提取访谈中一些有意思的观点供参考。</p><p>BTW，网上的中文完整字幕翻译对某些观点的翻译解读有误，建议看原视频。</p><p><a href=https://blogs.nvidia.com/blog/2023/03/22/sutskever-openai-gtc/ title="# AI Opener: OpenAI’s Sutskever in Conversation With Jensen Huang" rel="noopener external nofollow noreferrer" target=_blank class=exturl># AI Opener: OpenAI’s Sutskever in Conversation With Jensen Huang
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/fireside-talk-openai-ceo-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/lelocle-maintain/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="力洛克T41自行洗油保养实录"><meta itemprop=description content="戴了十几年的力洛克，一年前开始走时不准，最近每天能慢上一分钟，手动上弦似乎也有些问题，总是上不满弦，怀疑与之前疫情在家总手动上弦有关系 (最初怀疑发条断了)。
+距上次保养已经5年有余，天梭官方授权的店保养一次 (所谓完全服务) 约一千块，而买块新的ETA-2824-2机芯也就差不多这个价，所以再去保养显得非常不划算。老爷子年轻时玩表修表，有此家学，再加上网上有许多机芯拆解洗油点油视频，看起来也不甚困难，跃跃欲试，决定自行保养维护。
+前后历时一个月才保养完毕，趟坑无数。现在看来，动手时显然低估了保养洗油的难度，加之中间遇到的诸多难题，本想从玩表的过程获取些操作的成就感，不想却收获了诸多挫败感。修完后才感叹，授权店收一千块算是良心价了 :-) 。好在最终问题完美解决，记录下保养过程。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/lelocle-maintain/ itemprop=url class=post-title-link>力洛克T41自行洗油保养实录</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-03-05 23:49:05 +08:00" itemprop="dateCreated datePublished" datetime="2023-03-05 23:49:05 +0800 CST">2023-03-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/life/ itemprop=url rel=index><span itemprop=name>Life</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>8分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/lelocle-maintain/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/lelocle-maintain/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>戴了十几年的力洛克，一年前开始走时不准，最近每天能慢上一分钟，手动上弦似乎也有些问题，总是上不满弦，怀疑与之前疫情在家总手动上弦有关系 (最初怀疑发条断了)。</p><p>距上次保养已经5年有余，天梭官方授权的店保养一次 (所谓完全服务) 约一千块，而买块新的ETA-2824-2机芯也就差不多这个价，所以再去保养显得非常不划算。老爷子年轻时玩表修表，有此家学，再加上网上有许多机芯拆解洗油点油视频，看起来也不甚困难，跃跃欲试，决定自行保养维护。</p><p>前后历时一个月才保养完毕，趟坑无数。现在看来，动手时显然低估了保养洗油的难度，加之中间遇到的诸多难题，本想从玩表的过程获取些操作的成就感，不想却收获了诸多挫败感。修完后才感叹，授权店收一千块算是良心价了 :-) 。好在最终问题完美解决，记录下保养过程。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/lelocle-maintain/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/chain-of-thought-prompting-summary/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Chain-of-Thought Prompting 简读"><meta itemprop=description content="语言模型越来越大，但更大的模型并没有显示出更强的计算和推理能力。去年Google提出了Chain-of-Thought (CoT) 的方案，通过chain-of-thought提示，让模型逐步推断，使大模型的推理能力显著提升。本文来看一下chain-of-thought的原理。
+
+
+    Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+    
+    
+    
+
+
+
+    Language Models Perform Reasoning via Chain of Thought
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/chain-of-thought-prompting-summary/ itemprop=url class=post-title-link>Chain-of-Thought Prompting 简读</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-03-01 19:39:00 +08:00" itemprop="dateCreated datePublished" datetime="2023-03-01 19:39:00 +0800 CST">2023-03-01
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>2分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/chain-of-thought-prompting-summary/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/chain-of-thought-prompting-summary/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>语言模型越来越大，但更大的模型并没有显示出更强的计算和推理能力。去年Google提出了Chain-of-Thought (CoT) 的方案，通过chain-of-thought提示，让模型逐步推断，使大模型的推理能力显著提升。本文来看一下chain-of-thought的原理。</p><p><a href=https://arxiv.org/abs/2201.11903 title="Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://ai.googleblog.com/2022/05/language-models-perform-reasoning-via.html title="Language Models Perform Reasoning via Chain of Thought" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Language Models Perform Reasoning via Chain of Thought
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/chain-of-thought-prompting-summary/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/llm-training-instability-solution/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="大模型训练不稳定问题及解决方案"><meta itemprop=description content="大规模语言模型的春风已经吹遍大地，大家都惊叹于大模型出色的对话能力，但是在训练大模型时遇到的训练不稳定问题(training instabilities)，可能关注的人并不太多。所谓量变引起质变，模型每大一个量级，就可能会出现一些意想不到的问题，比如莫名其妙的训练崩溃。当然，也有好的方面，在模型有一定规模后，是否有可能表现出一些弱智能，也很难说。
+言归正传，今天聊聊在训练10B以上模型时遇到的训练不稳定现象，问题原因及当前的解法。"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/llm-training-instability-solution/ itemprop=url class=post-title-link>大模型训练不稳定问题及解决方案</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2023-02-15 10:08:12 +08:00" itemprop="dateCreated datePublished" datetime="2023-02-15 10:08:12 +0800 CST">2023-02-15
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>3分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/llm-training-instability-solution/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/llm-training-instability-solution/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>大规模语言模型的春风已经吹遍大地，大家都惊叹于大模型出色的对话能力，但是在训练大模型时遇到的训练不稳定问题(<strong>training instabilities</strong>)，可能关注的人并不太多。所谓量变引起质变，模型每大一个量级，就可能会出现一些意想不到的问题，比如莫名其妙的训练崩溃。当然，也有好的方面，在模型有一定规模后，是否有可能表现出一些弱智能，也很难说。</p><p>言归正传，今天聊聊在训练10B以上模型时遇到的训练不稳定现象，问题原因及当前的解法。</p></div><footer class=post-footer><div class=post-button><a class=btn href=/llm-training-instability-solution/#more rel=contents>阅读全文 &#187;</a></div><div class=post-eof></div></footer></article></div><nav class=pagination><a class="extend prev" rel=prev href=/post/page/2/><i class="fa fa-angle-left"></i>
+</a><a class=page-number href=/post/>1</a>
+<a class=page-number href=/post/page/2/>2</a>
+<span class="page-number current">3</span>
+<a class=page-number href=/post/page/4/>4</a>
+<a class=page-number href=/post/page/5/>5</a>
+<a class=page-number href=/post/page/6/>6</a>
+<a class=page-number href=/post/page/7/>7</a>
+<a class=page-number href=/post/page/8/>8</a>
+<a class="extend next" rel=next href=/post/page/4/><i class="fa fa-angle-right"></i></a></nav></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/post/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"comments":true,"expired":false,"isHome":false,"isPage":false,"path":"post","permalink":"https://finisky.github.io/post/","title":"Posts","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script></body></html>

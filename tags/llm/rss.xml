@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LLM on Finisky Garden</title><link>https://finisky.github.io/tags/llm/</link><description>Recent content in LLM on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Wed, 29 Apr 2026 23:45:02 +0800</lastBuildDate><atom:link href="https://finisky.github.io/tags/llm/rss.xml" rel="self" type="application/rss+xml"/><item><title>Transformer的简洁性：表达力的另一面</title><link>https://finisky.github.io/transformers-succinctness-summary/</link><pubDate>Wed, 29 Apr 2026 23:45:02 +0800</pubDate><guid>https://finisky.github.io/transformers-succinctness-summary/</guid><description>&lt;p&gt;ICLR 2026 的两篇杰出论文奖（Outstanding Paper）里有一篇纯理论的工作，叫 Transformers are Inherently Succinct。一篇没有实验、没有 benchmark、全是数学证明的论文能拿最佳论文，评审委员会给的理由是&amp;quot;提出了一个新的视角来解释 Transformer 架构的强大能力&amp;quot;。原论文不太好读，涉及大量形式语言理论和复杂度理论的工具，这篇文章试图把核心结论和构造思路用更直觉的方式讲清楚。&lt;/p&gt;
+&lt;p&gt;这个&amp;quot;新视角&amp;quot;是什么？过去大家比的是表达力，即&amp;quot;谁能识别的语言范围更广&amp;quot;，这篇论文换了个角度：同样一个语言，谁用更少的篇幅就能描述清楚？&lt;/p&gt;</description></item><item><title>LLM2Vec：把 Decoder LLM 变成 Embedding 模型</title><link>https://finisky.github.io/llm2vec-paper-summary/</link><pubDate>Sat, 25 Apr 2026 23:30:50 +0800</pubDate><guid>https://finisky.github.io/llm2vec-paper-summary/</guid><description>&lt;p&gt;Embedding 模型一直是 BERT 家族的领地。做语义搜索、做 RAG、做聚类，用的都是 encoder-only 模型。GPT、LLaMA 这些 decoder-only 模型虽然在生成任务上碾压一切，但大家默认它们不适合做 embedding，因为 causal attention 只能看前面的 token，无法构建完整的句子表示。&lt;/p&gt;
+&lt;p&gt;2024 年的 
+&lt;a href="https://arxiv.org/abs/2404.05961" title="LLM2Vec" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LLM2Vec
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;（COLM 2024）发现这个默认假设可能不对。三步改造，不需要标注数据，不需要 GPT-4 生成的合成数据，就能把任意 decoder-only LLM 变成 MTEB 上的 SOTA embedding 模型。&lt;/p&gt;</description></item><item><title>大模型训练数据的枯竭与低质化随想</title><link>https://finisky.github.io/training-data-depletion/</link><pubDate>Wed, 22 Apr 2026 11:30:00 +0800</pubDate><guid>https://finisky.github.io/training-data-depletion/</guid><description>&lt;p&gt;曾经有个说法：互联网上的真人数据几年内就会被消耗殆尽，大模型的训练数据要见底了。Epoch AI 在 2022 年的
+&lt;a href="https://arxiv.org/abs/2211.04325" title="预测" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 预测
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;说高质量文本数据可能在 2026 年前后耗尽。当时讨论很热烈，现在好像被提起不多了。&lt;/p&gt;
+&lt;p&gt;互联网上确实已经充斥大量 AI 生成的内容。随便搜个问题，前几条结果里大概率有 AI 写的。按照之前的忧虑，这些 AI 生成的文本会被爬回来当训练数据，模型吃自己的输出，越训越差，所谓的 model collapse。一篇 
+&lt;a href="https://www.nature.com/articles/s41586-024-07566-y" title="Nature 论文" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Nature 论文
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 证明了这一点：递归地在模型自身输出上训练，尾部分布会逐步消失，模型输出越来越同质化。&lt;/p&gt;</description></item><item><title>Claude Code：1.6% 的 AI，98.4% 的脚手架</title><link>https://finisky.github.io/dive-into-claude-code/</link><pubDate>Wed, 22 Apr 2026 09:15:00 +0800</pubDate><guid>https://finisky.github.io/dive-into-claude-code/</guid><description>&lt;p&gt;拆过 Claude Code 的记忆管理、上下文压缩、RAG、安全分类器、Edit 工具、子 Agent 缓存共享，每篇都是对着源码一行一行看。但看完这篇论文才意识到，我一直在看零件，没看整台机器。&lt;/p&gt;
+&lt;p&gt;论文叫 
+&lt;a href="https://arxiv.org/abs/2604.14228" title="Dive into Claude Code: The Design Space of Today&amp;rsquo;s and Future AI Agent Systems" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Dive into Claude Code: The Design Space of Today&amp;rsquo;s and Future AI Agent Systems
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，46 页，从源码出发对 Claude Code 做了一次完整的架构解剖。不是使用教程，不是 benchmark 评测，而是回答一个工程问题：一个生产级 AI Agent 系统，代码到底在干什么？&lt;/p&gt;</description></item><item><title>语言模型的蜂巢思维</title><link>https://finisky.github.io/artificial-hivemind/</link><pubDate>Fri, 17 Apr 2026 08:32:21 +0800</pubDate><guid>https://finisky.github.io/artificial-hivemind/</guid><description>&lt;p&gt;你让 GPT-4 推荐一部被低估的科幻电影，它说《月球》。换 Claude 问同一个问题，也是《月球》。再问 Gemini，还是《月球》。一篇 NeurIPS 2025 Best Paper 
+&lt;a href="https://arxiv.org/abs/2510.22954" title="Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond)" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond)
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 用大规模实验量化了这个现象：不同语言模型在开放式问题上的回答，相似度高到反常。&lt;/p&gt;</description></item><item><title>从RAG到知识编译</title><link>https://finisky.github.io/llm-wiki/</link><pubDate>Thu, 16 Apr 2026 08:39:28 +0800</pubDate><guid>https://finisky.github.io/llm-wiki/</guid><description>&lt;p&gt;RAG 的工作方式是每次提问都重新检索、重新拼接、重新推理。问一个需要综合五篇文档才能回答的问题，模型每次都得从头找到这五篇，拼起来，再给你答案。问十次，找十次。什么都没积累下来。&lt;/p&gt;
+&lt;p&gt;Karpathy 前两天发了一个叫 LLM Wiki 的 gist，提了一个不同的思路：别让模型每次现场检索了，让它把知识预先编译成一个结构化的 wiki，查询的时候直接查编译好的结果。&lt;/p&gt;</description></item><item><title>向量检索的理论天花板</title><link>https://finisky.github.io/embedding-retrieval-limits/</link><pubDate>Wed, 15 Apr 2026 17:31:47 +0800</pubDate><guid>https://finisky.github.io/embedding-retrieval-limits/</guid><description>&lt;p&gt;向量检索（dense retrieval）这几年几乎成了 RAG 的标配。把文档编码成一个向量，查询也编码成一个向量，算个余弦相似度就能检索。但一个基本问题很少被认真讨论过：一个 d 维向量，到底能表示多少种不同的 top-k 检索结果？&lt;/p&gt;
+&lt;p&gt;ICLR 2026 这篇来自 Google DeepMind 和 JHU 的论文 &lt;em&gt;&amp;ldquo;On the Theoretical Limitations of Embedding-Based Retrieval&amp;rdquo;&lt;/em&gt; 给出了一个数学上的回答：不够。而且远远不够。&lt;/p&gt;</description></item><item><title>跟AI交流的几个意外好处</title><link>https://finisky.github.io/talk-to-ai-perks/</link><pubDate>Tue, 14 Apr 2026 08:48:38 +0800</pubDate><guid>https://finisky.github.io/talk-to-ai-perks/</guid><description>&lt;p&gt;前段时间孙割有个暴论：&amp;ldquo;现在已经2026年了，大家能和AI聊天就不要和人类聊天。&amp;ldquo;后面还有什么删掉90年前出生人的联系方式、微信登味重之类的，典型的孙割风格，听个乐。&lt;/p&gt;
+&lt;p&gt;但抛开那些离谱的部分，作为AI重度用户，谈谈AI的好处和坏处。&lt;/p&gt;</description></item><item><title>Claude做梦机制：后台记忆碎片整理</title><link>https://finisky.github.io/claude-code-auto-dream/</link><pubDate>Mon, 13 Apr 2026 19:35:00 +0800</pubDate><guid>https://finisky.github.io/claude-code-auto-dream/</guid><description>&lt;p&gt;Claude Code 内部有一个叫 autoDream 的模块。它的 Prompt 标题是&amp;quot;Dream: Memory Consolidation&amp;quot;。&lt;/p&gt;
+&lt;p&gt;这不是什么隐喻。Claude Code 确实会在后台启动一个子代理，回顾过去多个会话的记录，把零散的记忆整理、去重、纠错，然后写回磁盘。整个过程你看不到，除非刻意去翻后台任务列表。&lt;/p&gt;</description></item><item><title>AI与就业：一场200年没吵完的架</title><link>https://finisky.github.io/ai-employment-paradox/</link><pubDate>Sat, 11 Apr 2026 00:45:00 +0800</pubDate><guid>https://finisky.github.io/ai-employment-paradox/</guid><description>&lt;p&gt;2025 年科技行业的招聘页面很分裂：传统软件工程师岗位在缩，带&amp;quot;AI&amp;quot;前缀的职位在涨。同一家公司，左手砍初中级开发和项目管理，右手开 Agent 编排工程师和 AI 应用架构师。&lt;/p&gt;</description></item><item><title>Agent 工程的三次进化</title><link>https://finisky.github.io/prompt-context-harness-engineering/</link><pubDate>Thu, 09 Apr 2026 00:15:33 +0800</pubDate><guid>https://finisky.github.io/prompt-context-harness-engineering/</guid><description>&lt;p&gt;去年 6 月 Shopify CEO Tobi Lutke 发了条推，说他觉得 context engineering 比 prompt engineering 好。Karpathy 转发 +1。Simon Willison 写了篇博客说这个词可能真能立住。Phil Schmid 做了完整定义。半个 AI 圈在一周之内集体换了术语。&lt;/p&gt;
+&lt;p&gt;到了 2026 年初，Phil Schmid 又抛了一个新词：Agent Harness。这次没有上一轮那么热闹，但写 Coding Agent 的人几乎都默默点了头。&lt;/p&gt;</description></item><item><title>Claude Code 和 OpenClaw 的上下文管理对比</title><link>https://finisky.github.io/openclaw-vs-claude-code-agent-arch/</link><pubDate>Tue, 07 Apr 2026 22:15:33 +0800</pubDate><guid>https://finisky.github.io/openclaw-vs-claude-code-agent-arch/</guid><description>&lt;p&gt;OpenClaw 拿下 35 万 Star 之后，社区开始出现一种论调：底层都是 Opus 4.6，开源方案应该能对标 Claude Code。实际用过两边的人大概都有同一个感受，长会话跑到后半段，OpenClaw 开始丢上下文，忘记之前读过的文件，重复做已经做过的事。Claude Code 也会，但明显晚得多，而且恢复能力强很多。&lt;/p&gt;
+&lt;p&gt;模型一样，体验不一样。差在哪？&lt;/p&gt;</description></item><item><title>基模到顶，应用起飞</title><link>https://finisky.github.io/foundation-model-plateau-application-era/</link><pubDate>Tue, 07 Apr 2026 00:16:45 +0800</pubDate><guid>https://finisky.github.io/foundation-model-plateau-application-era/</guid><description>&lt;p&gt;Cursor 的母公司 Anysphere 大概 150 人，2025 年 11 月
+&lt;a href="https://e.vnexpress.net/news/tech/personalities/4-mit-graduates-who-built-the-popular-ai-coding-tool-cursor-become-billionaires-4965462.html" title="年收入突破 10 亿美元" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 年收入突破 10 亿美元
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;。OpenAI 到 2026 年初有 
+&lt;a href="https://www.ft.com/content/7ffea5b4-e8bc-47cd-adb4-257f84c8028b" title="4500 名员工" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 4500 名员工
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，2025 年收入 131 亿美元，但据 Fortune 报道，
+&lt;a href="https://fortune.com/2025/11/12/openai-cash-burn-rate-annual-losses-2028-profitable-2030-financial-documents/" title="亏损约 90 亿美元" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 亏损约 90 亿美元
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，而且预计一直亏到 2028 年。&lt;/p&gt;
+&lt;p&gt;一个不训练任何模型的应用公司，人均产出碾压了训练模型的公司。这组数字是 2025 年 AI 行业最值得琢磨的信号。&lt;/p&gt;</description></item><item><title>OpenClaw 为什么能 4 个月拿下 35 万 Star</title><link>https://finisky.github.io/openclaw-why-viral/</link><pubDate>Mon, 06 Apr 2026 00:12:37 +0800</pubDate><guid>https://finisky.github.io/openclaw-why-viral/</guid><description>&lt;p&gt;2025 年 11 月底，一个叫 OpenClaw 的开源项目在 GitHub 上线。4 个半月后，它有 35 万 Star，7 万 Fork，81 个发布版本，OpenAI、NVIDIA、Vercel 做它的赞助商。同期对比：Open WebUI 用了两年半才到 13 万，NextChat 三年到 8.8 万。OpenClaw 的增速在 GitHub 历史上都不多见。&lt;/p&gt;
+&lt;p&gt;它不是一个新模型，不是一个训练框架，甚至不是一个传统意义上的&amp;quot;技术突破&amp;quot;。它是一个个人 AI 助手，跑在你自己的机器上，通过你已经在用的聊天工具跟你对话。WhatsApp、Telegram、Slack、Discord、微信、飞书、iMessage、Matrix，25 个以上的平台，同时接入，一个后台。&lt;/p&gt;
+&lt;p&gt;这篇聊聊它为什么能出圈。&lt;/p&gt;</description></item><item><title>Claude Code 的工具按需加载</title><link>https://finisky.github.io/claude-code-deferred-tools/</link><pubDate>Sun, 05 Apr 2026 21:33:24 +0800</pubDate><guid>https://finisky.github.io/claude-code-deferred-tools/</guid><description>&lt;p&gt;用 Claude Code 写代码的时候，你大概不会注意到一件事：它注册了超过 40 个工具，但你让它读个文件、改几行代码，它只用到三四个。剩下那三十多个工具的定义，每个大约 500 个 token，全塞进上下文就是一万多 token 的固定开销。你只想改一行 CSS，却要为 WebSearch、NotebookEdit、CronCreate 这些完全用不到的工具买单。&lt;/p&gt;</description></item><item><title>Claude Code 的 Edit 工具为什么不会改错文件</title><link>https://finisky.github.io/claude-code-edit-tool/</link><pubDate>Sun, 05 Apr 2026 21:17:51 +0800</pubDate><guid>https://finisky.github.io/claude-code-edit-tool/</guid><description>&lt;p&gt;Claude Code 的 Edit 工具接口极简: 给一个 old_string, 给一个 new_string, 在文件里找到前者替换成后者。听上去就是一个 &lt;code&gt;str.replace()&lt;/code&gt; 的事。但在 LLM Agent 的语境下, 这个看似平凡的操作背后藏着一整套从字符串清洗到并发安全的工程。模型会把行号塞进替换字符串, 会凭空产生弯引号, 会在用户审批的间隙里被外部工具改了目标文件。Edit 工具要在这些情况下保持正确, 比 find-and-replace 复杂得多。&lt;/p&gt;
+&lt;p&gt;从行为上观察, Edit 工具的执行可以拆成三个阶段: API 层预处理(在工具拿到输入之前), 输入校验(展示权限对话框之前), 和实际写入(用户同意之后)。每个阶段各自处理一类问题, 且刻意保持了特定的同步/异步边界。&lt;/p&gt;</description></item><item><title>Claude Code的Undercover Mode：当AI学会隐藏自己</title><link>https://finisky.github.io/claude-code-undercover/</link><pubDate>Sun, 05 Apr 2026 21:02:08 +0800</pubDate><guid>https://finisky.github.io/claude-code-undercover/</guid><description>&lt;p&gt;Claude Code有一个从未出现在任何文档中的模式,在这个模式下,它会系统性地抹除一切AI参与的痕迹。不写Co-Authored-By,不写Generated with Claude Code的footer,甚至连system prompt里都不告诉模型它自己是什么型号。这个模式叫&lt;strong&gt;Undercover Mode&lt;/strong&gt;,只存在于Anthropic内部构建版本中,外部用户永远看不到它,因为整个功能在公开构建时会被dead code elimination彻底剔除。&lt;/p&gt;
+&lt;p&gt;从行为推断,这个机制的存在意味着Anthropic员工日常使用Claude Code向公开仓库提交代码。如果没有某种保护措施,commit message里可能出现未发布模型的代号,PR描述里可能暴露内部项目名称,system prompt里的模型标识可能通过某种方式泄露。Undercover Mode就是为了堵住这些口子。&lt;/p&gt;</description></item><item><title>子Agent省90%费用的Prompt Cache共享机制</title><link>https://finisky.github.io/claude-code-fork-cache/</link><pubDate>Sun, 05 Apr 2026 20:46:42 +0800</pubDate><guid>https://finisky.github.io/claude-code-fork-cache/</guid><description>&lt;p&gt;Claude Code 执行复杂任务时会并行派生多个子 agent，每个都需要父对话的完整上下文。假设父对话积累了 100K token，并行 3 个子 agent，朴素实现要付 300K 的输入费用。&lt;/p&gt;
+&lt;p&gt;熟悉 LLM 推理优化的人会立刻想到：这不就是 KV Cache 共享的问题吗？多个请求如果前缀相同，Attention 层的 Key/Value 可以复用，省掉重复计算。Anthropic 把这个能力以 Prompt Cache 的形式暴露给了 API 用户，对缓存命中的前缀部分打一折。但前提是多个请求的前缀字节完全一致。Claude Code 的 fork 子 agent 被刻意构造成彼此之间 99% 以上的字节相同，3 个子 agent 的实际输入成本大约只有 120K 等价（100K 全价 + 2 × 100K × 10%）。&lt;/p&gt;</description></item><item><title>Claude Code 的上下文压缩:五层级联与免费摘要的艺术</title><link>https://finisky.github.io/claude-code-context-compaction/</link><pubDate>Sun, 05 Apr 2026 20:31:17 +0800</pubDate><guid>https://finisky.github.io/claude-code-context-compaction/</guid><description>&lt;p&gt;200K context window 听起来很大, 但一个中等复杂度的编程 session, 读几十个文件, 跑几轮 grep, 执行一些 bash 命令, 就能轻松吃掉大半个窗口. 压缩是必须的, 但压缩本身又要花钱: 你需要一次 LLM 调用来生成摘要, 而这次调用的输入就是你要压缩的那整段上下文. 这形成了一个有趣的工程权衡: 压得太早浪费信息, 压得太晚窗口爆了, 压缩本身的成本也不能忽略. Claude Code 对此给出的答案是一套多层级联系统: 能不压就不压, 能便宜压就便宜压, 实在不行才动用 LLM.&lt;/p&gt;</description></item><item><title>Claude Code 怎么防住 Bash 注入</title><link>https://finisky.github.io/claude-code-bash-security/</link><pubDate>Sun, 05 Apr 2026 20:15:33 +0800</pubDate><guid>https://finisky.github.io/claude-code-bash-security/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;AI 执行 Bash 命令的安全问题，不是&amp;quot;该不该信任模型&amp;quot;，而是&amp;quot;怎么确认命令的含义和它看起来的一样&amp;quot;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Claude Code 允许 AI 直接执行 Bash 命令。不是通过 MCP 那样的结构化接口间接调用，是真给模型开了一个 shell。MCP 的思路是把工具封装成 JSON schema，安全是安全了，但你不可能为几千个 CLI 工具逐个写 adapter，能力天花板肉眼可见。直接给 Bash，什么都能干，代价是安全问题从&amp;quot;接口权限控制&amp;quot;变成了&amp;quot;搞懂这条命令到底在干嘛&amp;quot;。上一篇聊了 YOLO Classifier 怎么用 AI 审查 AI，但 YOLO Classifier 看到的是完整的命令字符串，它做的是语义判断：这个操作危不危险。在那之前，还有一层更底层的问题需要回答：这个命令真的是它看起来的那个意思吗？&lt;/p&gt;</description></item><item><title>深入 Claude Code 的 YOLO Classifier</title><link>https://finisky.github.io/claude-code-auto-mode-security/</link><pubDate>Sun, 05 Apr 2026 19:58:56 +0800</pubDate><guid>https://finisky.github.io/claude-code-auto-mode-security/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;Claude Code 有个自动模式，可以不经确认直接执行操作。但&amp;quot;自动&amp;quot;不等于&amp;quot;不审查&amp;quot;，每个动作背后都有一个分类器在盯着。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="自动模式的矛盾"&gt;自动模式的矛盾
+&lt;a class="header-anchor" href="#%e8%87%aa%e5%8a%a8%e6%a8%a1%e5%bc%8f%e7%9a%84%e7%9f%9b%e7%9b%be"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;用 Claude Code 写代码，最烦的事之一是权限弹窗。每次执行 Bash 命令、写文件，都要点一下确认。效率高的用户会开启自动模式（auto mode），让 Claude 自主执行所有操作，不再逐个询问。&lt;/p&gt;
+&lt;p&gt;这带来一个显而易见的问题：如果模型决定 &lt;code&gt;rm -rf /&lt;/code&gt;，或者把代码推到 production 分支，或者往 &lt;code&gt;.bashrc&lt;/code&gt; 里写个后门呢？&lt;/p&gt;</description></item><item><title>拆解 Claude Code 的 RAG 机制</title><link>https://finisky.github.io/claude-code-rag/</link><pubDate>Thu, 02 Apr 2026 23:51:07 +0800</pubDate><guid>https://finisky.github.io/claude-code-rag/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;Claude Code 没有向量数据库，没有 embedding 索引，但它能在百万行代码库里精准定位你需要的文件。这背后是一套完全不同于传统 RAG 的检索架构。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="这不是你理解的-rag"&gt;这不是你理解的 RAG
+&lt;a class="header-anchor" href="#%e8%bf%99%e4%b8%8d%e6%98%af%e4%bd%a0%e7%90%86%e8%a7%a3%e7%9a%84-rag"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;用过 RAG 的人对这套流程应该很熟：离线建索引，用户提问，向量检索 Top-K，拼入 prompt，生成回答。一条直线，跑一次就完事。&lt;/p&gt;
+&lt;p&gt;Claude Code 完全不是这么干的。它没有离线索引，检索过程由模型自己驱动。&lt;/p&gt;</description></item><item><title>LLM就是那群终于打出莎士比亚的猴子</title><link>https://finisky.github.io/llm-infinite-monkeys/</link><pubDate>Thu, 02 Apr 2026 13:14:00 +0800</pubDate><guid>https://finisky.github.io/llm-infinite-monkeys/</guid><description>&lt;p&gt;塔勒布在《随机漫步的傻瓜》里讲了一个思想实验：如果有无限只猴子在无限台打字机前随机敲击，总有一只会打出《伊利亚特》全文。&lt;/p&gt;
+&lt;p&gt;我越想越觉得，这个故事的终局，就是今天的大语言模型。&lt;/p&gt;</description></item><item><title>深入解析Claude Code的记忆管理机制</title><link>https://finisky.github.io/claude-code-memory-management/</link><pubDate>Wed, 01 Apr 2026 23:57:55 +0800</pubDate><guid>https://finisky.github.io/claude-code-memory-management/</guid><description>&lt;p&gt;用过Claude Code的开发者可能都有这样的体验：即便在一次超长对话中修改了几十个文件，它似乎始终&amp;quot;记得&amp;quot;之前做过什么。更神奇的是，你在上一次对话里告诉它&amp;quot;我喜欢用bun而不是npm&amp;quot;，下次它就自动遵守了。&lt;/p&gt;
+&lt;p&gt;这背后是一套精密的记忆管理系统。今天，我们把Claude Code的记忆机制彻底拆解开来。&lt;/p&gt;</description></item><item><title>明明Agent是帮手，为什么我们却越来越累？</title><link>https://finisky.github.io/why-agents-make-us-more-tired/</link><pubDate>Thu, 26 Mar 2026 09:00:00 +0800</pubDate><guid>https://finisky.github.io/why-agents-make-us-more-tired/</guid><description>&lt;p&gt;公众号一年多没更新了，不是因为懒，也不是因为自己没有跟上技术的步伐，而是因为有个执念，AI变强之后，技术博客本身的价值就大幅降低，大家学习的方式已经从搜索-学习变成了直接与AI对话的交互式学习。此外由于AI能力的加持，太多AI生成的公众号内容会第一时间发布一些内容，让我觉得步人后尘倒也没有太大必要。从博客的访问量上来看，最近一年的访问量也骤跌，更没有了花几小时写一篇文章的兴致。我更怀念那些一个字一个字几个小时甚至几天码出来的一篇博文的时光。&lt;/p&gt;
+&lt;p&gt;最近半年AI工具有了长足进步，作为重度用户，聊聊”明明Agent是我们的帮手，为什么却感觉越来越累？”&lt;/p&gt;</description></item></channel></rss>

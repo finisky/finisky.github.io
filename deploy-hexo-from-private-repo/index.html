@@ -1,0 +1,237 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="从私有代码库自动部署Hexo站到GitHub Pages"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="Hexo,Hugo"><meta property="og:type" content="article"><meta property="og:title" content="从私有代码库自动部署Hexo站到GitHub Pages"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/deploy-hexo-from-private-repo/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2022-05-02 16:29:28 +0800 CST"><meta property="article:modified_time" content="2022-05-02 16:29:28 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/deploy-hexo-from-private-repo/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/deploy-hexo-from-private-repo/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>从私有代码库自动部署Hexo站到GitHub Pages - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#在私有库中创建action-workflow-yaml>在私有库中创建Action Workflow Yaml</a></li><li><a href=#配置主题submodule>配置主题Submodule</a></li><li><a href=#创建personal-access-token>创建Personal Access Token</a></li><li><a href=#在私有库中设置secret>在私有库中设置Secret</a></li><li><a href=#创建deploy-key>创建Deploy Key</a></li><li><a href=#安装pandoc可选>安装Pandoc(可选)</a></li><li><a href=#github-actions中拉取submodule>GitHub Actions中拉取Submodule</a></li><li><a href=#hexo网站的两种发布方式>Hexo网站的两种发布方式</a></li><li><a href=#总结>总结</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/finicounter-impl/>FiniCounter: 静态网站访问量统计工具</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/github-action-to-restore-file-mtime/>GitHub Checkout Action恢复文件修改时间</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/speedup-github-by-cdn/>CDN jsdelivr加速github图床</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/deploy-hugo-from-private-repo/>从私有代码库自动部署Hugo站到GitHub Pages</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/hugo-add-css-js/>Hugo添加自定义css和javascript</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/deploy-hexo-from-private-repo/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="从私有代码库自动部署Hexo站到GitHub Pages"><meta itemprop=description content="之前我们谈到如何 
+
+    从私有代码库自动部署Hugo站到GitHub Pages
+    
+ 。以为将之前的workflow yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub Action容易不少。"></span><header class=post-header><h1 class=post-title itemprop="name headline">从私有代码库自动部署Hexo站到GitHub Pages</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2022-05-02 16:29:28 +08:00" itemprop="dateCreated datePublished" datetime="2022-05-02 16:29:28 +0800 CST">2022-05-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/hexo/ itemprop=url rel=index><span itemprop=name>Hexo</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>7分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/deploy-hexo-from-private-repo/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/deploy-hexo-from-private-repo/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>之前我们谈到如何
+<a href=/deployhugofromprivaterepo/ title="从私有代码库自动部署Hugo站到GitHub Pages">从私有代码库自动部署Hugo站到GitHub Pages
+</a>。以为将之前的workflow yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub Action容易不少。</p><a id=more></a><p>花了好多时间并且尝试不了下20次，才将Hexo的action workflow最终调通 :-) ，记录下踩过的坑和解决文案。</p><p>与Hugo的workflow相比，需要解决如下几个问题：</p><ul><li>主题目录的submodule配置</li><li>使用PAT同时拉取两个私有库（主库及主题submodule）的代码</li><li>Pandoc在GitHub Action中的安装（可选）</li></ul><p>开始吧！</p><p>准备工作，需要有三个repo（可以属于不同账户），但不失一般性，假设它们三个都属于同一账户：</p><ul><li>私有库（private）: 存放网站的源码</li><li>主题库（private）: 存放被修改过的主题的源码</li><li>目标库（public）: GitHub Pages (xxx.github.io)</li></ul><p>需要做的是在目标库创建一个Personal Access Token (PAT)，并将其配置在私有库的secret中，再创建一个工作流的yaml，大功告成。</p><h1 id=在私有库中创建action-workflow-yaml>在私有库中创建Action Workflow Yaml
+<a class=header-anchor href=#%e5%9c%a8%e7%a7%81%e6%9c%89%e5%ba%93%e4%b8%ad%e5%88%9b%e5%bb%baaction-workflow-yaml></a></h1><p>为方便理解，在这个tutorial里使用自上而下的组织方式。先来看看最终的workflow yaml，然后后面小节用来填空和解决问题：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span><span class=lnt id=hl-0-22><a class=lnlinks href=#hl-0-22>22</a>
+</span><span class=lnt id=hl-0-23><a class=lnlinks href=#hl-0-23>23</a>
+</span><span class=lnt id=hl-0-24><a class=lnlinks href=#hl-0-24>24</a>
+</span><span class=lnt id=hl-0-25><a class=lnlinks href=#hl-0-25>25</a>
+</span><span class=lnt id=hl-0-26><a class=lnlinks href=#hl-0-26>26</a>
+</span><span class=lnt id=hl-0-27><a class=lnlinks href=#hl-0-27>27</a>
+</span><span class=lnt id=hl-0-28><a class=lnlinks href=#hl-0-28>28</a>
+</span><span class=lnt id=hl-0-29><a class=lnlinks href=#hl-0-29>29</a>
+</span><span class=lnt id=hl-0-30><a class=lnlinks href=#hl-0-30>30</a>
+</span><span class=lnt id=hl-0-31><a class=lnlinks href=#hl-0-31>31</a>
+</span><span class=lnt id=hl-0-32><a class=lnlinks href=#hl-0-32>32</a>
+</span><span class=lnt id=hl-0-33><a class=lnlinks href=#hl-0-33>33</a>
+</span><span class=lnt id=hl-0-34><a class=lnlinks href=#hl-0-34>34</a>
+</span><span class=lnt id=hl-0-35><a class=lnlinks href=#hl-0-35>35</a>
+</span><span class=lnt id=hl-0-36><a class=lnlinks href=#hl-0-36>36</a>
+</span><span class=lnt id=hl-0-37><a class=lnlinks href=#hl-0-37>37</a>
+</span><span class=lnt id=hl-0-38><a class=lnlinks href=#hl-0-38>38</a>
+</span><span class=lnt id=hl-0-39><a class=lnlinks href=#hl-0-39>39</a>
+</span><span class=lnt id=hl-0-40><a class=lnlinks href=#hl-0-40>40</a>
+</span><span class=lnt id=hl-0-41><a class=lnlinks href=#hl-0-41>41</a>
+</span><span class=lnt id=hl-0-42><a class=lnlinks href=#hl-0-42>42</a>
+</span><span class=lnt id=hl-0-43><a class=lnlinks href=#hl-0-43>43</a>
+</span><span class=lnt id=hl-0-44><a class=lnlinks href=#hl-0-44>44</a>
+</span><span class=lnt id=hl-0-45><a class=lnlinks href=#hl-0-45>45</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Hexo Build &amp; Deploy - Private to Public</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>push</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>branches</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=w> </span><span class=l>master ]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>build</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Checkout</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v3.0.0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.MYPAT }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;true&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>persist-credentials</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Prepare Node env</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/setup-node@v3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>node-version</span><span class=p>:</span><span class=w> </span><span class=m>16</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Install pandoc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>        cd /tmp
+</span></span></span><span class=line><span class=cl><span class=sd>        wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
+</span></span></span><span class=line><span class=cl><span class=sd>        sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Hexo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>        pandoc --version
+</span></span></span><span class=line><span class=cl><span class=sd>        npm i -g hexo-cli
+</span></span></span><span class=line><span class=cl><span class=sd>        npm i
+</span></span></span><span class=line><span class=cl><span class=sd>        hexo clean &amp;&amp; hexo g</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>JamesIves/github-pages-deploy-action@v4.3.3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>ssh-key</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.DEPLOY_KEY }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>repository-name</span><span class=p>:</span><span class=w> </span><span class=l>finisky/finisky.github.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>branch</span><span class=p>:</span><span class=w> </span><span class=l>master</span><span class=w> </span><span class=c># The branch the action should deploy to.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>folder</span><span class=p>:</span><span class=w> </span><span class=l>public</span><span class=w> </span><span class=c># The folder the action should deploy.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>single-commit</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>commit-message</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Deploy by source&#34;</span></span></span></code></pre></td></tr></table></div></div><p>此workflow yaml包括如下几个部分：</p><ul><li>Checkout: 拉取源码及主题submodule的源码</li><li>Setup Node Env: 安装配置node环境</li><li>Install pandoc for mathjax (可选): 使用pandoc和mathjax渲染公式的话，需要此部分</li><li>Setup and Run Hexo: 安装hexo-cli并且构建网站</li><li>Deploy: 用
+<a href=https://github.com/JamesIves/github-pages-deploy-action title="# GitHub Pages Deploy Action" rel="noopener external nofollow noreferrer" target=_blank class=exturl># GitHub Pages Deploy Action
+<i class="fa fa-external-link-alt"></i>
+</a>将网站发布到目标库</li></ul><p>此workflow是基于
+<a href=https://blog.euc-rt.me/post/github-actions-publish-private-hugo-repo-to-public-pages-site/ title="# Using GitHub Actions to Publish Hugo Site From Private to Public Repo" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Using GitHub Actions to Publish Hugo Site From Private to Public Repo
+<i class="fa fa-external-link-alt"></i>
+</a>。在私有库如下路径创建 <code>.github/workflows/main.yml</code></p><p>下面要做的几件事：</p><ul><li>配置主题Submodule</li></ul><p>给上面的yaml填空：</p><ul><li><code>token: ${{ secrets.MYPAT }}</code>: 创建PAT <code>MYPAT</code></li><li><code>ssh-key: ${{ secrets.DEPLOY_KEY }}</code>: 创建 <code>DEPLOY_KEY</code> 从私有库发布到目标库</li><li><code>repository-name: xxx/xxx.github.io</code>: 目标库的地址，即GitHub Page库的地址</li></ul><h1 id=配置主题submodule>配置主题Submodule
+<a class=header-anchor href=#%e9%85%8d%e7%bd%ae%e4%b8%bb%e9%a2%98submodule></a></h1><p>官方推荐的Hexo主题管理方法是用git submodule，同时将配置尽量写在主库中。具体要选用什么方案，有几个要考虑的因素：</p><ul><li>主题的配置文件需要保存，修改过的主题文件也需要保存</li><li>主题的更新是个大坑，NexT主题更新频繁，且有很多breaking change，merge和解决冲突挺麻烦</li></ul><p>最简单的方式就是直接不用submodule，将主题目录的<code>.git</code>删除，并把整个文件夹也checkin到主库中。但问题在于将来的更新很难处理。</p><p>我们最终选择将<code>theme/next</code> fork到自己的github账户中，创建另一个私有主题库<code>mythemenext</code>。同时用两个分支来解决主题的升级问题：<code>master</code> 分支与官方库保持一致，可以fast-forward。<code>v8.5</code>分支存放修改之后的主题文件与配置。如需更新，则在<code>v8.5</code>分支<code>merge</code>或<code>rebase master</code> 。</p><p>增加submodule的命令长这样，它的意思是创建一个submodule并且track它的<code>master</code>分支。这个被track的分支可以按需修改。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git submodule add -b master &lt;git@github.com:MYSUBMODULE.git&gt; &lt;path/to/MYSUBMODULE&gt;</span></span></code></pre></td></tr></table></div></div><p>我们可以在私有库创建主题库了：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git remote add mythemenext git@github.com:finisky/mythemenext
+</span></span><span class=line><span class=cl>git submodule add -b v8.5 https://github.com/finisky/mythemenext themes/next/</span></span></code></pre></td></tr></table></div></div><p>如果遇到这个错误: <code>'themes/next' already exists in the index</code> . 在 <code>git submodule add</code> 命令中加入 <code>--force</code> 选项即可.</p><p>本节参考了文章:</p><p><a href=https://blog.singee.me/2020/02/15/deploy-hexo-with-github-action/ title="利用 Github Action 部署 Hexo" rel="noopener external nofollow noreferrer" target=_blank class=exturl>利用 Github Action 部署 Hexo
+<i class="fa fa-external-link-alt"></i>
+</a><a href=https://achillessatan.github.io/posts/54991/ title="How to Setup Blog with Hexo and NexT on GitHub Pages" rel="noopener external nofollow noreferrer" target=_blank class=exturl>How to Setup Blog with Hexo and NexT on GitHub Pages
+<i class="fa fa-external-link-alt"></i></a></p><h1 id=创建personal-access-token>创建Personal Access Token
+<a class=header-anchor href=#%e5%88%9b%e5%bb%bapersonal-access-token></a></h1><blockquote><p>Personal access tokens (PATs) are an alternative to using passwords for authentication to GitHub Enterprise Server when using the GitHub API or the command line.</p></blockquote><p>创建PAT的主要目的是给私有库访问目标库的权限，可以让私有库的actions推送构建好的代码到目标库中去。</p><p>参照
+<a href=https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token title=这里 rel="noopener external nofollow noreferrer" target=_blank class=exturl>这里
+<i class="fa fa-external-link-alt"></i>
+</a>来生成PAT:</p><blockquote><p>Profile Photo -> Settings -> Developer settings -> Personal access tokens -> Generate new token</p></blockquote><p>记得要勾选下面两个scope: <code>workflow</code> and <code>write:packages</code>.</p><p>PAT生成好之后，复制下来，妥善保管留待后用，为方便指代，不妨设它为<code>TOKENXXX</code>。</p><p>注意PAT是一个账户级的token，而且是代开发者使用的，更好的方式是使用deploy key，它是代码库级的token。本文这里只能使用PAT，原因在于我们需要用账户级的token来同时拉取私有库和submodule的代码，后文有详解。</p><h1 id=在私有库中设置secret>在私有库中设置Secret
+<a class=header-anchor href=#%e5%9c%a8%e7%a7%81%e6%9c%89%e5%ba%93%e4%b8%ad%e8%ae%be%e7%bd%aesecret></a></h1><p>在私有库中:</p><blockquote><p>Settings -> Secrets -> Actions -> New repository secret</p></blockquote><p>粘贴刚才生成的PAT <code>TOKENXXX</code> 到value框中，并命名这个secret为<code>MYPAT</code>。</p><h1 id=创建deploy-key>创建Deploy Key
+<a class=header-anchor href=#%e5%88%9b%e5%bb%badeploy-key></a></h1><p>这里的Deploy Key用来将生成好的HTML文件从私有库上传到目标库中。而之前的PAT是用于拉取私有库和submodule的代码。实际上，PAT也可以用来完成Deploy Key的功能。</p><p><strong>Tips</strong>: 如果你选择使用PAT进行部署，本节可以<strong>略去</strong>，只要将yaml中 <code>ssh-key: ${{ secrets.DEPLOY_KEY }}</code> 替换为 <code>token: ${{ secrets.MYPAT }}</code> 即可。但<strong>建议</strong>使用Deploy Key。</p><p>参考
+<a href=https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys title=这篇 rel="noopener external nofollow noreferrer" target=_blank class=exturl>这篇
+<i class="fa fa-external-link-alt"></i>
+</a>和
+<a href=https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key title=这篇文章 rel="noopener external nofollow noreferrer" target=_blank class=exturl>这篇文章
+<i class="fa fa-external-link-alt"></i>
+</a>创建 deploy key:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ssh-keygen -t ed25519 -C <span class=s2>&#34;your_email@example.com&#34;</span></span></span></code></pre></td></tr></table></div></div><p>参考
+<a href=https://cyfeng.science/2020/12/02/use-github-action-to-automatically-deploy-hexo/ title=这篇 rel="noopener external nofollow noreferrer" target=_blank class=exturl>这篇
+<i class="fa fa-external-link-alt"></i>
+</a>将生成的deploy key添加到私有库:</p><blockquote><p>Once you&rsquo;ve generated the key pair you must add the contents of the public key within your repository&rsquo;s
+<a href=https://developer.github.com/v3/guides/managing-deploy-keys/ title="deploy keys menu" rel="noopener external nofollow noreferrer" target=_blank class=exturl>deploy keys menu
+<i class="fa fa-external-link-alt"></i>
+</a>. You can find this option by going to <code>Settings > Deploy Keys</code>, you can name the public key whatever you want, but you <strong>do</strong> need to give it write access. Afterwards, add the contents of the private key to the <code>Settings > Secrets</code> menu as <code>DEPLOY_KEY</code>.</p></blockquote><h1 id=安装pandoc可选>安装Pandoc(可选)
+<a class=header-anchor href=#%e5%ae%89%e8%a3%85pandoc%e5%8f%af%e9%80%89></a></h1><p>运行GitHub Actions时可能遇到错误：</p><blockquote><p>Error: R][hexo-renderer-pandoc] pandoc exited with code null.</p></blockquote><p>如果你用pandoc和mathjax来渲染公式，下面这部分就必不可少；否则，可以略过此步，并删除下面代码及下面那步的<code>pandoc --version</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Install pandoc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>        cd /tmp
+</span></span></span><span class=line><span class=cl><span class=sd>        wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
+</span></span></span><span class=line><span class=cl><span class=sd>        sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb</span></span></span></code></pre></td></tr></table></div></div><p>如果遇到如下错误</p><blockquote><p>Error: R][hexo-renderer-pandoc] pandoc exited with code 64: YAML parse exception at line 4, column 0,
+while scanning a simple key:
+could not find expected &lsquo;:&rsquo;</p></blockquote><p>是pandoc的兼容性问题，可以通过修改上面<code>wget</code> pandoc的版本解决，使用与你本地编译的版本一模一样的版本号为妙。参考:
+<a href=/en/pandoc-code64-bug/ title="# pandoc exited with code 64 Solution"># pandoc exited with code 64 Solution</a></p><hr><p>使用<code>dpkg</code>来安装pandoc的原因在于官方文档使用docker image的方案
+<a href=https://github.com/pandoc/pandoc-action-example title="# Using pandoc with GitHub Actions" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Using pandoc with GitHub Actions
+<i class="fa fa-external-link-alt"></i>
+</a>不适用于我们的情况:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>docker://pandoc/core:2.9</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>args</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;--help&#34;</span><span class=w> </span><span class=c># gets appended to pandoc command</span></span></span></code></pre></td></tr></table></div></div><p>在Action的下一步 <code>Setup and Run Hexo to build the Static Site</code> 会使用全局的 <code>pandoc</code> 命令进行页面渲染。因此参考了
+<a href=https://pxxyyz.com/posts/hexo-problem/ title=Hexo之问题集合 rel="noopener external nofollow noreferrer" target=_blank class=exturl>Hexo之问题集合
+<i class="fa fa-external-link-alt"></i>
+</a>方案，并加以修改，使用<code>wget</code>与<code>dpkg</code>来安装pandoc。</p><h1 id=github-actions中拉取submodule>GitHub Actions中拉取Submodule
+<a class=header-anchor href=#github-actions%e4%b8%ad%e6%8b%89%e5%8f%96submodule></a></h1><p>如果在构建网站时发现如下警告:</p><blockquote><p>WARN No layout: tags/index.html
+WARN No layout: nlpadapters/index.html
+WARN No layout: deployhugofromprivaterepo/index.html</p></blockquote><p>大概率是主题库submodule没有拉取成功。默认的checkout是不拉取submodule的，需要在checkout部分添加 <code>submodules: 'true'</code> 。</p><p>尝试使用
+<a href=https://samuelsson.dev/access-private-submodules-in-github-actions/ title="# Access private submodules in GitHub Actions" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Access private submodules in GitHub Actions
+<i class="fa fa-external-link-alt"></i>
+</a>的方案来拉取submodule代码。但后来发现有另一个错误：</p><blockquote><p>Run
+<a href=mailto:actions/checkout@v2.3.4 title=actions/checkout@v2.3.4>actions/checkout@v2.3.4
+</a>Syncing repository: finisky/finiskyblogsource
+&mldr;
+Fetching the repository
+Removing auth
+Error: The process &lsquo;/usr/bin/git&rsquo; failed with exit code 128</p></blockquote><p>看起来是主库的代码 <code>finisky/finiskyblogsource</code> 都拉不下来了。因为 <code>actions/checkout</code> 需要使用同一个 deploy key 来拉取主库和submodule的代码。也尝试在主库添加一样的deploy key，但github提示这个key已被使用，看起来它不允许在同一个账户中使用同一个deploy key读写不同的repo。</p><p>所以，我们要使用账户级的PAT来同时拉取私有库和主题库的代码，将<code>Checkout</code>部分的代码稍加修改：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1>1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2>2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3>3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4>4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5>5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6>6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=w>    </span><span class=c># Checkout</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Checkout</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v3.0.0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.MYPAT }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;true&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>persist-credentials</span><span class=p>:</span><span class=w> </span><span class=kc>false</span></span></span></code></pre></td></tr></table></div></div><h1 id=hexo网站的两种发布方式>Hexo网站的两种发布方式
+<a class=header-anchor href=#hexo%e7%bd%91%e7%ab%99%e7%9a%84%e4%b8%a4%e7%a7%8d%e5%8f%91%e5%b8%83%e6%96%b9%e5%bc%8f></a></h1><p>看下这两步：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Hexo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>        pandoc --version
+</span></span></span><span class=line><span class=cl><span class=sd>        npm i -g hexo-cli
+</span></span></span><span class=line><span class=cl><span class=sd>        npm i
+</span></span></span><span class=line><span class=cl><span class=sd>        hexo clean &amp;&amp; hexo g</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>JamesIves/github-pages-deploy-action@v4.3.3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=l>...</span></span></span></code></pre></td></tr></table></div></div><p>显然，我们有两种方式可以发布Hexo站：</p><ul><li>在<code>Setup and Run Hexo to build the Static Site</code>中使用<code>hexo deploy</code></li><li>用<code>github-pages-deploy-action</code></li></ul><p>我们选用了后者来让这个脚本与Hugo的部署脚本保持一致。所以在 <code>Hexo</code> 步骤中，只使用了 <code>hexo clean && hexo generate</code>。</p><h1 id=总结>总结
+<a class=header-anchor href=#%e6%80%bb%e7%bb%93></a></h1><p>恭喜你！</p><p>将此yaml checkin，然后，就可以实现向私有库push完之后触发自动构建及部署了：</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/hexodeployaction.png alt="Hexo Deployment Action"></p></div><footer class=post-footer><div class=post-tags><a href=/tags/hexo/>Hexo
+</a><a href=/tags/hugo/>Hugo</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/lora/ rel=next title="LoRA: Low-Rank Adaptation of Large Language Models 简读"><i class="fa fa-chevron-left"></i> LoRA: Low-Rank Adaptation of Large Language Models 简读</a></div><div class="post-nav-prev post-nav-item"><a href=/nlpadapters/ rel=prev title=NLP中的Adapters是什么？>NLP中的Adapters是什么？
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/deploy-hexo-from-private-repo/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"deploy-hexo-from-private-repo","permalink":"https://finisky.github.io/deploy-hexo-from-private-repo/","title":"从私有代码库自动部署Hexo站到GitHub Pages","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

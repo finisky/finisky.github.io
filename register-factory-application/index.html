@@ -1,0 +1,486 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="RegisterFactory(InjectionFactory)的应用"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="C#,Dependency Injection,Software Engineering,Unity"><meta property="og:type" content="article"><meta property="og:title" content="RegisterFactory(InjectionFactory)的应用"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/register-factory-application/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2019-11-20 18:35:31 +0800 CST"><meta property="article:modified_time" content="2019-11-20 18:35:31 +0800 CST"><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>RegisterFactory(InjectionFactory)的应用 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#registertype示例>RegisterType示例</a></li><li><a href=#registerfactory示例>RegisterFactory示例</a><ul><li><a href=#直接解析自定义类collection>直接解析自定义类Collection</a></li></ul></li><li><a href=#registerfactory-vs-registertype>RegisterFactory vs RegisterType</a></li><li><a href=#完整代码>完整代码</a></li><li><a href=#reference>Reference</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/register-factory-exp/>IUnityContainer.RegisterFactory例子</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/static-and-util/>谈谈static和util/helper类</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/null-or-empty-list/>返回null还是空List?</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/interface-derived-parameter/>参数或返回值为派生类的接口或抽象方法</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/selenium-page-load-strategy/>selenium禁止页面加载javascript</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/register-factory-application/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="RegisterFactory(InjectionFactory)的应用"><meta itemprop=description content="Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register："></span><header class=post-header><h1 class=post-title itemprop="name headline">RegisterFactory(InjectionFactory)的应用</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2019-11-20 18:35:31 +08:00" itemprop="dateCreated datePublished" datetime="2019-11-20 18:35:31 +0800 CST">2019-11-20
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/register-factory-application/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/register-factory-application/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register：</p><a id=more></a><ul><li>Instance registration</li><li>Type registration</li><li>Factory registration</li></ul><p>那这三种方式分别用于什么场景呢？简单来说，Instance registration和Type registration较为常见，直接通过ResolvedParameter解析依赖的对象，Factory registration更灵活，可以通过调用方法创建对象。举个例子，如果注入对象所依赖的参数是一个<code>List&lt;T></code>或<code>Dictionary&lt;T1, T2></code>，而T又是自定义的类，那么就必须使用Factory registration。本文主要介绍的就是如何解析一个自定义类的List或Dictionary。</p><h1 id=registertype示例>RegisterType示例
+<a class=header-anchor href=#registertype%e7%a4%ba%e4%be%8b></a></h1><p>从例子切入，定义IAnimal Interface，并有Tiger和Deer两个实现，还有一个Zoo类，聚合了Tiger和Deer:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span><span class=lnt id=hl-0-22><a class=lnlinks href=#hl-0-22>22</a>
+</span><span class=lnt id=hl-0-23><a class=lnlinks href=#hl-0-23>23</a>
+</span><span class=lnt id=hl-0-24><a class=lnlinks href=#hl-0-24>24</a>
+</span><span class=lnt id=hl-0-25><a class=lnlinks href=#hl-0-25>25</a>
+</span><span class=lnt id=hl-0-26><a class=lnlinks href=#hl-0-26>26</a>
+</span><span class=lnt id=hl-0-27><a class=lnlinks href=#hl-0-27>27</a>
+</span><span class=lnt id=hl-0-28><a class=lnlinks href=#hl-0-28>28</a>
+</span><span class=lnt id=hl-0-29><a class=lnlinks href=#hl-0-29>29</a>
+</span><span class=lnt id=hl-0-30><a class=lnlinks href=#hl-0-30>30</a>
+</span><span class=lnt id=hl-0-31><a class=lnlinks href=#hl-0-31>31</a>
+</span><span class=lnt id=hl-0-32><a class=lnlinks href=#hl-0-32>32</a>
+</span><span class=lnt id=hl-0-33><a class=lnlinks href=#hl-0-33>33</a>
+</span><span class=lnt id=hl-0-34><a class=lnlinks href=#hl-0-34>34</a>
+</span><span class=lnt id=hl-0-35><a class=lnlinks href=#hl-0-35>35</a>
+</span><span class=lnt id=hl-0-36><a class=lnlinks href=#hl-0-36>36</a>
+</span><span class=lnt id=hl-0-37><a class=lnlinks href=#hl-0-37>37</a>
+</span><span class=lnt id=hl-0-38><a class=lnlinks href=#hl-0-38>38</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>interface</span> <span class=nc>IAnimal</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>void</span> <span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>Tiger</span> <span class=p>:</span> <span class=n>IAnimal</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>void</span> <span class=n>Run</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Tiger runs away&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>Deer</span> <span class=p>:</span> <span class=n>IAnimal</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>void</span> <span class=n>Run</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Deer runs away&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>Zoo</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IAnimal</span> <span class=n>_tiger</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IAnimal</span> <span class=n>_deer</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Zoo</span><span class=p>(</span><span class=n>IAnimal</span> <span class=n>tiger</span><span class=p>,</span> <span class=n>IAnimal</span> <span class=n>deer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>_tiger</span> <span class=p>=</span> <span class=n>tiger</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>_deer</span> <span class=p>=</span> <span class=n>deer</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>void</span> <span class=n>Play</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>_tiger</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>_deer</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>注入并调用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// Registration</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>container</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UnityContainer</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Tiger</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>        <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Deer</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>        <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>,</span> <span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>)));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1>// Resolve the instances</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>zoo</span> <span class=p>=</span> <span class=n>container</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>zoo</span><span class=p>.</span><span class=n>Play</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>ReadKey</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>运行结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Tiger runs away
+</span></span><span class=line><span class=cl>Deer runs away</span></span></code></pre></td></tr></table></div></div><h1 id=registerfactory示例>RegisterFactory示例
+<a class=header-anchor href=#registerfactory%e7%a4%ba%e4%be%8b></a></h1><p>RegisterFactory (已淘汰的InjectionFactory)可以用Unity创建的Factory创建对象，这是它与RegisterInstance和RegisterType的主要区别。</p><p>继续上面的例子，为了更灵活，考虑让Zoo类接受animal list作为参数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>Zoo</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=k>readonly</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>_animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Zoo</span><span class=p>(</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>_animals</span> <span class=p>=</span> <span class=n>animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>void</span> <span class=n>Play</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>animal</span> <span class=k>in</span> <span class=n>_animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>animal</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>那么如何注入List<ianimal>？比较直观的想法是这样(错误代码):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7>7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8>8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;AnimalList&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=p>);</span></span></span></code></pre></td></tr></table></div></div><p>遇到编译错误：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Argument 1: cannot convert from &#39;Unity.Injection.ResolvedParameter&lt;ConsoleApp1.IAnimal&gt;&#39; to &#39;ConsoleApp1.IAnimal&#39;</span></span></code></pre></td></tr></table></div></div><p>报错原因在于List中是IAnimal类型，而ResolvedParameter<ianimal>是Unity.Injection.ResolvedParameter<ianimal>类型，二者不匹配，编译错误。在List内部ResolveParameter是运行时在List的构造函数中创建对象，而InjectionConstructor()中只能静态Resolve对象。所以RegisterType并不能达到在List中Resolve对象的目的。</p><p>RegisterFactory可以用Factory通过执行一段代码解决问题：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1>1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2>2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3>3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4>4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5>5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6>6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7>7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterFactory</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;AnimalList&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>m</span> <span class=p>=&gt;</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>);</span></span></span></code></pre></td></tr></table></div></div><p>RegisterFactory接受<code>Func&lt;IUnityContainer, object></code>为一个Factory，在List初始化时Resolve两个IAnimal对象。</p><h2 id=直接解析自定义类collection>直接解析自定义类Collection
+<a class=header-anchor href=#%e7%9b%b4%e6%8e%a5%e8%a7%a3%e6%9e%90%e8%87%aa%e5%ae%9a%e4%b9%89%e7%b1%bbcollection></a></h2><p>不用RegisterFactory也可直接解析自定义类Collection，但有两个条件：</p><ul><li>待解析的Collection必须是array []或<code>IEnumerable&lt;T></code></li><li>所有被注册为该自定义类的类型都会被加入Collection中，不能解析出所有自定义类的一个子集。听起来很绕，可以看下面实例。</li></ul><p>先修改Zoo的参数，由<code>List&lt;IAnimal></code>变为<code>IEnumerable&lt;IAnimal></code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>Zoo</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>_animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Zoo</span><span class=p>(</span><span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>_animals</span> <span class=p>=</span> <span class=n>animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>void</span> <span class=n>Play</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>animal</span> <span class=k>in</span> <span class=n>_animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>animal</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>然后可通过下面语句注册Zoo:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1>1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2>2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3>3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>,</span> <span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;()</span>
+</span></span><span class=line><span class=cl>    <span class=p>));</span></span></span></code></pre></td></tr></table></div></div><p>但这种注册方式会把所有已注册的IAnimal都加入<code>List&lt;IAnimal></code>，如果只想把Tiger加入其中则不行，必须使用RegisterFactory的方式。</p><h1 id=registerfactory-vs-registertype>RegisterFactory vs RegisterType
+<a class=header-anchor href=#registerfactory-vs-registertype></a></h1><p>考虑Zoo(IAnimal tiger, IAnimal deer)的两种不同注入方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>,</span> <span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>)));</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1>1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2>2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3>3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4>4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterFactory</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>m</span> <span class=p>=&gt;</span> <span class=k>new</span> <span class=n>Zoo</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=p>);</span></span></span></code></pre></td></tr></table></div></div><p>在container.Resolve<zoo>(&ldquo;Zoo&rdquo;)时，RegisterType直接通过container创建对象，而RegisterFactory是通过Zoo Factory调用委托new Zoo()的方式创建对象(在“m => new Zoo(”处可设置断点查看)。</p><p>简而言之，RegisterFactory是一种比RegisterType更为灵活的注入方式，可以通过注入一个Factory的委托执行代码进行对象创建，但RegisterFactory用起来更为复杂。</p><h1 id=完整代码>完整代码
+<a class=header-anchor href=#%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81></a></h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1>  1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2>  2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3>  3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4>  4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5>  5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6>  6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7>  7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8>  8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9>  9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10> 10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11> 11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12> 12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13> 13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14> 14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15> 15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16> 16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17> 17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18> 18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19> 19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20> 20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21> 21</a>
+</span><span class=lnt id=hl-11-22><a class=lnlinks href=#hl-11-22> 22</a>
+</span><span class=lnt id=hl-11-23><a class=lnlinks href=#hl-11-23> 23</a>
+</span><span class=lnt id=hl-11-24><a class=lnlinks href=#hl-11-24> 24</a>
+</span><span class=lnt id=hl-11-25><a class=lnlinks href=#hl-11-25> 25</a>
+</span><span class=lnt id=hl-11-26><a class=lnlinks href=#hl-11-26> 26</a>
+</span><span class=lnt id=hl-11-27><a class=lnlinks href=#hl-11-27> 27</a>
+</span><span class=lnt id=hl-11-28><a class=lnlinks href=#hl-11-28> 28</a>
+</span><span class=lnt id=hl-11-29><a class=lnlinks href=#hl-11-29> 29</a>
+</span><span class=lnt id=hl-11-30><a class=lnlinks href=#hl-11-30> 30</a>
+</span><span class=lnt id=hl-11-31><a class=lnlinks href=#hl-11-31> 31</a>
+</span><span class=lnt id=hl-11-32><a class=lnlinks href=#hl-11-32> 32</a>
+</span><span class=lnt id=hl-11-33><a class=lnlinks href=#hl-11-33> 33</a>
+</span><span class=lnt id=hl-11-34><a class=lnlinks href=#hl-11-34> 34</a>
+</span><span class=lnt id=hl-11-35><a class=lnlinks href=#hl-11-35> 35</a>
+</span><span class=lnt id=hl-11-36><a class=lnlinks href=#hl-11-36> 36</a>
+</span><span class=lnt id=hl-11-37><a class=lnlinks href=#hl-11-37> 37</a>
+</span><span class=lnt id=hl-11-38><a class=lnlinks href=#hl-11-38> 38</a>
+</span><span class=lnt id=hl-11-39><a class=lnlinks href=#hl-11-39> 39</a>
+</span><span class=lnt id=hl-11-40><a class=lnlinks href=#hl-11-40> 40</a>
+</span><span class=lnt id=hl-11-41><a class=lnlinks href=#hl-11-41> 41</a>
+</span><span class=lnt id=hl-11-42><a class=lnlinks href=#hl-11-42> 42</a>
+</span><span class=lnt id=hl-11-43><a class=lnlinks href=#hl-11-43> 43</a>
+</span><span class=lnt id=hl-11-44><a class=lnlinks href=#hl-11-44> 44</a>
+</span><span class=lnt id=hl-11-45><a class=lnlinks href=#hl-11-45> 45</a>
+</span><span class=lnt id=hl-11-46><a class=lnlinks href=#hl-11-46> 46</a>
+</span><span class=lnt id=hl-11-47><a class=lnlinks href=#hl-11-47> 47</a>
+</span><span class=lnt id=hl-11-48><a class=lnlinks href=#hl-11-48> 48</a>
+</span><span class=lnt id=hl-11-49><a class=lnlinks href=#hl-11-49> 49</a>
+</span><span class=lnt id=hl-11-50><a class=lnlinks href=#hl-11-50> 50</a>
+</span><span class=lnt id=hl-11-51><a class=lnlinks href=#hl-11-51> 51</a>
+</span><span class=lnt id=hl-11-52><a class=lnlinks href=#hl-11-52> 52</a>
+</span><span class=lnt id=hl-11-53><a class=lnlinks href=#hl-11-53> 53</a>
+</span><span class=lnt id=hl-11-54><a class=lnlinks href=#hl-11-54> 54</a>
+</span><span class=lnt id=hl-11-55><a class=lnlinks href=#hl-11-55> 55</a>
+</span><span class=lnt id=hl-11-56><a class=lnlinks href=#hl-11-56> 56</a>
+</span><span class=lnt id=hl-11-57><a class=lnlinks href=#hl-11-57> 57</a>
+</span><span class=lnt id=hl-11-58><a class=lnlinks href=#hl-11-58> 58</a>
+</span><span class=lnt id=hl-11-59><a class=lnlinks href=#hl-11-59> 59</a>
+</span><span class=lnt id=hl-11-60><a class=lnlinks href=#hl-11-60> 60</a>
+</span><span class=lnt id=hl-11-61><a class=lnlinks href=#hl-11-61> 61</a>
+</span><span class=lnt id=hl-11-62><a class=lnlinks href=#hl-11-62> 62</a>
+</span><span class=lnt id=hl-11-63><a class=lnlinks href=#hl-11-63> 63</a>
+</span><span class=lnt id=hl-11-64><a class=lnlinks href=#hl-11-64> 64</a>
+</span><span class=lnt id=hl-11-65><a class=lnlinks href=#hl-11-65> 65</a>
+</span><span class=lnt id=hl-11-66><a class=lnlinks href=#hl-11-66> 66</a>
+</span><span class=lnt id=hl-11-67><a class=lnlinks href=#hl-11-67> 67</a>
+</span><span class=lnt id=hl-11-68><a class=lnlinks href=#hl-11-68> 68</a>
+</span><span class=lnt id=hl-11-69><a class=lnlinks href=#hl-11-69> 69</a>
+</span><span class=lnt id=hl-11-70><a class=lnlinks href=#hl-11-70> 70</a>
+</span><span class=lnt id=hl-11-71><a class=lnlinks href=#hl-11-71> 71</a>
+</span><span class=lnt id=hl-11-72><a class=lnlinks href=#hl-11-72> 72</a>
+</span><span class=lnt id=hl-11-73><a class=lnlinks href=#hl-11-73> 73</a>
+</span><span class=lnt id=hl-11-74><a class=lnlinks href=#hl-11-74> 74</a>
+</span><span class=lnt id=hl-11-75><a class=lnlinks href=#hl-11-75> 75</a>
+</span><span class=lnt id=hl-11-76><a class=lnlinks href=#hl-11-76> 76</a>
+</span><span class=lnt id=hl-11-77><a class=lnlinks href=#hl-11-77> 77</a>
+</span><span class=lnt id=hl-11-78><a class=lnlinks href=#hl-11-78> 78</a>
+</span><span class=lnt id=hl-11-79><a class=lnlinks href=#hl-11-79> 79</a>
+</span><span class=lnt id=hl-11-80><a class=lnlinks href=#hl-11-80> 80</a>
+</span><span class=lnt id=hl-11-81><a class=lnlinks href=#hl-11-81> 81</a>
+</span><span class=lnt id=hl-11-82><a class=lnlinks href=#hl-11-82> 82</a>
+</span><span class=lnt id=hl-11-83><a class=lnlinks href=#hl-11-83> 83</a>
+</span><span class=lnt id=hl-11-84><a class=lnlinks href=#hl-11-84> 84</a>
+</span><span class=lnt id=hl-11-85><a class=lnlinks href=#hl-11-85> 85</a>
+</span><span class=lnt id=hl-11-86><a class=lnlinks href=#hl-11-86> 86</a>
+</span><span class=lnt id=hl-11-87><a class=lnlinks href=#hl-11-87> 87</a>
+</span><span class=lnt id=hl-11-88><a class=lnlinks href=#hl-11-88> 88</a>
+</span><span class=lnt id=hl-11-89><a class=lnlinks href=#hl-11-89> 89</a>
+</span><span class=lnt id=hl-11-90><a class=lnlinks href=#hl-11-90> 90</a>
+</span><span class=lnt id=hl-11-91><a class=lnlinks href=#hl-11-91> 91</a>
+</span><span class=lnt id=hl-11-92><a class=lnlinks href=#hl-11-92> 92</a>
+</span><span class=lnt id=hl-11-93><a class=lnlinks href=#hl-11-93> 93</a>
+</span><span class=lnt id=hl-11-94><a class=lnlinks href=#hl-11-94> 94</a>
+</span><span class=lnt id=hl-11-95><a class=lnlinks href=#hl-11-95> 95</a>
+</span><span class=lnt id=hl-11-96><a class=lnlinks href=#hl-11-96> 96</a>
+</span><span class=lnt id=hl-11-97><a class=lnlinks href=#hl-11-97> 97</a>
+</span><span class=lnt id=hl-11-98><a class=lnlinks href=#hl-11-98> 98</a>
+</span><span class=lnt id=hl-11-99><a class=lnlinks href=#hl-11-99> 99</a>
+</span><span class=lnt id=hl-11-100><a class=lnlinks href=#hl-11-100>100</a>
+</span><span class=lnt id=hl-11-101><a class=lnlinks href=#hl-11-101>101</a>
+</span><span class=lnt id=hl-11-102><a class=lnlinks href=#hl-11-102>102</a>
+</span><span class=lnt id=hl-11-103><a class=lnlinks href=#hl-11-103>103</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>System</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Collections.Generic</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>Unity</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>Unity.Injection</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>ConsoleApp1</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>interface</span> <span class=nc>IAnimal</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>void</span> <span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>Tiger</span> <span class=p>:</span> <span class=n>IAnimal</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=k>void</span> <span class=n>Run</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Tiger runs away&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>Deer</span> <span class=p>:</span> <span class=n>IAnimal</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=k>void</span> <span class=n>Run</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Deer runs away&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>Zoo</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>_animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>Zoo</span><span class=p>(</span><span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>_animals</span> <span class=p>=</span> <span class=n>animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=k>void</span> <span class=n>Play</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>animal</span> <span class=k>in</span> <span class=n>_animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>animal</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>SimpleZoo</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>_animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>SimpleZoo</span><span class=p>(</span><span class=n>IEnumerable</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span> <span class=n>animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>_animals</span> <span class=p>=</span> <span class=n>animals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=k>void</span> <span class=n>Play</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>animal</span> <span class=k>in</span> <span class=n>_animals</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>animal</span><span class=p>.</span><span class=n>Run</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// Registration</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>container</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UnityContainer</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Deer</span><span class=p>&gt;(</span><span class=s>&#34;Deer&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>            <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Tiger</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>            <span class=n>container</span><span class=p>.</span><span class=n>RegisterFactory</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;(</span>
+</span></span><span class=line><span class=cl>                <span class=s>&#34;AnimalList&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>m</span> <span class=p>=&gt;</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Tiger&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>,</span> <span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;()</span>
+</span></span><span class=line><span class=cl>                <span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>SimpleZoo</span><span class=p>,</span> <span class=n>SimpleZoo</span><span class=p>&gt;(</span><span class=s>&#34;SimpleZoo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=k>new</span> <span class=n>ResolvedParameter</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;(</span><span class=s>&#34;AnimalList&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1>// Resolve the instances</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Zoo: &#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>zoo</span> <span class=p>=</span> <span class=n>container</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>Zoo</span><span class=p>&gt;(</span><span class=s>&#34;Zoo&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>zoo</span><span class=p>.</span><span class=n>Play</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;SimpleZoo: &#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>simpleZoo</span> <span class=p>=</span> <span class=n>container</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>SimpleZoo</span><span class=p>&gt;(</span><span class=s>&#34;SimpleZoo&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>simpleZoo</span><span class=p>.</span><span class=n>Play</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>ReadKey</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h1 id=reference>Reference
+<a class=header-anchor href=#reference></a></h1><p><a href=https://stackoverflow.com/questions/45752218/c-sharp-unity-register-a-list-of-registered-types-and-resolve-by-adding-n-instan title="C# Unity register a list of registered types and resolve by adding N instances" rel="noopener external nofollow noreferrer" target=_blank class=exturl>C# Unity register a list of registered types and resolve by adding N instances
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://unitycontainer.github.io/articles/introduction.html#registering-types-and-object-instances title="Registering Types and Object Instances" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Registering Types and Object Instances
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://download.microsoft.com/download/4/d/b/4dbc771d-9e24-4211-adc5-65812115e52d/dependencyinjectionwithunity.pdf title="Dependency Injection with Unity" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Dependency Injection with Unity
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=http://unitycontainer.org/tutorials/resolution/collections.html title="Resolving collections of Objects of a Particular Type" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Resolving collections of Objects of a Particular Type
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/c/>C#
+</a><a href=/tags/dependency-injection/>Dependency Injection
+</a><a href=/tags/software-engineering/>Software Engineering
+</a><a href=/tags/unity/>Unity</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/null-or-empty-list/ rel=next title=返回null还是空List?><i class="fa fa-chevron-left"></i> 返回null还是空List?</a></div><div class="post-nav-prev post-nav-item"><a href=/register-factory-exp/ rel=prev title=IUnityContainer.RegisterFactory例子>IUnityContainer.RegisterFactory例子
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i></span></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"register-factory-application","permalink":"https://finisky.github.io/register-factory-application/","title":"RegisterFactory(InjectionFactory)的应用","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

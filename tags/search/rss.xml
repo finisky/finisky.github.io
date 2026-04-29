@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Search on Finisky Garden</title><link>https://finisky.github.io/tags/search/</link><description>Recent content in Search on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Thu, 29 Aug 2024 08:30:26 +0800</lastBuildDate><atom:link href="https://finisky.github.io/tags/search/rss.xml" rel="self" type="application/rss+xml"/><item><title>基于LLM评估搜索系统</title><link>https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/</link><pubDate>Thu, 29 Aug 2024 08:30:26 +0800</pubDate><guid>https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/</guid><description>&lt;p&gt;搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。&lt;/p&gt;
+&lt;p&gt;微软（Bing搜索组）在SIGIR'24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选择一个与之相符的LLM及其提示词，然后令该LLM大规模地产生标签。实验表明，LLM的准确性与人工标注者相当，并且在找到最佳系统和最难的查询方面同样有用。&lt;/p&gt;
+&lt;p&gt;[SIGIR2024] 
+&lt;a href="https://www.microsoft.com/en-us/research/publication/large-language-models-can-accurately-predict-searcher-preferences/" title="# Large Language Models can Accurately Predict Searcher Preferences" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Large Language Models can Accurately Predict Searcher Preferences
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>ChatGPT擅长搜索排序吗？</title><link>https://finisky.github.io/is-chatgpt-good-at-search-ranking/</link><pubDate>Sun, 21 Jul 2024 22:15:25 +0800</pubDate><guid>https://finisky.github.io/is-chatgpt-good-at-search-ranking/</guid><description>&lt;p&gt;大语言模型在各种与语言相关的任务中表现出了显著的零样本泛化能力，包括搜索引擎。然而，现有的工作主要利用LLM的生成能力进行信息检索，而不是直接进行段落排序。这篇EMNLP2023的论文(Outstanding Paper)研究了LLM是否擅长搜索排序的问题。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://aclanthology.org/2023.emnlp-main.923/" title="# Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Rethinking the Role of Token Retrieval in Multi-Vector Retrieval简读</title><link>https://finisky.github.io/xtr-summary/</link><pubDate>Sun, 30 Jun 2024 18:58:25 +0800</pubDate><guid>https://finisky.github.io/xtr-summary/</guid><description>&lt;p&gt;之前写过深度检索模型的介绍：
+&lt;a href="https://finisky.github.io/retrievermodels/" title="# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT" &gt;
+ # 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT
+ 
+&lt;/a&gt;，今天来看看DeepMind在NeurIPS 2024上的文章，对多向量检索模型（Multi-Vector Retrieval）ColBERT进行了改进：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/pdf/2304.01982" title="Rethinking the Role of Token Retrieval in Multi-Vector Retrieval" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Rethinking the Role of Token Retrieval in Multi-Vector Retrieval
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;多向量检索模型由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了SOTA。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR 引入了新的目标函数，鼓励模型首先检索最重要的文档词元，对词元检索的改进使得 XTR 可以仅使用检索到的词元来对候选文档排序，而不是文档中的所有词元，因此其成本比 ColBERT 低两到三个数量级。在流行的 BEIR 基准测试中，XTR 在没有任何蒸馏的情况下，将 NDCG@10 提升了 2.8。&lt;/p&gt;
+&lt;p&gt;主要改进点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;仅使用检索到的doc token而非全部doc token进行相似度计算&lt;/li&gt;
+&lt;li&gt;解决了检索训练和推理之间的gap&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>AI搜索与大模型应用的一些思考</title><link>https://finisky.github.io/thoughts-on-ai-search-and-llm-applications/</link><pubDate>Fri, 10 May 2024 09:28:36 +0800</pubDate><guid>https://finisky.github.io/thoughts-on-ai-search-and-llm-applications/</guid><description>&lt;p&gt;最近读到一篇有趣的文章，讨论了当前许多新的AI搜索产品是否会取代Google：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.theverge.com/24111326/ai-search-perplexity-copilot-you-google-review" title="Here’s why AI search engines really can’t kill Google" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Here’s why AI search engines really can’t kill Google
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;先简要地看下这篇文章在说什么：&lt;/p&gt;
+&lt;p&gt;如果要取代Google，那么这些新的产品必须可以完成Google能做的所有事情。于是，作者先收集了Top100的Google搜索查询，然后将它们输入到当前最好的一些AI搜索产品中。作者认为，虽然在某些情况下，基于LLM的搜索比一页Google搜索结果有用，但在大多数情况下，AI搜索取代Google还是相当困难的。&lt;/p&gt;</description></item><item><title>深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT</title><link>https://finisky.github.io/retrievermodels/</link><pubDate>Fri, 03 Jun 2022 11:18:00 +0800</pubDate><guid>https://finisky.github.io/retrievermodels/</guid><description>&lt;p&gt;文本匹配与检索是NLP中的经典问题，主要研究两个文本的主义相似度，通常用在检索系统的召回阶段。传统的召回方案如tf-idf和BM25具有速度优势，但在语义匹配方面有所欠缺。随着预训练模型的发展，使用深度模型进行文本检索变得必要与可行。&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Transformer on Finisky Garden</title><link>https://finisky.github.io/tags/transformer/</link><description>Recent content in Transformer on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Wed, 29 Apr 2026 23:45:02 +0800</lastBuildDate><atom:link href="https://finisky.github.io/tags/transformer/rss.xml" rel="self" type="application/rss+xml"/><item><title>Transformer的简洁性：表达力的另一面</title><link>https://finisky.github.io/transformers-succinctness-summary/</link><pubDate>Wed, 29 Apr 2026 23:45:02 +0800</pubDate><guid>https://finisky.github.io/transformers-succinctness-summary/</guid><description>&lt;p&gt;ICLR 2026 的两篇杰出论文奖（Outstanding Paper）里有一篇纯理论的工作，叫 Transformers are Inherently Succinct。一篇没有实验、没有 benchmark、全是数学证明的论文能拿最佳论文，评审委员会给的理由是&amp;quot;提出了一个新的视角来解释 Transformer 架构的强大能力&amp;quot;。原论文不太好读，涉及大量形式语言理论和复杂度理论的工具，这篇文章试图把核心结论和构造思路用更直觉的方式讲清楚。&lt;/p&gt;
+&lt;p&gt;这个&amp;quot;新视角&amp;quot;是什么？过去大家比的是表达力，即&amp;quot;谁能识别的语言范围更广&amp;quot;，这篇论文换了个角度：同样一个语言，谁用更少的篇幅就能描述清楚？&lt;/p&gt;</description></item><item><title>大模型分布式训练的并行策略</title><link>https://finisky.github.io/how-to-train-large-language-model/</link><pubDate>Thu, 02 Feb 2023 23:32:10 +0800</pubDate><guid>https://finisky.github.io/how-to-train-large-language-model/</guid><description>&lt;p&gt;随着神经网络模型规模的不断增大，对硬件的显存和算力提出了新的要求。首先模型参数过多，导致单机内存放不下，即使能放得下，算力也跟不上。同时，硬件算力的增长远远比不上模型增长的速度，单机训练变得不再可行，需要并行化分布式训练加速。比如&lt;code&gt;Megatron-Turing NLG&lt;/code&gt;有 530B 的参数，训练需要超过 10T 的内存来存储权重、梯度和状态。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/trendofnlpmodelsize.png" alt="" /&gt;&lt;/p&gt;
+&lt;p&gt;同时，模型是一个有机的整体，简单增加机器数量并不能提升算力，需要有并行策略和通信设计，才能实现高效的并行训练。本文简要介绍目前主流的几种并行策略：数据并行，张量并行，流水线并行和混合并行。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2201.11990" title="# Using DeepSpeed and Megatron to Train Megatron-Turing NLG 530B, A Large-Scale Generative Language Model" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Using DeepSpeed and Megatron to Train Megatron-Turing NLG 530B, A Large-Scale Generative Language Model
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Training Compute-Optimal Large Language Models 简读</title><link>https://finisky.github.io/training-compute-optimal-large-language-models-summary/</link><pubDate>Tue, 24 Jan 2023 17:26:43 +0800</pubDate><guid>https://finisky.github.io/training-compute-optimal-large-language-models-summary/</guid><description>&lt;p&gt;DeepMind去年在 NeurIPS 2022 发表了一篇如何在给定计算资源条件下，用多少tokens训练最优大小的 Large Language Models (LLM)。之前的许多工作都仅专注于扩大模型规模，而并不增加训练数据规模，导致这些模型显著地训练不到位 (undertrained)。DeepMind训练用不同规模的数据 (从5B到500B tokens) 训练超过400个不同大小的模型 (从70M到超过16B)，发现 &lt;strong&gt;模型和训练数据规模需要同比增大&lt;/strong&gt;。根据这个假设，使用与 Gopher (280B) 同样的计算量且4倍的数据，训练了70B的最优模型 Chinchilla。它在许多下游任务上的性能显著超过了 Gopher (280B), GPT-3 (175B) Jurassic-1 (178B) 和 Megatron-Turing NLG (530B)。&lt;/p&gt;
+&lt;p&gt;[NeurIPS 2022] 
+&lt;a href="https://openreview.net/pdf?id=iBBcRUlOAPR" title="Training Compute-Optimal Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training Compute-Optimal Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;
+
+&lt;a href="https://arxiv.org/abs/2203.15556" title="Training Compute-Optimal Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training Compute-Optimal Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;本文的 Chinchilla 也是后续对话系统 
+&lt;a href="https://finisky.github.io/sparrow-summary/" title="Sparrow" &gt;
+ Sparrow
+ 
+&lt;/a&gt; 的基模型。&lt;/p&gt;</description></item><item><title>2022 对话系统进展</title><link>https://finisky.github.io/dialog-system-progress-2022/</link><pubDate>Sun, 08 Jan 2023 12:29:09 +0800</pubDate><guid>https://finisky.github.io/dialog-system-progress-2022/</guid><description>&lt;p&gt;2022年随着ChatGPT的大火而结束，最近一年的时间各巨头相继推出了许多表现出色的对话系统，有意思的是大家前进的方向不谋而合，不再专注模型结构和规模，而转向实用性：如何让一个对话系统更有用、更安全、更理解用户意图？&lt;/p&gt;
+&lt;p&gt;对话系统在过去一年里的主要提升得益如下三点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;大模型&lt;/strong&gt;：对话系统的基础，规模大才有足够的通用表示能力&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;从人工反馈学习 (RLHF)&lt;/strong&gt;：通过人工标注不同模型输出，使模型更好地与用户意图align，甚至更小的模型可达到同样效果&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;搜索API&lt;/strong&gt;：使回复有所参考，内容更具体更有用，避免胡说八道 (hallucination)&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>BlenderBot 3 对话系统简析</title><link>https://finisky.github.io/blenderbot3-summary/</link><pubDate>Fri, 06 Jan 2023 20:12:01 +0800</pubDate><guid>https://finisky.github.io/blenderbot3-summary/</guid><description>&lt;p&gt;Meta AI在2022年8月发布了新一代的对话系统 BlenderBot 3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://ai.facebook.com/blog/blenderbot-3-a-175b-parameter-publicly-available-chatbot-that-improves-its-skills-and-safety-over-time/" title="BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2208.03188" title="BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;BlenderBot 3 (BB3) 只对在美国的成人开放，只用英文对话：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;We present BlenderBot 3 (BB3), an open-domain dialogue model that
+we have deployed as an English speaking conversational agent on a public website accessible by adults in the United States.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;此研究的主要目的与
+&lt;a href="https://finisky.github.io/sparrow-summary/" title="Sparrow" &gt;
+ Sparrow
+ 
+&lt;/a&gt;最接近，使对话更responsible &amp;amp; useful:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The goal of this research program is then to explore how to construct models that continue to improve from such interactions
+both in terms of becoming more responsible and more useful.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这个tech report包括了BB3部署的细节，包括UI设计，本文主要关注模型部分。&lt;/p&gt;</description></item><item><title>DeepMind Sparrow 对话系统简析</title><link>https://finisky.github.io/sparrow-summary/</link><pubDate>Tue, 27 Dec 2022 20:06:39 +0800</pubDate><guid>https://finisky.github.io/sparrow-summary/</guid><description>&lt;p&gt;Sparrow是DeepMind在今年9月底发布的对话系统，主打的点在&amp;quot;helpful, correct, and harmless&amp;quot;。总体来看，思路也是&amp;quot;alignment&amp;quot;，即让对话机器人的回复与用户的意图更贴合。在技术路线上，也是采用reinforcement learning from human feedback，通过定义一批规则，让模型更好地向期望的对话方向推进; 此外，对于事实型的问题，参考搜索出的内容给出回复。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.deepmind.com/blog/building-safer-dialogue-agents" title="Building safer dialogue agents" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Building safer dialogue agents
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2209.14375" title="Improving alignment of dialogue agents via targeted human judgements" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Improving alignment of dialogue agents via targeted human judgements
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>为什么不接ChatGPT到微信公号？</title><link>https://finisky.github.io/chatgpt-for-official-account/</link><pubDate>Fri, 16 Dec 2022 10:08:02 +0800</pubDate><guid>https://finisky.github.io/chatgpt-for-official-account/</guid><description>&lt;p&gt;ChatGPT火爆全网，要是能接到自己的微信公众号后台，岂不美哉？&lt;/p&gt;
+&lt;p&gt;想必有此想法的同志不止我一人，上周末就研究了一下，有几个问题需要解决。&lt;/p&gt;
+&lt;p&gt;首先就是ChatGPT API，最关键的问题没有之一，OpenAI并没有官方API支持。不过github上早有人反向工程破解了此API，Python实现：&lt;/p&gt;</description></item><item><title>WebGPT 简读</title><link>https://finisky.github.io/webgpt-summary/</link><pubDate>Tue, 13 Dec 2022 18:24:46 +0800</pubDate><guid>https://finisky.github.io/webgpt-summary/</guid><description>&lt;p&gt;WebGPT是OpenAI在2021年底发布的解决long-form quesion-answering (LFQA) 的方案。比InstructGPT的提出稍早一些。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/webgpt/" title="WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2112.09332" title="WebGPT: Browser-assisted question-answering with human feedback" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WebGPT: Browser-assisted question-answering with human feedback
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WebGPT想解决什么问题？让开放域QA回复更长更可靠。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;A rising challenge in NLP is long-form question-answering (LFQA), in which a paragraph-length answer is generated in response to an open-ended question. LFQA systems have the potential to become one of the main ways people learn about the world, but currently lag behind human performance.&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>ChatGPT的未解难题</title><link>https://finisky.github.io/chatgpt-limitations/</link><pubDate>Sat, 10 Dec 2022 18:12:01 +0800</pubDate><guid>https://finisky.github.io/chatgpt-limitations/</guid><description>&lt;p&gt;整个圈子最近都被ChatGPT出色的对话和Coding能力惊艳到了，前面写了篇文章简析了下其原理，虽然看起来直观，但国内的对话水平与其差距确非一日之功。下面的知乎回答深以为然：&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/whynochatgpt.png" alt="Why China Doesn&amp;rsquo;t Have ChatGPT" /&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/chatgpt/" title="ChatGPT: Optimizing Language Models for Dialogue" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ ChatGPT: Optimizing Language Models for Dialogue
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;既然大家都致力于发掘ChatGPT厉害的地方，就来找找它的不足吧。&lt;/p&gt;</description></item><item><title>InstructGPT/ChatGPT 简读</title><link>https://finisky.github.io/instructgpt-summary/</link><pubDate>Sat, 10 Dec 2022 11:43:52 +0800</pubDate><guid>https://finisky.github.io/instructgpt-summary/</guid><description>&lt;p&gt;最近ChatGPT火爆出圈，一众朋友发来各种网红文问我怎么看。ChatGPT的模型与InstructGPT一样，只是数据收集方式有区别。而InstructGPT的提出已差不多有一年了，只不过最近才引起大家的注意。其实，今年已经有不少工作是延续InstructGPT对提升模型效果的，如 
+&lt;a href="https://finisky.github.io/diamonte-dataset-paper-summary/" title="Diamonte" &gt;
+ Diamonte
+ 
+&lt;/a&gt;，参考了human feedback的思路，但将RL的方案替换成了额外的loss fuction项；
+&lt;a href="https://finisky.github.io/welm-paper-summary/" title="WeLM" &gt;
+ WeLM
+ 
+&lt;/a&gt;，参考了人工编写prompt模板训练大规模语言模型。&lt;/p&gt;
+&lt;p&gt;话不多说，来看看原始的InstructGPT是如何打败大模型的。原始Paper很长，有68页，而事实上核心思想并不复杂。（PS: 现在训练个大模型要不写个50页以上的Paper，都对不起咱烧的那钱！）&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training language models to follow instructions with human feedback
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/instruction-following/" title="Aligning Language Models to Follow Instructions" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Aligning Language Models to Follow Instructions
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;InstructGPT指出，模型并非越大越好：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Making language models bigger does not inherently make them better at following a user’s intent. For example, large language models can generate outputs that are untruthful, toxic, or simply not helpful to the user.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;所以InstrcutGPT希望&lt;strong&gt;通过人工反馈让语言模型与用户意图更加align&lt;/strong&gt;：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;We show an avenue for aligning language models with user intent on a wide range of tasks by fine-tuning with human feedback.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最终训练出来1.3B的InstructGPT模型，人工评测比175B的GPT-3要更好：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;In human evaluations on our prompt distribution, outputs from the 1.3B parameter InstructGPT model are preferred to outputs from the 175B GPT-3, despite having 100x fewer parameters.&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>小菲陪您唠唠磕</title><link>https://finisky.github.io/finisky-bot/</link><pubDate>Wed, 26 Oct 2022 19:26:52 +0800</pubDate><guid>https://finisky.github.io/finisky-bot/</guid><description>&lt;p&gt;之前 
+&lt;a href="https://finisky.github.io/welm-paper-summary/" title="WeLM的文章" &gt;
+ WeLM的文章
+ 
+&lt;/a&gt; 探讨了微信大语言模型的原理。同时，WeLM开放了API：https://welm.weixin.qq.com/docs/api/ ，有幸申请到了API Token，将其接入了微信公众号&lt;code&gt;Finisky Garden&lt;/code&gt;，聊天机器人取名&lt;code&gt;小菲&lt;/code&gt;，大家可以来试试~&lt;/p&gt;</description></item><item><title>WeLM: A Well-Read Pre-trained Language Model for Chinese 简读</title><link>https://finisky.github.io/welm-paper-summary/</link><pubDate>Mon, 17 Oct 2022 19:57:10 +0800</pubDate><guid>https://finisky.github.io/welm-paper-summary/</guid><description>&lt;p&gt;微信最近有篇新闻刷屏： 
+&lt;a href="https://new.qq.com/rain/a/20221013A02P8400" title="# 微信推出自研NLP大规模语言模型WeLM：零/少样本即可完成多种NLP任务" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # 微信推出自研NLP大规模语言模型WeLM：零/少样本即可完成多种NLP任务
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;来看看这背后的技术原理又是什么：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2209.10372" title="WeLM: A Well-Read Pre-trained Language Model for Chinese" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WeLM: A Well-Read Pre-trained Language Model for Chinese
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>LaMDA: Language Models for Dialog Applications 简读</title><link>https://finisky.github.io/lamda-paper-summary/</link><pubDate>Fri, 14 Oct 2022 18:08:12 +0800</pubDate><guid>https://finisky.github.io/lamda-paper-summary/</guid><description>&lt;p&gt;Google今年发布的聊天机器人LaMDA确实惊艳，之前一个Google员工与它对话后，声称它已经有了自我意识，还上了热搜。今天就来看看这机器人背后的原理是什么。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt; 大模型，高质量人工标注数据。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2201.08239" title="LaMDA: Language Models for Dialog Applications" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LaMDA: Language Models for Dialog Applications
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文的标题很大，有50多个作者，挺有意思。&lt;/p&gt;</description></item><item><title>深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT</title><link>https://finisky.github.io/retrievermodels/</link><pubDate>Fri, 03 Jun 2022 11:18:00 +0800</pubDate><guid>https://finisky.github.io/retrievermodels/</guid><description>&lt;p&gt;文本匹配与检索是NLP中的经典问题，主要研究两个文本的主义相似度，通常用在检索系统的召回阶段。传统的召回方案如tf-idf和BM25具有速度优势，但在语义匹配方面有所欠缺。随着预训练模型的发展，使用深度模型进行文本检索变得必要与可行。&lt;/p&gt;</description></item><item><title>LoRA: Low-Rank Adaptation of Large Language Models 简读</title><link>https://finisky.github.io/lora/</link><pubDate>Fri, 13 May 2022 18:48:01 +0800</pubDate><guid>https://finisky.github.io/lora/</guid><description>&lt;p&gt;之前我们谈到 Adapters 与 Prompting 都是轻量级的训练方法，所谓 lightweight-finetuning。今天来看一下另一种轻量级训练大语言模型的方法:&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LoRA: Low-Rank Adaptation of Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>NLP中的Adapters是什么？</title><link>https://finisky.github.io/nlpadapters/</link><pubDate>Sun, 01 May 2022 19:03:46 +0800</pubDate><guid>https://finisky.github.io/nlpadapters/</guid><description>&lt;p&gt;NLP adapters主要想解决不同任务需要finetune整个模型的痛点，与Prompting一样，是一种轻量级的训练方法，也是Transfer Learning的应用。按出现时间来看，finetune早于adapters，adapters早于prompting。今天来重看这篇Adapters的文章，可以更好地理解lightweight finetune的发展过程。&lt;/p&gt;</description></item><item><title>使用LineByLine数据集训练GPT</title><link>https://finisky.github.io/finetune-lm-line-by-line/</link><pubDate>Sun, 14 Nov 2021 09:49:59 +0800</pubDate><guid>https://finisky.github.io/finetune-lm-line-by-line/</guid><description>&lt;p&gt;训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial:
+
+&lt;a href="https://github.com/huggingface/transformers/tree/master/examples/pytorch/language-modeling" title="Transformers Language Model Training" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Transformers Language Model Training
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;示例提供了三个脚本: &lt;code&gt;run_clm.py&lt;/code&gt;, &lt;code&gt;run_mlm.py&lt;/code&gt; 和 &lt;code&gt;run_plm.py&lt;/code&gt;。GPT是个causal language model，可以使用 &lt;code&gt;run_clm.py&lt;/code&gt; 进行训练或微调。但这脚本并不支持行式数据集，即每行一个训练样本的数据集。它默认的数据处理是按行读取样本并把它们连接成一个&lt;code&gt;block_size&lt;/code&gt;的连续文本。&lt;/p&gt;</description></item><item><title>Autoencoding和Autoregressive的区别</title><link>https://finisky.github.io/autoencodervsautoregressive/</link><pubDate>Sun, 18 Jul 2021 12:07:32 +0800</pubDate><guid>https://finisky.github.io/autoencodervsautoregressive/</guid><description>&lt;p&gt;读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个&lt;code&gt;autoencoder&lt;/code&gt;，另一个是&lt;code&gt;autoregressive&lt;/code&gt;自回归模型。它们是什么意思，又有什么区别？&lt;/p&gt;</description></item><item><title>MultiHeadAttention实现详解</title><link>https://finisky.github.io/multi-head-attention/</link><pubDate>Mon, 25 May 2020 19:32:15 +0800</pubDate><guid>https://finisky.github.io/multi-head-attention/</guid><description>&lt;p&gt;Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper “Attention is All you Need”中对attention提出了通用的query/key/value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本文仅就其中的核心，MultiHeadAttention的实现进行源码剖析。&lt;/p&gt;</description></item><item><title>中文GPT2预训练实战</title><link>https://finisky.github.io/pretrain-chinese-gpt/</link><pubDate>Fri, 01 May 2020 18:32:30 +0800</pubDate><guid>https://finisky.github.io/pretrain-chinese-gpt/</guid><description>&lt;p&gt;GPT2是一个很好的长文本生成模型，但官方版本并没有开源中文预训练好的模型。因此，最近用开源的中文新闻，wiki，评论等从头训练了一个中文GPT2用于文本生成任务。&lt;/p&gt;</description></item></channel></rss>

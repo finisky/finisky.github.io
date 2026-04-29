@@ -1,0 +1,409 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS,openssl"><meta property="og:type" content="article"><meta property="og:title" content="Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-om-self-signed-certificates/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-12 23:30:39 +0800 CST"><meta property="article:modified_time" content="2020-12-12 23:30:39 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-self-signed-certificates/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-self-signed-certificates/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#实例设置>实例设置</a></li><li><a href=#生成自签名ca证书>生成自签名CA证书</a><ul><li><a href=#生成ca-key>生成CA key</a></li><li><a href=#配置rootcacnf>配置rootca.cnf</a></li><li><a href=#生成ca证书>生成CA证书</a></li></ul></li><li><a href=#生成ia证书intermediate-certificate>生成IA证书Intermediate Certificate</a></li><li><a href=#生成server证书>生成Server证书</a><ul><li><a href=#配置userdb0cnf>配置userdb0.cnf</a></li><li><a href=#生成server私钥和证书>生成server私钥和证书</a></li></ul></li><li><a href=#验证证书>验证证书</a><ul><li><a href=#验证server证书>验证Server证书</a></li><li><a href=#查看server证书的altnames>查看server证书的altnames</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-sharded-cluster/>部署Kubernetes MongoDB Sharded Cluster</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-tls-auth/>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-expose-services/>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-user-db/>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-ops-manager/>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-om-self-signed-certificates/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书"><meta itemprop=description content="本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。
+整个系列：
+
+
+
+    安装MongoDB Ops Manager
+    
+
+
+
+    创建用户数据库(replicaset)
+    
+
+
+
+    用户数据库服务配置公网访问
+    
+
+
+
+    openssl生成自签名CA证书和server证书
+    
+
+
+
+    打开用户数据库TLS通信加密和Auth授权
+    
+
+
+自签名证书不推荐在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。Public Key Infrastructure (PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。"></span><header class=post-header><h1 class=post-title itemprop="name headline">Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-12-12 23:30:39 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-12 23:30:39 +0800 CST">2020-12-12
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-om-self-signed-certificates/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-om-self-signed-certificates/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。</p><p>整个系列：</p><ol><li><a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager</a></li><li><a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)</a></li><li><a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问</a></li><li><a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></li><li><a href=/mongodb-om-tls-auth/ title=打开用户数据库TLS通信加密和Auth授权>打开用户数据库TLS通信加密和Auth授权</a></li></ol><p>自签名证书<strong>不推荐</strong>在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。<strong>Public Key Infrastructure</strong> (PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。</p><a id=more></a><h1 id=实例设置>实例设置
+<a class=header-anchor href=#%e5%ae%9e%e4%be%8b%e8%ae%be%e7%bd%ae></a></h1><p>首先回顾一下已有的userdb servers:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png alt="UserDB Servers"></p><p>构成userdb ReplicaSet有三个server, 在kubernetes中的内部通信使用<code>私网域名</code>：</p><ul><li>userdb-0.userdb-svc.mongodb.svc.cluster.local</li><li>userdb-1.userdb-svc.mongodb.svc.cluster.local</li><li>userdb-2.userdb-svc.mongodb.svc.cluster.local</li></ul><p>在
+<a href=/mongodb-om-expose-services/ title=第三部分>第三部分
+</a>也已配置了公网IP。现在我们已经可以从公网通过IP访问到这三个server，但更常见的情况是我们为这三个IP绑定了域名，这里假设三个<code>公网域名</code>：</p><ul><li>userdb0.com</li><li>userdb1.com</li><li>userdb2.com</li></ul><p>于是我们在kubernetes集群内部可以用<code>xxx.svc.cluster.local</code>地址访问server，在集群外部可以用<code>userdb&lt;X>.com</code>访问server。</p><p>注意MongoDB的server与server之间是需要通信的，用于数据同步、Primary节点选择等，而打开TLS之后，server与server之间也需要互相通过证书验证，因此每个server的证书需要<strong>同时包含公网域名和私网域名</strong>。</p><p>server和server之间如何相信对方是合法的证书呢？那就需要大家都相信同一个root certificate authority (CA)签名的证书。所以一共需要4个证书：</p><ul><li><code>rootca.crt</code></li><li><code>userdb&lt;X>.pem</code>，X=0,1,2</li></ul><h1 id=生成自签名ca证书>生成自签名CA证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90%e8%87%aa%e7%ad%be%e5%90%8dca%e8%af%81%e4%b9%a6></a></h1><p>参考官方文档：
+<a href=https://docs.mongodb.com/manual/appendix/security/appendixA-openssl-ca/ title="# Appendix A - OpenSSL CA Certificate for Testing" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Appendix A - OpenSSL CA Certificate for Testing
+<i class="fa fa-external-link-alt"></i></a></p><h2 id=生成ca-key>生成CA key
+<a class=header-anchor href=#%e7%94%9f%e6%88%90ca-key></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out rootca.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>Generating RSA private key, <span class=m>4096</span> bit long modulus <span class=o>(</span><span class=m>2</span> primes<span class=o>)</span>
+</span></span><span class=line><span class=cl>..................................................................................................................................................................................................................................................++++
+</span></span><span class=line><span class=cl>................++++
+</span></span><span class=line><span class=cl>e is <span class=m>65537</span> <span class=o>(</span>0x010001<span class=o>)</span></span></span></code></pre></td></tr></table></div></div><p><code>rootca.key</code>是私钥，妥善保管。</p><h2 id=配置rootcacnf>配置rootca.cnf
+<a class=header-anchor href=#%e9%85%8d%e7%bd%aerootcacnf></a></h2><p>这个文件很重要，用来生成CA证书的配置文件，不用改动，可在下一步openssl生成证书时修改其中State/Organization等信息。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span><span class=lnt id=hl-1-35><a class=lnlinks href=#hl-1-35>35</a>
+</span><span class=lnt id=hl-1-36><a class=lnlinks href=#hl-1-36>36</a>
+</span><span class=lnt id=hl-1-37><a class=lnlinks href=#hl-1-37>37</a>
+</span><span class=lnt id=hl-1-38><a class=lnlinks href=#hl-1-38>38</a>
+</span><span class=lnt id=hl-1-39><a class=lnlinks href=#hl-1-39>39</a>
+</span><span class=lnt id=hl-1-40><a class=lnlinks href=#hl-1-40>40</a>
+</span><span class=lnt id=hl-1-41><a class=lnlinks href=#hl-1-41>41</a>
+</span><span class=lnt id=hl-1-42><a class=lnlinks href=#hl-1-42>42</a>
+</span><span class=lnt id=hl-1-43><a class=lnlinks href=#hl-1-43>43</a>
+</span><span class=lnt id=hl-1-44><a class=lnlinks href=#hl-1-44>44</a>
+</span><span class=lnt id=hl-1-45><a class=lnlinks href=#hl-1-45>45</a>
+</span><span class=lnt id=hl-1-46><a class=lnlinks href=#hl-1-46>46</a>
+</span><span class=lnt id=hl-1-47><a class=lnlinks href=#hl-1-47>47</a>
+</span><span class=lnt id=hl-1-48><a class=lnlinks href=#hl-1-48>48</a>
+</span><span class=lnt id=hl-1-49><a class=lnlinks href=#hl-1-49>49</a>
+</span><span class=lnt id=hl-1-50><a class=lnlinks href=#hl-1-50>50</a>
+</span><span class=lnt id=hl-1-51><a class=lnlinks href=#hl-1-51>51</a>
+</span><span class=lnt id=hl-1-52><a class=lnlinks href=#hl-1-52>52</a>
+</span><span class=lnt id=hl-1-53><a class=lnlinks href=#hl-1-53>53</a>
+</span><span class=lnt id=hl-1-54><a class=lnlinks href=#hl-1-54>54</a>
+</span><span class=lnt id=hl-1-55><a class=lnlinks href=#hl-1-55>55</a>
+</span><span class=lnt id=hl-1-56><a class=lnlinks href=#hl-1-56>56</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># For the CA policy
+</span></span><span class=line><span class=cl>[ policy_match ]
+</span></span><span class=line><span class=cl>countryName = match
+</span></span><span class=line><span class=cl>stateOrProvinceName = match
+</span></span><span class=line><span class=cl>organizationName = match
+</span></span><span class=line><span class=cl>organizationalUnitName = optional
+</span></span><span class=line><span class=cl>commonName = supplied
+</span></span><span class=line><span class=cl>emailAddress = optional
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req ]
+</span></span><span class=line><span class=cl>default_bits = 4096
+</span></span><span class=line><span class=cl>default_keyfile = rootca.pem    ## The default private key file name.
+</span></span><span class=line><span class=cl>default_md = sha256                           ## Use SHA-256 for Signatures
+</span></span><span class=line><span class=cl>distinguished_name = req_dn
+</span></span><span class=line><span class=cl>req_extensions = v3_req
+</span></span><span class=line><span class=cl>x509_extensions = v3_ca # The extentions to add to the self signed cert
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_req ]
+</span></span><span class=line><span class=cl>subjectKeyIdentifier  = hash
+</span></span><span class=line><span class=cl>basicConstraints = CA:FALSE
+</span></span><span class=line><span class=cl>keyUsage = critical, digitalSignature, keyEncipherment
+</span></span><span class=line><span class=cl>nsComment = &#34;OpenSSL Generated Certificate for TESTING only.  NOT FOR PRODUCTION USE.&#34;
+</span></span><span class=line><span class=cl>extendedKeyUsage  = serverAuth, clientAuth
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req_dn ]
+</span></span><span class=line><span class=cl>countryName = Country Name (2 letter code)
+</span></span><span class=line><span class=cl>countryName_default = CN
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>countryName_min = 2
+</span></span><span class=line><span class=cl>countryName_max = 2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>stateOrProvinceName = State or Province Name (full name)
+</span></span><span class=line><span class=cl>stateOrProvinceName_default = Beijing
+</span></span><span class=line><span class=cl>stateOrProvinceName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>localityName = Locality Name (eg, city)
+</span></span><span class=line><span class=cl>localityName_default = Beijing
+</span></span><span class=line><span class=cl>localityName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationName = Organization Name (eg, company)
+</span></span><span class=line><span class=cl>organizationName_default = TestComp
+</span></span><span class=line><span class=cl>organizationName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationalUnitName = Organizational Unit Name (eg, section)
+</span></span><span class=line><span class=cl>organizationalUnitName_default = TestComp
+</span></span><span class=line><span class=cl>organizationalUnitName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commonName = Common Name (eg, YOUR name)
+</span></span><span class=line><span class=cl>commonName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_ca ]
+</span></span><span class=line><span class=cl># Extensions for a typical CA
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>subjectKeyIdentifier=hash
+</span></span><span class=line><span class=cl>basicConstraints = critical,CA:true
+</span></span><span class=line><span class=cl>authorityKeyIdentifier=keyid:always,issuer:always</span></span></code></pre></td></tr></table></div></div><h2 id=生成ca证书>生成CA证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90ca%e8%af%81%e4%b9%a6></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ openssl req -new -x509 -days 36500 -key rootca.key -out rootca.crt -config rootca.cnf
+</span></span><span class=line><span class=cl>You are about to be asked to enter information that will be incorporated
+</span></span><span class=line><span class=cl>into your certificate request.
+</span></span><span class=line><span class=cl>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span class=line><span class=cl>There are quite a few fields but you can leave some blank
+</span></span><span class=line><span class=cl>For some fields there will be a default value,
+</span></span><span class=line><span class=cl>If you enter &#39;.&#39;, the field will be left blank.
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>Country Name (2 letter code) [CN]:
+</span></span><span class=line><span class=cl>State or Province Name (full name) [Beijing]:
+</span></span><span class=line><span class=cl>Locality Name (eg, city) [Beijing]:
+</span></span><span class=line><span class=cl>Organization Name (eg, company) [TestComp]:
+</span></span><span class=line><span class=cl>Organizational Unit Name (eg, section) [TestComp]:
+</span></span><span class=line><span class=cl>Common Name (eg, YOUR name) []:</span></span></code></pre></td></tr></table></div></div><p>执行完此命令，会生成一个有效期为100年（不推荐这么长时间）的rootca证书<code>rootca.crt</code>。</p><h1 id=生成ia证书intermediate-certificate>生成IA证书Intermediate Certificate
+<a class=header-anchor href=#%e7%94%9f%e6%88%90ia%e8%af%81%e4%b9%a6intermediate-certificate></a></h1><p>自签名证书不要用这个，增加不必要的麻烦。
+<a href=https://www.thesslstore.com/blog/root-certificates-intermediate/ title="# The Difference Between Root Certificates and Intermediate Certificates" rel="noopener external nofollow noreferrer" target=_blank class=exturl># The Difference Between Root Certificates and Intermediate Certificates
+<i class="fa fa-external-link-alt"></i></a></p><p>证书的信任基于证书链，一般而言是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CA -&gt; IA -&gt; Server Certificate</span></span></code></pre></td></tr></table></div></div><p>但对于本文这种规模的cluster这么几台机器，IA是没有必要的，直接用rootca为server certificate签名即可：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CA -&gt; Server Certificate</span></span></code></pre></td></tr></table></div></div><h1 id=生成server证书>生成Server证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90server%e8%af%81%e4%b9%a6></a></h1><p>参考官方文档：
+<a href=https://docs.mongodb.com/manual/appendix/security/appendixB-openssl-server/ title="# Appendix B - OpenSSL Server Certificates for Testing" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Appendix B - OpenSSL Server Certificates for Testing
+<i class="fa fa-external-link-alt"></i></a></p><h2 id=配置userdb0cnf>配置userdb0.cnf
+<a class=header-anchor href=#%e9%85%8d%e7%bd%aeuserdb0cnf></a></h2><p>这个文件最重要的部分就是<code>[ alt_names ]</code>，如前所述，里面的DNS要同时写入公网和私网域名：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = userdb0.com
+</span></span><span class=line><span class=cl>DNS.2 = userdb-0.userdb-svc.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>如有必要，也可以加入固定IP。</p><p>userdb0.cnf:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25>25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26>26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27>27</a>
+</span><span class=lnt id=hl-6-28><a class=lnlinks href=#hl-6-28>28</a>
+</span><span class=lnt id=hl-6-29><a class=lnlinks href=#hl-6-29>29</a>
+</span><span class=lnt id=hl-6-30><a class=lnlinks href=#hl-6-30>30</a>
+</span><span class=lnt id=hl-6-31><a class=lnlinks href=#hl-6-31>31</a>
+</span><span class=lnt id=hl-6-32><a class=lnlinks href=#hl-6-32>32</a>
+</span><span class=lnt id=hl-6-33><a class=lnlinks href=#hl-6-33>33</a>
+</span><span class=lnt id=hl-6-34><a class=lnlinks href=#hl-6-34>34</a>
+</span><span class=lnt id=hl-6-35><a class=lnlinks href=#hl-6-35>35</a>
+</span><span class=lnt id=hl-6-36><a class=lnlinks href=#hl-6-36>36</a>
+</span><span class=lnt id=hl-6-37><a class=lnlinks href=#hl-6-37>37</a>
+</span><span class=lnt id=hl-6-38><a class=lnlinks href=#hl-6-38>38</a>
+</span><span class=lnt id=hl-6-39><a class=lnlinks href=#hl-6-39>39</a>
+</span><span class=lnt id=hl-6-40><a class=lnlinks href=#hl-6-40>40</a>
+</span><span class=lnt id=hl-6-41><a class=lnlinks href=#hl-6-41>41</a>
+</span><span class=lnt id=hl-6-42><a class=lnlinks href=#hl-6-42>42</a>
+</span><span class=lnt id=hl-6-43><a class=lnlinks href=#hl-6-43>43</a>
+</span><span class=lnt id=hl-6-44><a class=lnlinks href=#hl-6-44>44</a>
+</span><span class=lnt id=hl-6-45><a class=lnlinks href=#hl-6-45>45</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ req ]
+</span></span><span class=line><span class=cl>default_bits = 4096
+</span></span><span class=line><span class=cl>default_md = sha256
+</span></span><span class=line><span class=cl>distinguished_name = req_dn
+</span></span><span class=line><span class=cl>req_extensions = v3_req
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_req ]
+</span></span><span class=line><span class=cl>subjectKeyIdentifier  = hash
+</span></span><span class=line><span class=cl>basicConstraints = CA:FALSE
+</span></span><span class=line><span class=cl>keyUsage = critical, digitalSignature, keyEncipherment
+</span></span><span class=line><span class=cl>nsComment = &#34;OpenSSL Generated Certificate for TESTING only.  NOT FOR PRODUCTION USE.&#34;
+</span></span><span class=line><span class=cl>extendedKeyUsage  = serverAuth, clientAuth
+</span></span><span class=line><span class=cl>subjectAltName = @alt_names
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = userdb0.com        ##TODO: Enter the DNS names. The DNS names should match the server names.
+</span></span><span class=line><span class=cl>DNS.2 = userdb-0.userdb-svc.mongodb.svc.cluster.local        ##TODO: Enter the DNS names. The DNS names should match the server names.
+</span></span><span class=line><span class=cl>IP.1 =          ##TODO: Enter the IP address. SAN matching by IP address is available starting in MongoDB 4.2
+</span></span><span class=line><span class=cl>IP.2 =          ##TODO: Enter the IP address. SAN matching by IP address is available starting in MongoDB 4.2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req_dn ]
+</span></span><span class=line><span class=cl>countryName = Country Name (2 letter code)
+</span></span><span class=line><span class=cl>countryName_default = CN
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>countryName_min = 2
+</span></span><span class=line><span class=cl>countryName_max = 2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>stateOrProvinceName = State or Province Name (full name)
+</span></span><span class=line><span class=cl>stateOrProvinceName_default = Beijing
+</span></span><span class=line><span class=cl>stateOrProvinceName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>localityName = Locality Name (eg, city)
+</span></span><span class=line><span class=cl>localityName_default = Beijing
+</span></span><span class=line><span class=cl>localityName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationName = Organization Name (eg, company)
+</span></span><span class=line><span class=cl>organizationName_default = TestComp
+</span></span><span class=line><span class=cl>organizationName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationalUnitName = Organizational Unit Name (eg, section)
+</span></span><span class=line><span class=cl>organizationalUnitName_default = TestComp
+</span></span><span class=line><span class=cl>organizationalUnitName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commonName = Common Name (eg, YOUR name)
+</span></span><span class=line><span class=cl>commonName_max = 64</span></span></code></pre></td></tr></table></div></div><h2 id=生成server私钥和证书>生成server私钥和证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90server%e7%a7%81%e9%92%a5%e5%92%8c%e8%af%81%e4%b9%a6></a></h2><p>以userdb0为例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3>3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out userdb0.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>$ openssl req -new -key userdb0.key -out userdb0.csr -config userdb0.cnf
+</span></span><span class=line><span class=cl>$ openssl x509 -sha256 -req -days <span class=m>3650</span> -in userdb0.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out userdb0.crt -extfile userdb0.cnf -extensions v3_req
+</span></span><span class=line><span class=cl>$ cat userdb0.crt userdb0.key &gt; userdb0.pem</span></span></code></pre></td></tr></table></div></div><p>Sample output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span><span class=lnt id=hl-8-13><a class=lnlinks href=#hl-8-13>13</a>
+</span><span class=lnt id=hl-8-14><a class=lnlinks href=#hl-8-14>14</a>
+</span><span class=lnt id=hl-8-15><a class=lnlinks href=#hl-8-15>15</a>
+</span><span class=lnt id=hl-8-16><a class=lnlinks href=#hl-8-16>16</a>
+</span><span class=lnt id=hl-8-17><a class=lnlinks href=#hl-8-17>17</a>
+</span><span class=lnt id=hl-8-18><a class=lnlinks href=#hl-8-18>18</a>
+</span><span class=lnt id=hl-8-19><a class=lnlinks href=#hl-8-19>19</a>
+</span><span class=lnt id=hl-8-20><a class=lnlinks href=#hl-8-20>20</a>
+</span><span class=lnt id=hl-8-21><a class=lnlinks href=#hl-8-21>21</a>
+</span><span class=lnt id=hl-8-22><a class=lnlinks href=#hl-8-22>22</a>
+</span><span class=lnt id=hl-8-23><a class=lnlinks href=#hl-8-23>23</a>
+</span><span class=lnt id=hl-8-24><a class=lnlinks href=#hl-8-24>24</a>
+</span><span class=lnt id=hl-8-25><a class=lnlinks href=#hl-8-25>25</a>
+</span><span class=lnt id=hl-8-26><a class=lnlinks href=#hl-8-26>26</a>
+</span><span class=lnt id=hl-8-27><a class=lnlinks href=#hl-8-27>27</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out userdb0.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>Generating RSA private key, <span class=m>4096</span> bit long modulus <span class=o>(</span><span class=m>2</span> primes<span class=o>)</span>
+</span></span><span class=line><span class=cl>.............................................................++++
+</span></span><span class=line><span class=cl>.....++++
+</span></span><span class=line><span class=cl>e is <span class=m>65537</span> <span class=o>(</span>0x010001<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ openssl req -new -key userdb0.key -out userdb0.csr -config userdb0.cnf
+</span></span><span class=line><span class=cl>You are about to be asked to enter information that will be incorporated
+</span></span><span class=line><span class=cl>into your certificate request.
+</span></span><span class=line><span class=cl>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span class=line><span class=cl>There are quite a few fields but you can leave some blank
+</span></span><span class=line><span class=cl>For some fields there will be a default value,
+</span></span><span class=line><span class=cl>If you enter <span class=s1>&#39;.&#39;</span>, the field will be left blank.
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>Country Name <span class=o>(</span><span class=m>2</span> letter code<span class=o>)</span> <span class=o>[</span>CN<span class=o>]</span>:
+</span></span><span class=line><span class=cl>State or Province Name <span class=o>(</span>full name<span class=o>)</span> <span class=o>[</span>Beijing<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Locality Name <span class=o>(</span>eg, city<span class=o>)</span> <span class=o>[</span>Beijing<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Organization Name <span class=o>(</span>eg, company<span class=o>)</span> <span class=o>[</span>TestComp<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Organizational Unit Name <span class=o>(</span>eg, section<span class=o>)</span> <span class=o>[</span>TestComp<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Common Name <span class=o>(</span>eg, YOUR name<span class=o>)</span> <span class=o>[]</span>:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ openssl x509 -sha256 -req -days <span class=m>3650</span> -in userdb0.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out userdb0.crt -extfile userdb0.cnf -extensions v3_req
+</span></span><span class=line><span class=cl>Signature ok
+</span></span><span class=line><span class=cl><span class=nv>subject</span><span class=o>=</span><span class=nv>C</span> <span class=o>=</span> CN, <span class=nv>ST</span> <span class=o>=</span> Beijing, <span class=nv>L</span> <span class=o>=</span> Beijing, <span class=nv>O</span> <span class=o>=</span> TestComp, <span class=nv>OU</span> <span class=o>=</span> TestComp
+</span></span><span class=line><span class=cl>Getting CA Private Key
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ cat userdb0.crt userdb0.key &gt; userdb0.pem</span></span></code></pre></td></tr></table></div></div><p>替换以上四个命令的userdb0为userdb1和userdb2，重复以上步骤，生成三个不同的server证书userdb0.pem, userdb1.pem和userdb2.pem。</p><h1 id=验证证书>验证证书
+<a class=header-anchor href=#%e9%aa%8c%e8%af%81%e8%af%81%e4%b9%a6></a></h1><h2 id=验证server证书>验证Server证书
+<a class=header-anchor href=#%e9%aa%8c%e8%af%81server%e8%af%81%e4%b9%a6></a></h2><p>下面命令可以用来验证生成的server证书是有效的，指定CA文件为rootca.crt</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl verify -CAfile rootca.crt userdb0.pem
+</span></span><span class=line><span class=cl>userdb0.pem: OK</span></span></code></pre></td></tr></table></div></div><p>当然也可以验证CA本身：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1>1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>openssl verify -CAfile rootca.crt rootca.crt
+</span></span><span class=line><span class=cl>rootca.crt: OK</span></span></code></pre></td></tr></table></div></div><h2 id=查看server证书的altnames>查看server证书的altnames
+<a class=header-anchor href=#%e6%9f%a5%e7%9c%8bserver%e8%af%81%e4%b9%a6%e7%9a%84altnames></a></h2><p>查看证书认证的域名：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1>1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2>2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3>3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4>4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl x509 -text -noout -in userdb0.pem
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>            X509v3 Subject Alternative Name:
+</span></span><span class=line><span class=cl>                DNS:userdb0.com, DNS:userdb-0.userdb-svc.mongodb.svc.cluster.local, IP Address:xxx.xxx.xxx.xxx
+</span></span><span class=line><span class=cl>...</span></span></code></pre></td></tr></table></div></div><p>至此，我们已经生成了一个根证书root.crt和三个server证书<code>userdb&lt;X>.pem</code>。</p><p>可以开始最后的操作：
+<a href=/mongodb-om-tls-auth/ title=Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权
+</a>。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/kubernetes/>Kubernetes
+</a><a href=/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/tags/tls/>TLS
+</a><a href=/tags/openssl/>openssl</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/mongodb-om-tls-auth/ rel=next title=Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权><i class="fa fa-chevron-left"></i> Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a></div><div class="post-nav-prev post-nav-item"><a href=/mongodb-om-expose-services/ rel=prev title=Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-om-self-signed-certificates/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-self-signed-certificates","permalink":"https://finisky.github.io/mongodb-om-self-signed-certificates/","title":"Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

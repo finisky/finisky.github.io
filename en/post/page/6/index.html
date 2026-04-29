@@ -1,0 +1,848 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Posts"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="NLP, LLM, LLM Agent, AI, Machine Learning, Software Engineering, Product Design"><meta property="og:type" content="website"><meta property="og:title" content="Posts"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/post/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/post/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/post/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>post - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-overview-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner index posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/cleanup-tmp/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Clean .com.google.Chrome.* in /tmp"><meta itemprop=description content='Recently, I found there were huge amount of files named .com.google.Chrome.* be created in my /tmp folder. Obviously the culprit is Chrome. However, after some research no solution is found to prevent Chrome creating these garbage.
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+
+
+/tmp$ du -csh .com.google.Chrome.*
+
+8.0K    .com.google.Chrome.00OKwD
+104K    .com.google.Chrome.013jYf
+172K    .com.google.Chrome.015x5t
+...
+48K     .com.google.Chrome.Zytrhf
+16K     .com.google.Chrome.zz233G
+36K     .com.google.Chrome.ZzrsZY
+163M    total
+/tmp$  find /tmp -name ".com.google.Chrome*" -ls| wc -l
+3468
+
+
+
+Update 2020/12/12
+I found there are lots of .com.google.Chrome.* files in /tmp/snap.chromium/tmp :-( . Look at the ncdu results:'></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/cleanup-tmp/ itemprop=url class=post-title-link>Clean .com.google.Chrome.* in /tmp</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-03-31 17:52:51 +08:00" itemprop="dateCreated datePublished" datetime="2020-03-31 17:52:51 +0800 CST">2020-03-31
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/cleanup-tmp/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/cleanup-tmp/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Recently, I found there were huge amount of files named <code>.com.google.Chrome.*</code> be created in my /tmp folder. Obviously the culprit is Chrome. However, after some research no solution is found to prevent Chrome creating these garbage.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>/tmp$ du -csh .com.google.Chrome.*
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>8.0K    .com.google.Chrome.00OKwD
+</span></span><span class=line><span class=cl>104K    .com.google.Chrome.013jYf
+</span></span><span class=line><span class=cl>172K    .com.google.Chrome.015x5t
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>48K     .com.google.Chrome.Zytrhf
+</span></span><span class=line><span class=cl>16K     .com.google.Chrome.zz233G
+</span></span><span class=line><span class=cl>36K     .com.google.Chrome.ZzrsZY
+</span></span><span class=line><span class=cl>163M    total
+</span></span><span class=line><span class=cl>/tmp$  find /tmp -name <span class=s2>&#34;.com.google.Chrome*&#34;</span> -ls<span class=p>|</span> wc -l
+</span></span><span class=line><span class=cl><span class=m>3468</span></span></span></code></pre></td></tr></table></div></div><p><strong>Update 2020/12/12</strong>
+I found there are lots of <code>.com.google.Chrome.*</code> files in <code>/tmp/snap.chromium/tmp</code> :-( . Look at the <code>ncdu </code>results:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/cleanup-tmp/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/tmp-folder-explosion/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="A start job is running for Create Volatile Files and Directories"><meta itemprop=description content="Yesterday, when I login to my VM I found that the disk is full. Even a tab command completion cannot be done. I immediately delete some unused files and the system works. However, when I reboot the system, it stucked at A start job is running for Create Volatile Files and Directories...:
+
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+
+
+...
+[  OK  ] Started File System Check on /dev/disk/cloud/azure_resource-part1.
+[  OK  ] Started File System Check Daemon to report status.
+[  OK  ] Started File System Check on /dev/d…5d996-7436-4ec8-b5d6-0d7b6100aeb5.
+         Mounting /data...
+[  OK  ] Mounted /data.
+[  OK  ] Reached target Local File Systems.
+         Starting AppArmor initialization...
+         Starting ebtables ruleset management...
+         Starting Tell Plymouth To Write Out Runtime Data...
+         Starting Set console font and keymap...
+[  OK  ] Started Set console font and keymap.
+[  OK  ] Started Tell Plymouth To Write Out Runtime Data.
+[  OK  ] Started ebtables ruleset management.
+[  OK  ] Started Flush Journal to Persistent Storage.
+         Starting Create Volatile Files and Directories...
+[  OK  ] Started AppArmor initialization.
+[    **] A start job is running for Create V… Directories (13min 46s / no limit)
+
+
+
+I searched and found a similar discussion:
+
+
+    # Boot stuck at “A start job is running for Create Volatile Files and Directories”
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/tmp-folder-explosion/ itemprop=url class=post-title-link>A start job is running for Create Volatile Files and Directories</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-03-29 13:01:16 +08:00" itemprop="dateCreated datePublished" datetime="2020-03-29 13:01:16 +0800 CST">2020-03-29
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>3min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/tmp-folder-explosion/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/tmp-folder-explosion/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Yesterday, when I login to my VM I found that the disk is full. Even a tab command completion cannot be done. I immediately delete some unused files and the system works. However, when I reboot the system, it stucked at <code>A start job is running for Create Volatile Files and Directories...</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>[  OK  ] Started File System Check on /dev/disk/cloud/azure_resource-part1.
+</span></span><span class=line><span class=cl>[  OK  ] Started File System Check Daemon to report status.
+</span></span><span class=line><span class=cl>[  OK  ] Started File System Check on /dev/d…5d996-7436-4ec8-b5d6-0d7b6100aeb5.
+</span></span><span class=line><span class=cl>         Mounting /data...
+</span></span><span class=line><span class=cl>[  OK  ] Mounted /data.
+</span></span><span class=line><span class=cl>[  OK  ] Reached target Local File Systems.
+</span></span><span class=line><span class=cl>         Starting AppArmor initialization...
+</span></span><span class=line><span class=cl>         Starting ebtables ruleset management...
+</span></span><span class=line><span class=cl>         Starting Tell Plymouth To Write Out Runtime Data...
+</span></span><span class=line><span class=cl>         Starting Set console font and keymap...
+</span></span><span class=line><span class=cl>[  OK  ] Started Set console font and keymap.
+</span></span><span class=line><span class=cl>[  OK  ] Started Tell Plymouth To Write Out Runtime Data.
+</span></span><span class=line><span class=cl>[  OK  ] Started ebtables ruleset management.
+</span></span><span class=line><span class=cl>[  OK  ] Started Flush Journal to Persistent Storage.
+</span></span><span class=line><span class=cl>         Starting Create Volatile Files and Directories...
+</span></span><span class=line><span class=cl>[  OK  ] Started AppArmor initialization.
+</span></span><span class=line><span class=cl>[    **] A start job is running for Create V… Directories (13min 46s / no limit)</span></span></code></pre></td></tr></table></div></div><p>I searched and found a similar discussion:
+<a href=https://serverfault.com/questions/987488/boot-stuck-at-a-start-job-is-running-for-create-volatile-files-and-directories title="# Boot stuck at “A start job is running for Create Volatile Files and Directories”" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Boot stuck at “A start job is running for Create Volatile Files and Directories”
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/tmp-folder-explosion/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/server-refused-our-key/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="SSH Server Refused Our Key"><meta itemprop=description content="After I changed the HOME folder to another place, I copied the ssh config folder from old HOME to the new place. Supposedly it should directly work, right? However, when I login the server with my private key, the server said: &ldquo;Server Refused Our Key&rdquo;&mldr;
+
+I spent some time to figure out the problem: new HOME folder access mode issue, it SHOULD NOT have write access for group."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/server-refused-our-key/ itemprop=url class=post-title-link>SSH Server Refused Our Key</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-03-28 17:48:55 +08:00" itemprop="dateCreated datePublished" datetime="2020-03-28 17:48:55 +0800 CST">2020-03-28
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/server-refused-our-key/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/server-refused-our-key/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>After I changed the HOME folder to another place, I copied the ssh config folder from old HOME to the new place. Supposedly it should directly work, right? However, when I login the server with my private key, the server said: &ldquo;Server Refused Our Key&rdquo;&mldr;</p><p>I spent some time to figure out the problem: new HOME folder access mode issue, it SHOULD NOT have write access for group.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/server-refused-our-key/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/resolve-class-collection-in-unity-config/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Resolve a Collection of Customized Class in UnityConfig"><meta itemprop=description content="Unity supports three ways of registering types:
+
+Instance registration
+Type registration
+Factory registration
+
+Typically, Instance registration and Type registration resolve dependencies through ResolvedParameter<T>, while Factory registration resolve dependencies by a factory delegate. In practice, when you want to resolve a List<T> or Dictionary<T1, T2>, Factory registration is what you want. Let&rsquo;s go through how to resolve a collection of customized classes.
+
+Animal Example
+
+Start with example, assume we have an IAnimal interface which has two implementations. There is a Zoo class which accept List<IAnimal> as the parameter:"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/resolve-class-collection-in-unity-config/ itemprop=url class=post-title-link>Resolve a Collection of Customized Class in UnityConfig</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-03-02 19:45:23 +08:00" itemprop="dateCreated datePublished" datetime="2020-03-02 19:45:23 +0800 CST">2020-03-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>5min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/resolve-class-collection-in-unity-config/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/resolve-class-collection-in-unity-config/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Unity supports three ways of registering types:</p><ul><li>Instance registration</li><li>Type registration</li><li>Factory registration</li></ul><p>Typically, Instance registration and Type registration resolve dependencies through <code>ResolvedParameter&lt;T></code>, while Factory registration resolve dependencies by a factory delegate. In practice, when you want to resolve a <code>List&lt;T></code> or <code>Dictionary&lt;T1, T2></code>, Factory registration is what you want. Let&rsquo;s go through how to resolve a collection of customized classes.</p><h1 id=animal-example>Animal Example
+<a class=header-anchor href=#animal-example></a></h1><p>Start with example, assume we have an IAnimal interface which has two implementations. There is a Zoo class which accept <code>List&lt;IAnimal></code> as the parameter:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/resolve-class-collection-in-unity-config/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/vs-net-core-load-failed/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="VS2017 .NET Core Projects Load Failed"><meta itemprop=description content="If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear:
+
+  
+    The current .NET SDK does not support targeting .NET Standard 2.0.  Either target .NET Standard 1.6 or lower, or use a version of the .NET SDK that supports .NET Standard 2.0.	XXXProject	C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\Sdks\Microsoft.NET.Sdk\build\Microsoft.NET.TargetFrameworkInference.targets
+
+  
+Another related issue is .NET Core project load failed. Both errors point out that the corresponding .NET SDK is missing."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/vs-net-core-load-failed/ itemprop=url class=post-title-link>VS2017 .NET Core Projects Load Failed</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-01-25 12:29:58 +08:00" itemprop="dateCreated datePublished" datetime="2020-01-25 12:29:58 +0800 CST">2020-01-25
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>3min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/vs-net-core-load-failed/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/vs-net-core-load-failed/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>If you use Visual Studio 2017 and create an .NET Core projects the first time, the following errors might appear:</p><blockquote><p>The current .NET SDK does not support targeting .NET Standard 2.0. Either target .NET Standard 1.6 or lower, or use a version of the .NET SDK that supports .NET Standard 2.0. XXXProject C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\Sdks\Microsoft.NET.Sdk\build\Microsoft.NET.TargetFrameworkInference.targets</p></blockquote><p>Another related issue is .NET Core project load failed. Both errors point out that the corresponding .NET SDK is missing.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/vs-net-core-load-failed/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/memory-metrics/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Memory Related Metrics in C#"><meta itemprop=description content="Recently we use Grafana to monitor ASP.NET Core apps. We have an interesting observation that sometimes the &ldquo;allocated memory&rdquo; is larger than &ldquo;working set&rdquo;. After investigation, we found the root cause is that the app uses native dlls which operates on unmanaged memory which is not managed by GC. Therefore, how to correctly collect memory related metrics in C#?
+We will explain these related concepts in this post.
+
+Basic Concepts
+
+Managed vs Unmanaged Code
+
+
+
+    # What is &ldquo;managed code&rdquo;?
+    
+    
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/memory-metrics/ itemprop=url class=post-title-link>Memory Related Metrics in C#</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-01-22 19:41:32 +08:00" itemprop="dateCreated datePublished" datetime="2020-01-22 19:41:32 +0800 CST">2020-01-22
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>4min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/memory-metrics/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/memory-metrics/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Recently we use Grafana to monitor ASP.NET Core apps. We have an interesting observation that sometimes the &ldquo;allocated memory&rdquo; is larger than &ldquo;working set&rdquo;. After investigation, we found the root cause is that the app uses native dlls which operates on unmanaged memory which is not managed by GC. Therefore, how to correctly collect memory related metrics in C#?</p><p>We will explain these related concepts in this post.</p><h1 id=basic-concepts>Basic Concepts
+<a class=header-anchor href=#basic-concepts></a></h1><h2 id=managed-vs-unmanaged-code>Managed vs Unmanaged Code
+<a class=header-anchor href=#managed-vs-unmanaged-code></a></h2><p><a href=https://docs.microsoft.com/en-us/dotnet/standard/managed-code title="# What is &ldquo;managed code&rdquo;?" rel="noopener external nofollow noreferrer" target=_blank class=exturl># What is &ldquo;managed code&rdquo;?
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/memory-metrics/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/class-advice-impossible/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="TypeError Class advice impossible in Python3"><meta itemprop=description content='The error looks like this:
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+
+
+$ python test.py
+Traceback (most recent call last):
+  File "test.py", line 3, in <module>
+  ...
+  File "miniconda3/envs/torch/lib/python3.7/site-packages/apex/__init__.py", line 18, in <module>
+    from apex.interfaces import (ApexImplementation,
+  File "miniconda3/envs/torch/lib/python3.7/site-packages/apex/interfaces.py", line 10, in <module>
+    class ApexImplementation(object):
+  File "miniconda3/envs/torch/lib/python3.7/site-packages/apex/interfaces.py", line 14, in ApexImplementation
+    implements(IApex)
+  File "miniconda3/envs/torch/lib/python3.7/site-packages/zope/interface/declarations.py", line 483, in implements
+    raise TypeError(_ADVICE_ERROR % &#39;implementer&#39;)
+TypeError: Class advice impossible in Python3.  Use the @implementer class decorator instead.
+
+
+
+Refer to this issue: 
+
+    https://github.com/NVIDIA/apex/issues/116
+    
+    
+    
+'></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/class-advice-impossible/ itemprop=url class=post-title-link>TypeError Class advice impossible in Python3</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-01-06 18:52:52 +08:00" itemprop="dateCreated datePublished" datetime="2020-01-06 18:52:52 +0800 CST">2020-01-06
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/class-advice-impossible/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/class-advice-impossible/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>The error looks like this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ python test.py
+</span></span><span class=line><span class=cl>Traceback <span class=o>(</span>most recent call last<span class=o>)</span>:
+</span></span><span class=line><span class=cl>  File <span class=s2>&#34;test.py&#34;</span>, line 3, in &lt;module&gt;
+</span></span><span class=line><span class=cl>  ...
+</span></span><span class=line><span class=cl>  File <span class=s2>&#34;miniconda3/envs/torch/lib/python3.7/site-packages/apex/__init__.py&#34;</span>, line 18, in &lt;module&gt;
+</span></span><span class=line><span class=cl>    from apex.interfaces import <span class=o>(</span>ApexImplementation,
+</span></span><span class=line><span class=cl>  File <span class=s2>&#34;miniconda3/envs/torch/lib/python3.7/site-packages/apex/interfaces.py&#34;</span>, line 10, in &lt;module&gt;
+</span></span><span class=line><span class=cl>    class ApexImplementation<span class=o>(</span>object<span class=o>)</span>:
+</span></span><span class=line><span class=cl>  File <span class=s2>&#34;miniconda3/envs/torch/lib/python3.7/site-packages/apex/interfaces.py&#34;</span>, line 14, in ApexImplementation
+</span></span><span class=line><span class=cl>    implements<span class=o>(</span>IApex<span class=o>)</span>
+</span></span><span class=line><span class=cl>  File <span class=s2>&#34;miniconda3/envs/torch/lib/python3.7/site-packages/zope/interface/declarations.py&#34;</span>, line 483, in implements
+</span></span><span class=line><span class=cl>    raise TypeError<span class=o>(</span>_ADVICE_ERROR % <span class=s1>&#39;implementer&#39;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>TypeError: Class advice impossible in Python3.  Use the @implementer class decorator instead.</span></span></code></pre></td></tr></table></div></div><p>Refer to this issue:
+<a href=https://github.com/NVIDIA/apex/issues/116 title=https://github.com/NVIDIA/apex/issues/116 rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/NVIDIA/apex/issues/116
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/class-advice-impossible/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/jupyter-dlopen/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Jupyter dlopen cannot load any more object with static TLS"><meta itemprop=description content="A weird problem that execute &ldquo;import torch&rdquo; in bash works but when you run it in Jupyter notebook:
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+
+
+ImportError Traceback (most recent call last)
+<ipython-input-4-8ba1970b60ce> in <module>
+ 6 import random
+ 7 
+----> 8  import torch
+ 9 import torch.nn as nn
+ 10 
+
+~/miniconda3/envs/tf/lib/python3.6/site-packages/torch/__init__.py in <module>
+ 79 del _dl_flags
+ 80 
+---> 81  from torch._C import *
+ 82 
+ 83 __all__ += [name for name in dir(_C)
+
+ImportError: dlopen: cannot load any more object with static TLS
+
+
+
+
+Seems that it&rsquo;s a compatibility issue. Even though there are a large volume of discussions but none of them works. Ironically, I accidently fixed the issue by resolving another: 
+
+    # RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution
+    
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/jupyter-dlopen/ itemprop=url class=post-title-link>Jupyter dlopen cannot load any more object with static TLS</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-01-06 10:49:23 +08:00" itemprop="dateCreated datePublished" datetime="2020-01-06 10:49:23 +0800 CST">2020-01-06
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/jupyter-dlopen/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/jupyter-dlopen/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>A weird problem that execute &ldquo;import torch&rdquo; in bash works but when you run it in Jupyter notebook:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>ImportError</span> <span class=n>Traceback</span> <span class=p>(</span><span class=n>most</span> <span class=n>recent</span> <span class=n>call</span> <span class=n>last</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=n>ipython</span><span class=o>-</span><span class=n>input</span><span class=o>-</span><span class=mi>4</span><span class=o>-</span><span class=mi>8</span><span class=n>ba1970b60ce</span><span class=o>&gt;</span> <span class=ow>in</span> <span class=o>&lt;</span><span class=n>module</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl> <span class=mi>6</span> <span class=n>import</span> <span class=n>random</span>
+</span></span><span class=line><span class=cl> <span class=mi>7</span> 
+</span></span><span class=line><span class=cl><span class=o>----&gt;</span> <span class=mi>8</span>  <span class=n>import</span> <span class=n>torch</span>
+</span></span><span class=line><span class=cl> <span class=mi>9</span> <span class=n>import</span> <span class=n>torch</span><span class=o>.</span><span class=n>nn</span> <span class=n>as</span> <span class=n>nn</span>
+</span></span><span class=line><span class=cl> <span class=mi>10</span> 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>~/</span><span class=n>miniconda3</span><span class=o>/</span><span class=n>envs</span><span class=o>/</span><span class=n>tf</span><span class=o>/</span><span class=n>lib</span><span class=o>/</span><span class=n>python3</span><span class=o>.</span><span class=mi>6</span><span class=o>/</span><span class=n>site</span><span class=o>-</span><span class=n>packages</span><span class=o>/</span><span class=n>torch</span><span class=o>/</span><span class=n>__init__</span><span class=o>.</span><span class=n>py</span> <span class=ow>in</span> <span class=o>&lt;</span><span class=n>module</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl> <span class=mi>79</span> <span class=n>del</span> <span class=n>_dl_flags</span>
+</span></span><span class=line><span class=cl> <span class=mi>80</span> 
+</span></span><span class=line><span class=cl><span class=o>---&gt;</span> <span class=mi>81</span>  <span class=n>from</span> <span class=n>torch</span><span class=o>.</span><span class=n>_C</span> <span class=n>import</span> <span class=o>*</span>
+</span></span><span class=line><span class=cl> <span class=mi>82</span> 
+</span></span><span class=line><span class=cl> <span class=mi>83</span> <span class=n>__all__</span> <span class=o>+=</span> <span class=p>[</span><span class=n>name</span> <span class=k>for</span> <span class=n>name</span> <span class=ow>in</span> <span class=n>dir</span><span class=p>(</span><span class=n>_C</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>ImportError</span><span class=p>:</span> <span class=n>dlopen</span><span class=p>:</span> <span class=n>cannot</span> <span class=nb>load</span> <span class=n>any</span> <span class=n>more</span> <span class=n>object</span> <span class=n>with</span> <span class=k>static</span> <span class=n>TLS</span></span></span></code></pre></td></tr></table></div></div><p>Seems that it&rsquo;s a compatibility issue. Even though there are a large volume of discussions but none of them works. Ironically, I accidently fixed the issue by resolving another:
+<a href=/en/cudnn-status-execution-failed/ title="# RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution"># RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution</a></p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/jupyter-dlopen/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/cudnn-status-execution-failed/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution"><meta itemprop=description content="
+
+1
+
+
+RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED
+
+
+
+When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work.
+Actually, the root cause is pytorch/cuda/python compatibility issue.
+
+Solution
+
+The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine.
+My environment:
+
+Ubuntu 18.04 LTS
+Python 3.6.9
+PyTorch 1.3.0
+cuda 10.1
+
+This command resolved my issue (PyTorch version really matters! from 1.3.0 to 1.2.0):"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/cudnn-status-execution-failed/ itemprop=url class=post-title-link>RuntimeError cuDNN error CUDNN_STATUS_EXECUTION_FAILED Solution</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-01-03 17:05:21 +08:00" itemprop="dateCreated datePublished" datetime="2020-01-03 17:05:21 +0800 CST">2020-01-03
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/cudnn-status-execution-failed/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/cudnn-status-execution-failed/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED</span></span></code></pre></td></tr></table></div></div><p>When you encountered the above issue and Google it, you will find lots of discussions. Unfortunately, very rare of them are useful and work.</p><p>Actually, the root cause is <strong>pytorch/cuda/python compatibility issue</strong>.</p><h1 id=solution>Solution
+<a class=header-anchor href=#solution></a></h1><p>The solution is straightforward. Simply downgrade pytorch and install a different version of cuda or python would be fine.</p><p>My environment:</p><ol><li>Ubuntu 18.04 LTS</li><li>Python 3.6.9</li><li>PyTorch 1.3.0</li><li>cuda 10.1</li></ol><p>This command resolved my issue (PyTorch version really matters! from 1.3.0 to 1.2.0):</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/cudnn-status-execution-failed/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/k8s-invalid-object/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="invalid object doesn't have additional properties error"><meta itemprop=description content="When I use kubectl to deploy a service:
+
+
+
+1
+
+
+$ kubectl --kubeconfig=C:\Users\xxx\.kube\config apply -f deploy.yaml --namespace=xxx
+
+
+
+a SchemeError was raised:
+
+
+
+1
+
+
+EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v1beta1.RollingUpdateStatefulSetStrategy): invalid object doesn't have additional properties
+
+
+
+
+Seems that the issue is caused by kubectl version mismatch: 
+
+    Install and Set Up kubectl
+    
+    
+    
+
+
+
+
+1
+
+
+You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.2 client should work with v1.1, v1.2, and v1.3 master. Using the latest version of kubectl helps avoid unforeseen issues.
+
+
+
+Follow these steps to resolve the issue:"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/k8s-invalid-object/ itemprop=url class=post-title-link>invalid object doesn't have additional properties error</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-12-31 19:30:23 +08:00" itemprop="dateCreated datePublished" datetime="2019-12-31 19:30:23 +0800 CST">2019-12-31
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/k8s-invalid-object/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/k8s-invalid-object/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>When I use kubectl to deploy a service:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ kubectl --kubeconfig<span class=o>=</span>C:<span class=se>\U</span>sers<span class=se>\x</span>xx<span class=se>\.</span>kube<span class=se>\c</span>onfig apply -f deploy.yaml --namespace<span class=o>=</span>xxx</span></span></code></pre></td></tr></table></div></div><p>a SchemeError was raised:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>EXEC(0,0): Error : SchemaError(io.k8s.api.apps.v1beta1.RollingUpdateStatefulSetStrategy): invalid object doesn&#39;t have additional properties</span></span></code></pre></td></tr></table></div></div><p>Seems that the issue is caused by kubectl version mismatch:
+<a href=https://kubernetes.io/docs/tasks/tools/install-kubectl/#before-you-begin title="Install and Set Up kubectl" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Install and Set Up kubectl
+<i class="fa fa-external-link-alt"></i></a></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.2 client should work with v1.1, v1.2, and v1.3 master. Using the latest version of kubectl helps avoid unforeseen issues.</span></span></code></pre></td></tr></table></div></div><p>Follow these steps to resolve the issue:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/k8s-invalid-object/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/resharper-red-color/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="ReSharper Marked Classes in Red Color Issue"><meta itemprop=description content="I have encountered an issue: solution can be successfully built and run, but lots of classes in the VisualStudio are marked as red color by ReSharper. Clean and rebuild the solution doesn&rsquo;t work. Something like this:
+
+
+    Everything compiles, but Resharper marks everything in red?
+    
+    
+    
+
+
+Clean ReSharper Cache
+
+The following instructions are tested under Resharper Ultimate 2019.2:"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/resharper-red-color/ itemprop=url class=post-title-link>ReSharper Marked Classes in Red Color Issue</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-12-20 20:59:57 +08:00" itemprop="dateCreated datePublished" datetime="2019-12-20 20:59:57 +0800 CST">2019-12-20
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/resharper-red-color/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/resharper-red-color/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>I have encountered an issue: solution can be successfully built and run, but lots of classes in the VisualStudio are marked as red color by ReSharper. Clean and rebuild the solution doesn&rsquo;t work. Something like this:
+<a href=https://stackoverflow.com/questions/6040338/everything-compiles-but-resharper-marks-everything-in-red title="Everything compiles, but Resharper marks everything in red?" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Everything compiles, but Resharper marks everything in red?
+<i class="fa fa-external-link-alt"></i></a></p><h1 id=clean-resharper-cache>Clean ReSharper Cache
+<a class=header-anchor href=#clean-resharper-cache></a></h1><p>The following instructions are tested under Resharper Ultimate 2019.2:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/resharper-red-color/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/update-hexo/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="How to Update Hexo?"><meta itemprop=description content='
+
+    Hexo 4.0.0 has been released
+    
+    
+    
+ on 2019-10-14. How to upgrade it?
+
+Upgrade Hexo
+
+
+Go to the hexo folder
+Modify package.json file, inside &ldquo;dependencies&rdquo; braces:
+
+
+
+
+1
+2
+
+
+-    "hexo": "^3.9.0",
++    "hexo": "^4.0.0",
+
+
+
+UNNECESSARY to change
+
+
+
+1
+2
+3
+
+
+"hexo": {
+    "version": "3.9.0"
+},
+
+
+
+and it will be automatically updated after &ldquo;npm update&rdquo;.
+
+Run
+
+
+
+
+1
+
+
+$ npm update
+
+
+
+Done. Then check the hexo version as below.'></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/update-hexo/ itemprop=url class=post-title-link>How to Update Hexo?</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-11-24 11:13:17 +08:00" itemprop="dateCreated datePublished" datetime="2019-11-24 11:13:17 +0800 CST">2019-11-24
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/hexo/ itemprop=url rel=index><span itemprop=name>Hexo</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/update-hexo/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/update-hexo/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p><a href=https://hexo.io/news/2019/10/14/hexo-4-released/ title="Hexo 4.0.0 has been released" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Hexo 4.0.0 has been released
+<i class="fa fa-external-link-alt"></i>
+</a>on 2019-10-14. How to upgrade it?</p><h1 id=upgrade-hexo>Upgrade Hexo
+<a class=header-anchor href=#upgrade-hexo></a></h1><ol><li>Go to the hexo folder</li><li>Modify package.json file, inside &ldquo;dependencies&rdquo; braces:</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-    &#34;hexo&#34;: &#34;^3.9.0&#34;,
+</span></span><span class=line><span class=cl>+    &#34;hexo&#34;: &#34;^4.0.0&#34;,</span></span></code></pre></td></tr></table></div></div><p>UNNECESSARY to change</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2>2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&#34;hexo&#34;: {
+</span></span><span class=line><span class=cl>    &#34;version&#34;: &#34;3.9.0&#34;
+</span></span><span class=line><span class=cl>},</span></span></code></pre></td></tr></table></div></div><p>and it will be automatically updated after &ldquo;npm update&rdquo;.</p><ol start=3><li>Run</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ npm update</span></span></code></pre></td></tr></table></div></div><p>Done. Then check the hexo version as below.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/update-hexo/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/register-factory-exp/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="C# Unity Replace InjectionFactory by RegisterFactory Example"><meta itemprop=description content='When you use RegisterType or RegisterInstance combined with InjectionFactory in old version of Unity, the following complier warning will be displayed:
+
+  
+    &lsquo;InjectionFactory&rsquo; is obsolete: &lsquo;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(&mldr;) method instead.
+
+  
+
+The code that triggered the warning:
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+
+
+var container = new UnityContainer();
+container.RegisterType<IAnimal, Cat>("Cat", new InjectionConstructor());
+container.RegisterType<IAnimal, Dog>("Dog", new InjectionConstructor());
+
+container.RegisterType<List<IAnimal>>(
+    "AnimalList",
+    new InjectionFactory(
+        m => new List<IAnimal>
+        {
+            m.Resolve<IAnimal>("Cat"),
+            m.Resolve<IAnimal>("Dog"),
+        }
+        )
+);
+
+
+
+The solution is straightforward, follow the instruction and use RegisterFactory instead:'></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/register-factory-exp/ itemprop=url class=post-title-link>C# Unity Replace InjectionFactory by RegisterFactory Example</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-11-19 18:53:10 +08:00" itemprop="dateCreated datePublished" datetime="2019-11-19 18:53:10 +0800 CST">2019-11-19
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/register-factory-exp/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/register-factory-exp/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>When you use RegisterType or RegisterInstance combined with InjectionFactory in old version of Unity, the following complier warning will be displayed:</p><blockquote><p>&lsquo;InjectionFactory&rsquo; is obsolete: &lsquo;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(&mldr;) method instead.</p></blockquote><p>The code that triggered the warning:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>container</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UnityContainer</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Cat</span><span class=p>&gt;(</span><span class=s>&#34;Cat&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>,</span> <span class=n>Dog</span><span class=p>&gt;(</span><span class=s>&#34;Dog&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>InjectionConstructor</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>container</span><span class=p>.</span><span class=n>RegisterType</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;&gt;(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;AnimalList&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>new</span> <span class=n>InjectionFactory</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span> <span class=p>=&gt;</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Cat&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>m</span><span class=p>.</span><span class=n>Resolve</span><span class=p>&lt;</span><span class=n>IAnimal</span><span class=p>&gt;(</span><span class=s>&#34;Dog&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>);</span></span></span></code></pre></td></tr></table></div></div><p>The solution is straightforward, follow the instruction and use RegisterFactory instead:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/register-factory-exp/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/cloud-service-keyset/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content='Azure CloudService Deployment "Keyset does not exist"'><meta itemprop=description content="Deploy Azure cloudservice failed, and Microsoft Azure Activity Log shows the following message：
+
+
+
+1
+2
+3
+4
+
+
+15:45:39 - Checking for Remote Desktop certificate...  
+15:45:40 - Applying Diagnostics extension.  
+15:46:03 - Applying remote desktop protocol (RDP) extension.  
+15:46:03 - Keyset does not exist.
+
+
+
+
+It seems that the problem is caused by the certificate which is used to encrypt the user credentials of RDP.
+First, I found the corresponding certificate in ServiceConfiguration.Cloud.cscfg (hiding the thumbprint):"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/cloud-service-keyset/ itemprop=url class=post-title-link>Azure CloudService Deployment "Keyset does not exist"</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-07-23 18:05:43 +08:00" itemprop="dateCreated datePublished" datetime="2019-07-23 18:05:43 +0800 CST">2019-07-23
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/cloud-service-keyset/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/cloud-service-keyset/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Deploy Azure cloudservice failed, and Microsoft Azure Activity Log shows the following message：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>15:45:39 - Checking for Remote Desktop certificate...  
+</span></span><span class=line><span class=cl>15:45:40 - Applying Diagnostics extension.  
+</span></span><span class=line><span class=cl>15:46:03 - Applying remote desktop protocol (RDP) extension.  
+</span></span><span class=line><span class=cl>15:46:03 - Keyset does not exist.</span></span></code></pre></td></tr></table></div></div><p>It seems that the problem is caused by the certificate which is used to encrypt the user credentials of RDP.</p><p>First, I found the corresponding certificate in ServiceConfiguration.Cloud.cscfg (hiding the thumbprint):</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/cloud-service-keyset/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/ndcg/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="NDCG Metrics & Implementations"><meta itemprop=description content="Intro to NDCG
+
+Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality. Typically, it is used to measure the performance of a ranker and widely adopted in information retrieval. Our goal is to rank relevant documents higher than irrelavant documents. Here comes the problem, given a list of documents with corresponding grades, how to model the ranking quality?
+Concretely, assume we want to rank a list of 5 documents with grades:
+$$G = [3, 1, 2, 0, 2]$$"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/ndcg/ itemprop=url class=post-title-link>NDCG Metrics & Implementations</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-04-24 10:49:10 +08:00" itemprop="dateCreated datePublished" datetime="2019-04-24 10:49:10 +0800 CST">2019-04-24
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>4min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/ndcg/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/ndcg/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><h1 id=intro-to-ndcg>Intro to NDCG
+<a class=header-anchor href=#intro-to-ndcg></a></h1><p>Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality. Typically, it is used to measure the performance of a ranker and widely adopted in information retrieval. Our goal is to rank relevant documents higher than irrelavant documents. Here comes the problem, given a list of documents with corresponding grades, how to model the ranking quality?</p><p>Concretely, assume we want to rank a list of 5 documents with grades:
+$$G = [3, 1, 2, 0, 2]$$</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/ndcg/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/font-awesome-issue/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Fontawesome Icons Show As Blank Squares"><meta itemprop=description content="Description
+
+After deploying the Hexo websites to server, all the NexT icons were shown as blank squares.
+
+
+Analysis
+
+The NexT theme uses 
+
+    Font Awesome
+    
+    
+    
+ to display icons. If the website is started locally, everything is fine. Another interesting point is that the issue exists in Chrome but not IE.
+
+
+Stylish plugin in Chrome. I forced all pages use customized fonts by Stylish. Maybe the font does not contain such icons. However, even I disable the plugin, the issue still exists."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/font-awesome-issue/ itemprop=url class=post-title-link>Fontawesome Icons Show As Blank Squares</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2019-01-24 00:26:02 +08:00" itemprop="dateCreated datePublished" datetime="2019-01-24 00:26:02 +0800 CST">2019-01-24
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/hexo/ itemprop=url rel=index><span itemprop=name>Hexo</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/font-awesome-issue/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/font-awesome-issue/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><h1 id=description>Description
+<a class=header-anchor href=#description></a></h1><p>After deploying the Hexo websites to server, all the NexT icons were shown as blank squares.
+<img src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/fontsquare.png width=40% height=40%></p><h1 id=analysis>Analysis
+<a class=header-anchor href=#analysis></a></h1><p>The NexT theme uses
+<a href=https://fontawesome.com/ title="Font Awesome" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Font Awesome
+<i class="fa fa-external-link-alt"></i>
+</a>to display icons. If the website is started locally, everything is fine. Another interesting point is that the issue exists in Chrome but not IE.</p><ol><li><p>Stylish plugin in Chrome. I forced all pages use customized fonts by Stylish. Maybe the font does not contain such icons. However, even I disable the plugin, the issue still exists.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/font-awesome-issue/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><nav class=pagination><a class="extend prev" rel=prev href=/en/post/page/5/><i class="fa fa-angle-left"></i>
+</a><a class=page-number href=/en/post/>1</a>
+<a class=page-number href=/en/post/page/2/>2</a>
+<a class=page-number href=/en/post/page/3/>3</a>
+<a class=page-number href=/en/post/page/4/>4</a>
+<a class=page-number href=/en/post/page/5/>5</a>
+<span class="page-number current">6</span></nav></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/post/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"comments":true,"expired":false,"isHome":false,"isPage":false,"path":"post","permalink":"https://finisky.github.io/en/post/","title":"Posts","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script></body></html>

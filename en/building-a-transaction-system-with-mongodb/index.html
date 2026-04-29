@@ -1,0 +1,1203 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Building a Transaction System with MongoDB"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,C#"><meta property="og:type" content="article"><meta property="og:title" content="Building a Transaction System with MongoDB"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/building-a-transaction-system-with-mongodb/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2024-11-24 12:58:00 +0800 CST"><meta property="article:modified_time" content="2024-11-24 12:58:00 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/building-a-transaction-system-with-mongodb/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/building-a-transaction-system-with-mongodb/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Building a Transaction System with MongoDB - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#problem-statement-and-challenges>Problem Statement and Challenges</a></li><li><a href=#data-modeling>Data Modeling</a></li><li><a href=#system-implementation>System Implementation</a><ul><li><a href=#createaccount-api>CreateAccount API</a></li><li><a href=#getbalance-api>GetBalance API</a></li><li><a href=#addbalance--decreasebalance-api>AddBalance & DecreaseBalance API</a></li><li><a href=#gettransactionbytid--gettransactions-api>GetTransactionByTid & GetTransactions API</a></li><li><a href=#recharge-api>Recharge API</a></li><li><a href=#purchase-api>Purchase API</a></li><li><a href=#indexes-and-shard-keys>Indexes and Shard Keys</a></li></ul></li><li><a href=#test-code>Test Code</a></li><li><a href=#full-demo>Full Demo</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/building-large-scale-social-network-graphs-with-mongodb/>Building Large-Scale Social Network Graphs with MongoDB</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/solving-double-spending-with-mongodb/>Solving Double-Spending with MongoDB: Transactions vs. Versioning</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-endless-retry/>MongoDB Transaction BulkWrite Endless Retry</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-slave-sync/>MongoDB Master-Slave Replication by Change Stream</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-strongly-typed-collection-example/>MongoDB Strongly-Typed Collection Usage Example</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/building-a-transaction-system-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Building a Transaction System with MongoDB"><meta itemprop=description content="Transaction systems are at the heart of modern commerce and financial activities, spanning a wide range of scenarios from e-commerce order processing to real-time settlements in financial institutions. Such systems demand high concurrency handling, real-time data storage, and efficient retrieval capabilities, all while balancing data consistency and performance. As transaction data continues to grow in scale and complexity, traditional transaction system architectures often struggle to meet these challenges due to rigid table structures and limited horizontal scalability.
+MongoDB, as a distributed document-oriented database, provides a modern solution for building complex and efficient transaction systems. With its flexible schema design, high throughput capabilities, and built-in transaction support, MongoDB addresses diverse business needs effectively."></span><header class=post-header><h1 class=post-title itemprop="name headline">Building a Transaction System with MongoDB</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-24 12:58:00 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-24 12:58:00 +0800 CST">2024-11-24
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>18min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/building-a-transaction-system-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/building-a-transaction-system-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Transaction systems are at the heart of modern commerce and financial activities, spanning a wide range of scenarios from e-commerce order processing to real-time settlements in financial institutions. Such systems demand high concurrency handling, real-time data storage, and efficient retrieval capabilities, all while balancing data consistency and performance. As transaction data continues to grow in scale and complexity, traditional transaction system architectures often struggle to meet these challenges due to rigid table structures and limited horizontal scalability.</p><p>MongoDB, as a distributed document-oriented database, provides a modern solution for building complex and efficient transaction systems. With its flexible schema design, high throughput capabilities, and built-in transaction support, MongoDB addresses diverse business needs effectively.</p><a id=more></a><h1 id=problem-statement-and-challenges>Problem Statement and Challenges
+<a class=header-anchor href=#problem-statement-and-challenges></a></h1><p>The core functionalities of a transaction system include account management, balance inquiry, recharge, purchase, and managing and querying transaction records. For instance, the following illustrates how a user&rsquo;s account balance is displayed:</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/getbalance.jpg alt></p><p>Displays the user&rsquo;s transaction history:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/gettransaction.jpg alt></p><p>Building an efficient and reliable modern transaction system involves tackling several key challenges:</p><ol><li><p><strong>High Concurrency</strong>
+Transaction systems must handle large-scale concurrent requests, particularly in domains like finance and e-commerce, where users frequently perform transactions, balance inquiries, and other operations simultaneously. Failure to support high concurrency can result in delayed responses or even system crashes.</p></li><li><p><strong>Data Consistency and Transaction Management</strong>
+Ensuring data consistency is critical, especially for sensitive operations like account balance updates, transaction records, and purchase. Any inconsistency could lead to financial risks and a loss of user trust. Transaction management in distributed environments adds another layer of complexity.</p></li><li><p><strong>Flexible Data Modeling</strong>
+Traditional relational databases often rely on rigid table structures that struggle to adapt to the complex and evolving business logic of transaction systems. Adding new features often requires significant changes to the data model, leading to high modification costs and potential service disruptions.</p></li><li><p><strong>Real-Time Data Processing and Query Performance</strong>
+With massive transaction volumes, the system must efficiently store, retrieve, and process real-time user queries, such as balance checks and transaction history retrievals. This demands a database with high throughput and lightning-fast query performance.</p></li><li><p><strong>System Scalability</strong>
+As the business grows, the volume of transaction data will continue to expand. The system must support seamless horizontal scaling, ensuring that performance improves linearly as additional servers or storage nodes are added.</p></li></ol><h1 id=data-modeling>Data Modeling
+<a class=header-anchor href=#data-modeling></a></h1><p>To achieve large-scale data storage and high-concurrency read/write capabilities, data modeling is the key challenge. MongoDB&rsquo;s document model is renowned for its flexibility and efficiency, allowing it to easily accommodate the complex and evolving needs of transaction systems.</p><p>The following six APIs define the essential functionalities of the transaction system:</p><ol><li><p><strong><code>api/CreateAccount</code></strong>
+Creates a user account, initializing basic user information and the initial balance.</p></li><li><p><strong><code>api/GetBalance</code></strong>
+Retrieves the account balance, ensuring real-time accuracy and consistency.</p></li><li><p><strong><code>api/GetTransactionById</code></strong>
+Fetches transaction details based on a transaction ID, supporting quick and precise lookups.</p></li><li><p><strong><code>api/GetTransactions</code></strong>
+Retrieves historical transaction records for a specific account, with support for pagination and time-range filtering to handle large-scale data queries.</p></li><li><p><strong><code>api/Recharge</code></strong>
+Processes account recharges, involving transaction handling to ensure synchronized updates to the account balance and transaction records.</p></li><li><p><strong><code>api/Purchase</code></strong>
+Handles purchase operations, ensuring transaction integrity and detailed operation records.</p></li></ol><p>To address the above requirements, two collections are designed to store user account states and detailed transaction information. The two collections are linked through <code>Uuid</code>, enabling efficient queries and updates.</p><ol><li><strong><code>AccountEntry</code></strong> represents the basic account information for each user in the system, with the following key fields:</li></ol><ul><li><p><strong><code>Uuid</code> (string)</strong>
+A unique identifier for each account, used to uniquely locate an account within the system. Globally unique.</p></li><li><p><strong><code>Balance</code> (decimal)</strong>
+The current balance of the account, stored as a precise decimal value to record the total amount of funds available to the user.</p></li></ul><p>The <code>AccountEntry</code> definition:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>AccountEntry</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Balance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><ol start=2><li><strong><code>TransEntry</code></strong> records each transaction in the system and supports various types of operations. The field descriptions are as follows:</li></ol><ul><li><p><strong><code>Tid</code> (string)</strong>
+A unique identifier for each transaction, used to uniquely locate a specific transaction.</p></li><li><p><strong><code>Uuid</code> (string)</strong>
+The unique identifier of the corresponding account, serving as a foreign key linked to <code>AccountEntry</code>, indicating which account this transaction belongs to.</p></li><li><p><strong><code>Amount</code> (decimal)</strong>
+The transaction amount, recording the funds involved in this transaction.</p></li><li><p><strong><code>NewBalance</code> (decimal)</strong>
+A snapshot of the account balance after the transaction is completed, enabling the tracking of fund movements and supporting auditing functionality.</p></li><li><p><strong><code>Type</code> (TransType)</strong>
+An enumeration of transaction types, indicating the nature of the transaction.</p></li></ul><p>The <code>TransEntry</code> definition:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>TransEntry</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>Tid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Amount</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>NewBalance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>TransType</span> <span class=n>Type</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>TransType</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>None</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>Recharge</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>Purchase</span> <span class=p>=</span> <span class=m>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h1 id=system-implementation>System Implementation
+<a class=header-anchor href=#system-implementation></a></h1><p>Here we implement each API and determine the required indexes and shard keys based on actual read and write patterns. The APIs are introduced step-by-step, starting with simpler ones and progressing to more complex implementations.</p><h2 id=createaccount-api>CreateAccount API
+<a class=header-anchor href=#createaccount-api></a></h2><p>The <code>CreateAccount</code> API is straightforward. It does not use transaction processing because the user&rsquo;s <code>Uuid</code> serves as the primary key. If an account with the same <code>Uuid</code> already exists, the insert operation will fail due to the unique constraint.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>cancellationToken</span> <span class=p>=</span> <span class=k>default</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>newAccount</span> <span class=p>=</span> <span class=k>new</span> <span class=n>AccountEntry</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>Uuid</span> <span class=p>=</span> <span class=n>uuid</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>Balance</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span>
+</span></span><span class=line><span class=cl>        <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>newAccount</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>newAccount</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=getbalance-api>GetBalance API
+<a class=header-anchor href=#getbalance-api></a></h2><p>The implementation of retrieving the balance is straightforward. Note that the <code>IClientSessionHandle</code> parameter is optional. When this parameter is provided, it serves as a basic building block of complex transactions：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span><span class=lnt id=hl-3-18><a class=lnlinks href=#hl-3-18>18</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=kt>decimal</span><span class=p>&gt;</span> <span class=n>GetBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span> <span class=p>=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>AccountEntry</span> <span class=n>account</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>s</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>uuid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>uuid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>account</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>KeyNotFoundException</span><span class=p>(</span><span class=s>$&#34;Account &#39;{uuid}&#39; does not exist.&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>account</span><span class=p>.</span><span class=n>Balance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>This API requires <code>Account</code> index：(Uuid).</p><h2 id=addbalance--decreasebalance-api>AddBalance & DecreaseBalance API
+<a class=header-anchor href=#addbalance--decreasebalance-api></a></h2><p>The operations on the balance are also the foundation for constructing subsequent transaction APIs. The implementation of these two APIs uses MongoDB&rsquo;s <code>Inc</code> operator for atomic operations, and they also support transactions. They will not be used independently, as both increasing or decreasing the balance require corresponding transaction records. Therefore, the <code>IClientSessionHandle</code> parameter is mandatory:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span><span class=lnt id=hl-4-11><a class=lnlinks href=#hl-4-11>11</a>
+</span><span class=lnt id=hl-4-12><a class=lnlinks href=#hl-4-12>12</a>
+</span><span class=lnt id=hl-4-13><a class=lnlinks href=#hl-4-13>13</a>
+</span><span class=lnt id=hl-4-14><a class=lnlinks href=#hl-4-14>14</a>
+</span><span class=lnt id=hl-4-15><a class=lnlinks href=#hl-4-15>15</a>
+</span><span class=lnt id=hl-4-16><a class=lnlinks href=#hl-4-16>16</a>
+</span><span class=lnt id=hl-4-17><a class=lnlinks href=#hl-4-17>17</a>
+</span><span class=lnt id=hl-4-18><a class=lnlinks href=#hl-4-18>18</a>
+</span><span class=lnt id=hl-4-19><a class=lnlinks href=#hl-4-19>19</a>
+</span><span class=lnt id=hl-4-20><a class=lnlinks href=#hl-4-20>20</a>
+</span><span class=lnt id=hl-4-21><a class=lnlinks href=#hl-4-21>21</a>
+</span><span class=lnt id=hl-4-22><a class=lnlinks href=#hl-4-22>22</a>
+</span><span class=lnt id=hl-4-23><a class=lnlinks href=#hl-4-23>23</a>
+</span><span class=lnt id=hl-4-24><a class=lnlinks href=#hl-4-24>24</a>
+</span><span class=lnt id=hl-4-25><a class=lnlinks href=#hl-4-25>25</a>
+</span><span class=lnt id=hl-4-26><a class=lnlinks href=#hl-4-26>26</a>
+</span><span class=lnt id=hl-4-27><a class=lnlinks href=#hl-4-27>27</a>
+</span><span class=lnt id=hl-4-28><a class=lnlinks href=#hl-4-28>28</a>
+</span><span class=lnt id=hl-4-29><a class=lnlinks href=#hl-4-29>29</a>
+</span><span class=lnt id=hl-4-30><a class=lnlinks href=#hl-4-30>30</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>AddBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span><span class=p>,</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Gte</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>It is worth mentioning that in our design, the amount in both of these APIs is always a positive number. The advantage of this is that when decreasing the balance, we can include <code>Filter.Gte(x => x.Balance, amount)</code>, which further ensures the correctness of the balance deduction.</p><p>These two APIs require an index on the <code>Account</code> table: <code>(Uuid)</code>.</p><h2 id=gettransactionbytid--gettransactions-api>GetTransactionByTid & GetTransactions API
+<a class=header-anchor href=#gettransactionbytid--gettransactions-api></a></h2><p>Both APIs are simple:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span> <span class=p>=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>s</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Tid</span> <span class=p>==</span> <span class=n>tid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Tid</span> <span class=p>==</span> <span class=n>tid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;&gt;</span> <span class=n>GetTransactionsAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span> <span class=p>=</span> <span class=m>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>SortBy</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>).</span><span class=n>Limit</span><span class=p>(</span><span class=n>n</span><span class=p>).</span><span class=n>ToListAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>These two APIs require an index on the <code>Trans</code> table: (Uuid, CreateTime), (Tid).</p><h2 id=recharge-api>Recharge API
+<a class=header-anchor href=#recharge-api></a></h2><p>Here come the two most complex transaction APIs: <code>Recharge</code> and <code>Purchase</code>. Note that these two APIs not only ensure consistency, but also need to guarantee idempotency, meaning they must support repeated calls without affecting the final result.</p><p>For <code>Recharge</code>, three operations are involved, which require a transaction:</p><ul><li><code>GetTransactionByTid</code>: The caller needs to pass in the <code>Tid</code> to prevent duplicate transactions. Idempotency is ensured by this step. In practical applications, the <code>Tid</code> can be the unique identifier returned by a third-party financial system.</li><li><code>AddBalance</code>: This API was implemented earlier.</li><li><code>InsertTransaction</code>: Adds a recharge transaction record.</li></ul><p>If any of the above three operations fail, MongoDB&rsquo;s transaction can be used to roll back the changes, ensuring strong consistency of the transaction:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25>25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26>26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27>27</a>
+</span><span class=lnt id=hl-6-28><a class=lnlinks href=#hl-6-28>28</a>
+</span><span class=lnt id=hl-6-29><a class=lnlinks href=#hl-6-29>29</a>
+</span><span class=lnt id=hl-6-30><a class=lnlinks href=#hl-6-30>30</a>
+</span><span class=lnt id=hl-6-31><a class=lnlinks href=#hl-6-31>31</a>
+</span><span class=lnt id=hl-6-32><a class=lnlinks href=#hl-6-32>32</a>
+</span><span class=lnt id=hl-6-33><a class=lnlinks href=#hl-6-33>33</a>
+</span><span class=lnt id=hl-6-34><a class=lnlinks href=#hl-6-34>34</a>
+</span><span class=lnt id=hl-6-35><a class=lnlinks href=#hl-6-35>35</a>
+</span><span class=lnt id=hl-6-36><a class=lnlinks href=#hl-6-36>36</a>
+</span><span class=lnt id=hl-6-37><a class=lnlinks href=#hl-6-37>37</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>existingTransEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=n>tid</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>existingTransEntry</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>DuplicateTrans</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newBalanceEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>AddBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>amount</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newTransEntry</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TransEntry</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Uuid</span> <span class=p>=</span> <span class=n>accountId</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Amount</span> <span class=p>=</span> <span class=n>amount</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newBalanceEntry</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Type</span> <span class=p>=</span> <span class=n>TransType</span><span class=p>.</span><span class=n>Recharge</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>newTransEntry</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>NewBalance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Tid</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>Tid</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=purchase-api>Purchase API
+<a class=header-anchor href=#purchase-api></a></h2><p>The implementation of the <code>Purchase</code> API is essentially the same as <code>Recharge</code>, with <code>AddBalance</code> replaced by <code>DecreaseBalance</code>.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span><span class=lnt id=hl-7-18><a class=lnlinks href=#hl-7-18>18</a>
+</span><span class=lnt id=hl-7-19><a class=lnlinks href=#hl-7-19>19</a>
+</span><span class=lnt id=hl-7-20><a class=lnlinks href=#hl-7-20>20</a>
+</span><span class=lnt id=hl-7-21><a class=lnlinks href=#hl-7-21>21</a>
+</span><span class=lnt id=hl-7-22><a class=lnlinks href=#hl-7-22>22</a>
+</span><span class=lnt id=hl-7-23><a class=lnlinks href=#hl-7-23>23</a>
+</span><span class=lnt id=hl-7-24><a class=lnlinks href=#hl-7-24>24</a>
+</span><span class=lnt id=hl-7-25><a class=lnlinks href=#hl-7-25>25</a>
+</span><span class=lnt id=hl-7-26><a class=lnlinks href=#hl-7-26>26</a>
+</span><span class=lnt id=hl-7-27><a class=lnlinks href=#hl-7-27>27</a>
+</span><span class=lnt id=hl-7-28><a class=lnlinks href=#hl-7-28>28</a>
+</span><span class=lnt id=hl-7-29><a class=lnlinks href=#hl-7-29>29</a>
+</span><span class=lnt id=hl-7-30><a class=lnlinks href=#hl-7-30>30</a>
+</span><span class=lnt id=hl-7-31><a class=lnlinks href=#hl-7-31>31</a>
+</span><span class=lnt id=hl-7-32><a class=lnlinks href=#hl-7-32>32</a>
+</span><span class=lnt id=hl-7-33><a class=lnlinks href=#hl-7-33>33</a>
+</span><span class=lnt id=hl-7-34><a class=lnlinks href=#hl-7-34>34</a>
+</span><span class=lnt id=hl-7-35><a class=lnlinks href=#hl-7-35>35</a>
+</span><span class=lnt id=hl-7-36><a class=lnlinks href=#hl-7-36>36</a>
+</span><span class=lnt id=hl-7-37><a class=lnlinks href=#hl-7-37>37</a>
+</span><span class=lnt id=hl-7-38><a class=lnlinks href=#hl-7-38>38</a>
+</span><span class=lnt id=hl-7-39><a class=lnlinks href=#hl-7-39>39</a>
+</span><span class=lnt id=hl-7-40><a class=lnlinks href=#hl-7-40>40</a>
+</span><span class=lnt id=hl-7-41><a class=lnlinks href=#hl-7-41>41</a>
+</span><span class=lnt id=hl-7-42><a class=lnlinks href=#hl-7-42>42</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>PurchaseAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>existingTransEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=n>tid</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>existingTransEntry</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>DuplicateTrans</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newBalanceEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>amount</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>newBalanceEntry</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newTransEntry</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TransEntry</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Uuid</span> <span class=p>=</span> <span class=n>accountId</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Amount</span> <span class=p>=</span> <span class=n>amount</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newBalanceEntry</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Type</span> <span class=p>=</span> <span class=n>TransType</span><span class=p>.</span><span class=n>Purchase</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>newTransEntry</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>NewBalance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Tid</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>Tid</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>In practice, the <code>Purchase</code> API can be modified to incorperate business logic, ensuring consistency between the business logic and the transaction system.</p><h2 id=indexes-and-shard-keys>Indexes and Shard Keys
+<a class=header-anchor href=#indexes-and-shard-keys></a></h2><p>Based on the above implementations and considering the leftmost prefix matching principle, we need one indexe on <code>Account</code>:</p><ul><li>(Uuid)</li></ul><p>Two indexes on <code>Trans</code>：</p><ul><li>(Uuid, CreateTime)</li><li>(Tid)</li></ul><p>Both <code>Account</code> and <code>Trans</code> could use <code>Uuid</code> as the sharding key.</p><h1 id=test-code>Test Code
+<a class=header-anchor href=#test-code></a></h1><p>Create 10 accounts and perform an initial recharge of 1000 for each account. Generate 5 transactions for each account, randomly deciding the transaction type (recharge or purchase), with transaction amounts between 0 and 300. Print the current balance of each account, as well as the details of the last 10 transactions.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span><span class=lnt id=hl-8-13><a class=lnlinks href=#hl-8-13>13</a>
+</span><span class=lnt id=hl-8-14><a class=lnlinks href=#hl-8-14>14</a>
+</span><span class=lnt id=hl-8-15><a class=lnlinks href=#hl-8-15>15</a>
+</span><span class=lnt id=hl-8-16><a class=lnlinks href=#hl-8-16>16</a>
+</span><span class=lnt id=hl-8-17><a class=lnlinks href=#hl-8-17>17</a>
+</span><span class=lnt id=hl-8-18><a class=lnlinks href=#hl-8-18>18</a>
+</span><span class=lnt id=hl-8-19><a class=lnlinks href=#hl-8-19>19</a>
+</span><span class=lnt id=hl-8-20><a class=lnlinks href=#hl-8-20>20</a>
+</span><span class=lnt id=hl-8-21><a class=lnlinks href=#hl-8-21>21</a>
+</span><span class=lnt id=hl-8-22><a class=lnlinks href=#hl-8-22>22</a>
+</span><span class=lnt id=hl-8-23><a class=lnlinks href=#hl-8-23>23</a>
+</span><span class=lnt id=hl-8-24><a class=lnlinks href=#hl-8-24>24</a>
+</span><span class=lnt id=hl-8-25><a class=lnlinks href=#hl-8-25>25</a>
+</span><span class=lnt id=hl-8-26><a class=lnlinks href=#hl-8-26>26</a>
+</span><span class=lnt id=hl-8-27><a class=lnlinks href=#hl-8-27>27</a>
+</span><span class=lnt id=hl-8-28><a class=lnlinks href=#hl-8-28>28</a>
+</span><span class=lnt id=hl-8-29><a class=lnlinks href=#hl-8-29>29</a>
+</span><span class=lnt id=hl-8-30><a class=lnlinks href=#hl-8-30>30</a>
+</span><span class=lnt id=hl-8-31><a class=lnlinks href=#hl-8-31>31</a>
+</span><span class=lnt id=hl-8-32><a class=lnlinks href=#hl-8-32>32</a>
+</span><span class=lnt id=hl-8-33><a class=lnlinks href=#hl-8-33>33</a>
+</span><span class=lnt id=hl-8-34><a class=lnlinks href=#hl-8-34>34</a>
+</span><span class=lnt id=hl-8-35><a class=lnlinks href=#hl-8-35>35</a>
+</span><span class=lnt id=hl-8-36><a class=lnlinks href=#hl-8-36>36</a>
+</span><span class=lnt id=hl-8-37><a class=lnlinks href=#hl-8-37>37</a>
+</span><span class=lnt id=hl-8-38><a class=lnlinks href=#hl-8-38>38</a>
+</span><span class=lnt id=hl-8-39><a class=lnlinks href=#hl-8-39>39</a>
+</span><span class=lnt id=hl-8-40><a class=lnlinks href=#hl-8-40>40</a>
+</span><span class=lnt id=hl-8-41><a class=lnlinks href=#hl-8-41>41</a>
+</span><span class=lnt id=hl-8-42><a class=lnlinks href=#hl-8-42>42</a>
+</span><span class=lnt id=hl-8-43><a class=lnlinks href=#hl-8-43>43</a>
+</span><span class=lnt id=hl-8-44><a class=lnlinks href=#hl-8-44>44</a>
+</span><span class=lnt id=hl-8-45><a class=lnlinks href=#hl-8-45>45</a>
+</span><span class=lnt id=hl-8-46><a class=lnlinks href=#hl-8-46>46</a>
+</span><span class=lnt id=hl-8-47><a class=lnlinks href=#hl-8-47>47</a>
+</span><span class=lnt id=hl-8-48><a class=lnlinks href=#hl-8-48>48</a>
+</span><span class=lnt id=hl-8-49><a class=lnlinks href=#hl-8-49>49</a>
+</span><span class=lnt id=hl-8-50><a class=lnlinks href=#hl-8-50>50</a>
+</span><span class=lnt id=hl-8-51><a class=lnlinks href=#hl-8-51>51</a>
+</span><span class=lnt id=hl-8-52><a class=lnlinks href=#hl-8-52>52</a>
+</span><span class=lnt id=hl-8-53><a class=lnlinks href=#hl-8-53>53</a>
+</span><span class=lnt id=hl-8-54><a class=lnlinks href=#hl-8-54>54</a>
+</span><span class=lnt id=hl-8-55><a class=lnlinks href=#hl-8-55>55</a>
+</span><span class=lnt id=hl-8-56><a class=lnlinks href=#hl-8-56>56</a>
+</span><span class=lnt id=hl-8-57><a class=lnlinks href=#hl-8-57>57</a>
+</span><span class=lnt id=hl-8-58><a class=lnlinks href=#hl-8-58>58</a>
+</span><span class=lnt id=hl-8-59><a class=lnlinks href=#hl-8-59>59</a>
+</span><span class=lnt id=hl-8-60><a class=lnlinks href=#hl-8-60>60</a>
+</span><span class=lnt id=hl-8-61><a class=lnlinks href=#hl-8-61>61</a>
+</span><span class=lnt id=hl-8-62><a class=lnlinks href=#hl-8-62>62</a>
+</span><span class=lnt id=hl-8-63><a class=lnlinks href=#hl-8-63>63</a>
+</span><span class=lnt id=hl-8-64><a class=lnlinks href=#hl-8-64>64</a>
+</span><span class=lnt id=hl-8-65><a class=lnlinks href=#hl-8-65>65</a>
+</span><span class=lnt id=hl-8-66><a class=lnlinks href=#hl-8-66>66</a>
+</span><span class=lnt id=hl-8-67><a class=lnlinks href=#hl-8-67>67</a>
+</span><span class=lnt id=hl-8-68><a class=lnlinks href=#hl-8-68>68</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>random</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Random</span><span class=p>(</span><span class=m>42</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// Create 10 accounts</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>accountIds</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>10</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>accountId</span> <span class=p>=</span> <span class=n>GenerateAccountUuid</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>accountIds</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>account</span><span class=p>.</span><span class=n>Uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=n>account</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>GenerateTid</span><span class=p>(),</span> <span class=m>1000</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Created account {account.Uuid} with initial balance of 1000.&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------------------------------------------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>accountId</span> <span class=k>in</span> <span class=n>accountIds</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>5</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>isRecharge</span> <span class=p>=</span> <span class=n>random</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=m>0</span><span class=p>,</span> <span class=m>2</span><span class=p>)</span> <span class=p>==</span> <span class=m>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>amount</span> <span class=p>=</span> <span class=p>(</span><span class=kt>decimal</span><span class=p>)(</span><span class=n>random</span><span class=p>.</span><span class=n>NextDouble</span><span class=p>()</span> <span class=p>*</span> <span class=m>300</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>isRecharge</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>tid</span><span class=p>,</span> <span class=n>amount</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>result</span><span class=p>.</span><span class=n>Code</span> <span class=p>==</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>Success</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Recharge: Account {accountId}, Amount: {Math.Round(amount, 2)}, New Balance: {Math.Round(result.NewBalance, 2)}, Tid: {tid}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=k>else</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Recharge failed: {result.Code}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>else</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>PurchaseAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>tid</span><span class=p>,</span> <span class=n>amount</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>result</span><span class=p>.</span><span class=n>Code</span> <span class=p>==</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>Success</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Purchase: Account {accountId}, Amount: {Math.Round(amount, 2)}, New Balance: {Math.Round(result.NewBalance, 2)}, Tid: {tid}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=k>else</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Purchase failed: {result.Code}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------------------------------------------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>accountId</span> <span class=k>in</span> <span class=n>accountIds</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>balance</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span><span class=p>.</span><span class=n>None</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>transactions</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionsAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span><span class=p>.</span><span class=n>None</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Account {accountId} Balance: {Math.Round(balance, 2)}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Recent Transactions:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>transaction</span> <span class=k>in</span> <span class=n>transactions</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Tid: {transaction.Tid}, Type: {transaction.Type}, Amount: {Math.Round(transaction.Amount, 2)}, New Balance: {Math.Round(transaction.NewBalance, 2)}, Time: {transaction.CreateTime}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;****************************************************************************&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Some results:</p><blockquote><p>Account Acc_BE2E2B2FD3A2490CBEEA9625C3BD7C18 Balance: 1267.83
+Recent Transactions:
+Tid: T_6DA267BECAC945E2973903C7EE36C599, Type: Recharge, Amount: 1000, New Balance: 1000, Time: 11/24/2024 4:00:42 AM
+Tid: T_6BB3C3B2E9CD4197B609957C2937D218, Type: Purchase, Amount: 42.27, New Balance: 957.73, Time: 11/24/2024 4:00:43 AM
+Tid: T_0D63FB52BCBF4FF382D7C611252329F4, Type: Recharge, Amount: 156.83, New Balance: 1114.56, Time: 11/24/2024 4:00:43 AM
+Tid: T_30201F58B3AA4BD6B14C4B9DC0A20272, Type: Recharge, Amount: 78.78, New Balance: 1193.33, Time: 11/24/2024 4:00:43 AM
+Tid: T_42837124561748BFBECA1677FD951338, Type: Purchase, Amount: 153.88, New Balance: 1039.46, Time: 11/24/2024 4:00:43 AM
+Tid: T_16DC47F772814D4A8A3E1DBCF26B661D, Type: Recharge, Amount: 228.38, New Balance: 1267.83, Time: 11/24/2024 4:00:43 AM</p></blockquote><p>Connect to the database deployed on MongoDB Atlas using MongoDB Compass:</p><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/transentries.png alt></p><p>In this post, we provide complete account management and transaction support functions based on MongoDB, making it suitable for small to medium-sized transaction systems. It is also easily extendable to more complex application scenarios, such as multi-currency support and international payments. Each functional module works together through transactions, filters, and idempotency handling to build a secure, efficient, and scalable transaction system framework.</p><p>This design meets the practical business needs of high concurrency, data consistency, and complex transactions, while also providing clear error handling pathways for easier maintenance and expansion.</p><h1 id=full-demo>Full Demo
+<a class=header-anchor href=#full-demo></a></h1><p>Fill the <code>ConnectionString</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>  1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>  2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>  3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4>  4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5>  5</a>
+</span><span class=lnt id=hl-9-6><a class=lnlinks href=#hl-9-6>  6</a>
+</span><span class=lnt id=hl-9-7><a class=lnlinks href=#hl-9-7>  7</a>
+</span><span class=lnt id=hl-9-8><a class=lnlinks href=#hl-9-8>  8</a>
+</span><span class=lnt id=hl-9-9><a class=lnlinks href=#hl-9-9>  9</a>
+</span><span class=lnt id=hl-9-10><a class=lnlinks href=#hl-9-10> 10</a>
+</span><span class=lnt id=hl-9-11><a class=lnlinks href=#hl-9-11> 11</a>
+</span><span class=lnt id=hl-9-12><a class=lnlinks href=#hl-9-12> 12</a>
+</span><span class=lnt id=hl-9-13><a class=lnlinks href=#hl-9-13> 13</a>
+</span><span class=lnt id=hl-9-14><a class=lnlinks href=#hl-9-14> 14</a>
+</span><span class=lnt id=hl-9-15><a class=lnlinks href=#hl-9-15> 15</a>
+</span><span class=lnt id=hl-9-16><a class=lnlinks href=#hl-9-16> 16</a>
+</span><span class=lnt id=hl-9-17><a class=lnlinks href=#hl-9-17> 17</a>
+</span><span class=lnt id=hl-9-18><a class=lnlinks href=#hl-9-18> 18</a>
+</span><span class=lnt id=hl-9-19><a class=lnlinks href=#hl-9-19> 19</a>
+</span><span class=lnt id=hl-9-20><a class=lnlinks href=#hl-9-20> 20</a>
+</span><span class=lnt id=hl-9-21><a class=lnlinks href=#hl-9-21> 21</a>
+</span><span class=lnt id=hl-9-22><a class=lnlinks href=#hl-9-22> 22</a>
+</span><span class=lnt id=hl-9-23><a class=lnlinks href=#hl-9-23> 23</a>
+</span><span class=lnt id=hl-9-24><a class=lnlinks href=#hl-9-24> 24</a>
+</span><span class=lnt id=hl-9-25><a class=lnlinks href=#hl-9-25> 25</a>
+</span><span class=lnt id=hl-9-26><a class=lnlinks href=#hl-9-26> 26</a>
+</span><span class=lnt id=hl-9-27><a class=lnlinks href=#hl-9-27> 27</a>
+</span><span class=lnt id=hl-9-28><a class=lnlinks href=#hl-9-28> 28</a>
+</span><span class=lnt id=hl-9-29><a class=lnlinks href=#hl-9-29> 29</a>
+</span><span class=lnt id=hl-9-30><a class=lnlinks href=#hl-9-30> 30</a>
+</span><span class=lnt id=hl-9-31><a class=lnlinks href=#hl-9-31> 31</a>
+</span><span class=lnt id=hl-9-32><a class=lnlinks href=#hl-9-32> 32</a>
+</span><span class=lnt id=hl-9-33><a class=lnlinks href=#hl-9-33> 33</a>
+</span><span class=lnt id=hl-9-34><a class=lnlinks href=#hl-9-34> 34</a>
+</span><span class=lnt id=hl-9-35><a class=lnlinks href=#hl-9-35> 35</a>
+</span><span class=lnt id=hl-9-36><a class=lnlinks href=#hl-9-36> 36</a>
+</span><span class=lnt id=hl-9-37><a class=lnlinks href=#hl-9-37> 37</a>
+</span><span class=lnt id=hl-9-38><a class=lnlinks href=#hl-9-38> 38</a>
+</span><span class=lnt id=hl-9-39><a class=lnlinks href=#hl-9-39> 39</a>
+</span><span class=lnt id=hl-9-40><a class=lnlinks href=#hl-9-40> 40</a>
+</span><span class=lnt id=hl-9-41><a class=lnlinks href=#hl-9-41> 41</a>
+</span><span class=lnt id=hl-9-42><a class=lnlinks href=#hl-9-42> 42</a>
+</span><span class=lnt id=hl-9-43><a class=lnlinks href=#hl-9-43> 43</a>
+</span><span class=lnt id=hl-9-44><a class=lnlinks href=#hl-9-44> 44</a>
+</span><span class=lnt id=hl-9-45><a class=lnlinks href=#hl-9-45> 45</a>
+</span><span class=lnt id=hl-9-46><a class=lnlinks href=#hl-9-46> 46</a>
+</span><span class=lnt id=hl-9-47><a class=lnlinks href=#hl-9-47> 47</a>
+</span><span class=lnt id=hl-9-48><a class=lnlinks href=#hl-9-48> 48</a>
+</span><span class=lnt id=hl-9-49><a class=lnlinks href=#hl-9-49> 49</a>
+</span><span class=lnt id=hl-9-50><a class=lnlinks href=#hl-9-50> 50</a>
+</span><span class=lnt id=hl-9-51><a class=lnlinks href=#hl-9-51> 51</a>
+</span><span class=lnt id=hl-9-52><a class=lnlinks href=#hl-9-52> 52</a>
+</span><span class=lnt id=hl-9-53><a class=lnlinks href=#hl-9-53> 53</a>
+</span><span class=lnt id=hl-9-54><a class=lnlinks href=#hl-9-54> 54</a>
+</span><span class=lnt id=hl-9-55><a class=lnlinks href=#hl-9-55> 55</a>
+</span><span class=lnt id=hl-9-56><a class=lnlinks href=#hl-9-56> 56</a>
+</span><span class=lnt id=hl-9-57><a class=lnlinks href=#hl-9-57> 57</a>
+</span><span class=lnt id=hl-9-58><a class=lnlinks href=#hl-9-58> 58</a>
+</span><span class=lnt id=hl-9-59><a class=lnlinks href=#hl-9-59> 59</a>
+</span><span class=lnt id=hl-9-60><a class=lnlinks href=#hl-9-60> 60</a>
+</span><span class=lnt id=hl-9-61><a class=lnlinks href=#hl-9-61> 61</a>
+</span><span class=lnt id=hl-9-62><a class=lnlinks href=#hl-9-62> 62</a>
+</span><span class=lnt id=hl-9-63><a class=lnlinks href=#hl-9-63> 63</a>
+</span><span class=lnt id=hl-9-64><a class=lnlinks href=#hl-9-64> 64</a>
+</span><span class=lnt id=hl-9-65><a class=lnlinks href=#hl-9-65> 65</a>
+</span><span class=lnt id=hl-9-66><a class=lnlinks href=#hl-9-66> 66</a>
+</span><span class=lnt id=hl-9-67><a class=lnlinks href=#hl-9-67> 67</a>
+</span><span class=lnt id=hl-9-68><a class=lnlinks href=#hl-9-68> 68</a>
+</span><span class=lnt id=hl-9-69><a class=lnlinks href=#hl-9-69> 69</a>
+</span><span class=lnt id=hl-9-70><a class=lnlinks href=#hl-9-70> 70</a>
+</span><span class=lnt id=hl-9-71><a class=lnlinks href=#hl-9-71> 71</a>
+</span><span class=lnt id=hl-9-72><a class=lnlinks href=#hl-9-72> 72</a>
+</span><span class=lnt id=hl-9-73><a class=lnlinks href=#hl-9-73> 73</a>
+</span><span class=lnt id=hl-9-74><a class=lnlinks href=#hl-9-74> 74</a>
+</span><span class=lnt id=hl-9-75><a class=lnlinks href=#hl-9-75> 75</a>
+</span><span class=lnt id=hl-9-76><a class=lnlinks href=#hl-9-76> 76</a>
+</span><span class=lnt id=hl-9-77><a class=lnlinks href=#hl-9-77> 77</a>
+</span><span class=lnt id=hl-9-78><a class=lnlinks href=#hl-9-78> 78</a>
+</span><span class=lnt id=hl-9-79><a class=lnlinks href=#hl-9-79> 79</a>
+</span><span class=lnt id=hl-9-80><a class=lnlinks href=#hl-9-80> 80</a>
+</span><span class=lnt id=hl-9-81><a class=lnlinks href=#hl-9-81> 81</a>
+</span><span class=lnt id=hl-9-82><a class=lnlinks href=#hl-9-82> 82</a>
+</span><span class=lnt id=hl-9-83><a class=lnlinks href=#hl-9-83> 83</a>
+</span><span class=lnt id=hl-9-84><a class=lnlinks href=#hl-9-84> 84</a>
+</span><span class=lnt id=hl-9-85><a class=lnlinks href=#hl-9-85> 85</a>
+</span><span class=lnt id=hl-9-86><a class=lnlinks href=#hl-9-86> 86</a>
+</span><span class=lnt id=hl-9-87><a class=lnlinks href=#hl-9-87> 87</a>
+</span><span class=lnt id=hl-9-88><a class=lnlinks href=#hl-9-88> 88</a>
+</span><span class=lnt id=hl-9-89><a class=lnlinks href=#hl-9-89> 89</a>
+</span><span class=lnt id=hl-9-90><a class=lnlinks href=#hl-9-90> 90</a>
+</span><span class=lnt id=hl-9-91><a class=lnlinks href=#hl-9-91> 91</a>
+</span><span class=lnt id=hl-9-92><a class=lnlinks href=#hl-9-92> 92</a>
+</span><span class=lnt id=hl-9-93><a class=lnlinks href=#hl-9-93> 93</a>
+</span><span class=lnt id=hl-9-94><a class=lnlinks href=#hl-9-94> 94</a>
+</span><span class=lnt id=hl-9-95><a class=lnlinks href=#hl-9-95> 95</a>
+</span><span class=lnt id=hl-9-96><a class=lnlinks href=#hl-9-96> 96</a>
+</span><span class=lnt id=hl-9-97><a class=lnlinks href=#hl-9-97> 97</a>
+</span><span class=lnt id=hl-9-98><a class=lnlinks href=#hl-9-98> 98</a>
+</span><span class=lnt id=hl-9-99><a class=lnlinks href=#hl-9-99> 99</a>
+</span><span class=lnt id=hl-9-100><a class=lnlinks href=#hl-9-100>100</a>
+</span><span class=lnt id=hl-9-101><a class=lnlinks href=#hl-9-101>101</a>
+</span><span class=lnt id=hl-9-102><a class=lnlinks href=#hl-9-102>102</a>
+</span><span class=lnt id=hl-9-103><a class=lnlinks href=#hl-9-103>103</a>
+</span><span class=lnt id=hl-9-104><a class=lnlinks href=#hl-9-104>104</a>
+</span><span class=lnt id=hl-9-105><a class=lnlinks href=#hl-9-105>105</a>
+</span><span class=lnt id=hl-9-106><a class=lnlinks href=#hl-9-106>106</a>
+</span><span class=lnt id=hl-9-107><a class=lnlinks href=#hl-9-107>107</a>
+</span><span class=lnt id=hl-9-108><a class=lnlinks href=#hl-9-108>108</a>
+</span><span class=lnt id=hl-9-109><a class=lnlinks href=#hl-9-109>109</a>
+</span><span class=lnt id=hl-9-110><a class=lnlinks href=#hl-9-110>110</a>
+</span><span class=lnt id=hl-9-111><a class=lnlinks href=#hl-9-111>111</a>
+</span><span class=lnt id=hl-9-112><a class=lnlinks href=#hl-9-112>112</a>
+</span><span class=lnt id=hl-9-113><a class=lnlinks href=#hl-9-113>113</a>
+</span><span class=lnt id=hl-9-114><a class=lnlinks href=#hl-9-114>114</a>
+</span><span class=lnt id=hl-9-115><a class=lnlinks href=#hl-9-115>115</a>
+</span><span class=lnt id=hl-9-116><a class=lnlinks href=#hl-9-116>116</a>
+</span><span class=lnt id=hl-9-117><a class=lnlinks href=#hl-9-117>117</a>
+</span><span class=lnt id=hl-9-118><a class=lnlinks href=#hl-9-118>118</a>
+</span><span class=lnt id=hl-9-119><a class=lnlinks href=#hl-9-119>119</a>
+</span><span class=lnt id=hl-9-120><a class=lnlinks href=#hl-9-120>120</a>
+</span><span class=lnt id=hl-9-121><a class=lnlinks href=#hl-9-121>121</a>
+</span><span class=lnt id=hl-9-122><a class=lnlinks href=#hl-9-122>122</a>
+</span><span class=lnt id=hl-9-123><a class=lnlinks href=#hl-9-123>123</a>
+</span><span class=lnt id=hl-9-124><a class=lnlinks href=#hl-9-124>124</a>
+</span><span class=lnt id=hl-9-125><a class=lnlinks href=#hl-9-125>125</a>
+</span><span class=lnt id=hl-9-126><a class=lnlinks href=#hl-9-126>126</a>
+</span><span class=lnt id=hl-9-127><a class=lnlinks href=#hl-9-127>127</a>
+</span><span class=lnt id=hl-9-128><a class=lnlinks href=#hl-9-128>128</a>
+</span><span class=lnt id=hl-9-129><a class=lnlinks href=#hl-9-129>129</a>
+</span><span class=lnt id=hl-9-130><a class=lnlinks href=#hl-9-130>130</a>
+</span><span class=lnt id=hl-9-131><a class=lnlinks href=#hl-9-131>131</a>
+</span><span class=lnt id=hl-9-132><a class=lnlinks href=#hl-9-132>132</a>
+</span><span class=lnt id=hl-9-133><a class=lnlinks href=#hl-9-133>133</a>
+</span><span class=lnt id=hl-9-134><a class=lnlinks href=#hl-9-134>134</a>
+</span><span class=lnt id=hl-9-135><a class=lnlinks href=#hl-9-135>135</a>
+</span><span class=lnt id=hl-9-136><a class=lnlinks href=#hl-9-136>136</a>
+</span><span class=lnt id=hl-9-137><a class=lnlinks href=#hl-9-137>137</a>
+</span><span class=lnt id=hl-9-138><a class=lnlinks href=#hl-9-138>138</a>
+</span><span class=lnt id=hl-9-139><a class=lnlinks href=#hl-9-139>139</a>
+</span><span class=lnt id=hl-9-140><a class=lnlinks href=#hl-9-140>140</a>
+</span><span class=lnt id=hl-9-141><a class=lnlinks href=#hl-9-141>141</a>
+</span><span class=lnt id=hl-9-142><a class=lnlinks href=#hl-9-142>142</a>
+</span><span class=lnt id=hl-9-143><a class=lnlinks href=#hl-9-143>143</a>
+</span><span class=lnt id=hl-9-144><a class=lnlinks href=#hl-9-144>144</a>
+</span><span class=lnt id=hl-9-145><a class=lnlinks href=#hl-9-145>145</a>
+</span><span class=lnt id=hl-9-146><a class=lnlinks href=#hl-9-146>146</a>
+</span><span class=lnt id=hl-9-147><a class=lnlinks href=#hl-9-147>147</a>
+</span><span class=lnt id=hl-9-148><a class=lnlinks href=#hl-9-148>148</a>
+</span><span class=lnt id=hl-9-149><a class=lnlinks href=#hl-9-149>149</a>
+</span><span class=lnt id=hl-9-150><a class=lnlinks href=#hl-9-150>150</a>
+</span><span class=lnt id=hl-9-151><a class=lnlinks href=#hl-9-151>151</a>
+</span><span class=lnt id=hl-9-152><a class=lnlinks href=#hl-9-152>152</a>
+</span><span class=lnt id=hl-9-153><a class=lnlinks href=#hl-9-153>153</a>
+</span><span class=lnt id=hl-9-154><a class=lnlinks href=#hl-9-154>154</a>
+</span><span class=lnt id=hl-9-155><a class=lnlinks href=#hl-9-155>155</a>
+</span><span class=lnt id=hl-9-156><a class=lnlinks href=#hl-9-156>156</a>
+</span><span class=lnt id=hl-9-157><a class=lnlinks href=#hl-9-157>157</a>
+</span><span class=lnt id=hl-9-158><a class=lnlinks href=#hl-9-158>158</a>
+</span><span class=lnt id=hl-9-159><a class=lnlinks href=#hl-9-159>159</a>
+</span><span class=lnt id=hl-9-160><a class=lnlinks href=#hl-9-160>160</a>
+</span><span class=lnt id=hl-9-161><a class=lnlinks href=#hl-9-161>161</a>
+</span><span class=lnt id=hl-9-162><a class=lnlinks href=#hl-9-162>162</a>
+</span><span class=lnt id=hl-9-163><a class=lnlinks href=#hl-9-163>163</a>
+</span><span class=lnt id=hl-9-164><a class=lnlinks href=#hl-9-164>164</a>
+</span><span class=lnt id=hl-9-165><a class=lnlinks href=#hl-9-165>165</a>
+</span><span class=lnt id=hl-9-166><a class=lnlinks href=#hl-9-166>166</a>
+</span><span class=lnt id=hl-9-167><a class=lnlinks href=#hl-9-167>167</a>
+</span><span class=lnt id=hl-9-168><a class=lnlinks href=#hl-9-168>168</a>
+</span><span class=lnt id=hl-9-169><a class=lnlinks href=#hl-9-169>169</a>
+</span><span class=lnt id=hl-9-170><a class=lnlinks href=#hl-9-170>170</a>
+</span><span class=lnt id=hl-9-171><a class=lnlinks href=#hl-9-171>171</a>
+</span><span class=lnt id=hl-9-172><a class=lnlinks href=#hl-9-172>172</a>
+</span><span class=lnt id=hl-9-173><a class=lnlinks href=#hl-9-173>173</a>
+</span><span class=lnt id=hl-9-174><a class=lnlinks href=#hl-9-174>174</a>
+</span><span class=lnt id=hl-9-175><a class=lnlinks href=#hl-9-175>175</a>
+</span><span class=lnt id=hl-9-176><a class=lnlinks href=#hl-9-176>176</a>
+</span><span class=lnt id=hl-9-177><a class=lnlinks href=#hl-9-177>177</a>
+</span><span class=lnt id=hl-9-178><a class=lnlinks href=#hl-9-178>178</a>
+</span><span class=lnt id=hl-9-179><a class=lnlinks href=#hl-9-179>179</a>
+</span><span class=lnt id=hl-9-180><a class=lnlinks href=#hl-9-180>180</a>
+</span><span class=lnt id=hl-9-181><a class=lnlinks href=#hl-9-181>181</a>
+</span><span class=lnt id=hl-9-182><a class=lnlinks href=#hl-9-182>182</a>
+</span><span class=lnt id=hl-9-183><a class=lnlinks href=#hl-9-183>183</a>
+</span><span class=lnt id=hl-9-184><a class=lnlinks href=#hl-9-184>184</a>
+</span><span class=lnt id=hl-9-185><a class=lnlinks href=#hl-9-185>185</a>
+</span><span class=lnt id=hl-9-186><a class=lnlinks href=#hl-9-186>186</a>
+</span><span class=lnt id=hl-9-187><a class=lnlinks href=#hl-9-187>187</a>
+</span><span class=lnt id=hl-9-188><a class=lnlinks href=#hl-9-188>188</a>
+</span><span class=lnt id=hl-9-189><a class=lnlinks href=#hl-9-189>189</a>
+</span><span class=lnt id=hl-9-190><a class=lnlinks href=#hl-9-190>190</a>
+</span><span class=lnt id=hl-9-191><a class=lnlinks href=#hl-9-191>191</a>
+</span><span class=lnt id=hl-9-192><a class=lnlinks href=#hl-9-192>192</a>
+</span><span class=lnt id=hl-9-193><a class=lnlinks href=#hl-9-193>193</a>
+</span><span class=lnt id=hl-9-194><a class=lnlinks href=#hl-9-194>194</a>
+</span><span class=lnt id=hl-9-195><a class=lnlinks href=#hl-9-195>195</a>
+</span><span class=lnt id=hl-9-196><a class=lnlinks href=#hl-9-196>196</a>
+</span><span class=lnt id=hl-9-197><a class=lnlinks href=#hl-9-197>197</a>
+</span><span class=lnt id=hl-9-198><a class=lnlinks href=#hl-9-198>198</a>
+</span><span class=lnt id=hl-9-199><a class=lnlinks href=#hl-9-199>199</a>
+</span><span class=lnt id=hl-9-200><a class=lnlinks href=#hl-9-200>200</a>
+</span><span class=lnt id=hl-9-201><a class=lnlinks href=#hl-9-201>201</a>
+</span><span class=lnt id=hl-9-202><a class=lnlinks href=#hl-9-202>202</a>
+</span><span class=lnt id=hl-9-203><a class=lnlinks href=#hl-9-203>203</a>
+</span><span class=lnt id=hl-9-204><a class=lnlinks href=#hl-9-204>204</a>
+</span><span class=lnt id=hl-9-205><a class=lnlinks href=#hl-9-205>205</a>
+</span><span class=lnt id=hl-9-206><a class=lnlinks href=#hl-9-206>206</a>
+</span><span class=lnt id=hl-9-207><a class=lnlinks href=#hl-9-207>207</a>
+</span><span class=lnt id=hl-9-208><a class=lnlinks href=#hl-9-208>208</a>
+</span><span class=lnt id=hl-9-209><a class=lnlinks href=#hl-9-209>209</a>
+</span><span class=lnt id=hl-9-210><a class=lnlinks href=#hl-9-210>210</a>
+</span><span class=lnt id=hl-9-211><a class=lnlinks href=#hl-9-211>211</a>
+</span><span class=lnt id=hl-9-212><a class=lnlinks href=#hl-9-212>212</a>
+</span><span class=lnt id=hl-9-213><a class=lnlinks href=#hl-9-213>213</a>
+</span><span class=lnt id=hl-9-214><a class=lnlinks href=#hl-9-214>214</a>
+</span><span class=lnt id=hl-9-215><a class=lnlinks href=#hl-9-215>215</a>
+</span><span class=lnt id=hl-9-216><a class=lnlinks href=#hl-9-216>216</a>
+</span><span class=lnt id=hl-9-217><a class=lnlinks href=#hl-9-217>217</a>
+</span><span class=lnt id=hl-9-218><a class=lnlinks href=#hl-9-218>218</a>
+</span><span class=lnt id=hl-9-219><a class=lnlinks href=#hl-9-219>219</a>
+</span><span class=lnt id=hl-9-220><a class=lnlinks href=#hl-9-220>220</a>
+</span><span class=lnt id=hl-9-221><a class=lnlinks href=#hl-9-221>221</a>
+</span><span class=lnt id=hl-9-222><a class=lnlinks href=#hl-9-222>222</a>
+</span><span class=lnt id=hl-9-223><a class=lnlinks href=#hl-9-223>223</a>
+</span><span class=lnt id=hl-9-224><a class=lnlinks href=#hl-9-224>224</a>
+</span><span class=lnt id=hl-9-225><a class=lnlinks href=#hl-9-225>225</a>
+</span><span class=lnt id=hl-9-226><a class=lnlinks href=#hl-9-226>226</a>
+</span><span class=lnt id=hl-9-227><a class=lnlinks href=#hl-9-227>227</a>
+</span><span class=lnt id=hl-9-228><a class=lnlinks href=#hl-9-228>228</a>
+</span><span class=lnt id=hl-9-229><a class=lnlinks href=#hl-9-229>229</a>
+</span><span class=lnt id=hl-9-230><a class=lnlinks href=#hl-9-230>230</a>
+</span><span class=lnt id=hl-9-231><a class=lnlinks href=#hl-9-231>231</a>
+</span><span class=lnt id=hl-9-232><a class=lnlinks href=#hl-9-232>232</a>
+</span><span class=lnt id=hl-9-233><a class=lnlinks href=#hl-9-233>233</a>
+</span><span class=lnt id=hl-9-234><a class=lnlinks href=#hl-9-234>234</a>
+</span><span class=lnt id=hl-9-235><a class=lnlinks href=#hl-9-235>235</a>
+</span><span class=lnt id=hl-9-236><a class=lnlinks href=#hl-9-236>236</a>
+</span><span class=lnt id=hl-9-237><a class=lnlinks href=#hl-9-237>237</a>
+</span><span class=lnt id=hl-9-238><a class=lnlinks href=#hl-9-238>238</a>
+</span><span class=lnt id=hl-9-239><a class=lnlinks href=#hl-9-239>239</a>
+</span><span class=lnt id=hl-9-240><a class=lnlinks href=#hl-9-240>240</a>
+</span><span class=lnt id=hl-9-241><a class=lnlinks href=#hl-9-241>241</a>
+</span><span class=lnt id=hl-9-242><a class=lnlinks href=#hl-9-242>242</a>
+</span><span class=lnt id=hl-9-243><a class=lnlinks href=#hl-9-243>243</a>
+</span><span class=lnt id=hl-9-244><a class=lnlinks href=#hl-9-244>244</a>
+</span><span class=lnt id=hl-9-245><a class=lnlinks href=#hl-9-245>245</a>
+</span><span class=lnt id=hl-9-246><a class=lnlinks href=#hl-9-246>246</a>
+</span><span class=lnt id=hl-9-247><a class=lnlinks href=#hl-9-247>247</a>
+</span><span class=lnt id=hl-9-248><a class=lnlinks href=#hl-9-248>248</a>
+</span><span class=lnt id=hl-9-249><a class=lnlinks href=#hl-9-249>249</a>
+</span><span class=lnt id=hl-9-250><a class=lnlinks href=#hl-9-250>250</a>
+</span><span class=lnt id=hl-9-251><a class=lnlinks href=#hl-9-251>251</a>
+</span><span class=lnt id=hl-9-252><a class=lnlinks href=#hl-9-252>252</a>
+</span><span class=lnt id=hl-9-253><a class=lnlinks href=#hl-9-253>253</a>
+</span><span class=lnt id=hl-9-254><a class=lnlinks href=#hl-9-254>254</a>
+</span><span class=lnt id=hl-9-255><a class=lnlinks href=#hl-9-255>255</a>
+</span><span class=lnt id=hl-9-256><a class=lnlinks href=#hl-9-256>256</a>
+</span><span class=lnt id=hl-9-257><a class=lnlinks href=#hl-9-257>257</a>
+</span><span class=lnt id=hl-9-258><a class=lnlinks href=#hl-9-258>258</a>
+</span><span class=lnt id=hl-9-259><a class=lnlinks href=#hl-9-259>259</a>
+</span><span class=lnt id=hl-9-260><a class=lnlinks href=#hl-9-260>260</a>
+</span><span class=lnt id=hl-9-261><a class=lnlinks href=#hl-9-261>261</a>
+</span><span class=lnt id=hl-9-262><a class=lnlinks href=#hl-9-262>262</a>
+</span><span class=lnt id=hl-9-263><a class=lnlinks href=#hl-9-263>263</a>
+</span><span class=lnt id=hl-9-264><a class=lnlinks href=#hl-9-264>264</a>
+</span><span class=lnt id=hl-9-265><a class=lnlinks href=#hl-9-265>265</a>
+</span><span class=lnt id=hl-9-266><a class=lnlinks href=#hl-9-266>266</a>
+</span><span class=lnt id=hl-9-267><a class=lnlinks href=#hl-9-267>267</a>
+</span><span class=lnt id=hl-9-268><a class=lnlinks href=#hl-9-268>268</a>
+</span><span class=lnt id=hl-9-269><a class=lnlinks href=#hl-9-269>269</a>
+</span><span class=lnt id=hl-9-270><a class=lnlinks href=#hl-9-270>270</a>
+</span><span class=lnt id=hl-9-271><a class=lnlinks href=#hl-9-271>271</a>
+</span><span class=lnt id=hl-9-272><a class=lnlinks href=#hl-9-272>272</a>
+</span><span class=lnt id=hl-9-273><a class=lnlinks href=#hl-9-273>273</a>
+</span><span class=lnt id=hl-9-274><a class=lnlinks href=#hl-9-274>274</a>
+</span><span class=lnt id=hl-9-275><a class=lnlinks href=#hl-9-275>275</a>
+</span><span class=lnt id=hl-9-276><a class=lnlinks href=#hl-9-276>276</a>
+</span><span class=lnt id=hl-9-277><a class=lnlinks href=#hl-9-277>277</a>
+</span><span class=lnt id=hl-9-278><a class=lnlinks href=#hl-9-278>278</a>
+</span><span class=lnt id=hl-9-279><a class=lnlinks href=#hl-9-279>279</a>
+</span><span class=lnt id=hl-9-280><a class=lnlinks href=#hl-9-280>280</a>
+</span><span class=lnt id=hl-9-281><a class=lnlinks href=#hl-9-281>281</a>
+</span><span class=lnt id=hl-9-282><a class=lnlinks href=#hl-9-282>282</a>
+</span><span class=lnt id=hl-9-283><a class=lnlinks href=#hl-9-283>283</a>
+</span><span class=lnt id=hl-9-284><a class=lnlinks href=#hl-9-284>284</a>
+</span><span class=lnt id=hl-9-285><a class=lnlinks href=#hl-9-285>285</a>
+</span><span class=lnt id=hl-9-286><a class=lnlinks href=#hl-9-286>286</a>
+</span><span class=lnt id=hl-9-287><a class=lnlinks href=#hl-9-287>287</a>
+</span><span class=lnt id=hl-9-288><a class=lnlinks href=#hl-9-288>288</a>
+</span><span class=lnt id=hl-9-289><a class=lnlinks href=#hl-9-289>289</a>
+</span><span class=lnt id=hl-9-290><a class=lnlinks href=#hl-9-290>290</a>
+</span><span class=lnt id=hl-9-291><a class=lnlinks href=#hl-9-291>291</a>
+</span><span class=lnt id=hl-9-292><a class=lnlinks href=#hl-9-292>292</a>
+</span><span class=lnt id=hl-9-293><a class=lnlinks href=#hl-9-293>293</a>
+</span><span class=lnt id=hl-9-294><a class=lnlinks href=#hl-9-294>294</a>
+</span><span class=lnt id=hl-9-295><a class=lnlinks href=#hl-9-295>295</a>
+</span><span class=lnt id=hl-9-296><a class=lnlinks href=#hl-9-296>296</a>
+</span><span class=lnt id=hl-9-297><a class=lnlinks href=#hl-9-297>297</a>
+</span><span class=lnt id=hl-9-298><a class=lnlinks href=#hl-9-298>298</a>
+</span><span class=lnt id=hl-9-299><a class=lnlinks href=#hl-9-299>299</a>
+</span><span class=lnt id=hl-9-300><a class=lnlinks href=#hl-9-300>300</a>
+</span><span class=lnt id=hl-9-301><a class=lnlinks href=#hl-9-301>301</a>
+</span><span class=lnt id=hl-9-302><a class=lnlinks href=#hl-9-302>302</a>
+</span><span class=lnt id=hl-9-303><a class=lnlinks href=#hl-9-303>303</a>
+</span><span class=lnt id=hl-9-304><a class=lnlinks href=#hl-9-304>304</a>
+</span><span class=lnt id=hl-9-305><a class=lnlinks href=#hl-9-305>305</a>
+</span><span class=lnt id=hl-9-306><a class=lnlinks href=#hl-9-306>306</a>
+</span><span class=lnt id=hl-9-307><a class=lnlinks href=#hl-9-307>307</a>
+</span><span class=lnt id=hl-9-308><a class=lnlinks href=#hl-9-308>308</a>
+</span><span class=lnt id=hl-9-309><a class=lnlinks href=#hl-9-309>309</a>
+</span><span class=lnt id=hl-9-310><a class=lnlinks href=#hl-9-310>310</a>
+</span><span class=lnt id=hl-9-311><a class=lnlinks href=#hl-9-311>311</a>
+</span><span class=lnt id=hl-9-312><a class=lnlinks href=#hl-9-312>312</a>
+</span><span class=lnt id=hl-9-313><a class=lnlinks href=#hl-9-313>313</a>
+</span><span class=lnt id=hl-9-314><a class=lnlinks href=#hl-9-314>314</a>
+</span><span class=lnt id=hl-9-315><a class=lnlinks href=#hl-9-315>315</a>
+</span><span class=lnt id=hl-9-316><a class=lnlinks href=#hl-9-316>316</a>
+</span><span class=lnt id=hl-9-317><a class=lnlinks href=#hl-9-317>317</a>
+</span><span class=lnt id=hl-9-318><a class=lnlinks href=#hl-9-318>318</a>
+</span><span class=lnt id=hl-9-319><a class=lnlinks href=#hl-9-319>319</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson.Serialization.Conventions</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>MongoTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>model</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TransModel</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>model</span><span class=p>.</span><span class=n>RunAsync</span><span class=p>().</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Done&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>AccountEntry</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Balance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>TransEntry</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>Tid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>Uuid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>Amount</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>NewBalance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>TransType</span> <span class=n>Type</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>CreateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>DateTime</span> <span class=n>UpdateTime</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>enum</span> <span class=n>TransType</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>None</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>Recharge</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>Purchase</span> <span class=p>=</span> <span class=m>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>TransResult</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>string</span> <span class=n>Tid</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>decimal</span> <span class=n>NewBalance</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>TransCode</span> <span class=n>Code</span> <span class=p>{</span> <span class=k>get</span><span class=p>;</span> <span class=k>set</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>enum</span> <span class=n>TransCode</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Success</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>DuplicateTrans</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>Purchase</span> <span class=p>=</span> <span class=m>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>InsufficientBalance</span> <span class=p>=</span> <span class=m>3</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>TransModel</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoClient</span> <span class=n>_mongoClient</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoCollection</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>_accountCollection</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=k>readonly</span> <span class=n>IMongoCollection</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;</span> <span class=n>_transCollection</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Transaction&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>AccountCollectionName</span> <span class=p>=</span> <span class=s>&#34;Account&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>TransCollectionName</span> <span class=p>=</span> <span class=s>&#34;Trans&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=n>TransModel</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>_mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>database</span> <span class=p>=</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>ignoreExtraElementsConvention</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConventionPack</span> <span class=p>{</span> <span class=k>new</span> <span class=n>IgnoreExtraElementsConvention</span><span class=p>(</span><span class=kc>true</span><span class=p>)</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=n>ConventionRegistry</span><span class=p>.</span><span class=n>Register</span><span class=p>(</span><span class=s>&#34;IgnoreExtraElements&#34;</span><span class=p>,</span> <span class=n>ignoreExtraElementsConvention</span><span class=p>,</span> <span class=n>type</span> <span class=p>=&gt;</span> <span class=kc>true</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>_accountCollection</span> <span class=p>=</span> <span class=n>database</span><span class=p>.</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;(</span><span class=n>AccountCollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>_transCollection</span> <span class=p>=</span> <span class=n>database</span><span class=p>.</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;(</span><span class=n>TransCollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>static</span> <span class=kt>string</span> <span class=n>GenerateTid</span><span class=p>()</span> <span class=p>=&gt;</span> <span class=s>$&#34;T_{Guid.NewGuid().ToString(&#34;</span><span class=n>N</span><span class=s>&#34;).ToUpper()}&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>static</span> <span class=kt>string</span> <span class=n>GenerateAccountUuid</span><span class=p>()</span> <span class=p>=&gt;</span> <span class=s>$&#34;Acc_{Guid.NewGuid().ToString(&#34;</span><span class=n>N</span><span class=s>&#34;).ToUpper()}&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>cancellationToken</span> <span class=p>=</span> <span class=k>default</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>newAccount</span> <span class=p>=</span> <span class=k>new</span> <span class=n>AccountEntry</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Uuid</span> <span class=p>=</span> <span class=n>uuid</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Balance</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span>
+</span></span><span class=line><span class=cl>                <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>newAccount</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>newAccount</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=kt>decimal</span><span class=p>&gt;</span> <span class=n>GetBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span> <span class=p>=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>AccountEntry</span> <span class=n>account</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>s</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>uuid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>else</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>uuid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>account</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>throw</span> <span class=k>new</span> <span class=n>KeyNotFoundException</span><span class=p>(</span><span class=s>$&#34;Account &#39;{uuid}&#39; does not exist.&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>account</span><span class=p>.</span><span class=n>Balance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>AddBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span><span class=p>,</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>amount</span> <span class=p>&lt;=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>throw</span> <span class=k>new</span> <span class=n>ArgumentException</span><span class=p>(</span><span class=s>&#34;Amount should &gt; 0&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>And</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>accountId</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Gte</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>update</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;.</span><span class=n>Update</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Inc</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span> <span class=p>-</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>.</span><span class=n>Set</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UpdateTime</span><span class=p>,</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FindOneAndUpdateOptions</span><span class=p>&lt;</span><span class=n>AccountEntry</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>ReturnDocument</span> <span class=p>=</span> <span class=n>ReturnDocument</span><span class=p>.</span><span class=n>After</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>await</span> <span class=n>_accountCollection</span><span class=p>.</span><span class=n>FindOneAndUpdateAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>update</span><span class=p>,</span> <span class=n>options</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=n>IClientSessionHandle</span> <span class=n>s</span> <span class=p>=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>s</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Tid</span> <span class=p>==</span> <span class=n>tid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Tid</span> <span class=p>==</span> <span class=n>tid</span><span class=p>).</span><span class=n>FirstOrDefaultAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>TransEntry</span><span class=p>&gt;&gt;</span> <span class=n>GetTransactionsAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>ct</span><span class=p>,</span> <span class=kt>int</span> <span class=n>n</span> <span class=p>=</span> <span class=m>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Uuid</span> <span class=p>==</span> <span class=n>accountId</span><span class=p>).</span><span class=n>SortBy</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>CreateTime</span><span class=p>).</span><span class=n>Limit</span><span class=p>(</span><span class=n>n</span><span class=p>).</span><span class=n>ToListAsync</span><span class=p>(</span><span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>existingTransEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=n>tid</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>existingTransEntry</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>DuplicateTrans</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>newBalanceEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>AddBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>amount</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>newTransEntry</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TransEntry</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Uuid</span> <span class=p>=</span> <span class=n>accountId</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Amount</span> <span class=p>=</span> <span class=n>amount</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newBalanceEntry</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Type</span> <span class=p>=</span> <span class=n>TransType</span><span class=p>.</span><span class=n>Recharge</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                        <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>newTransEntry</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>NewBalance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Tid</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>Tid</span>
+</span></span><span class=line><span class=cl>                        <span class=p>};</span>
+</span></span><span class=line><span class=cl>                    <span class=p>},</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TransResult</span><span class=p>&gt;</span> <span class=n>PurchaseAsync</span><span class=p>(</span><span class=kt>string</span> <span class=n>accountId</span><span class=p>,</span> <span class=kt>string</span> <span class=n>tid</span><span class=p>,</span> <span class=kt>decimal</span> <span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>_mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>existingTransEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionByTidAsync</span><span class=p>(</span><span class=n>tid</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>existingTransEntry</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>DuplicateTrans</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>newBalanceEntry</span> <span class=p>=</span> <span class=k>await</span> <span class=n>DecreaseBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>amount</span><span class=p>,</span> <span class=n>ct</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>newBalanceEntry</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span> <span class=p>{</span> <span class=n>Code</span> <span class=p>=</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>InsufficientBalance</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>newTransEntry</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TransEntry</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Uuid</span> <span class=p>=</span> <span class=n>accountId</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Amount</span> <span class=p>=</span> <span class=n>amount</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newBalanceEntry</span><span class=p>.</span><span class=n>Balance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Type</span> <span class=p>=</span> <span class=n>TransType</span><span class=p>.</span><span class=n>Purchase</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>CreateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>UpdateTime</span> <span class=p>=</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                        <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=k>await</span> <span class=n>_transCollection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>newTransEntry</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                        <span class=k>return</span> <span class=k>new</span> <span class=n>TransResult</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>NewBalance</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>NewBalance</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Tid</span> <span class=p>=</span> <span class=n>newTransEntry</span><span class=p>.</span><span class=n>Tid</span>
+</span></span><span class=line><span class=cl>                        <span class=p>};</span>
+</span></span><span class=line><span class=cl>                    <span class=p>},</span>
+</span></span><span class=line><span class=cl>                    <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RunAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>random</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Random</span><span class=p>(</span><span class=m>42</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1>// Create 10 accounts</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>accountIds</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>10</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>accountId</span> <span class=p>=</span> <span class=n>GenerateAccountUuid</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>account</span> <span class=p>=</span> <span class=k>await</span> <span class=n>CreateAccountAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>accountIds</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>account</span><span class=p>.</span><span class=n>Uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=n>account</span><span class=p>.</span><span class=n>Uuid</span><span class=p>,</span> <span class=n>GenerateTid</span><span class=p>(),</span> <span class=m>1000</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Created account {account.Uuid} with initial balance of 1000.&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------------------------------------------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>accountId</span> <span class=k>in</span> <span class=n>accountIds</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>5</span><span class=p>;</span> <span class=n>i</span><span class=p>++)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>var</span> <span class=n>isRecharge</span> <span class=p>=</span> <span class=n>random</span><span class=p>.</span><span class=n>Next</span><span class=p>(</span><span class=m>0</span><span class=p>,</span> <span class=m>2</span><span class=p>)</span> <span class=p>==</span> <span class=m>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>var</span> <span class=n>amount</span> <span class=p>=</span> <span class=p>(</span><span class=kt>decimal</span><span class=p>)(</span><span class=n>random</span><span class=p>.</span><span class=n>NextDouble</span><span class=p>()</span> <span class=p>*</span> <span class=m>300</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=kt>var</span> <span class=n>tid</span> <span class=p>=</span> <span class=n>GenerateTid</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                    <span class=k>if</span> <span class=p>(</span><span class=n>isRecharge</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>RechargeAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>tid</span><span class=p>,</span> <span class=n>amount</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>result</span><span class=p>.</span><span class=n>Code</span> <span class=p>==</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>Success</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Recharge: Account {accountId}, Amount: {Math.Round(amount, 2)}, New Balance: {Math.Round(result.NewBalance, 2)}, Tid: {tid}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>                        <span class=k>else</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Recharge failed: {result.Code}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>                    <span class=k>else</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>PurchaseAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>tid</span><span class=p>,</span> <span class=n>amount</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>if</span> <span class=p>(</span><span class=n>result</span><span class=p>.</span><span class=n>Code</span> <span class=p>==</span> <span class=n>TransCode</span><span class=p>.</span><span class=n>Success</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Purchase: Account {accountId}, Amount: {Math.Round(amount, 2)}, New Balance: {Math.Round(result.NewBalance, 2)}, Tid: {tid}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>                        <span class=k>else</span>
+</span></span><span class=line><span class=cl>                        <span class=p>{</span>
+</span></span><span class=line><span class=cl>                            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Purchase failed: {result.Code}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=p>}</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------------------------------------------------------------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>accountId</span> <span class=k>in</span> <span class=n>accountIds</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>balance</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetBalanceAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span><span class=p>.</span><span class=n>None</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>transactions</span> <span class=p>=</span> <span class=k>await</span> <span class=n>GetTransactionsAsync</span><span class=p>(</span><span class=n>accountId</span><span class=p>,</span> <span class=n>CancellationToken</span><span class=p>.</span><span class=n>None</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Account {accountId} Balance: {Math.Round(balance, 2)}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Recent Transactions:&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>transaction</span> <span class=k>in</span> <span class=n>transactions</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Tid: {transaction.Tid}, Type: {transaction.Type}, Amount: {Math.Round(transaction.Amount, 2)}, New Balance: {Math.Round(transaction.NewBalance, 2)}, Time: {transaction.CreateTime}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;****************************************************************************&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/c/>C#</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/use-az-cli-to-query-vm-cpu-credits/ rel=next title="Use az cli to Query VM Remaining CPU Credits"><i class="fa fa-chevron-left"></i> Use az cli to Query VM Remaining CPU Credits</a></div><div class="post-nav-prev post-nav-item"><a href=/en/certbot-automating-nginx-ssl-renewal/ rel=prev title="Certbot: Automating Nginx SSL Renewal">Certbot: Automating Nginx SSL Renewal
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/building-a-transaction-system-with-mongodb/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"building-a-transaction-system-with-mongodb","permalink":"https://finisky.github.io/en/building-a-transaction-system-with-mongodb/","title":"Building a Transaction System with MongoDB","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

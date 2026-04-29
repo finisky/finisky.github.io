@@ -1,0 +1,1717 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Finisky Garden</title><link>https://finisky.github.io/</link><description>Recent content on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Wed, 29 Apr 2026 23:45:02 +0800</lastBuildDate><atom:link href="https://finisky.github.io/rss.xml" rel="self" type="application/rss+xml"/><item><title>Transformer的简洁性：表达力的另一面</title><link>https://finisky.github.io/transformers-succinctness-summary/</link><pubDate>Wed, 29 Apr 2026 23:45:02 +0800</pubDate><guid>https://finisky.github.io/transformers-succinctness-summary/</guid><description>&lt;p&gt;ICLR 2026 的两篇杰出论文奖（Outstanding Paper）里有一篇纯理论的工作，叫 Transformers are Inherently Succinct。一篇没有实验、没有 benchmark、全是数学证明的论文能拿最佳论文，评审委员会给的理由是&amp;quot;提出了一个新的视角来解释 Transformer 架构的强大能力&amp;quot;。原论文不太好读，涉及大量形式语言理论和复杂度理论的工具，这篇文章试图把核心结论和构造思路用更直觉的方式讲清楚。&lt;/p&gt;
+&lt;p&gt;这个&amp;quot;新视角&amp;quot;是什么？过去大家比的是表达力，即&amp;quot;谁能识别的语言范围更广&amp;quot;，这篇论文换了个角度：同样一个语言，谁用更少的篇幅就能描述清楚？&lt;/p&gt;</description></item><item><title>LLM2Vec：把 Decoder LLM 变成 Embedding 模型</title><link>https://finisky.github.io/llm2vec-paper-summary/</link><pubDate>Sat, 25 Apr 2026 23:30:50 +0800</pubDate><guid>https://finisky.github.io/llm2vec-paper-summary/</guid><description>&lt;p&gt;Embedding 模型一直是 BERT 家族的领地。做语义搜索、做 RAG、做聚类，用的都是 encoder-only 模型。GPT、LLaMA 这些 decoder-only 模型虽然在生成任务上碾压一切，但大家默认它们不适合做 embedding，因为 causal attention 只能看前面的 token，无法构建完整的句子表示。&lt;/p&gt;
+&lt;p&gt;2024 年的 
+&lt;a href="https://arxiv.org/abs/2404.05961" title="LLM2Vec" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LLM2Vec
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;（COLM 2024）发现这个默认假设可能不对。三步改造，不需要标注数据，不需要 GPT-4 生成的合成数据，就能把任意 decoder-only LLM 变成 MTEB 上的 SOTA embedding 模型。&lt;/p&gt;</description></item><item><title>大模型训练数据的枯竭与低质化随想</title><link>https://finisky.github.io/training-data-depletion/</link><pubDate>Wed, 22 Apr 2026 11:30:00 +0800</pubDate><guid>https://finisky.github.io/training-data-depletion/</guid><description>&lt;p&gt;曾经有个说法：互联网上的真人数据几年内就会被消耗殆尽，大模型的训练数据要见底了。Epoch AI 在 2022 年的
+&lt;a href="https://arxiv.org/abs/2211.04325" title="预测" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 预测
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;说高质量文本数据可能在 2026 年前后耗尽。当时讨论很热烈，现在好像被提起不多了。&lt;/p&gt;
+&lt;p&gt;互联网上确实已经充斥大量 AI 生成的内容。随便搜个问题，前几条结果里大概率有 AI 写的。按照之前的忧虑，这些 AI 生成的文本会被爬回来当训练数据，模型吃自己的输出，越训越差，所谓的 model collapse。一篇 
+&lt;a href="https://www.nature.com/articles/s41586-024-07566-y" title="Nature 论文" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Nature 论文
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 证明了这一点：递归地在模型自身输出上训练，尾部分布会逐步消失，模型输出越来越同质化。&lt;/p&gt;</description></item><item><title>Claude Code：1.6% 的 AI，98.4% 的脚手架</title><link>https://finisky.github.io/dive-into-claude-code/</link><pubDate>Wed, 22 Apr 2026 09:15:00 +0800</pubDate><guid>https://finisky.github.io/dive-into-claude-code/</guid><description>&lt;p&gt;拆过 Claude Code 的记忆管理、上下文压缩、RAG、安全分类器、Edit 工具、子 Agent 缓存共享，每篇都是对着源码一行一行看。但看完这篇论文才意识到，我一直在看零件，没看整台机器。&lt;/p&gt;
+&lt;p&gt;论文叫 
+&lt;a href="https://arxiv.org/abs/2604.14228" title="Dive into Claude Code: The Design Space of Today&amp;rsquo;s and Future AI Agent Systems" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Dive into Claude Code: The Design Space of Today&amp;rsquo;s and Future AI Agent Systems
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，46 页，从源码出发对 Claude Code 做了一次完整的架构解剖。不是使用教程，不是 benchmark 评测，而是回答一个工程问题：一个生产级 AI Agent 系统，代码到底在干什么？&lt;/p&gt;</description></item><item><title>语言模型的蜂巢思维</title><link>https://finisky.github.io/artificial-hivemind/</link><pubDate>Fri, 17 Apr 2026 08:32:21 +0800</pubDate><guid>https://finisky.github.io/artificial-hivemind/</guid><description>&lt;p&gt;你让 GPT-4 推荐一部被低估的科幻电影，它说《月球》。换 Claude 问同一个问题，也是《月球》。再问 Gemini，还是《月球》。一篇 NeurIPS 2025 Best Paper 
+&lt;a href="https://arxiv.org/abs/2510.22954" title="Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond)" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond)
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 用大规模实验量化了这个现象：不同语言模型在开放式问题上的回答，相似度高到反常。&lt;/p&gt;</description></item><item><title>从RAG到知识编译</title><link>https://finisky.github.io/llm-wiki/</link><pubDate>Thu, 16 Apr 2026 08:39:28 +0800</pubDate><guid>https://finisky.github.io/llm-wiki/</guid><description>&lt;p&gt;RAG 的工作方式是每次提问都重新检索、重新拼接、重新推理。问一个需要综合五篇文档才能回答的问题，模型每次都得从头找到这五篇，拼起来，再给你答案。问十次，找十次。什么都没积累下来。&lt;/p&gt;
+&lt;p&gt;Karpathy 前两天发了一个叫 LLM Wiki 的 gist，提了一个不同的思路：别让模型每次现场检索了，让它把知识预先编译成一个结构化的 wiki，查询的时候直接查编译好的结果。&lt;/p&gt;</description></item><item><title>向量检索的理论天花板</title><link>https://finisky.github.io/embedding-retrieval-limits/</link><pubDate>Wed, 15 Apr 2026 17:31:47 +0800</pubDate><guid>https://finisky.github.io/embedding-retrieval-limits/</guid><description>&lt;p&gt;向量检索（dense retrieval）这几年几乎成了 RAG 的标配。把文档编码成一个向量，查询也编码成一个向量，算个余弦相似度就能检索。但一个基本问题很少被认真讨论过：一个 d 维向量，到底能表示多少种不同的 top-k 检索结果？&lt;/p&gt;
+&lt;p&gt;ICLR 2026 这篇来自 Google DeepMind 和 JHU 的论文 &lt;em&gt;&amp;ldquo;On the Theoretical Limitations of Embedding-Based Retrieval&amp;rdquo;&lt;/em&gt; 给出了一个数学上的回答：不够。而且远远不够。&lt;/p&gt;</description></item><item><title>跟AI交流的几个意外好处</title><link>https://finisky.github.io/talk-to-ai-perks/</link><pubDate>Tue, 14 Apr 2026 08:48:38 +0800</pubDate><guid>https://finisky.github.io/talk-to-ai-perks/</guid><description>&lt;p&gt;前段时间孙割有个暴论：&amp;ldquo;现在已经2026年了，大家能和AI聊天就不要和人类聊天。&amp;ldquo;后面还有什么删掉90年前出生人的联系方式、微信登味重之类的，典型的孙割风格，听个乐。&lt;/p&gt;
+&lt;p&gt;但抛开那些离谱的部分，作为AI重度用户，谈谈AI的好处和坏处。&lt;/p&gt;</description></item><item><title>Claude做梦机制：后台记忆碎片整理</title><link>https://finisky.github.io/claude-code-auto-dream/</link><pubDate>Mon, 13 Apr 2026 19:35:00 +0800</pubDate><guid>https://finisky.github.io/claude-code-auto-dream/</guid><description>&lt;p&gt;Claude Code 内部有一个叫 autoDream 的模块。它的 Prompt 标题是&amp;quot;Dream: Memory Consolidation&amp;quot;。&lt;/p&gt;
+&lt;p&gt;这不是什么隐喻。Claude Code 确实会在后台启动一个子代理，回顾过去多个会话的记录，把零散的记忆整理、去重、纠错，然后写回磁盘。整个过程你看不到，除非刻意去翻后台任务列表。&lt;/p&gt;</description></item><item><title>AI与就业：一场200年没吵完的架</title><link>https://finisky.github.io/ai-employment-paradox/</link><pubDate>Sat, 11 Apr 2026 00:45:00 +0800</pubDate><guid>https://finisky.github.io/ai-employment-paradox/</guid><description>&lt;p&gt;2025 年科技行业的招聘页面很分裂：传统软件工程师岗位在缩，带&amp;quot;AI&amp;quot;前缀的职位在涨。同一家公司，左手砍初中级开发和项目管理，右手开 Agent 编排工程师和 AI 应用架构师。&lt;/p&gt;</description></item><item><title>Agent 工程的三次进化</title><link>https://finisky.github.io/prompt-context-harness-engineering/</link><pubDate>Thu, 09 Apr 2026 00:15:33 +0800</pubDate><guid>https://finisky.github.io/prompt-context-harness-engineering/</guid><description>&lt;p&gt;去年 6 月 Shopify CEO Tobi Lutke 发了条推，说他觉得 context engineering 比 prompt engineering 好。Karpathy 转发 +1。Simon Willison 写了篇博客说这个词可能真能立住。Phil Schmid 做了完整定义。半个 AI 圈在一周之内集体换了术语。&lt;/p&gt;
+&lt;p&gt;到了 2026 年初，Phil Schmid 又抛了一个新词：Agent Harness。这次没有上一轮那么热闹，但写 Coding Agent 的人几乎都默默点了头。&lt;/p&gt;</description></item><item><title>Claude Code 和 OpenClaw 的上下文管理对比</title><link>https://finisky.github.io/openclaw-vs-claude-code-agent-arch/</link><pubDate>Tue, 07 Apr 2026 22:15:33 +0800</pubDate><guid>https://finisky.github.io/openclaw-vs-claude-code-agent-arch/</guid><description>&lt;p&gt;OpenClaw 拿下 35 万 Star 之后，社区开始出现一种论调：底层都是 Opus 4.6，开源方案应该能对标 Claude Code。实际用过两边的人大概都有同一个感受，长会话跑到后半段，OpenClaw 开始丢上下文，忘记之前读过的文件，重复做已经做过的事。Claude Code 也会，但明显晚得多，而且恢复能力强很多。&lt;/p&gt;
+&lt;p&gt;模型一样，体验不一样。差在哪？&lt;/p&gt;</description></item><item><title>基模到顶，应用起飞</title><link>https://finisky.github.io/foundation-model-plateau-application-era/</link><pubDate>Tue, 07 Apr 2026 00:16:45 +0800</pubDate><guid>https://finisky.github.io/foundation-model-plateau-application-era/</guid><description>&lt;p&gt;Cursor 的母公司 Anysphere 大概 150 人，2025 年 11 月
+&lt;a href="https://e.vnexpress.net/news/tech/personalities/4-mit-graduates-who-built-the-popular-ai-coding-tool-cursor-become-billionaires-4965462.html" title="年收入突破 10 亿美元" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 年收入突破 10 亿美元
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;。OpenAI 到 2026 年初有 
+&lt;a href="https://www.ft.com/content/7ffea5b4-e8bc-47cd-adb4-257f84c8028b" title="4500 名员工" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 4500 名员工
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，2025 年收入 131 亿美元，但据 Fortune 报道，
+&lt;a href="https://fortune.com/2025/11/12/openai-cash-burn-rate-annual-losses-2028-profitable-2030-financial-documents/" title="亏损约 90 亿美元" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 亏损约 90 亿美元
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，而且预计一直亏到 2028 年。&lt;/p&gt;
+&lt;p&gt;一个不训练任何模型的应用公司，人均产出碾压了训练模型的公司。这组数字是 2025 年 AI 行业最值得琢磨的信号。&lt;/p&gt;</description></item><item><title>OpenClaw 为什么能 4 个月拿下 35 万 Star</title><link>https://finisky.github.io/openclaw-why-viral/</link><pubDate>Mon, 06 Apr 2026 00:12:37 +0800</pubDate><guid>https://finisky.github.io/openclaw-why-viral/</guid><description>&lt;p&gt;2025 年 11 月底，一个叫 OpenClaw 的开源项目在 GitHub 上线。4 个半月后，它有 35 万 Star，7 万 Fork，81 个发布版本，OpenAI、NVIDIA、Vercel 做它的赞助商。同期对比：Open WebUI 用了两年半才到 13 万，NextChat 三年到 8.8 万。OpenClaw 的增速在 GitHub 历史上都不多见。&lt;/p&gt;
+&lt;p&gt;它不是一个新模型，不是一个训练框架，甚至不是一个传统意义上的&amp;quot;技术突破&amp;quot;。它是一个个人 AI 助手，跑在你自己的机器上，通过你已经在用的聊天工具跟你对话。WhatsApp、Telegram、Slack、Discord、微信、飞书、iMessage、Matrix，25 个以上的平台，同时接入，一个后台。&lt;/p&gt;
+&lt;p&gt;这篇聊聊它为什么能出圈。&lt;/p&gt;</description></item><item><title>Claude Code 的工具按需加载</title><link>https://finisky.github.io/claude-code-deferred-tools/</link><pubDate>Sun, 05 Apr 2026 21:33:24 +0800</pubDate><guid>https://finisky.github.io/claude-code-deferred-tools/</guid><description>&lt;p&gt;用 Claude Code 写代码的时候，你大概不会注意到一件事：它注册了超过 40 个工具，但你让它读个文件、改几行代码，它只用到三四个。剩下那三十多个工具的定义，每个大约 500 个 token，全塞进上下文就是一万多 token 的固定开销。你只想改一行 CSS，却要为 WebSearch、NotebookEdit、CronCreate 这些完全用不到的工具买单。&lt;/p&gt;</description></item><item><title>Claude Code 的 Edit 工具为什么不会改错文件</title><link>https://finisky.github.io/claude-code-edit-tool/</link><pubDate>Sun, 05 Apr 2026 21:17:51 +0800</pubDate><guid>https://finisky.github.io/claude-code-edit-tool/</guid><description>&lt;p&gt;Claude Code 的 Edit 工具接口极简: 给一个 old_string, 给一个 new_string, 在文件里找到前者替换成后者。听上去就是一个 &lt;code&gt;str.replace()&lt;/code&gt; 的事。但在 LLM Agent 的语境下, 这个看似平凡的操作背后藏着一整套从字符串清洗到并发安全的工程。模型会把行号塞进替换字符串, 会凭空产生弯引号, 会在用户审批的间隙里被外部工具改了目标文件。Edit 工具要在这些情况下保持正确, 比 find-and-replace 复杂得多。&lt;/p&gt;
+&lt;p&gt;从行为上观察, Edit 工具的执行可以拆成三个阶段: API 层预处理(在工具拿到输入之前), 输入校验(展示权限对话框之前), 和实际写入(用户同意之后)。每个阶段各自处理一类问题, 且刻意保持了特定的同步/异步边界。&lt;/p&gt;</description></item><item><title>Claude Code的Undercover Mode：当AI学会隐藏自己</title><link>https://finisky.github.io/claude-code-undercover/</link><pubDate>Sun, 05 Apr 2026 21:02:08 +0800</pubDate><guid>https://finisky.github.io/claude-code-undercover/</guid><description>&lt;p&gt;Claude Code有一个从未出现在任何文档中的模式,在这个模式下,它会系统性地抹除一切AI参与的痕迹。不写Co-Authored-By,不写Generated with Claude Code的footer,甚至连system prompt里都不告诉模型它自己是什么型号。这个模式叫&lt;strong&gt;Undercover Mode&lt;/strong&gt;,只存在于Anthropic内部构建版本中,外部用户永远看不到它,因为整个功能在公开构建时会被dead code elimination彻底剔除。&lt;/p&gt;
+&lt;p&gt;从行为推断,这个机制的存在意味着Anthropic员工日常使用Claude Code向公开仓库提交代码。如果没有某种保护措施,commit message里可能出现未发布模型的代号,PR描述里可能暴露内部项目名称,system prompt里的模型标识可能通过某种方式泄露。Undercover Mode就是为了堵住这些口子。&lt;/p&gt;</description></item><item><title>子Agent省90%费用的Prompt Cache共享机制</title><link>https://finisky.github.io/claude-code-fork-cache/</link><pubDate>Sun, 05 Apr 2026 20:46:42 +0800</pubDate><guid>https://finisky.github.io/claude-code-fork-cache/</guid><description>&lt;p&gt;Claude Code 执行复杂任务时会并行派生多个子 agent，每个都需要父对话的完整上下文。假设父对话积累了 100K token，并行 3 个子 agent，朴素实现要付 300K 的输入费用。&lt;/p&gt;
+&lt;p&gt;熟悉 LLM 推理优化的人会立刻想到：这不就是 KV Cache 共享的问题吗？多个请求如果前缀相同，Attention 层的 Key/Value 可以复用，省掉重复计算。Anthropic 把这个能力以 Prompt Cache 的形式暴露给了 API 用户，对缓存命中的前缀部分打一折。但前提是多个请求的前缀字节完全一致。Claude Code 的 fork 子 agent 被刻意构造成彼此之间 99% 以上的字节相同，3 个子 agent 的实际输入成本大约只有 120K 等价（100K 全价 + 2 × 100K × 10%）。&lt;/p&gt;</description></item><item><title>Claude Code 的上下文压缩:五层级联与免费摘要的艺术</title><link>https://finisky.github.io/claude-code-context-compaction/</link><pubDate>Sun, 05 Apr 2026 20:31:17 +0800</pubDate><guid>https://finisky.github.io/claude-code-context-compaction/</guid><description>&lt;p&gt;200K context window 听起来很大, 但一个中等复杂度的编程 session, 读几十个文件, 跑几轮 grep, 执行一些 bash 命令, 就能轻松吃掉大半个窗口. 压缩是必须的, 但压缩本身又要花钱: 你需要一次 LLM 调用来生成摘要, 而这次调用的输入就是你要压缩的那整段上下文. 这形成了一个有趣的工程权衡: 压得太早浪费信息, 压得太晚窗口爆了, 压缩本身的成本也不能忽略. Claude Code 对此给出的答案是一套多层级联系统: 能不压就不压, 能便宜压就便宜压, 实在不行才动用 LLM.&lt;/p&gt;</description></item><item><title>Claude Code 怎么防住 Bash 注入</title><link>https://finisky.github.io/claude-code-bash-security/</link><pubDate>Sun, 05 Apr 2026 20:15:33 +0800</pubDate><guid>https://finisky.github.io/claude-code-bash-security/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;AI 执行 Bash 命令的安全问题，不是&amp;quot;该不该信任模型&amp;quot;，而是&amp;quot;怎么确认命令的含义和它看起来的一样&amp;quot;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Claude Code 允许 AI 直接执行 Bash 命令。不是通过 MCP 那样的结构化接口间接调用，是真给模型开了一个 shell。MCP 的思路是把工具封装成 JSON schema，安全是安全了，但你不可能为几千个 CLI 工具逐个写 adapter，能力天花板肉眼可见。直接给 Bash，什么都能干，代价是安全问题从&amp;quot;接口权限控制&amp;quot;变成了&amp;quot;搞懂这条命令到底在干嘛&amp;quot;。上一篇聊了 YOLO Classifier 怎么用 AI 审查 AI，但 YOLO Classifier 看到的是完整的命令字符串，它做的是语义判断：这个操作危不危险。在那之前，还有一层更底层的问题需要回答：这个命令真的是它看起来的那个意思吗？&lt;/p&gt;</description></item><item><title>深入 Claude Code 的 YOLO Classifier</title><link>https://finisky.github.io/claude-code-auto-mode-security/</link><pubDate>Sun, 05 Apr 2026 19:58:56 +0800</pubDate><guid>https://finisky.github.io/claude-code-auto-mode-security/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;Claude Code 有个自动模式，可以不经确认直接执行操作。但&amp;quot;自动&amp;quot;不等于&amp;quot;不审查&amp;quot;，每个动作背后都有一个分类器在盯着。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="自动模式的矛盾"&gt;自动模式的矛盾
+&lt;a class="header-anchor" href="#%e8%87%aa%e5%8a%a8%e6%a8%a1%e5%bc%8f%e7%9a%84%e7%9f%9b%e7%9b%be"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;用 Claude Code 写代码，最烦的事之一是权限弹窗。每次执行 Bash 命令、写文件，都要点一下确认。效率高的用户会开启自动模式（auto mode），让 Claude 自主执行所有操作，不再逐个询问。&lt;/p&gt;
+&lt;p&gt;这带来一个显而易见的问题：如果模型决定 &lt;code&gt;rm -rf /&lt;/code&gt;，或者把代码推到 production 分支，或者往 &lt;code&gt;.bashrc&lt;/code&gt; 里写个后门呢？&lt;/p&gt;</description></item><item><title>拆解 Claude Code 的 RAG 机制</title><link>https://finisky.github.io/claude-code-rag/</link><pubDate>Thu, 02 Apr 2026 23:51:07 +0800</pubDate><guid>https://finisky.github.io/claude-code-rag/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;Claude Code 没有向量数据库，没有 embedding 索引，但它能在百万行代码库里精准定位你需要的文件。这背后是一套完全不同于传统 RAG 的检索架构。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="这不是你理解的-rag"&gt;这不是你理解的 RAG
+&lt;a class="header-anchor" href="#%e8%bf%99%e4%b8%8d%e6%98%af%e4%bd%a0%e7%90%86%e8%a7%a3%e7%9a%84-rag"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;用过 RAG 的人对这套流程应该很熟：离线建索引，用户提问，向量检索 Top-K，拼入 prompt，生成回答。一条直线，跑一次就完事。&lt;/p&gt;
+&lt;p&gt;Claude Code 完全不是这么干的。它没有离线索引，检索过程由模型自己驱动。&lt;/p&gt;</description></item><item><title>LLM就是那群终于打出莎士比亚的猴子</title><link>https://finisky.github.io/llm-infinite-monkeys/</link><pubDate>Thu, 02 Apr 2026 13:14:00 +0800</pubDate><guid>https://finisky.github.io/llm-infinite-monkeys/</guid><description>&lt;p&gt;塔勒布在《随机漫步的傻瓜》里讲了一个思想实验：如果有无限只猴子在无限台打字机前随机敲击，总有一只会打出《伊利亚特》全文。&lt;/p&gt;
+&lt;p&gt;我越想越觉得，这个故事的终局，就是今天的大语言模型。&lt;/p&gt;</description></item><item><title>深入解析Claude Code的记忆管理机制</title><link>https://finisky.github.io/claude-code-memory-management/</link><pubDate>Wed, 01 Apr 2026 23:57:55 +0800</pubDate><guid>https://finisky.github.io/claude-code-memory-management/</guid><description>&lt;p&gt;用过Claude Code的开发者可能都有这样的体验：即便在一次超长对话中修改了几十个文件，它似乎始终&amp;quot;记得&amp;quot;之前做过什么。更神奇的是，你在上一次对话里告诉它&amp;quot;我喜欢用bun而不是npm&amp;quot;，下次它就自动遵守了。&lt;/p&gt;
+&lt;p&gt;这背后是一套精密的记忆管理系统。今天，我们把Claude Code的记忆机制彻底拆解开来。&lt;/p&gt;</description></item><item><title>明明Agent是帮手，为什么我们却越来越累？</title><link>https://finisky.github.io/why-agents-make-us-more-tired/</link><pubDate>Thu, 26 Mar 2026 09:00:00 +0800</pubDate><guid>https://finisky.github.io/why-agents-make-us-more-tired/</guid><description>&lt;p&gt;公众号一年多没更新了，不是因为懒，也不是因为自己没有跟上技术的步伐，而是因为有个执念，AI变强之后，技术博客本身的价值就大幅降低，大家学习的方式已经从搜索-学习变成了直接与AI对话的交互式学习。此外由于AI能力的加持，太多AI生成的公众号内容会第一时间发布一些内容，让我觉得步人后尘倒也没有太大必要。从博客的访问量上来看，最近一年的访问量也骤跌，更没有了花几小时写一篇文章的兴致。我更怀念那些一个字一个字几个小时甚至几天码出来的一篇博文的时光。&lt;/p&gt;
+&lt;p&gt;最近半年AI工具有了长足进步，作为重度用户，聊聊”明明Agent是我们的帮手，为什么却感觉越来越累？”&lt;/p&gt;</description></item><item><title>TeX Live mktexmf 无法找到字体的解决方案</title><link>https://finisky.github.io/tex-mktexmf-cannot-find-font/</link><pubDate>Wed, 18 Jun 2025 23:49:33 +0800</pubDate><guid>https://finisky.github.io/tex-mktexmf-cannot-find-font/</guid><description>&lt;p&gt;当你在 Windows 上使用 TeX Live 编译包含自定义字体的 LaTeX 文档时，可能会遇到如下错误：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-14"&gt;&lt;a class="lnlinks" href="#hl-0-14"&gt;14&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-15"&gt;&lt;a class="lnlinks" href="#hl-0-15"&gt;15&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-16"&gt;&lt;a class="lnlinks" href="#hl-0-16"&gt;16&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-17"&gt;&lt;a class="lnlinks" href="#hl-0-17"&gt;17&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-18"&gt;&lt;a class="lnlinks" href="#hl-0-18"&gt;18&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-19"&gt;&lt;a class="lnlinks" href="#hl-0-19"&gt;19&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-20"&gt;&lt;a class="lnlinks" href="#hl-0-20"&gt;20&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-21"&gt;&lt;a class="lnlinks" href="#hl-0-21"&gt;21&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-22"&gt;&lt;a class="lnlinks" href="#hl-0-22"&gt;22&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kpathsea: Running mktextfm Fontin
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The command name is F:\texlive\2025\bin\windows\mktextfm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;name = Fontin, rootname = Fontin, pointsize =
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mktexmf: empty or non-existent rootfile!
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kpathsea: Running mktexmf Fontin.mf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The command name is F:\texlive\2025\bin\windows\mktexmf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Cannot find Fontin.mf.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kpathsea: Appending font creation commands to missfont.log.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kpathsea: Running mktextfm Fontin
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The command name is F:\texlive\2025\bin\windows\mktextfm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;name = Fontin, rootname = Fontin, pointsize =
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mktexmf: empty or non-existent rootfile!
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kpathsea: Running mktexmf Fontin.mf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The command name is F:\texlive\2025\bin\windows\mktexmf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Cannot find Fontin.mf.&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这个错误的原因是 TeX 系统找不到所需的字体文件（特别是 &lt;code&gt;.mf&lt;/code&gt; 或 &lt;code&gt;.tfm&lt;/code&gt; 文件），因此无法生成它们。奇怪的是，你可能已经安装了该字体。&lt;/p&gt;</description></item><item><title>MongoDB Aggregation Pipeline入门</title><link>https://finisky.github.io/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/</link><pubDate>Wed, 26 Mar 2025 22:36:00 +0800</pubDate><guid>https://finisky.github.io/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/</guid><description>&lt;p&gt;MongoDB 的 Aggregation Pipeline 是处理和分析数据的强大工具，适用于实时查询和离线数据分析。它允许开发者使用多个阶段（stages）来转换、过滤、分组和排序数据，从而高效地执行复杂的计算。本文将探讨 Aggregation Pipeline 的基本概念、应用示例、性能分析及优化方案。&lt;/p&gt;</description></item><item><title>SwitchyOmega已无法再使用的解决方案</title><link>https://finisky.github.io/switchyomega-no-longer-be-supported-solution/</link><pubDate>Tue, 04 Mar 2025 22:53:33 +0800</pubDate><guid>https://finisky.github.io/switchyomega-no-longer-be-supported-solution/</guid><description>&lt;p&gt;今天打开Chrome突然提示SwitchyOmega “此扩展程序未遵循 Chrome 扩展程序的最佳实践，因此已无法再使用。” 应该是Chrome自动升级之后插件被禁用了。还有一个坏消息，Stylish插件也因为一样的问题入土不可再用。&lt;/p&gt;
+&lt;p&gt;然后Chrome Web Store无法打开安装其他插件，死锁了。&lt;/p&gt;</description></item><item><title>用MongoDB解决双花问题: 基于事务还是基于版本</title><link>https://finisky.github.io/solving-double-spending-with-mongodb/</link><pubDate>Wed, 01 Jan 2025 09:36:00 +0800</pubDate><guid>https://finisky.github.io/solving-double-spending-with-mongodb/</guid><description>&lt;p&gt;双花问题是交易系统中的一个关键挑战，尤其是在管理账户余额或资金时。当系统允许由于并发操作或竞争条件导致同一笔资金被多次使用时，就会发生双花问题。本文将探讨使用 MongoDB 解决这一问题的两种方法：&lt;strong&gt;基于事务的处理&lt;/strong&gt;和&lt;strong&gt;基于版本的处理&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;本文是
+&lt;a href="https://finisky.github.io/building-a-transaction-system-with-mongodb/" title="用MongoDB构建交易系统" &gt;
+ 用MongoDB构建交易系统
+ 
+&lt;/a&gt;关于双花问题的深入讨论。&lt;/p&gt;</description></item><item><title>解决Win11远程桌面黑屏问题</title><link>https://finisky.github.io/how-to-fix-win11-rdp-black-screen/</link><pubDate>Sat, 14 Dec 2024 10:02:03 +0800</pubDate><guid>https://finisky.github.io/how-to-fix-win11-rdp-black-screen/</guid><description>&lt;p&gt;Windows Update之后，win11的远程桌面就不好使了：连接黑屏，鼠标和界面一概不可见，一分钟之后自动断开连接。无奈只能重新进入本机查看到底是什么问题。&lt;/p&gt;</description></item><item><title>用MongoDB构建交易系统</title><link>https://finisky.github.io/building-a-transaction-system-with-mongodb/</link><pubDate>Sun, 24 Nov 2024 12:31:03 +0800</pubDate><guid>https://finisky.github.io/building-a-transaction-system-with-mongodb/</guid><description>&lt;p&gt;交易系统是现代商业和金融活动的核心，涵盖从电子商务订单处理到金融机构的实时清算等多种场景。这类系统通常需要高并发处理能力、实时数据存储和高效检索功能，同时需要在数据一致性与性能之间找到平衡。随着交易数据的规模和复杂性不断增长，传统交易系统架构在应对这些挑战时，往往因固定的表结构和横向扩展能力的不足而受限。&lt;/p&gt;
+&lt;p&gt;MongoDB 作为一款分布式文档型数据库，以其灵活的架构、高吞吐能力和内置的事务支持，为构建复杂、高效的交易系统提供了一种现代化的解决方案，能够满足多样化的业务需求。&lt;/p&gt;</description></item><item><title>Cerbot自动化管理Nginx网站证书</title><link>https://finisky.github.io/certbot-automating-nginx-ssl-renewal/</link><pubDate>Sun, 17 Nov 2024 12:56:40 +0800</pubDate><guid>https://finisky.github.io/certbot-automating-nginx-ssl-renewal/</guid><description>&lt;p&gt;收到腾讯云的证书续期通知，结果在申请新证书时发现，腾讯云不再支持一年的免费证书：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;2024年4月25日起，腾讯云新签发的免费证书有效期调整为 90 天&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;考虑到一直是手动更新证书，如果三个月手动操作一次还是挺费劲的。于是研究Let&amp;rsquo;s Encrypt的certbot，唯一的顾虑是如何证明自己对二级域名的所有权问题。实践之后发现此问题并不存在，因为certbot仅是签发一个证书而已，并不存在对网站本身的威胁。&lt;/p&gt;
+&lt;p&gt;下面是certbot的配置步骤，其实仅需要执行几个命令，非常简单。&lt;/p&gt;</description></item><item><title>十一伦敦游记</title><link>https://finisky.github.io/london-travel/</link><pubDate>Sat, 09 Nov 2024 18:45:31 +0800</pubDate><guid>https://finisky.github.io/london-travel/</guid><description>&lt;p&gt;十一去了趟伦敦，很喜欢这座拥有悠久历史和丰富文化的城市，古典和现代的结合给人留下了非常深刻的印象。限于时间，只玩了几处最具代表性的地标：大英博物馆、西敏寺、牛津大学、国家美术馆和海德公园。&lt;/p&gt;
+&lt;p&gt;去之前在小红书上做了些功课，主要是两点：提前办无接触信用卡(contactless card)和治安不好。其他就是常规操作，出发前两天买旅行险，提前在淘宝上买电话卡(用的giffgaff，信号还可以)。&lt;/p&gt;
+&lt;p&gt;旅行的体验：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;无接触卡非常必要，一分钱现金也没花，全带回来了。&lt;/li&gt;
+&lt;li&gt;总体治安尚可，肯定不像小红书上说得那么夸张，当地朋友告诉我们治安非常好。同行的朋友确实遭遇了抢手机，虽然没抢走，但也受了点小伤。&lt;/li&gt;
+&lt;li&gt;吃得还不错，不需要带泡面，当地的英式早餐、英国菜、印度菜和意大利菜都挺好吃，不是传说中的“美食荒漠”。&lt;/li&gt;
+&lt;li&gt;酒店比较贵。&lt;/li&gt;
+&lt;li&gt;购物不太行，不像美国日本那么好买，许多品牌比国内贵。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;特别要提的是天气，十月已经不再是伦敦的旅游旺季，温度大概在10度左右，偏湿冷。当地朋友特意提示要穿waterproof，也就是冲锋衣。实际体验之后明白了原因，这里的雨可谓是霪雨霏霏，下得不大，但说下就下，而且可能伴有大风，穿雨衣忒费劲，打伞又举不住，而且大风带着小雨一样会把衣服打湿。&lt;/p&gt;</description></item><item><title>用MongoDB构建大规模社交网络关系链</title><link>https://finisky.github.io/building-large-scale-social-network-graphs-with-mongodb/</link><pubDate>Mon, 04 Nov 2024 21:59:48 +0800</pubDate><guid>https://finisky.github.io/building-large-scale-social-network-graphs-with-mongodb/</guid><description>&lt;p&gt;如今许多App都涉及社交网络，如 Twitter、WhatsApp 和 Facebook。这些平台必须扩展以处理数十亿用户（图节点），这并非易事。构建和维护一个可扩展的社交网络基础设施需要仔细的规划和战略性的数据建模。实际上，像Facebook这样专业的社交网络应用有专门的团队来做这块内容，对其性能进行极致的优化。但对于许多希望加入社交网络功能的小型App，如一个创业公司项目，建立一个团队来做这样的架构显然是不现实也没有必要的。&lt;/p&gt;
+&lt;p&gt;那么，利用合适的数据建模和存储能否构建一个高性能易扩展的社交网络？答案是肯定的。早期的Facebook使用mysql作为底层存储来构建社交网络，但今天我们可以有更好更高效的存储选择：MongoDB。&lt;/p&gt;</description></item><item><title>TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) 解决方案</title><link>https://finisky.github.io/argument-incorrect-type-expected-ndarray/</link><pubDate>Sat, 02 Nov 2024 12:20:29 +0800</pubDate><guid>https://finisky.github.io/argument-incorrect-type-expected-ndarray/</guid><description>&lt;p&gt;在conda环境中升级软件包后，talib无法接受DataFrame作为输入，错误信息如下所示：&lt;code&gt;TypeError: Argument 'xxx' has incorrect type (expected numpy.ndarray, got DataFrame)&lt;/code&gt;：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt;6&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Traceback (most recent call last):
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; File &amp;#34;/data/1.py&amp;#34;, line 7, in &amp;lt;module&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; df[&amp;#39;SMA_5&amp;#39;] = ta.SMA(df[&amp;#39;Close&amp;#39;], timeperiod=5)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; File &amp;#34;/data/miniconda3/envs/a/lib/python3.10/site-packages/talib/__init__.py&amp;#34;, line 64, in wrapper
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; result = func(*_args, **_kwds)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;TypeError: Argument &amp;#39;real&amp;#39; has incorrect type (expected numpy.ndarray, got DataFrame)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;大多数网络搜索结果都具有误导性，比如将df转换为np数组。由于在更新软件包之前代码能够正常运行，因此问题应为软件包不兼容的问题。&lt;/p&gt;</description></item><item><title>Win11 D盘可用但在文件浏览器中不可见</title><link>https://finisky.github.io/drive-d-usable-but-not-visible-in-file-explorer/</link><pubDate>Sun, 13 Oct 2024 00:13:33 +0800</pubDate><guid>https://finisky.github.io/drive-d-usable-but-not-visible-in-file-explorer/</guid><description>&lt;p&gt;今天遇到Win11中 D 盘在磁盘管理工具中显示可用，但在文件管理器中却不可见的诡异情况。网上搜了许多方案，如在设备管理器中更新驱动，禁用再启用设备，用&lt;code&gt;diskpart&lt;/code&gt;重新删除新建分区，改卷标改盘符等等都不好使。&lt;/p&gt;
+&lt;h2 id="问题描述"&gt;问题描述
+&lt;a class="header-anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;新建D盘，在&lt;code&gt;diskmgmt.msc&lt;/code&gt;磁盘管理器中可见，一切正常。甚至能打开文件浏览器（只是左栏不显示磁盘）&lt;/li&gt;
+&lt;li&gt;D盘可正常使用，如在命令行中使用&lt;/li&gt;
+&lt;li&gt;修改盘符为“E”或其他盘符，文件浏览器中就可见了，但改回“D”又会消失&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>基于LLM评估搜索系统</title><link>https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/</link><pubDate>Thu, 29 Aug 2024 08:30:26 +0800</pubDate><guid>https://finisky.github.io/llm-can-accurately-predict-searcher-preferences/</guid><description>&lt;p&gt;搜索系统的评估和调优很大程度上依赖于相关性标签——这些标签标注了某个文档对特定搜索和搜索者是否有用。理想情况下，这些标签来自真实的搜索用户，但要大规模收集这些数据非常困难，所以典型的实验依赖于第三方标注人员，但他们也可能产生不准确的标注。标注质量一般通过持续的审核、培训和监控来管理。&lt;/p&gt;
+&lt;p&gt;微软（Bing搜索组）在SIGIR'24提出了一种“反其道而行之”的方法：从真实的用户获取反馈，并利用这些反馈来选择一个与之相符的LLM及其提示词，然后令该LLM大规模地产生标签。实验表明，LLM的准确性与人工标注者相当，并且在找到最佳系统和最难的查询方面同样有用。&lt;/p&gt;
+&lt;p&gt;[SIGIR2024] 
+&lt;a href="https://www.microsoft.com/en-us/research/publication/large-language-models-can-accurately-predict-searcher-preferences/" title="# Large Language Models can Accurately Predict Searcher Preferences" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Large Language Models can Accurately Predict Searcher Preferences
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>ChatGPT擅长搜索排序吗？</title><link>https://finisky.github.io/is-chatgpt-good-at-search-ranking/</link><pubDate>Sun, 21 Jul 2024 22:15:25 +0800</pubDate><guid>https://finisky.github.io/is-chatgpt-good-at-search-ranking/</guid><description>&lt;p&gt;大语言模型在各种与语言相关的任务中表现出了显著的零样本泛化能力，包括搜索引擎。然而，现有的工作主要利用LLM的生成能力进行信息检索，而不是直接进行段落排序。这篇EMNLP2023的论文(Outstanding Paper)研究了LLM是否擅长搜索排序的问题。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://aclanthology.org/2023.emnlp-main.923/" title="# Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Rethinking the Role of Token Retrieval in Multi-Vector Retrieval简读</title><link>https://finisky.github.io/xtr-summary/</link><pubDate>Sun, 30 Jun 2024 18:58:25 +0800</pubDate><guid>https://finisky.github.io/xtr-summary/</guid><description>&lt;p&gt;之前写过深度检索模型的介绍：
+&lt;a href="https://finisky.github.io/retrievermodels/" title="# 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT" &gt;
+ # 深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT
+ 
+&lt;/a&gt;，今天来看看DeepMind在NeurIPS 2024上的文章，对多向量检索模型（Multi-Vector Retrieval）ColBERT进行了改进：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/pdf/2304.01982" title="Rethinking the Role of Token Retrieval in Multi-Vector Retrieval" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Rethinking the Role of Token Retrieval in Multi-Vector Retrieval
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;多向量检索模型由于使Query与Doc进行词元级别的交互，因此在许多信息检索基准测试中达到了SOTA。然而，其非线性评分函数无法扩展到数百万个文档，这就需要一个三阶段的推理过程：通过词元检索检索初始候选，访问所有词元向量，并对初始候选文档进行评分。非线性评分函数应用于每个候选文档的所有词元向量，使得推理过程复杂且缓慢。XTR 引入了新的目标函数，鼓励模型首先检索最重要的文档词元，对词元检索的改进使得 XTR 可以仅使用检索到的词元来对候选文档排序，而不是文档中的所有词元，因此其成本比 ColBERT 低两到三个数量级。在流行的 BEIR 基准测试中，XTR 在没有任何蒸馏的情况下，将 NDCG@10 提升了 2.8。&lt;/p&gt;
+&lt;p&gt;主要改进点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;仅使用检索到的doc token而非全部doc token进行相似度计算&lt;/li&gt;
+&lt;li&gt;解决了检索训练和推理之间的gap&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>AI搜索与大模型应用的一些思考</title><link>https://finisky.github.io/thoughts-on-ai-search-and-llm-applications/</link><pubDate>Fri, 10 May 2024 09:28:36 +0800</pubDate><guid>https://finisky.github.io/thoughts-on-ai-search-and-llm-applications/</guid><description>&lt;p&gt;最近读到一篇有趣的文章，讨论了当前许多新的AI搜索产品是否会取代Google：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.theverge.com/24111326/ai-search-perplexity-copilot-you-google-review" title="Here’s why AI search engines really can’t kill Google" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Here’s why AI search engines really can’t kill Google
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;先简要地看下这篇文章在说什么：&lt;/p&gt;
+&lt;p&gt;如果要取代Google，那么这些新的产品必须可以完成Google能做的所有事情。于是，作者先收集了Top100的Google搜索查询，然后将它们输入到当前最好的一些AI搜索产品中。作者认为，虽然在某些情况下，基于LLM的搜索比一页Google搜索结果有用，但在大多数情况下，AI搜索取代Google还是相当困难的。&lt;/p&gt;</description></item><item><title>Word追踪修订时通配符替换Bug</title><link>https://finisky.github.io/word-wildcard-replace-bug-when-track-changes/</link><pubDate>Wed, 03 Apr 2024 09:16:33 +0800</pubDate><guid>https://finisky.github.io/word-wildcard-replace-bug-when-track-changes/</guid><description>&lt;p&gt;没想到浓眉大眼的Office Word居然还有这种Bug：在追踪修订时，通配符不能正确替换。&lt;/p&gt;
+&lt;p&gt;在处理一个大型文档时，需要批量将英文括号替换成中文括号，因此需要使用到通配符替换：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Find What: \((*)\)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Options: Use Wildcards
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Replace With: （\1）&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;预期行为是：将“(abc)”替换为“（abc）”，却没料到被替换成了“abc（）”。&lt;/p&gt;</description></item><item><title>为什么语言模型的本质是压缩器？</title><link>https://finisky.github.io/language-modeling-is-compression-summary/</link><pubDate>Tue, 26 Mar 2024 19:05:56 +0800</pubDate><guid>https://finisky.github.io/language-modeling-is-compression-summary/</guid><description>&lt;p&gt;最早听说语言模型的本质是压缩器的想法是在
+&lt;a href="https://finisky.github.io/fireside-talk-openai-ceo-summary/" title="黄仁勋和Ilya的围炉对谈" &gt;
+ 黄仁勋和Ilya的围炉对谈
+ 
+&lt;/a&gt;，当时只是直觉上觉得这个说法很有意思，但却没想明白原理是什么。2023年9月，DeepMind写论文进一步论证了语言建模与压缩的等价性：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2309.10668" title="# Language Modeling Is Compression" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Language Modeling Is Compression
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;长期以来，人们已经确认预测模型可以转化为无损压缩器，反之亦然。值得注意的是，近年来，机器学习领域一直专注于训练规模越来越大且功能强大的自监督语言模型。由于这些大语言模型展示了很强的预测能力，它们自然而然地也被认为是强大的压缩器。文中研究者主张通过压缩的视角来审视预测问题，并依此评估大型基座模型的压缩能力。实验证明大语言模型也是强大的通用预测器，语言模型即压缩的视角为扩展定律和上下文学习提供了新的见解。例如，Chinchilla 70B虽然主要用文本训练，但却能将ImageNet patches和LibriSpeech样本压缩到其原始大小的43.4%和16.4%，分别超过了领域特定的压缩器，如PNG（58.5%）和FLAC（30.3%）。最后，研究者证实基于预测与压缩的等价性可以使用任何压缩器来构建条件生成模型。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;本文试图用简洁的语言（无公式）来说明“语言建模即压缩”的思想。原论文的思路是借助算术编码的原理和过程，然后将语言模型建模的过程与算术编码过程进行映射并证明它们等价。这个思路有些类似于NP难问题的证明：将一个问题在多项式时间归约成已知的某个NP难问题。&lt;/p&gt;</description></item><item><title>大模型的涌现能力是幻象？</title><link>https://finisky.github.io/llm-emergent-ability-is-mirage-summary/</link><pubDate>Sat, 06 Jan 2024 01:15:46 +0800</pubDate><guid>https://finisky.github.io/llm-emergent-ability-is-mirage-summary/</guid><description>&lt;p&gt;“涌现能力”可谓是大模型的神来之笔：这些能力在小规模模型中不存在，而仅在大规模模型中存在。涌现能力的神奇之处就在于两点：第一，锐利性，似乎它们瞬间从不存在变为存在；第二，不可预测性，不知道在什么规模的模型上就突现了。&lt;/p&gt;
+&lt;p&gt;涌现能力相关的讨论在大模型出圈之后一直被津津乐道，尤其是在训练出的模型能力不达预期时，时常背锅：可能是模型不够大，所以不具备这样的能力。问题来了，涌现能力是否真的是大规模模型才拥有的魔法？&lt;/p&gt;
+&lt;p&gt;NeurIPS 2023的Main Track Outstanding Paper的二者之一，提出了对涌现能力的一种解释：对于特定任务和模型，在分析模型输出时，涌现能力的出现是由于研究人员选择的衡量指标所致，而非模型行为随着规模扩大而发生了根本性变化。具体而言，非线性或不连续的衡量标准会产生明显的涌现能力，而线性或连续的度量标准会导致模型性能的平滑、连续、可预测的变化。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://blog.neurips.cc/2023/12/11/announcing-the-neurips-2023-paper-awards/" title="# Announcing the NeurIPS 2023 Paper Awards" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Announcing the NeurIPS 2023 Paper Awards
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2304.15004" title="# Are Emergent Abilities of Large Language Models a Mirage?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Are Emergent Abilities of Large Language Models a Mirage?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>ChatGPT一周年：开源大模型迎头赶上？</title><link>https://finisky.github.io/open-source-llm-vs-chatgpt/</link><pubDate>Tue, 26 Dec 2023 09:59:45 +0800</pubDate><guid>https://finisky.github.io/open-source-llm-vs-chatgpt/</guid><description>&lt;p&gt;一篇有趣的综述文章，写于ChatGPT问世一周年之时，总结了开源大型语言模型（LLM）在过去一年中的发展情况。首先介绍了开源LLM的兴起，以及它们如何在各种自然语言处理任务中取得了显著的进展。然后讨论了开源LLM与闭源LLM之间的竞争，以及它们在性能和应用方面的差异。文中提到了一些具体的研究成果和进展，包括知识获取、情感分析、代码生成等。最后，论文探讨了开源LLM的未来发展方向，以及在伦理和安全方面的挑战和应对措施。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2311.16989" title="# ChatGPT&amp;rsquo;s One-year Anniversary: Are Open-Source Large Language Models Catching up?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # ChatGPT&amp;rsquo;s One-year Anniversary: Are Open-Source Large Language Models Catching up?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>小模型的惊人能力: Phi-2</title><link>https://finisky.github.io/phi2-the-surprising-power-summary/</link><pubDate>Wed, 13 Dec 2023 18:18:16 +0800</pubDate><guid>https://finisky.github.io/phi2-the-surprising-power-summary/</guid><description>&lt;p&gt;过去半年，MSR发布了一套名为&lt;code&gt;Phi&lt;/code&gt;的小模型（SLMs），取得了卓越的性能表现。其中第一个模型，1.3B 的&lt;code&gt;Phi-1&lt;/code&gt;，实现了在现有SLMs中对Python编码的最佳性能（在HumanEval和MBPP数据集上）。随后，他们将注意力扩展到常识推理和语言理解，并创建了一个新的 1.3B 模型，命名为&lt;code&gt;Phi-1.5&lt;/code&gt;，其性能相当于规模更大5倍的模型。&lt;/p&gt;
+&lt;p&gt;最近MSR发布了&lt;code&gt;Phi-2&lt;/code&gt;，一个 2.7B 的语言模型，展示了卓越的推理和语言理解能力，表现出小于 13B 语言模型的最好效果。在各种测试中，&lt;code&gt;Phi-2&lt;/code&gt;与规模大达25倍的模型差不多或获胜，主要归功于模型规模和训练数据方面的创新。MSR已经在Azure AI Studio模型目录中提供了Phi-2，以促进语言模型的研究和开发。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Phi-2&lt;/code&gt; 未放出细节的技术报告，具体可参考原博客：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.microsoft.com/en-us/research/blog/phi-2-the-surprising-power-of-small-language-models/" title="# Phi-2: The surprising power of small language models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Phi-2: The surprising power of small language models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;第一代&lt;code&gt;Phi-1&lt;/code&gt;解读：
+&lt;a href="https://finisky.github.io/textbooks-are-all-you-need-summary/" title="数据为王: Textbooks Are All You Need" &gt;
+ 数据为王: Textbooks Are All You Need
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Skywork: A More Open Bilingual Foundation Model 简读</title><link>https://finisky.github.io/skywork-summary/</link><pubDate>Fri, 10 Nov 2023 19:18:16 +0800</pubDate><guid>https://finisky.github.io/skywork-summary/</guid><description>&lt;p&gt;昆仑的天工模型一直走开源路线，最近放出了技术报告，其中关于预训练模型刷榜作弊的部分引发了广泛的讨论，把大家心照不宣的事情首次放到了台面上 :-)。本文来看下这篇技术报告的亮点(非全文精读，仅摘要有趣的点，细节可阅读原论文)。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2310.19341" title="# Skywork: A More Open Bilingual Foundation Model" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Skywork: A More Open Bilingual Foundation Model
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>十一前洛阳自驾游记</title><link>https://finisky.github.io/luoyang/</link><pubDate>Thu, 28 Sep 2023 17:49:43 +0800</pubDate><guid>https://finisky.github.io/luoyang/</guid><description>&lt;p&gt;趁着十一前的假期，去神都洛阳逛逛。作为一个河南人，河南的景点却基本没怎么去过，这种感觉有点类似住的最近的人常常会迟到一样。&lt;/p&gt;
+&lt;p&gt;没有太多规划，原计划是龙门石窟、白马寺和少林寺，不过后来因为一直下雨和略感疲倦，逛完白马寺直接回家。自驾往返共400公里整，大部分是高速，剩下几十公里国道。&lt;/p&gt;</description></item><item><title>LIMA: Less Is More for Alignment 简读</title><link>https://finisky.github.io/lima-summary/</link><pubDate>Tue, 12 Sep 2023 19:18:16 +0800</pubDate><guid>https://finisky.github.io/lima-summary/</guid><description>&lt;p&gt;LIMA是五月份的一篇网红文，发表后引起了广泛的讨论。它用极致简约的SFT方案训练了一个不错的模型，希望证实表面对齐假设 (Superficial Alignment Hypothesis)：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;大模型中几乎所有知识都是在预训练中学习的，指令微调只是一个很简单的过程，让模型学到与用户交互的形式。&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;为证明上述假设，作者们推测仅需要少量的指令微调数据(1000条)就可以教会模型产生高质量输出。此外，1000条SFT数据就达到了很好的指令微调效果，也说明了高质量数据对于模型的重要性，这一点与 
+&lt;a href="https://finisky.github.io/textbooks-are-all-you-need-summary/" title="Textbooks Are All You Need" &gt;
+ Textbooks Are All You Need
+ 
+&lt;/a&gt; 有异曲同工之妙。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2305.11206" title="# LIMA: Less Is More for Alignment" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # LIMA: Less Is More for Alignment
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>力洛克T41发条突然弹松问题</title><link>https://finisky.github.io/lelocle-mainspring-suddenly-release/</link><pubDate>Sat, 29 Jul 2023 18:00:05 +0800</pubDate><guid>https://finisky.github.io/lelocle-mainspring-suddenly-release/</guid><description>&lt;p&gt;
+&lt;a href="https://finisky.github.io/lelocle-maintain/" title="力洛克T41自行洗油保养实录" &gt;
+ 力洛克T41自行洗油保养实录
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;手动上弦的问题并未解决，保养后不久，问题更加严重，仅能上弦约10圈（走时约10小时），便开始不断打滑，同时发出“咔咔”的异响。如小心继续上弦，发条会突然弹松，直接停表。针对此问题搜了许多国内外论坛，都没找到合适的解决方案，此处记录以飨后人。&lt;/p&gt;
+&lt;p&gt;前后花了约一个月，买了一根发条，两个发条盒总成件，捏断两根发条内钩，最终购买一套立轮和离合轮（合轮）彻底解决问题。&lt;/p&gt;
+&lt;p&gt;先买了一根新发条，换上之后问题依然存在。&lt;/p&gt;
+&lt;p&gt;由于出现突然弹松的现象，怀疑发条轴与发条内钩打滑所致，感觉是上链时二者一直打滑，出现“咔咔”的异响。打开看了看发条轴，似乎有一些磨损（它的凸起不太明显，不是非常有经验的老师傅不太容易看出是否磨损），干脆买了一个新的原装发条盒。换上之后问题依旧。&lt;/p&gt;</description></item><item><title>图说文本生成解码策略</title><link>https://finisky.github.io/illustrated-decoding-strategies/</link><pubDate>Wed, 19 Jul 2023 09:46:22 +0800</pubDate><guid>https://finisky.github.io/illustrated-decoding-strategies/</guid><description>&lt;p&gt;之前写过 
+&lt;a href="https://finisky.github.io/nucleussampling/" title="# Nucleus Sampling与文本生成中的不同解码策略比较" &gt;
+ # Nucleus Sampling与文本生成中的不同解码策略比较
+ 
+&lt;/a&gt;，不过文中缺乏图例，对于解码过程解释不够清晰，本文作为2.0版加以补充。&lt;/p&gt;</description></item><item><title>使LLM善假于物: Toolformer</title><link>https://finisky.github.io/toolformer-summary/</link><pubDate>Sun, 16 Jul 2023 23:58:16 +0800</pubDate><guid>https://finisky.github.io/toolformer-summary/</guid><description>&lt;p&gt;大模型可以仅凭指令或几个示例就能解决各种新任务，但在一些看似简单的算术或搜索任务上却表现欠佳。俗话说得好，人和动物的区别就是人可以更好地使用工具。于是，Meta AI提出了&lt;code&gt;Toolformer&lt;/code&gt;，让LLM&lt;code&gt;善假于物&lt;/code&gt;，通过自学使用外部工具。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Toolformer&lt;/code&gt;可以决定调用什么API、何时调用它们、传递什么参数及如何将API返回值融合。&lt;code&gt;Toolformer&lt;/code&gt;以自监督方式训练，每个API仅需要几个示例。它在各种下游任务中显著提升了零样本性能，而不牺牲其核心语言模型能力。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2302.04761" title="# Toolformer: Language Models Can Teach Themselves to Use Tools" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Toolformer: Language Models Can Teach Themselves to Use Tools
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>数据为王: Textbooks Are All You Need</title><link>https://finisky.github.io/textbooks-are-all-you-need-summary/</link><pubDate>Sun, 09 Jul 2023 19:48:00 +0800</pubDate><guid>https://finisky.github.io/textbooks-are-all-you-need-summary/</guid><description>&lt;p&gt;MSR使用“教科书”级的高质量数据训练了仅 1.3B 的面向代码任务的&lt;code&gt;phi-1&lt;/code&gt;模型，在 HumanEval 和 MBPP 上取得了很高的准确率。&lt;/p&gt;
+&lt;p&gt;根据模型扩展法则，为提升模型性能，需要从增大算量和模型规模入手。这里则另辟蹊径：从数据质量出发。之前的研究证实：提升数据质量会大幅改变扩展法则趋势，能让小模型达到大模型的效果。本文则在此结论上更进一步，打破了已有的模型扩展法则，证明&lt;strong&gt;高质量的数据甚至可以在使用更少的数据和算量条件下超越大模型的SOTA&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;具体来说，用约 7B token 训练8轮，然后在少于 200M token的数据上微调得到 1.3B 的模型 &lt;code&gt;phi-1&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2306.11644" title="# Textbooks Are All You Need" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Textbooks Are All You Need
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>训练中文垂类大模型：Lawyer LLaMA</title><link>https://finisky.github.io/lawyer-llama-summary/</link><pubDate>Mon, 19 Jun 2023 19:20:16 +0800</pubDate><guid>https://finisky.github.io/lawyer-llama-summary/</guid><description>&lt;p&gt;开源的通用能力大模型越来越多，但真正有用和落地的是在某个领域专精的垂类模型。初看上去，似乎大模型仅需要少量prompt工作就可以很好地在垂类工作，可事实并非如此。不进行领域微调的通用模型可以很快地构建80分的应用，可是大部分的实用场景，需要95甚至98分的模型效果。这也是为什么在各个领域（如金融、车载、虚拟人）大家都在训练或微调自己大模型的原因。&lt;/p&gt;
+&lt;p&gt;微调这件事看上去不难，但却有很多未解问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如何基于英文大模型继续训练一个中文大模型？&lt;/li&gt;
+&lt;li&gt;垂类数据应该在预训练阶段引入，还是指令微调时引入？&lt;/li&gt;
+&lt;li&gt;通用指令数据与垂类任务数据的混合比例有什么讲究？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;上面的每个问题都有很多种不同的方案，但限于时间和成本，逐一实验是不可行的，AB测试也会带来额外的成本。所以有趣的事情出现了，各个玩家对自己训练时的细节都讳莫如深，自己训练的时候也都遇到过各种各样奇怪的坑。更有意思的是，即使别人提供了一些细节参考，自己在训练时未必能够复现 :-( 。&lt;/p&gt;
+&lt;p&gt;代码库：
+&lt;a href="https://github.com/AndrewZhe/lawyer-llama" title="# Lawyer LLaMA" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Lawyer LLaMA
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Lawyer LLaMA&lt;/code&gt;技术报告：
+&lt;a href="https://arxiv.org/abs/2305.15062" title="# Lawyer LLaMA Technical Report" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Lawyer LLaMA Technical Report
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>提升大模型数学推理能力: 过程监督</title><link>https://finisky.github.io/process-supervision-reward-model/</link><pubDate>Tue, 06 Jun 2023 10:18:23 +0800</pubDate><guid>https://finisky.github.io/process-supervision-reward-model/</guid><description>&lt;p&gt;思维链采用逐步推理的方式得到最终结果，如果模型在某一步出现幻想 (Hallucination)，则差之毫厘，谬以千里，后面的错误会被放大，导致错误结果。&lt;/p&gt;
+&lt;p&gt;OpenAI最近提出使用过程监督 (Process Supervision) 减少大模型幻想并提升大模型的数学推理能力，所以什么是过程监督？&lt;/p&gt;
+&lt;p&gt;过程监督 (Process Supervision) 是相对于之前的结果监督 (Outcome Supervison) 而言。众所周知，大模型基于人工反馈的强化学习部分需要用到奖励模型 (Reward Model, RM)，数学推理能力是基于思维链 (Chain of Thought)。传统的奖励模型采用的是结果监督的方式，仅使用思维链的最终结果进行判别与反馈，而过程监督则是对思维链的每步推理都进行反馈。因此，过程监督是针对思维链和奖励模型的一种改进方案。&lt;/p&gt;
+&lt;p&gt;OpenAI开源了过程监督的数据集 PRM800K。论文的核心思想很直观，主要关注在实验设计。&lt;/p&gt;
+&lt;p&gt;OpenAI 博客：
+&lt;a href="https://openai.com/research/improving-mathematical-reasoning-with-process-supervision" title="# Improving mathematical reasoning with process supervision" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Improving mathematical reasoning with process supervision
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文链接：
+&lt;a href="https://arxiv.org/abs/2305.20050" title="# Let&amp;rsquo;s Verify Step by Step" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Let&amp;rsquo;s Verify Step by Step
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>升级gcc解决编译llama-cpp-python错误</title><link>https://finisky.github.io/build-llama-cpp-python-error-solution/</link><pubDate>Thu, 11 May 2023 17:18:39 +0800</pubDate><guid>https://finisky.github.io/build-llama-cpp-python-error-solution/</guid><description>&lt;p&gt;安装 
+&lt;a href="https://github.com/oobabooga/text-generation-webui" title="text-generation-webui" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ text-generation-webui
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;~/text-generation-webui$ pip install -r requirements.txt&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;遇到错误：&lt;/p&gt;</description></item><item><title>贵州4月下旬自驾游记</title><link>https://finisky.github.io/guizhou/</link><pubDate>Thu, 04 May 2023 09:12:01 +0800</pubDate><guid>https://finisky.github.io/guizhou/</guid><description>&lt;p&gt;好久没出去看大好河山，五一前休假去贵州自驾游，云贵川算是都打了卡。按照惯例，还是提前简单做下攻略，本想将行程设置宽松些，后来发现贵州的大部分景点门票预订（进景区时间）都要精确到小时，才不得不把行程提前细化。&lt;/p&gt;
+&lt;p&gt;贵州的主要景点也比较分散，不过都是以省会贵阳为中心放射状排列，本次自驾主要以黔东为主。之前找到一张不错的贵州景点分布图，记不清出处了：&lt;/p&gt;</description></item><item><title>围炉对谈：OpenAI创始人对GPT-4和ChatGPT的理解</title><link>https://finisky.github.io/fireside-talk-openai-ceo-summary/</link><pubDate>Thu, 30 Mar 2023 19:02:03 +0800</pubDate><guid>https://finisky.github.io/fireside-talk-openai-ceo-summary/</guid><description>&lt;p&gt;3月22日，NVIDIA的CEO黄仁勋与OpenAI的创始人Ilya Sutskever进行了围炉对谈，通过视频可以更好地了解OpenAI是如何走到今天，又是如何理解ChatGPT和GPT-4这些大模型的。不过毕竟是非正式访谈，思路和观点略有发散，本文提取访谈中一些有意思的观点供参考。&lt;/p&gt;
+&lt;p&gt;BTW，网上的中文完整字幕翻译对某些观点的翻译解读有误，建议看原视频。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://blogs.nvidia.com/blog/2023/03/22/sutskever-openai-gtc/" title="# AI Opener: OpenAI’s Sutskever in Conversation With Jensen Huang" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # AI Opener: OpenAI’s Sutskever in Conversation With Jensen Huang
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>力洛克T41自行洗油保养实录</title><link>https://finisky.github.io/lelocle-maintain/</link><pubDate>Sun, 05 Mar 2023 23:49:05 +0800</pubDate><guid>https://finisky.github.io/lelocle-maintain/</guid><description>&lt;p&gt;戴了十几年的力洛克，一年前开始走时不准，最近每天能慢上一分钟，手动上弦似乎也有些问题，总是上不满弦，怀疑与之前疫情在家总手动上弦有关系 (最初怀疑发条断了)。&lt;/p&gt;
+&lt;p&gt;距上次保养已经5年有余，天梭官方授权的店保养一次 (所谓完全服务) 约一千块，而买块新的ETA-2824-2机芯也就差不多这个价，所以再去保养显得非常不划算。老爷子年轻时玩表修表，有此家学，再加上网上有许多机芯拆解洗油点油视频，看起来也不甚困难，跃跃欲试，决定自行保养维护。&lt;/p&gt;
+&lt;p&gt;前后历时一个月才保养完毕，趟坑无数。现在看来，动手时显然低估了保养洗油的难度，加之中间遇到的诸多难题，本想从玩表的过程获取些操作的成就感，不想却收获了诸多挫败感。修完后才感叹，授权店收一千块算是良心价了 :-) 。好在最终问题完美解决，记录下保养过程。&lt;/p&gt;</description></item><item><title>Chain-of-Thought Prompting 简读</title><link>https://finisky.github.io/chain-of-thought-prompting-summary/</link><pubDate>Wed, 01 Mar 2023 19:39:00 +0800</pubDate><guid>https://finisky.github.io/chain-of-thought-prompting-summary/</guid><description>&lt;p&gt;语言模型越来越大，但更大的模型并没有显示出更强的计算和推理能力。去年Google提出了Chain-of-Thought (CoT) 的方案，通过chain-of-thought提示，让模型逐步推断，使大模型的推理能力显著提升。本文来看一下chain-of-thought的原理。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2201.11903" title="Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://ai.googleblog.com/2022/05/language-models-perform-reasoning-via.html" title="Language Models Perform Reasoning via Chain of Thought" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Language Models Perform Reasoning via Chain of Thought
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>大模型训练不稳定问题及解决方案</title><link>https://finisky.github.io/llm-training-instability-solution/</link><pubDate>Wed, 15 Feb 2023 10:08:12 +0800</pubDate><guid>https://finisky.github.io/llm-training-instability-solution/</guid><description>&lt;p&gt;大规模语言模型的春风已经吹遍大地，大家都惊叹于大模型出色的对话能力，但是在训练大模型时遇到的训练不稳定问题(&lt;strong&gt;training instabilities&lt;/strong&gt;)，可能关注的人并不太多。所谓量变引起质变，模型每大一个量级，就可能会出现一些意想不到的问题，比如莫名其妙的训练崩溃。当然，也有好的方面，在模型有一定规模后，是否有可能表现出一些弱智能，也很难说。&lt;/p&gt;
+&lt;p&gt;言归正传，今天聊聊在训练10B以上模型时遇到的训练不稳定现象，问题原因及当前的解法。&lt;/p&gt;</description></item><item><title>Google拟发布ChatGPT的竞争对手Bard</title><link>https://finisky.github.io/google-open-bard-to-trusted-testers/</link><pubDate>Wed, 08 Feb 2023 19:55:39 +0800</pubDate><guid>https://finisky.github.io/google-open-bard-to-trusted-testers/</guid><description>&lt;p&gt;ChatGPT的大火让Google也坐不住了，许多人认为这一波Google已落后一个身位。坊间甚至传言创始人谢尔盖・布林都已“躬身入局”，亲自写代码了。上面的说法可以当八卦看来一乐，不过昨天微软官宣Bing和Edge浏览器要集成ChatGPT时，Google也不甘示弱，表示也要上线大模型&lt;code&gt;Bard&lt;/code&gt; (这个名字倒也颇具浪漫主义气质：吟游诗人)。&lt;/p&gt;</description></item><item><title>大模型分布式训练的并行策略</title><link>https://finisky.github.io/how-to-train-large-language-model/</link><pubDate>Thu, 02 Feb 2023 23:32:10 +0800</pubDate><guid>https://finisky.github.io/how-to-train-large-language-model/</guid><description>&lt;p&gt;随着神经网络模型规模的不断增大，对硬件的显存和算力提出了新的要求。首先模型参数过多，导致单机内存放不下，即使能放得下，算力也跟不上。同时，硬件算力的增长远远比不上模型增长的速度，单机训练变得不再可行，需要并行化分布式训练加速。比如&lt;code&gt;Megatron-Turing NLG&lt;/code&gt;有 530B 的参数，训练需要超过 10T 的内存来存储权重、梯度和状态。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/trendofnlpmodelsize.png" alt="" /&gt;&lt;/p&gt;
+&lt;p&gt;同时，模型是一个有机的整体，简单增加机器数量并不能提升算力，需要有并行策略和通信设计，才能实现高效的并行训练。本文简要介绍目前主流的几种并行策略：数据并行，张量并行，流水线并行和混合并行。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2201.11990" title="# Using DeepSpeed and Megatron to Train Megatron-Turing NLG 530B, A Large-Scale Generative Language Model" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Using DeepSpeed and Megatron to Train Megatron-Turing NLG 530B, A Large-Scale Generative Language Model
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>ChatGPT推出了收费版，每月20刀</title><link>https://finisky.github.io/chatgpt-plus/</link><pubDate>Thu, 02 Feb 2023 10:19:00 +0800</pubDate><guid>https://finisky.github.io/chatgpt-plus/</guid><description>&lt;p&gt;近来被人们玩坏的ChatGPT推出了收费订阅&lt;code&gt;ChatGPT Plus&lt;/code&gt;，每月20刀，提供更好的可用性，更快的回复时间，和提前试用新功能的权益。&lt;/p&gt;
+&lt;p&gt;这个订阅目前仅对美国地区开放，先从之前登记的waitlist上邀请试用，后续会开放更多国家和地区。&lt;/p&gt;
+&lt;p&gt;好消息是免费版继续可用，推出收费版后可以更好地服务于更多的免费用户。&lt;/p&gt;</description></item><item><title>Hexo环境变量区分生产环境</title><link>https://finisky.github.io/how-to-set-hexo-env/</link><pubDate>Sat, 28 Jan 2023 00:42:27 +0800</pubDate><guid>https://finisky.github.io/how-to-set-hexo-env/</guid><description>&lt;p&gt;最近升级NexT主题到最新版v8.14.1，相关文章功能从v8.10开始由&lt;code&gt;hexo-related-popular-posts&lt;/code&gt;替换成了&lt;code&gt;hexo-related-posts&lt;/code&gt;，后者是用tf-idf算法对文章全文进行相似度计算而得相关文章，比&lt;code&gt;hexo-related-popular-posts&lt;/code&gt;要精准和先进一些，不过副作用是计算量变大，在文章数较多的情况下运行会比较慢，这样在写完文章后用&lt;code&gt;hexo s&lt;/code&gt;进行本地调试效率就变低了，每次文章修改都要重新计算一遍tf-idf。好在 
+&lt;a href="https://github.com/sergeyzwezdin/hexo-related-posts" title="hexo-related-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 考虑到了此问题，可以通过设置&lt;code&gt;enable_env_name&lt;/code&gt;变量，只在特定环境(如生产环境)中才开启此功能。不过文档略有些问题，费了一番周折才设置环境变量成功。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;短答案&lt;/strong&gt;：&lt;code&gt;$ hexo &amp;lt;command&amp;gt; --&amp;lt;env_key&amp;gt; env_value&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;长答案：本文介绍了如何使用环境变量仅在生产环境开启相关文章功能。&lt;/p&gt;</description></item><item><title>ETA 2824-2 机芯保养手册</title><link>https://finisky.github.io/eta-2824-2-manual/</link><pubDate>Thu, 26 Jan 2023 13:06:00 +0800</pubDate><guid>https://finisky.github.io/eta-2824-2-manual/</guid><description>&lt;p&gt;ETA 2824-2 是经典的瑞士机芯之一，稳定、准确度高。网上也有一个很好的拆解点油视频：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.bilibili.com/video/BV1qJ411v7nQ/" title="# ETA2824机芯的保养与拆解组装过程" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # ETA2824机芯的保养与拆解组装过程
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;不过关于2824机芯的手册百度很难搜到免费下载，在此与表友共享。&lt;/p&gt;</description></item><item><title>Training Compute-Optimal Large Language Models 简读</title><link>https://finisky.github.io/training-compute-optimal-large-language-models-summary/</link><pubDate>Tue, 24 Jan 2023 17:26:43 +0800</pubDate><guid>https://finisky.github.io/training-compute-optimal-large-language-models-summary/</guid><description>&lt;p&gt;DeepMind去年在 NeurIPS 2022 发表了一篇如何在给定计算资源条件下，用多少tokens训练最优大小的 Large Language Models (LLM)。之前的许多工作都仅专注于扩大模型规模，而并不增加训练数据规模，导致这些模型显著地训练不到位 (undertrained)。DeepMind训练用不同规模的数据 (从5B到500B tokens) 训练超过400个不同大小的模型 (从70M到超过16B)，发现 &lt;strong&gt;模型和训练数据规模需要同比增大&lt;/strong&gt;。根据这个假设，使用与 Gopher (280B) 同样的计算量且4倍的数据，训练了70B的最优模型 Chinchilla。它在许多下游任务上的性能显著超过了 Gopher (280B), GPT-3 (175B) Jurassic-1 (178B) 和 Megatron-Turing NLG (530B)。&lt;/p&gt;
+&lt;p&gt;[NeurIPS 2022] 
+&lt;a href="https://openreview.net/pdf?id=iBBcRUlOAPR" title="Training Compute-Optimal Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training Compute-Optimal Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;
+
+&lt;a href="https://arxiv.org/abs/2203.15556" title="Training Compute-Optimal Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training Compute-Optimal Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;本文的 Chinchilla 也是后续对话系统 
+&lt;a href="https://finisky.github.io/sparrow-summary/" title="Sparrow" &gt;
+ Sparrow
+ 
+&lt;/a&gt; 的基模型。&lt;/p&gt;</description></item><item><title>微软与ChatGPT联手会带来什么？</title><link>https://finisky.github.io/why-microsoft-buy-chatgpt/</link><pubDate>Mon, 23 Jan 2023 10:49:00 +0800</pubDate><guid>https://finisky.github.io/why-microsoft-buy-chatgpt/</guid><description>&lt;p&gt;最近微软投资ChatGPT的消息甚嚣尘上，二者的联手会给产业和用户带来什么？&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.reuters.com/technology/microsoft-talks-invest-10-bln-chatgpt-owner-semafor-2023-01-10/" title="# Microsoft in talks to invest $10 bln in ChatGPT-owner OpenAI" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Microsoft in talks to invest $10 bln in ChatGPT-owner OpenAI
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;从新闻上来看，微软会将ChatGPT集成到Office和Bing Search。但实际情况可能不止于此，微软擅长做平台，CVP已经在
+&lt;a href="https://azure.microsoft.com/en-us/blog/general-availability-of-azure-openai-service-expands-access-to-large-advanced-ai-models-with-added-enterprise-benefits/" title="Azure Blog" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Azure Blog
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;称ChatGPT将不久在Azure OpenAI Service上可用:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Customers will also be able to access ChatGPT—a fine-tuned version of GPT-3.5 that has been trained and runs inference on Azure AI infrastructure—through Azure OpenAI Service soon.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;好消息是这个服务可以直接让中小企业基于API研发产品而无须自行研发模型。坏消息是它的效果太好以至于自己训练的模型不能达到同水平的效果，形成对此底层服务的强依赖。&lt;/p&gt;</description></item><item><title>2022 对话系统进展</title><link>https://finisky.github.io/dialog-system-progress-2022/</link><pubDate>Sun, 08 Jan 2023 12:29:09 +0800</pubDate><guid>https://finisky.github.io/dialog-system-progress-2022/</guid><description>&lt;p&gt;2022年随着ChatGPT的大火而结束，最近一年的时间各巨头相继推出了许多表现出色的对话系统，有意思的是大家前进的方向不谋而合，不再专注模型结构和规模，而转向实用性：如何让一个对话系统更有用、更安全、更理解用户意图？&lt;/p&gt;
+&lt;p&gt;对话系统在过去一年里的主要提升得益如下三点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;大模型&lt;/strong&gt;：对话系统的基础，规模大才有足够的通用表示能力&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;从人工反馈学习 (RLHF)&lt;/strong&gt;：通过人工标注不同模型输出，使模型更好地与用户意图align，甚至更小的模型可达到同样效果&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;搜索API&lt;/strong&gt;：使回复有所参考，内容更具体更有用，避免胡说八道 (hallucination)&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>BlenderBot 3 对话系统简析</title><link>https://finisky.github.io/blenderbot3-summary/</link><pubDate>Fri, 06 Jan 2023 20:12:01 +0800</pubDate><guid>https://finisky.github.io/blenderbot3-summary/</guid><description>&lt;p&gt;Meta AI在2022年8月发布了新一代的对话系统 BlenderBot 3，希望通过这样一个公开的demo收集更多的真实数据来改进对话系统，使它变得更安全、更有用。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://ai.facebook.com/blog/blenderbot-3-a-175b-parameter-publicly-available-chatbot-that-improves-its-skills-and-safety-over-time/" title="BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ BlenderBot 3: A 175B parameter, publicly available chatbot that improves its skills and safety over time
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2208.03188" title="BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;BlenderBot 3 (BB3) 只对在美国的成人开放，只用英文对话：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;We present BlenderBot 3 (BB3), an open-domain dialogue model that
+we have deployed as an English speaking conversational agent on a public website accessible by adults in the United States.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;此研究的主要目的与
+&lt;a href="https://finisky.github.io/sparrow-summary/" title="Sparrow" &gt;
+ Sparrow
+ 
+&lt;/a&gt;最接近，使对话更responsible &amp;amp; useful:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The goal of this research program is then to explore how to construct models that continue to improve from such interactions
+both in terms of becoming more responsible and more useful.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这个tech report包括了BB3部署的细节，包括UI设计，本文主要关注模型部分。&lt;/p&gt;</description></item><item><title>DeepMind Sparrow 对话系统简析</title><link>https://finisky.github.io/sparrow-summary/</link><pubDate>Tue, 27 Dec 2022 20:06:39 +0800</pubDate><guid>https://finisky.github.io/sparrow-summary/</guid><description>&lt;p&gt;Sparrow是DeepMind在今年9月底发布的对话系统，主打的点在&amp;quot;helpful, correct, and harmless&amp;quot;。总体来看，思路也是&amp;quot;alignment&amp;quot;，即让对话机器人的回复与用户的意图更贴合。在技术路线上，也是采用reinforcement learning from human feedback，通过定义一批规则，让模型更好地向期望的对话方向推进; 此外，对于事实型的问题，参考搜索出的内容给出回复。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.deepmind.com/blog/building-safer-dialogue-agents" title="Building safer dialogue agents" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Building safer dialogue agents
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2209.14375" title="Improving alignment of dialogue agents via targeted human judgements" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Improving alignment of dialogue agents via targeted human judgements
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>为什么不接ChatGPT到微信公号？</title><link>https://finisky.github.io/chatgpt-for-official-account/</link><pubDate>Fri, 16 Dec 2022 10:08:02 +0800</pubDate><guid>https://finisky.github.io/chatgpt-for-official-account/</guid><description>&lt;p&gt;ChatGPT火爆全网，要是能接到自己的微信公众号后台，岂不美哉？&lt;/p&gt;
+&lt;p&gt;想必有此想法的同志不止我一人，上周末就研究了一下，有几个问题需要解决。&lt;/p&gt;
+&lt;p&gt;首先就是ChatGPT API，最关键的问题没有之一，OpenAI并没有官方API支持。不过github上早有人反向工程破解了此API，Python实现：&lt;/p&gt;</description></item><item><title>WebGPT 简读</title><link>https://finisky.github.io/webgpt-summary/</link><pubDate>Tue, 13 Dec 2022 18:24:46 +0800</pubDate><guid>https://finisky.github.io/webgpt-summary/</guid><description>&lt;p&gt;WebGPT是OpenAI在2021年底发布的解决long-form quesion-answering (LFQA) 的方案。比InstructGPT的提出稍早一些。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/webgpt/" title="WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WebGPT: Improving the Factual Accuracy of Language Models through Web Browsing
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2112.09332" title="WebGPT: Browser-assisted question-answering with human feedback" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WebGPT: Browser-assisted question-answering with human feedback
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WebGPT想解决什么问题？让开放域QA回复更长更可靠。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;A rising challenge in NLP is long-form question-answering (LFQA), in which a paragraph-length answer is generated in response to an open-ended question. LFQA systems have the potential to become one of the main ways people learn about the world, but currently lag behind human performance.&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>ChatGPT的未解难题</title><link>https://finisky.github.io/chatgpt-limitations/</link><pubDate>Sat, 10 Dec 2022 18:12:01 +0800</pubDate><guid>https://finisky.github.io/chatgpt-limitations/</guid><description>&lt;p&gt;整个圈子最近都被ChatGPT出色的对话和Coding能力惊艳到了，前面写了篇文章简析了下其原理，虽然看起来直观，但国内的对话水平与其差距确非一日之功。下面的知乎回答深以为然：&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/whynochatgpt.png" alt="Why China Doesn&amp;rsquo;t Have ChatGPT" /&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/chatgpt/" title="ChatGPT: Optimizing Language Models for Dialogue" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ ChatGPT: Optimizing Language Models for Dialogue
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;既然大家都致力于发掘ChatGPT厉害的地方，就来找找它的不足吧。&lt;/p&gt;</description></item><item><title>InstructGPT/ChatGPT 简读</title><link>https://finisky.github.io/instructgpt-summary/</link><pubDate>Sat, 10 Dec 2022 11:43:52 +0800</pubDate><guid>https://finisky.github.io/instructgpt-summary/</guid><description>&lt;p&gt;最近ChatGPT火爆出圈，一众朋友发来各种网红文问我怎么看。ChatGPT的模型与InstructGPT一样，只是数据收集方式有区别。而InstructGPT的提出已差不多有一年了，只不过最近才引起大家的注意。其实，今年已经有不少工作是延续InstructGPT对提升模型效果的，如 
+&lt;a href="https://finisky.github.io/diamonte-dataset-paper-summary/" title="Diamonte" &gt;
+ Diamonte
+ 
+&lt;/a&gt;，参考了human feedback的思路，但将RL的方案替换成了额外的loss fuction项；
+&lt;a href="https://finisky.github.io/welm-paper-summary/" title="WeLM" &gt;
+ WeLM
+ 
+&lt;/a&gt;，参考了人工编写prompt模板训练大规模语言模型。&lt;/p&gt;
+&lt;p&gt;话不多说，来看看原始的InstructGPT是如何打败大模型的。原始Paper很长，有68页，而事实上核心思想并不复杂。（PS: 现在训练个大模型要不写个50页以上的Paper，都对不起咱烧的那钱！）&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Training language models to follow instructions with human feedback
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://openai.com/blog/instruction-following/" title="Aligning Language Models to Follow Instructions" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Aligning Language Models to Follow Instructions
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;InstructGPT指出，模型并非越大越好：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Making language models bigger does not inherently make them better at following a user’s intent. For example, large language models can generate outputs that are untruthful, toxic, or simply not helpful to the user.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;所以InstrcutGPT希望&lt;strong&gt;通过人工反馈让语言模型与用户意图更加align&lt;/strong&gt;：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;We show an avenue for aligning language models with user intent on a wide range of tasks by fine-tuning with human feedback.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最终训练出来1.3B的InstructGPT模型，人工评测比175B的GPT-3要更好：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;In human evaluations on our prompt distribution, outputs from the 1.3B parameter InstructGPT model are preferred to outputs from the 175B GPT-3, despite having 100x fewer parameters.&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>Chrome加代理使用本地DNS还是远程DNS？</title><link>https://finisky.github.io/chrome-using-proxy-dns-is-done-client-side-or-proxy-side/</link><pubDate>Sun, 27 Nov 2022 19:26:36 +0800</pubDate><guid>https://finisky.github.io/chrome-using-proxy-dns-is-done-client-side-or-proxy-side/</guid><description>&lt;p&gt;如果在Chrome中使用SwitchyOmega插件进行网络代理，那么DNS是走的本地DNS还是代理服务器的DNS？我们来验证一下。&lt;/p&gt;
+&lt;p&gt;本测试使用 Chrome 107.0.5304.107，SwitchyOmega中的&lt;strong&gt;HTTP&lt;/strong&gt;代理。&lt;/p&gt;</description></item><item><title>Windows大小写不敏感导致的git冲突</title><link>https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/</link><pubDate>Tue, 15 Nov 2022 19:01:30 +0800</pubDate><guid>https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/</guid><description>&lt;p&gt;来个好玩的，遇到过 &lt;code&gt;git reset --hard&lt;/code&gt; 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;D:&lt;span class="se"&gt;\$&lt;/span&gt; git clone https://github.com/finisky/git-case-demo.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Cloning into &lt;span class="s1"&gt;&amp;#39;git-case-demo&amp;#39;&lt;/span&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Enumerating objects: 11, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Counting objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;11/11&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Compressing objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;6/6&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Total &lt;span class="m"&gt;11&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Unpacking objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;11/11&lt;span class="o"&gt;)&lt;/span&gt;, 1.85 KiB &lt;span class="p"&gt;|&lt;/span&gt; 126.00 KiB/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;warning: the following paths have collided &lt;span class="o"&gt;(&lt;/span&gt;e.g. &lt;span class="k"&gt;case&lt;/span&gt;-sensitive paths
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;on a &lt;span class="k"&gt;case&lt;/span&gt;-insensitive filesystem&lt;span class="o"&gt;)&lt;/span&gt; and only one from the same
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;colliding group is in the working tree:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;File.txt&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;file.txt&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;然后就会发现刚拉的&lt;code&gt;main&lt;/code&gt;分支都不干净(橙色)，而且&lt;code&gt;git reset --hard&lt;/code&gt;也失效了，仔细看才发现，每reset一次，会在大写 &lt;code&gt;File.txt&lt;/code&gt; 和小写 &lt;code&gt;file.txt&lt;/code&gt; 之间切换，神奇不？&lt;/p&gt;</description></item><item><title>用301重定向迁移 GitHub Pages</title><link>https://finisky.github.io/migrate-github-pages-by-301-redirects/</link><pubDate>Tue, 15 Nov 2022 00:12:58 +0800</pubDate><guid>https://finisky.github.io/migrate-github-pages-by-301-redirects/</guid><description>&lt;p&gt;在一篇老文 
+&lt;a href="https://finisky.github.io/migrate-github-pages/" title="# 迁移Hexo博客到GitHub Pages" &gt;
+ # 迁移Hexo博客到GitHub Pages
+ 
+&lt;/a&gt; 中提到:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;GitHub Pages可能是个单行线，只能迁出，不好再迁出了。简单研究了一下文档，它不允许用户修改Server配置，所以看起来无法完成301重定向。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;但在迁移博客时，301重定向必不可少，它是保证站点迁移不损失搜索排名的关键所在。具体来说，在迁移到新站点之后，需要 
+&lt;a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes" title="手动修改 Google Search Console 的配置" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 手动修改 Google Search Console 的配置
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Do you lose credit for links when you redirect to new URLs?&lt;/strong&gt;&lt;br&gt;
+No, 301 or 302 redirects do not cause a loss in PageRank&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;所以如何才是无损排名迁移 GitHub Pages 的正确方式？&lt;/p&gt;</description></item><item><title>老板喜欢什么样的下属？</title><link>https://finisky.github.io/what-type-of-employees-do-managers-like/</link><pubDate>Sun, 13 Nov 2022 00:21:51 +0800</pubDate><guid>https://finisky.github.io/what-type-of-employees-do-managers-like/</guid><description>&lt;p&gt;今天来聊聊老板喜欢什么样的下属。这个问题其实因老板而异，工作这些年见过各种风格的老板，但不论什么风格，靠谱和有能力的下属都是重点培养对象。我们先从老板的角度，简单分析下作为下属可以从哪些方面提升这些能力。&lt;/p&gt;</description></item><item><title>漫谈 Knowledge Grounded Conversation</title><link>https://finisky.github.io/brief-on-knowledge-grounded-conversation/</link><pubDate>Wed, 09 Nov 2022 23:53:46 +0800</pubDate><guid>https://finisky.github.io/brief-on-knowledge-grounded-conversation/</guid><description>&lt;p&gt;Knowledge Grounded Conversation (KGC)，就是基于知识的对话生成，与不使用知识的对话生成相比，生成的回复更有信息量，可更好地与用户互动。&lt;/p&gt;
+&lt;p&gt;本文不是KGC的综述，所谓漫谈，则是比较随性地聊聊这个方向的代表工作，顺带简单梳理其发展脉络。&lt;/p&gt;</description></item><item><title>小菲陪您唠唠磕</title><link>https://finisky.github.io/finisky-bot/</link><pubDate>Wed, 26 Oct 2022 19:26:52 +0800</pubDate><guid>https://finisky.github.io/finisky-bot/</guid><description>&lt;p&gt;之前 
+&lt;a href="https://finisky.github.io/welm-paper-summary/" title="WeLM的文章" &gt;
+ WeLM的文章
+ 
+&lt;/a&gt; 探讨了微信大语言模型的原理。同时，WeLM开放了API：https://welm.weixin.qq.com/docs/api/ ，有幸申请到了API Token，将其接入了微信公众号&lt;code&gt;Finisky Garden&lt;/code&gt;，聊天机器人取名&lt;code&gt;小菲&lt;/code&gt;，大家可以来试试~&lt;/p&gt;</description></item><item><title>这么个玩意儿也能赚钱？</title><link>https://finisky.github.io/muyu-app/</link><pubDate>Thu, 20 Oct 2022 09:52:58 +0800</pubDate><guid>https://finisky.github.io/muyu-app/</guid><description>&lt;p&gt;一个看着非常简单的App：手机敲木鱼，居然能在App Store上评分4.8，十几万的评论，还有App内购买赚钱，刷新认知不？&lt;/p&gt;
+&lt;p&gt;这年头多少人绞尽脑汁做App都无人理睬，反倒被这么个极简的玩意儿割了韭菜，原因还是它抓住了用户的痛点。&lt;/p&gt;</description></item><item><title>WeLM: A Well-Read Pre-trained Language Model for Chinese 简读</title><link>https://finisky.github.io/welm-paper-summary/</link><pubDate>Mon, 17 Oct 2022 19:57:10 +0800</pubDate><guid>https://finisky.github.io/welm-paper-summary/</guid><description>&lt;p&gt;微信最近有篇新闻刷屏： 
+&lt;a href="https://new.qq.com/rain/a/20221013A02P8400" title="# 微信推出自研NLP大规模语言模型WeLM：零/少样本即可完成多种NLP任务" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # 微信推出自研NLP大规模语言模型WeLM：零/少样本即可完成多种NLP任务
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;来看看这背后的技术原理又是什么：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2209.10372" title="WeLM: A Well-Read Pre-trained Language Model for Chinese" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ WeLM: A Well-Read Pre-trained Language Model for Chinese
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>LaMDA: Language Models for Dialog Applications 简读</title><link>https://finisky.github.io/lamda-paper-summary/</link><pubDate>Fri, 14 Oct 2022 18:08:12 +0800</pubDate><guid>https://finisky.github.io/lamda-paper-summary/</guid><description>&lt;p&gt;Google今年发布的聊天机器人LaMDA确实惊艳，之前一个Google员工与它对话后，声称它已经有了自我意识，还上了热搜。今天就来看看这机器人背后的原理是什么。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt; 大模型，高质量人工标注数据。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2201.08239" title="LaMDA: Language Models for Dialog Applications" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LaMDA: Language Models for Dialog Applications
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文的标题很大，有50多个作者，挺有意思。&lt;/p&gt;</description></item><item><title>Towards Boosting the Open-Domain Chatbot with Human Feedback 简读</title><link>https://finisky.github.io/diamonte-dataset-paper-summary/</link><pubDate>Mon, 10 Oct 2022 19:48:01 +0800</pubDate><guid>https://finisky.github.io/diamonte-dataset-paper-summary/</guid><description>&lt;p&gt;百度最近放出来的一篇文章，发布了一个高质量中文多轮chitchat数据集Diamonte：&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2208.14165" title="Towards Boosting the Open-Domain Chatbot with Human Feedback" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Towards Boosting the Open-Domain Chatbot with Human Feedback
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Diamonte数据集 
+&lt;a href="https://www.luge.ai/#/luge/dataDetail?id=52" title="下载地址" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 下载地址
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Leveraging Similar Users for Personalized Language Modeling with Limited Data 简读</title><link>https://finisky.github.io/leveraging-similar-users-for-personalized-lm-paper-summary/</link><pubDate>Sat, 08 Oct 2022 19:28:27 +0800</pubDate><guid>https://finisky.github.io/leveraging-similar-users-for-personalized-lm-paper-summary/</guid><description>&lt;p&gt;今天来看看这篇 ACL2022 的文章：&lt;/p&gt;
+&lt;p&gt;[ACL2022] 
+&lt;a href="https://aclanthology.org/2022.acl-long.122/" title="Leveraging Similar Users for Personalized Language Modeling with Limited Data" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Leveraging Similar Users for Personalized Language Modeling with Limited Data
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;解决的问题很容易理解，个性化语言模型在用户刚加入时缺少数据的冷启动问题：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Personalized language models are designed and trained to capture language patterns specific to individual users.&lt;/p&gt;
+&lt;p&gt;However, when a new user joins a platform and not enough text is available, it is harder to build effective personalized language models.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;思路也比较直接，使用新用户的少量数据在已有用户中找到相似的用户，然后用相似用户的数据进行语言模型的训练，从而解决数据稀疏的问题。&lt;/p&gt;
+&lt;p&gt;实验论文，提出了三种不同的指标来进行用户相似度计算，实验证明 user embedding + interpolate model效果最好。&lt;/p&gt;</description></item><item><title>开卷有益？</title><link>https://finisky.github.io/kai-juan-you-yi/</link><pubDate>Sat, 24 Sep 2022 10:12:46 +0800</pubDate><guid>https://finisky.github.io/kai-juan-you-yi/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;开卷有益是一个成语，最早出自《与子俨等疏》。
+意思是读书总有益处。常用以勉励人们勤奋好学，多读书就会受益。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;现在这年头，出书不要太容易，烂书也是出奇的多，开卷有益这词儿已经不适用了。就随口说说我最近翻过的几本烂书：《断舍离》，《组织的力量》，《底层逻辑》。&lt;/p&gt;</description></item><item><title>Long-Term Open-Domain Conversation 简读</title><link>https://finisky.github.io/long-term-open-domain-conversation-paper-summary/</link><pubDate>Thu, 22 Sep 2022 09:55:10 +0800</pubDate><guid>https://finisky.github.io/long-term-open-domain-conversation-paper-summary/</guid><description>&lt;p&gt;今天来看看这篇 ACL2022 的文章：&lt;/p&gt;
+&lt;p&gt;[ACL2022] 
+&lt;a href="https://aclanthology.org/2022.acl-long.356/" title="Beyond Goldfish Memory: Long-Term Open-Domain Conversation" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Beyond Goldfish Memory: Long-Term Open-Domain Conversation
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;问题比较清楚，提升长期开放域对话的效果。题目用到一个梗：超越金鱼的7秒记忆，可以看出论文要解决的问题是跨越数小时甚至数天的会话。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt; 这里是“长期” (long-term) 对话，不是 “长程”对话，即对话时间跨度比较长的对话。&lt;/p&gt;
+&lt;p&gt;本文同时发布了一个人与人进行长期对话的数据集 &lt;code&gt;Multi-Session Chat (MSC)&lt;/code&gt;，其中双方通过之前的会话互相了解对方的喜好，并在之后的对话中得以体现。&lt;/p&gt;
+&lt;p&gt;在长期对话中，使用retrieval-augmented的方式，结合对上下文对话的摘要，可以达到超越传统encoder-decoder架构的模型效果。&lt;/p&gt;</description></item><item><title>羊了个羊为什么这么火？</title><link>https://finisky.github.io/why-yang-le-ge-yang-so-hot/</link><pubDate>Sun, 18 Sep 2022 19:02:56 +0800</pubDate><guid>https://finisky.github.io/why-yang-le-ge-yang-so-hot/</guid><description>&lt;p&gt;继跳一跳，2048，合成大西瓜等一众休闲小游戏爆火之后，羊了个羊最近频繁上热搜，甚至成了一个梗，它为什么爆红？有什么过人之处？今天就来扒一扒。&lt;/p&gt;</description></item><item><title>Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering 简读</title><link>https://finisky.github.io/fusion-in-decoder-paper-summary/</link><pubDate>Tue, 13 Sep 2022 19:36:46 +0800</pubDate><guid>https://finisky.github.io/fusion-in-decoder-paper-summary/</guid><description>&lt;p&gt;开放域问答常常需要借助外部知识生成更有信息量和准确的答复。当检索出相关知识后，如何将它们融入生成模型就是个问题。Fusion-in-Decoder (FiD) 这篇文章提出了一个简单有效的方案。&lt;/p&gt;
+&lt;p&gt;[EACL2021] [FiD] 
+&lt;a href="https://aclanthology.org/2021.eacl-main.74/" title="Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>'pandoc exited with code null' 解决方案</title><link>https://finisky.github.io/pandoc-exited-with-code-null-solution/</link><pubDate>Mon, 12 Sep 2022 00:10:05 +0800</pubDate><guid>https://finisky.github.io/pandoc-exited-with-code-null-solution/</guid><description>&lt;p&gt;随着博客文章的不断增加，Hexo生成这些文章需要的时间越来越长，最近居然能卡住几分钟，然后报错：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;[ERROR][hexo-renderer-pandoc] pandoc exited with code null.
+at Object._prettifyError (/home/finisky/node_modules/nunjucks/src/lib.js:36:11)&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;花了不少时间研究到底问题在哪，最终发现是VM的配置太低所致…… :-(&lt;/p&gt;</description></item><item><title>Long Time No See! Open-Domain Conversation with Long-Term Persona Memory 简读</title><link>https://finisky.github.io/long-time-no-see-paper-summary/</link><pubDate>Sun, 11 Sep 2022 19:21:36 +0800</pubDate><guid>https://finisky.github.io/long-time-no-see-paper-summary/</guid><description>&lt;p&gt;对话系统中的个性化，或者说带有人设的AI对话机器人是个挺热的研究问题。随着虚拟人的爆火，如何能打造千人千面与用户沟通的AI，也就自然登上了舞台。今天就来看一篇ACL2022findings的文章：&lt;/p&gt;
+&lt;p&gt;[ACL2022findings] 
+&lt;a href="https://aclanthology.org/2022.findings-acl.207.pdf" title="Long Time No See! Open-Domain Conversation with Long-Term Persona Memory" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Long Time No See! Open-Domain Conversation with Long-Term Persona Memory
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;很多对话系统不能很好地利用用户对话的长程记忆，从而影响对话效果。百度的这篇文章提出了一个新任务 &lt;code&gt;Long-term Memory Conversation (LeMon)&lt;/code&gt; 并发布了对应的数据集 DuLeMon。该系统可以在用户和AI对话的过程中动态提取有用的Persona Memory，并在之后的对话中同时考虑双方的Persona Memory进行更好的对话。&lt;/p&gt;</description></item><item><title>AI虚拟主播带货是不是个好生意？</title><link>https://finisky.github.io/aianchor/</link><pubDate>Mon, 22 Aug 2022 09:42:06 +0800</pubDate><guid>https://finisky.github.io/aianchor/</guid><description>&lt;p&gt;随着元宇宙概念的兴起，AI虚拟主播也跟着又火起来了，但AI虚拟主播真是个好生意吗？&lt;/p&gt;
+&lt;p&gt;AI虚拟主播大致可分为两类，一类是纯的AI虚拟主播，另一类是真人驱动的AI虚拟主播。后者要解决的是真人出镜的问题，本文主要讨论的是前者。&lt;/p&gt;</description></item><item><title>About Me</title><link>https://finisky.github.io/about/</link><pubDate>Sun, 14 Aug 2022 18:27:16 +0800</pubDate><guid>https://finisky.github.io/about/</guid><description>&lt;h2 id="bio"&gt;Bio
+&lt;a class="header-anchor" href="#bio"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;img src="https://finisky.github.io/images/me.webp" alt="finisky" style="border-radius:50%;height:100px;width:100px;" /&gt; 
+&lt;ul&gt;
+&lt;li&gt;Ph.D. in Computer Science and Engineering&lt;/li&gt;
+&lt;li&gt;Work at Microsoft&lt;/li&gt;
+&lt;li&gt;Experience in search ranking, NLP, chatbot, AI and system design&lt;/li&gt;
+&lt;li&gt;Philosophy: simple, reliable, maintainable&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/tags/" title="More&amp;hellip;" &gt;
+ More&amp;hellip;
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;br&gt;
+&lt;ul&gt;
+&lt;li&gt;Living in Beijing, China&lt;/li&gt;
+&lt;li&gt;Love hiking, swimming, pingpong, photography, history, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="contact"&gt;Contact
+&lt;a class="header-anchor" href="#contact"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Email&lt;/strong&gt;: &lt;code&gt;a@b.com&lt;/code&gt;, where &lt;code&gt;a = finiskygarden&lt;/code&gt;, &lt;code&gt;b = gmail&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Wechat Official Account&lt;/strong&gt;: &lt;code&gt;Finisky Garden&lt;/code&gt;&lt;/p&gt;
+&lt;img alt="finisky" src="https://finisky.github.io/images/qrcode.webp" style="height:100px;width:100px;"&gt;</description></item><item><title>Hexo去LeanCloud依赖</title><link>https://finisky.github.io/hexormleancloud/</link><pubDate>Tue, 09 Aug 2022 00:26:09 +0800</pubDate><guid>https://finisky.github.io/hexormleancloud/</guid><description>&lt;p&gt;7.19日，收到了LeanCloud的邮件，大意如下：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务&lt;/p&gt;
+&lt;p&gt;为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8 月 1 日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。&lt;/p&gt;</description></item><item><title>FiniCounter: 静态网站访问量统计工具</title><link>https://finisky.github.io/finicounter-impl/</link><pubDate>Sun, 07 Aug 2022 13:20:03 +0800</pubDate><guid>https://finisky.github.io/finicounter-impl/</guid><description>&lt;p&gt;静态博客如Hexo/Hugo/Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。&lt;/p&gt;</description></item><item><title>抖音为什么如此成功？</title><link>https://finisky.github.io/douyinproduct/</link><pubDate>Sun, 24 Jul 2022 09:55:35 +0800</pubDate><guid>https://finisky.github.io/douyinproduct/</guid><description>&lt;p&gt;抖音自2016年9月于今日头条孵化上线，定位为适合中国大陆年轻人的音乐短视频社区，应用为垂直音乐的UGC短视频。从数据来看，抖音主站在2021年第一季度的平均日活已过6亿，非常惊人，可见用户对于抖音产品的认可和依赖。同时，笔者周围有不少人的抖音都是装了又卸，卸了又装，感叹：刷抖音太费时间了，一不小心几个小时就过去了。那么，抖音是如何在互联网行业中突出重围，脱颖而出的呢？&lt;/p&gt;</description></item><item><title>为什么微信能做支付，支付宝做不了社交</title><link>https://finisky.github.io/wechatvsalipay/</link><pubDate>Fri, 15 Jul 2022 09:50:21 +0800</pubDate><guid>https://finisky.github.io/wechatvsalipay/</guid><description>&lt;p&gt;关于&amp;quot;为什么微信能做支付，支付宝做不了社交&amp;quot;这个问题之前有过很多讨论，最近看到一个最直接直观的解释是，因为应用场景的包含关系不同。&lt;/p&gt;</description></item><item><title>回滚老版本Stylish Chrome插件</title><link>https://finisky.github.io/rollback-stylish/</link><pubDate>Wed, 13 Jul 2022 09:39:43 +0800</pubDate><guid>https://finisky.github.io/rollback-stylish/</guid><description>&lt;p&gt;(从前) 
+&lt;a href="https://chrome.google.com/webstore/detail/stylish-custom-themes-for/fjnbnpbmkenffdnngjfgmeleoegfcffe?hl=en" title="Stylish" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Stylish
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 是个特别好的Chrome插件，可以自定义不同的css style，覆盖网站原有的风格和字体。我使用Stylish主要是将网页本身的英文字体改为Monaco，中文字体是雅黑。&lt;/p&gt;</description></item><item><title>Hexo生成错误的永久链接日期</title><link>https://finisky.github.io/wrong-permalinks-date/</link><pubDate>Sat, 11 Jun 2022 18:23:51 +0800</pubDate><guid>https://finisky.github.io/wrong-permalinks-date/</guid><description>&lt;p&gt;使用 
+&lt;a href="https://finisky.github.io/deployhexofromprivaterepo/" title="# 从私有代码库自动部署Hexo站到GitHub Pages" &gt;
+ # 从私有代码库自动部署Hexo站到GitHub Pages
+ 
+&lt;/a&gt; 之后，真是幺娥子迭出：先是 
+&lt;a href="https://finisky.github.io/githubactiontorestorefilemtime/" title="文章的最后编辑时间不正确" &gt;
+ 文章的最后编辑时间不正确
+ 
+&lt;/a&gt; ，现在又发现有些页面的永久链接的日期会差一天，比如markdown写的是&lt;code&gt;2020-07-13 00:50:05&lt;/code&gt;，生成的永久链接变成了&lt;code&gt;2020/07/12&lt;/code&gt;。这个错误可能会导致搜索引擎找不到老页面，从而影响搜索展示。&lt;/p&gt;</description></item><item><title>什么是一个优秀的校招候选人</title><link>https://finisky.github.io/goodcampushire/</link><pubDate>Mon, 06 Jun 2022 23:30:35 +0800</pubDate><guid>https://finisky.github.io/goodcampushire/</guid><description>&lt;p&gt;作为面试官面试过数百候选人，深知招人难，招合适的人更难。同时，所谓“良禽择木而栖”，找一份自己满意的工作也并非易事。社招由于岗位职责的不同，与校招的标准有较大区别，下回分解。今天我们从面试官的角度来聊聊，对于技术研发岗，什么是一个优秀的校招候选人。&lt;/p&gt;</description></item><item><title>深度文本检索模型：DPR, PolyEncoders, DCBERT, ColBERT</title><link>https://finisky.github.io/retrievermodels/</link><pubDate>Fri, 03 Jun 2022 11:18:00 +0800</pubDate><guid>https://finisky.github.io/retrievermodels/</guid><description>&lt;p&gt;文本匹配与检索是NLP中的经典问题，主要研究两个文本的主义相似度，通常用在检索系统的召回阶段。传统的召回方案如tf-idf和BM25具有速度优势，但在语义匹配方面有所欠缺。随着预训练模型的发展，使用深度模型进行文本检索变得必要与可行。&lt;/p&gt;</description></item><item><title>GitHub Checkout Action恢复文件修改时间</title><link>https://finisky.github.io/github-action-to-restore-file-mtime/</link><pubDate>Sun, 15 May 2022 20:37:48 +0800</pubDate><guid>https://finisky.github.io/github-action-to-restore-file-mtime/</guid><description>&lt;p&gt;在 
+&lt;a href="https://finisky.github.io/deployhexofromprivaterepo/" title="# 从私有代码库自动部署Hexo站到GitHub Pages" &gt;
+ # 从私有代码库自动部署Hexo站到GitHub Pages
+ 
+&lt;/a&gt;, 我们用GitHub Action实现了自动化部署Hexo站。但还存在一个问题，在每次部署后所有文章的修改时间都变成了当前时间，而非实际的修改时间。这样的问题在于所有历史文章在每次部署之后都会发生变化，会让搜索引擎误认为这个网站时常改动。&lt;/p&gt;</description></item><item><title>LoRA: Low-Rank Adaptation of Large Language Models 简读</title><link>https://finisky.github.io/lora/</link><pubDate>Fri, 13 May 2022 18:48:01 +0800</pubDate><guid>https://finisky.github.io/lora/</guid><description>&lt;p&gt;之前我们谈到 Adapters 与 Prompting 都是轻量级的训练方法，所谓 lightweight-finetuning。今天来看一下另一种轻量级训练大语言模型的方法:&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ LoRA: Low-Rank Adaptation of Large Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>从私有代码库自动部署Hexo站到GitHub Pages</title><link>https://finisky.github.io/deploy-hexo-from-private-repo/</link><pubDate>Mon, 02 May 2022 16:29:28 +0800</pubDate><guid>https://finisky.github.io/deploy-hexo-from-private-repo/</guid><description>&lt;p&gt;之前我们谈到如何 
+&lt;a href="https://finisky.github.io/deployhugofromprivaterepo/" title="从私有代码库自动部署Hugo站到GitHub Pages" &gt;
+ 从私有代码库自动部署Hugo站到GitHub Pages
+ 
+&lt;/a&gt; 。以为将之前的workflow yaml修改为Hexo的版本非常容易，亲自试了下发现打脸了。原因在于Hexo的依赖很多，因此环境配置比Hugo就复杂很多，同时还兼有各种包和库的兼容性问题。相比之下，Hugo就显得非常干净，使用GitHub Action容易不少。&lt;/p&gt;</description></item><item><title>NLP中的Adapters是什么？</title><link>https://finisky.github.io/nlpadapters/</link><pubDate>Sun, 01 May 2022 19:03:46 +0800</pubDate><guid>https://finisky.github.io/nlpadapters/</guid><description>&lt;p&gt;NLP adapters主要想解决不同任务需要finetune整个模型的痛点，与Prompting一样，是一种轻量级的训练方法，也是Transfer Learning的应用。按出现时间来看，finetune早于adapters，adapters早于prompting。今天来重看这篇Adapters的文章，可以更好地理解lightweight finetune的发展过程。&lt;/p&gt;</description></item><item><title>从私有代码库自动部署Hugo站到GitHub Pages</title><link>https://finisky.github.io/deploy-hugo-from-private-repo/</link><pubDate>Tue, 26 Apr 2022 20:25:02 +0800</pubDate><guid>https://finisky.github.io/deploy-hugo-from-private-repo/</guid><description>&lt;p&gt;Hugo是个极好的静态网站生成器。一个常见的情况是原始的网站源码放在私有代码库中，但希望自动化构建和部署的功能。假设私有代码库托管在github上，希望能自动化部署到GitHub Pages，这个功能可以通过github actions轻松搞定。&lt;/p&gt;</description></item><item><title>神经网络为什么可以表示语言模型</title><link>https://finisky.github.io/why-nn-can-represent-lm/</link><pubDate>Thu, 07 Apr 2022 14:02:01 +0800</pubDate><guid>https://finisky.github.io/why-nn-can-represent-lm/</guid><description>&lt;p&gt;最初对语言模型的理解源于n-gram语言模型，但后来出现了RNNLM等一众神经网络语言模型，就有了这个疑问：神经网络为什么可以表示语言模型？&lt;/p&gt;
+&lt;p&gt;首先，语言模型本质上是
+&lt;a href="https://en.wikipedia.org/wiki/Language_model" title="概率分布" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 概率分布
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;：&lt;/p&gt;</description></item><item><title>Scaling Laws for Neural Language Models简读</title><link>https://finisky.github.io/nlmpowerlaw/</link><pubDate>Wed, 05 Jan 2022 11:31:00 +0800</pubDate><guid>https://finisky.github.io/nlmpowerlaw/</guid><description>&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/2001.08361" title="# Scaling Laws for Neural Language Models" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Scaling Laws for Neural Language Models
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;一篇实验Paper，调研了神经网络语言模型交叉熵损失变化满足power-law定律，挺有意思的文章。Transformer之后有许多探索不同模型结构的文章，并在一些任务上取得了新的SOTA，却鲜有人考虑影响模型性能的主要因素是什么。&lt;/p&gt;</description></item><item><title>C++ priority_queue使用示例</title><link>https://finisky.github.io/priority-queue-example/</link><pubDate>Wed, 05 Jan 2022 00:45:40 +0800</pubDate><guid>https://finisky.github.io/priority-queue-example/</guid><description>&lt;p&gt;LeetCode 
+&lt;a href="https://leetcode.com/problems/top-k-frequent-words/" title="Top K Frequent Words" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Top K Frequent Words
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 中会用到priority_queue，同时需要定义priority_queue的排序算法。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://en.cppreference.com/w/cpp/container/priority_queue" title="priority_queue的定义" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ priority_queue的定义
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>CDN jsdelivr加速github图床</title><link>https://finisky.github.io/speedup-github-by-cdn/</link><pubDate>Sun, 19 Dec 2021 13:15:40 +0800</pubDate><guid>https://finisky.github.io/speedup-github-by-cdn/</guid><description>&lt;p&gt;在迁移博客之后，就切换了图床，使用github作免费的图床。但最近发现它不太稳定，常常打不开。研究发现可以用jsdelivr作github的CDN加速，只需替换下图片地址即可。这才是github图床正确的打开方式 :-)&lt;/p&gt;</description></item><item><title>MongoDB BulkWrite无限重试问题解决</title><link>https://finisky.github.io/mongodb-endless-retry/</link><pubDate>Thu, 16 Dec 2021 00:22:48 +0800</pubDate><guid>https://finisky.github.io/mongodb-endless-retry/</guid><description>&lt;p&gt;之前我们谈到 
+&lt;a href="https://finisky.github.io/mongodb-retry-transaction/" title="# MongoDB事务重试实现" &gt;
+ # MongoDB事务重试实现
+ 
+&lt;/a&gt;. 如果在事务中使用了BulkWrite()，那么这个新的事务API可能会&lt;strong&gt;无限重试从而导致服务器CPU使用率100%&lt;/strong&gt; (MongoDB Server v4.4.6-ent, MongoDB Driver v2.12.2)。&lt;/p&gt;</description></item><item><title>NLP Prompt技术简介</title><link>https://finisky.github.io/brief-intro-to-prompt/</link><pubDate>Tue, 14 Dec 2021 10:00:45 +0800</pubDate><guid>https://finisky.github.io/brief-intro-to-prompt/</guid><description>&lt;p&gt;Prompt是当下最热的NLP技术之一，本文通过 what, why 和 how 三个问题对它进行介绍。力求简明扼要，不是完整综述，更多细节，可参考更多论文原文。&lt;/p&gt;
+&lt;h1 id="prompt是什么"&gt;Prompt是什么
+&lt;a class="header-anchor" href="#prompt%e6%98%af%e4%bb%80%e4%b9%88"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;首先来看什么是Prompt，没有找到权威定义，引用一些论文中的描述来说明什么是Prompt。&lt;/p&gt;</description></item><item><title>Hugo添加自定义css和javascript</title><link>https://finisky.github.io/hugo-add-css-js/</link><pubDate>Tue, 07 Dec 2021 01:03:00 +0800</pubDate><guid>https://finisky.github.io/hugo-add-css-js/</guid><description>&lt;p&gt;最近从Hexo切到了Hugo博客生成引擎，主要原因是&lt;strong&gt;Hexo太慢，且在页面数量上千时会崩溃&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://gohugo.io/about/what-is-hugo/#who-should-use-hugo" title="# Who Should Use Hugo?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Who Should Use Hugo?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Hugo is for people building a blog, a company site, a portfolio site, documentation, a single landing page, or a website with thousands of pages.&lt;/p&gt;</description></item><item><title>十月川北自驾游记——黄龙</title><link>https://finisky.github.io/cbhuanglong/</link><pubDate>Tue, 30 Nov 2021 22:59:39 +0800</pubDate><guid>https://finisky.github.io/cbhuanglong/</guid><description>&lt;p&gt;本文为十月川北自驾游记系列之五，黄龙。&lt;/p&gt;
+&lt;p&gt;十月川北自驾游记系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbchengdu/" title="十月川北自驾游记——成都" &gt;
+ 十月川北自驾游记——成都
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbleshan/" title="十月川北自驾游记——乐山" &gt;
+ 十月川北自驾游记——乐山
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbdujiangyan/" title="十月川北自驾游记——都江堰" &gt;
+ 十月川北自驾游记——都江堰
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbjiuzhai/" title="十月川北自驾游记——九寨沟" &gt;
+ 十月川北自驾游记——九寨沟
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbhuanglong/" title="十月川北自驾游记——黄龙" &gt;
+ 十月川北自驾游记——黄龙
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;我们先去的九寨沟，回程玩黄龙，考虑到川主寺这边没什么好的酒店，就计划上午玩黄龙（10点到，1点出），晚上赶到都江堰住（晚7点左右），但显然这个安排是非常紧的，加上我们游览的速度并不快，导致不可能在晚上赶到都江堰。出于行车安全考虑，改住在茂县，住宿简直是个噩梦。&lt;/p&gt;</description></item><item><title>十月川北自驾游记——九寨沟</title><link>https://finisky.github.io/cbjiuzhai/</link><pubDate>Mon, 29 Nov 2021 23:06:59 +0800</pubDate><guid>https://finisky.github.io/cbjiuzhai/</guid><description>&lt;p&gt;本文为十月川北自驾游记系列之四，九寨沟。&lt;/p&gt;
+&lt;p&gt;十月川北自驾游记系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbchengdu/" title="十月川北自驾游记——成都" &gt;
+ 十月川北自驾游记——成都
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbleshan/" title="十月川北自驾游记——乐山" &gt;
+ 十月川北自驾游记——乐山
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbdujiangyan/" title="十月川北自驾游记——都江堰" &gt;
+ 十月川北自驾游记——都江堰
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbjiuzhai/" title="十月川北自驾游记——九寨沟" &gt;
+ 十月川北自驾游记——九寨沟
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbhuanglong/" title="十月川北自驾游记——黄龙" &gt;
+ 十月川北自驾游记——黄龙
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;游记之前，先聊两个FAQ：&lt;/p&gt;</description></item><item><title>十月川北自驾游记——都江堰</title><link>https://finisky.github.io/cbdujiangyan/</link><pubDate>Mon, 29 Nov 2021 09:20:09 +0800</pubDate><guid>https://finisky.github.io/cbdujiangyan/</guid><description>&lt;p&gt;本文为十月川北自驾游记系列之三，都江堰。&lt;/p&gt;
+&lt;p&gt;十月川北自驾游记系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbchengdu/" title="十月川北自驾游记——成都" &gt;
+ 十月川北自驾游记——成都
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbleshan/" title="十月川北自驾游记——乐山" &gt;
+ 十月川北自驾游记——乐山
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbdujiangyan/" title="十月川北自驾游记——都江堰" &gt;
+ 十月川北自驾游记——都江堰
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbjiuzhai/" title="十月川北自驾游记——九寨沟" &gt;
+ 十月川北自驾游记——九寨沟
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbhuanglong/" title="十月川北自驾游记——黄龙" &gt;
+ 十月川北自驾游记——黄龙
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h1 id="都江堰"&gt;都江堰
+&lt;a class="header-anchor" href="#%e9%83%bd%e6%b1%9f%e5%a0%b0"&gt;&lt;/a&gt;
+&lt;/h1&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;问道青城山 拜水都江堰&lt;/p&gt;</description></item><item><title>十月川北自驾游记——乐山</title><link>https://finisky.github.io/cbleshan/</link><pubDate>Sun, 28 Nov 2021 23:43:49 +0800</pubDate><guid>https://finisky.github.io/cbleshan/</guid><description>&lt;p&gt;本文为十月川北自驾游记系列之二，乐山。&lt;/p&gt;
+&lt;p&gt;十月川北自驾游记系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbchengdu/" title="十月川北自驾游记——成都" &gt;
+ 十月川北自驾游记——成都
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbleshan/" title="十月川北自驾游记——乐山" &gt;
+ 十月川北自驾游记——乐山
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbdujiangyan/" title="十月川北自驾游记——都江堰" &gt;
+ 十月川北自驾游记——都江堰
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbjiuzhai/" title="十月川北自驾游记——九寨沟" &gt;
+ 十月川北自驾游记——九寨沟
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbhuanglong/" title="十月川北自驾游记——黄龙" &gt;
+ 十月川北自驾游记——黄龙
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h1 id="乐山"&gt;乐山
+&lt;a class="header-anchor" href="#%e4%b9%90%e5%b1%b1"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;成都到乐山一日游，采用高铁+打车的方案，高铁单程大约50分钟。考虑到乐山的美食非常出名，希望三餐都在乐山解决。由于还在十一假期，成都去乐山的车次很好买，但晚上7点以后返程的车票就比较紧俏了，好在通过候补车票的方式买到了往返车票。&lt;/p&gt;</description></item><item><title>十月川北自驾游记——成都</title><link>https://finisky.github.io/cbchengdu/</link><pubDate>Sun, 28 Nov 2021 23:30:58 +0800</pubDate><guid>https://finisky.github.io/cbchengdu/</guid><description>&lt;p&gt;本文为十月川北自驾游记系列之第一篇，成都。&lt;/p&gt;
+&lt;p&gt;十月川北自驾游记系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbchengdu/" title="十月川北自驾游记——成都" &gt;
+ 十月川北自驾游记——成都
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbleshan/" title="十月川北自驾游记——乐山" &gt;
+ 十月川北自驾游记——乐山
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbdujiangyan/" title="十月川北自驾游记——都江堰" &gt;
+ 十月川北自驾游记——都江堰
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbjiuzhai/" title="十月川北自驾游记——九寨沟" &gt;
+ 十月川北自驾游记——九寨沟
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/cbhuanglong/" title="十月川北自驾游记——黄龙" &gt;
+ 十月川北自驾游记——黄龙
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;继前年9月 
+&lt;a href="https://finisky.github.io/qg/" title="自驾青甘大环线" &gt;
+ 自驾青甘大环线
+ 
+&lt;/a&gt; 之后，因为疫情原因，两年没出远门。又是一年秋天，连着十一休了一周年假，去九寨沟看看。&lt;/p&gt;</description></item><item><title>Nucleus Sampling与文本生成中的不同解码策略比较</title><link>https://finisky.github.io/nucleussampling/</link><pubDate>Thu, 25 Nov 2021 18:26:48 +0800</pubDate><guid>https://finisky.github.io/nucleussampling/</guid><description>&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/1904.09751" title="# The Curious Case of Neural Text Degeneration" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # The Curious Case of Neural Text Degeneration
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这篇ICLR 2020年的文章我很喜欢，因为它简洁直观。文章首先提出一个有意思的发现：人说的自然语言常常出人意料，即说出的并不总是语言模型中概率最大的词，而Beam Search会总会选择最符合语言模型的词汇，因此生成的文本没有新意(&lt;code&gt;less surprising&lt;/code&gt;)。之后提出了一种top-k sampling的改进方案来解决问题：nucleus sampling (top-p sampling)。&lt;/p&gt;</description></item><item><title>避免Pod反复自动重启</title><link>https://finisky.github.io/prevent-pod-restart/</link><pubDate>Sun, 21 Nov 2021 10:16:27 +0800</pubDate><guid>https://finisky.github.io/prevent-pod-restart/</guid><description>&lt;p&gt;如果一个Pod在错误状态启动不了 (crashloopbackoff)，那么Kubernetes就会自动重启该Pod。这就给调试这个Pod带来了麻烦，无法exec到这个Pod上查看问题，也不容易看到这个Pod的日志，因为此时这个Pod已经被Kubernetes杀掉了：&lt;/p&gt;</description></item><item><title>使用LineByLine数据集训练GPT</title><link>https://finisky.github.io/finetune-lm-line-by-line/</link><pubDate>Sun, 14 Nov 2021 09:49:59 +0800</pubDate><guid>https://finisky.github.io/finetune-lm-line-by-line/</guid><description>&lt;p&gt;训练GPT等语言模型可以参考Huggingface Transformer训练语言模型的tutorial:
+
+&lt;a href="https://github.com/huggingface/transformers/tree/master/examples/pytorch/language-modeling" title="Transformers Language Model Training" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Transformers Language Model Training
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;示例提供了三个脚本: &lt;code&gt;run_clm.py&lt;/code&gt;, &lt;code&gt;run_mlm.py&lt;/code&gt; 和 &lt;code&gt;run_plm.py&lt;/code&gt;。GPT是个causal language model，可以使用 &lt;code&gt;run_clm.py&lt;/code&gt; 进行训练或微调。但这脚本并不支持行式数据集，即每行一个训练样本的数据集。它默认的数据处理是按行读取样本并把它们连接成一个&lt;code&gt;block_size&lt;/code&gt;的连续文本。&lt;/p&gt;</description></item><item><title>同一机器配置多个GitHub账号</title><link>https://finisky.github.io/multiple-github-accounts-on-one-machine/</link><pubDate>Wed, 03 Nov 2021 01:15:40 +0800</pubDate><guid>https://finisky.github.io/multiple-github-accounts-on-one-machine/</guid><description>&lt;p&gt;在同一机器上对不同repo使用不同的github账号是个常见需求。举个例子，&lt;code&gt;repo1&lt;/code&gt;托管在github账号&lt;code&gt;x1&lt;/code&gt;下，而&lt;code&gt;repo2&lt;/code&gt;托管在账号&lt;code&gt;x2&lt;/code&gt;下，如何方便地在同一机器上使用不同账号自动&lt;code&gt;git push&lt;/code&gt;到对应的远端？比较直接的做法是在不同repo目录下使用&lt;code&gt;git config&lt;/code&gt;配置用户名，但这样有两个问题：&lt;/p&gt;</description></item><item><title>如何获取MongoDB每个块的数据大小</title><link>https://finisky.github.io/mongodb-get-chunk-size/</link><pubDate>Fri, 22 Oct 2021 20:33:16 +0800</pubDate><guid>https://finisky.github.io/mongodb-get-chunk-size/</guid><description>&lt;p&gt;最近发现MongoDB分片集群的流量不太均衡，研究之后发现根本原因在于数据分布不均衡。虽然
+&lt;a href="https://www.mongodb.com/blog/post/sharding-pitfalls-part-iii-chunk-balancing-and" title="数据分布均衡不等于流量均衡" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 数据分布均衡不等于流量均衡
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，但还是应该尽量使得数据分布在不同shard之间基本均衡。三个shard的数据分布大概这样：&lt;/p&gt;</description></item><item><title>MongoDB使用Change Stream主从复制</title><link>https://finisky.github.io/mongodb-slave-sync/</link><pubDate>Fri, 23 Jul 2021 00:07:15 +0800</pubDate><guid>https://finisky.github.io/mongodb-slave-sync/</guid><description>&lt;p&gt;Change stream是什么？
+&lt;a href="https://docs.mongodb.com/v4.4/changeStreams/" title="官方文档" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 官方文档
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.&lt;/p&gt;</description></item><item><title>Autoencoding和Autoregressive的区别</title><link>https://finisky.github.io/autoencodervsautoregressive/</link><pubDate>Sun, 18 Jul 2021 12:07:32 +0800</pubDate><guid>https://finisky.github.io/autoencodervsautoregressive/</guid><description>&lt;p&gt;读一些预训练模型的文章时，常常会把这些模型进行分类，比如说这是个&lt;code&gt;autoencoder&lt;/code&gt;，另一个是&lt;code&gt;autoregressive&lt;/code&gt;自回归模型。它们是什么意思，又有什么区别？&lt;/p&gt;</description></item><item><title>段落和列表中间添加空行的脚本</title><link>https://finisky.github.io/commonmarktostandardmarkdown/</link><pubDate>Sun, 18 Jul 2021 00:13:33 +0800</pubDate><guid>https://finisky.github.io/commonmarktostandardmarkdown/</guid><description>&lt;p&gt;升级Hexo到v8.5.0之后，发现mathjax不能正确显示公式。看了下
+&lt;a href="https://theme-next.js.org/docs/third-party-services/math-equations.html" title="文档" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 文档
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，发现推荐的hexo renderer是&lt;code&gt;hexo-renderer-pandoc&lt;/code&gt;，而目前使用的是&lt;code&gt;hexo-renderer-kramed&lt;/code&gt;，而且这个包已经不再更新也不推荐使用了。&lt;/p&gt;</description></item><item><title>自嘲</title><link>https://finisky.github.io/zichao/</link><pubDate>Mon, 12 Jul 2021 23:56:59 +0800</pubDate><guid>https://finisky.github.io/zichao/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;卜算子自嘲 丁元英&lt;/p&gt;
+&lt;p&gt;本是后山人，
+偶做前堂客。
+醉舞经阁半卷书，
+坐井说天阔。&lt;/p&gt;
+&lt;p&gt;大志戏功名，
+海斗量福祸。
+论到囊中羞涩时，
+怒指乾坤错。&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item><item><title>延迟加载Google Auto Ads加速Hexo</title><link>https://finisky.github.io/delay-auto-ads-loading/</link><pubDate>Sun, 11 Jul 2021 19:21:00 +0800</pubDate><guid>https://finisky.github.io/delay-auto-ads-loading/</guid><description>&lt;p&gt;
+&lt;a href="https://finisky.github.io/responsivehexonext/" title="# 提升Hexo NexT主题加载速度" &gt;
+ # 提升Hexo NexT主题加载速度
+ 
+&lt;/a&gt; 中留了个尾巴，优化到最后发现最影响PageSpeed Insights得分的竟然是Google Auto Ads。 
+&lt;a href="https://support.google.com/adsense/thread/18615134/page-speed-dropping-after-enabling-the-auto-ads?hl=en" title="这里" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 这里
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 有个有意思的讨论，说加上auto ads之后页面加载得分显著变低，采纳答案说“你啥也做不了，也不用care”，下面有人反对这个观点，加载速度评测认为网站慢就会导致搜索排序降低。我赞成后者的观点，风一样的加载速度即我所欲也，本来无一物，何处惹尘埃！&lt;/p&gt;</description></item><item><title>提升Hexo NexT主题加载速度</title><link>https://finisky.github.io/responsivehexonext/</link><pubDate>Sat, 10 Jul 2021 23:52:46 +0800</pubDate><guid>https://finisky.github.io/responsivehexonext/</guid><description>&lt;p&gt;网站加载速度是影响搜索引擎排名的一个重要因素。
+&lt;a href="https://developers.google.com/speed/pagespeed/insights/" title="# Google Page Speed Insight" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Google Page Speed Insight
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 是个很好的网页性能分析工具，可以根据它的分析结果有针对性地对网页进行优化。&lt;/p&gt;</description></item><item><title>两家网红牛肉面</title><link>https://finisky.github.io/beijingbeefnoodles/</link><pubDate>Wed, 07 Jul 2021 00:25:16 +0800</pubDate><guid>https://finisky.github.io/beijingbeefnoodles/</guid><description>&lt;p&gt;说起牛肉面，第一反应可能是“兰州拉面”。可兰州人民已经澄清了这个概念：兰州没有拉面，只有牛肉面。去
+&lt;a href="https://finisky.github.io/qg/" title="甘肃旅游" &gt;
+ 甘肃旅游
+ 
+&lt;/a&gt;时也吃过正宗的兰州牛肉面，确实不错。帝都的兰州拉面馆不少，个人觉得马华的还原度就挺高。&lt;/p&gt;</description></item><item><title>Hexo使用Waline评论系统</title><link>https://finisky.github.io/hexowaline/</link><pubDate>Tue, 29 Jun 2021 00:22:59 +0800</pubDate><guid>https://finisky.github.io/hexowaline/</guid><description>&lt;p&gt;最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：&lt;/p&gt;</description></item><item><title>Hexo添加自定义分类菜单项并定制页面布局(简洁版)</title><link>https://finisky.github.io/customizecategorybyextension/</link><pubDate>Sun, 20 Jun 2021 00:53:43 +0800</pubDate><guid>https://finisky.github.io/customizecategorybyextension/</guid><description>&lt;p&gt;希望在Hexo的NexT主题中增加自定义分类的菜单，即一个指向特定分类的链接，且页面显示的是类似主页的标题+摘要风格。
+&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/customizedcategorysample.png" alt="定制Hexo分类页面布局" /&gt;&lt;/p&gt;
+&lt;p&gt;之前有一个比较粗暴的实现：
+&lt;a href="https://finisky.github.io/customized-category/" title="# Hexo添加自定义分类菜单项并定制页面布局" &gt;
+ # Hexo添加自定义分类菜单项并定制页面布局
+ 
+&lt;/a&gt;。由于直接修改了源码，属于侵入式实现，导致以后升级Hexo和主题时需要手动再改代码，不推荐。&lt;/p&gt;</description></item><item><title>最简单的Hexo友情链接页面定制</title><link>https://finisky.github.io/simplest-blogroll/</link><pubDate>Thu, 17 Jun 2021 20:33:39 +0800</pubDate><guid>https://finisky.github.io/simplest-blogroll/</guid><description>&lt;p&gt;Hexo的NexT主题可以天然支持友链，即在NexT主题的配置文件&lt;code&gt;_config.yml&lt;/code&gt;中有一个&lt;code&gt;# Blog rolls&lt;/code&gt;块，可以添加友链，然后在左边栏的底端会显示它们。但这样的问题在于边栏的空间有限，友链比较多的话会影响布局，而且分散主题。于是考虑单独创建一个友链页面，搜索发现已经有成型的方案，大体思路与 
+&lt;a href="https://finisky.github.io/customizecategorybyextension/" title="# Hexo添加自定义分类菜单项并定制页面布局" &gt;
+ # Hexo添加自定义分类菜单项并定制页面布局
+ 
+&lt;/a&gt; 一样，增加菜单项和友链模版，再修改主页模板。这样做可以解决问题，但是不够优雅，属于侵入式的定制（直接修改了主题文件模板），但绝大多数人都采用了这种方案 :-)。&lt;/p&gt;</description></item><item><title>友情链接</title><link>https://finisky.github.io/flinks/</link><pubDate>Wed, 16 Jun 2021 00:34:27 +0800</pubDate><guid>https://finisky.github.io/flinks/</guid><description>&lt;div class="post-body"&gt;
+&lt;div id="links"&gt;
+&lt;style&gt;
+.links-content{
+margin-top:1rem;
+}
+.link-navigation::after {
+content: " ";
+display: block;
+clear: both;
+}
+.card {
+width: 42%;
+max-width: 400px;
+font-size: 1rem;
+padding: 10px 20px;
+border-radius: 5px;
+transition-duration: 0.15s;
+margin-bottom: 1rem;
+display:flex;
+}
+.card:nth-child(odd) {
+float: left;
+}
+@media (max-width: 500px) {
+.card {
+width: 90%;
+}
+}
+@media (min-width: 990px) {
+.card {
+width: 42%;
+}
+}
+.card:hover {
+transform: scale(1.1);
+box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+}
+.card a {
+border:none;
+}
+.card .ava {
+width: 3rem!important;
+height: 3rem!important;
+margin:0!important;
+margin-right: 1em!important;
+border-radius:4px;
+}
+.card .card-header {
+font-style: italic;
+overflow: hidden;
+width: 100%;
+}
+.card .card-header a {
+font-style: normal;
+color: #2bbc8a;
+font-weight: bold;
+text-decoration: none;
+}
+.card .card-header a:hover {
+color: #d480aa;
+text-decoration: none;
+}
+.card .card-header .info {
+font-style:normal;
+color:#a3a3a3;
+font-size:14px;
+min-width: 0;
+overflow: hidden;
+white-space: nowrap;
+}
+&lt;/style&gt;
+&lt;div class="links-content"&gt;
+&lt;div class="link-navigation"&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://finicounter.eu.org/logo.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://finicounter.eu.org/" target="_blank"&gt;FiniCounter&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;极简的网站访客计数器&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://www.iszy.cc/images/avatar.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://www.iszy.cc/" target="_blank"&gt;随遇而安&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;生活吐槽 学习记录&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://cdn.jsdelivr.net/gh/guanqr/blog/static/icons/android-chrome-512x512.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://guanqr.com/" target="_blank"&gt;荷戟独彷徨&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;爱光学，爱生活，爱创造&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://mitaoguancha.github.io/images/logo.svg" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://mitaoguancha.github.io/" target="_blank"&gt;觅桃观察&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;专注婚恋和亲密关系&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://coriva.eu.org/logo.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://coriva.eu.org/" target="_blank"&gt;Coriva&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;量化交易与深度技术&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://s2.loli.net/2022/09/26/wAXkIVLb27me41R.webp" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://ychch.top/" target="_blank"&gt;ychch’s blog&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;当我与世界初相见&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://lisenhui.cn/img/avatar.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://lisenhui.cn" target="_blank"&gt;凡梦星尘空间站&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;再平凡的人也有属于他自己的梦想!&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://f2h2h1.github.io/avatar.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://f2h2h1.github.io" target="_blank"&gt;f2h2h1’s blog&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;守正出奇，以正合，以奇胜&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://dong2000.xyz/ptr.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://dong2000.xyz" target="_blank"&gt;Anomie&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;野夫怒见不平处，磨平胸中万古刀&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://sdn.geekzu.org/avatar/9fe339a6ef2860a067d7f83bb957dc48?s=256" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://qiuyuair.com" target="_blank"&gt;Qiuyuair的自留地&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;Airyu’s Site&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://www.manction.com/logo.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://www.manction.com" target="_blank"&gt;月光海岸&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;用心创造快乐！&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://static.oyohyee.com/logo.svg" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://www.ohyee.cc" target="_blank"&gt;OhYee&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;个人向笔记性质技术分享，共产主义开源编程&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://pic4.zhimg.com/80/v2-a0456a5f527c1923f096759f2926012f_1440w.webp" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://wcowin.work/" target="_blank"&gt;Wcowin’s Web&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;循此苦旅，以达星辰&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://qianxu.run/images/avatar.jpg" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://qianxu.run" target="_blank"&gt;qxdn&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;蓬生麻中，不扶自直&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://vrast.cn/uploads/WX20190313-093822.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://vrast.cn/" target="_blank"&gt;Keyle’s Blog&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;在这里记录一些偶尔冒出来转眼就会忘的灵感。&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://longluo.me/assets/logo/favicon-32x32.png" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://www.longluo.me" target="_blank"&gt;LongLuo’s Life Notes&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;每一天都是奇迹&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;img class="ava" src="https://www.kulafan.com/images/Kulafan_logo.jpg" /&gt;
+&lt;div class="card-header"&gt;
+&lt;div&gt;&lt;a href="https://www.kulafan.com/" target="_blank"&gt;库拉饭&lt;/a&gt;&lt;/div&gt;
+&lt;div class="info"&gt;一个喜欢折腾电子产品的影视工作者&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;交换友链，请 &lt;strong&gt;添加本站友链后&lt;/strong&gt; 下方留言申请，期望您的站点:&lt;/p&gt;</description></item><item><title>Hexo修改永久链接格式并向后兼容</title><link>https://finisky.github.io/change-permalink-format/</link><pubDate>Tue, 15 Jun 2021 00:33:28 +0800</pubDate><guid>https://finisky.github.io/change-permalink-format/</guid><description>&lt;p&gt;最近一直想简化每篇博客的永久链接，现在的永久链接大概长这样：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/2021/03/21/migrateopsmanager.en/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;希望能把中间的日期去掉，变成这样：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/migrateopsmanager.en/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;原因在于短链接更作为标识更为合理，而URL上带有日期字符串并没有实际的用处，除非重名的博客太多。但这不可能发生，因为所有博客都写在&lt;code&gt;source/_post&lt;/code&gt;文件夹，博客重名会引起文件名冲突。&lt;/p&gt;</description></item><item><title>分析和清理SQL Server数据表和存储过程</title><link>https://finisky.github.io/sql-server-cleanup-queries/</link><pubDate>Sun, 02 May 2021 23:12:52 +0800</pubDate><guid>https://finisky.github.io/sql-server-cleanup-queries/</guid><description>&lt;p&gt;生产环境有个SQL Server云数据库，花钱不少，性能却很差。最近发现跑一些并不太复杂的存储过程却需要好几分钟。其中一个常用的存储过程是将几张表通过一个键值关联并返回结果，这几张表都在千万级大小。分析了下执行计划，发现index seek花去了90%以上的时间，进而发现这些表的索引碎片化都极为严重。由于这个老DB几经易手，没人知道这些表和存储过程是做什么的，于是需要手动分析这些表的schema和存储过程所依赖的表。基于这些结果再对索引重建提升性能。下面就是用来分析DB的一些重要Query。&lt;/p&gt;</description></item><item><title>MongoDB强类型Collection用法示例</title><link>https://finisky.github.io/mongodb-strongly-typed-collection-example/</link><pubDate>Sat, 27 Feb 2021 20:16:05 +0800</pubDate><guid>https://finisky.github.io/mongodb-strongly-typed-collection-example/</guid><description>&lt;p&gt;.NET中使用MongoDB非常简单，一般来说可以直接使用BsonDocument，也可以使用定义好的数据类型对文档进行CRUD操作。本文通过实例对比一下两种方式的优劣，通常，通过强类型Collection对文档进行操作更为便捷。&lt;/p&gt;</description></item><item><title>MongoDB事务重试实现</title><link>https://finisky.github.io/mongodb-retry-transaction/</link><pubDate>Sat, 20 Feb 2021 20:36:59 +0800</pubDate><guid>https://finisky.github.io/mongodb-retry-transaction/</guid><description>&lt;p&gt;MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..&lt;/p&gt;</description></item><item><title>别在mongos前做负载均衡</title><link>https://finisky.github.io/dont-use-load-balancer-in-front-of-mongos/</link><pubDate>Wed, 13 Jan 2021 23:40:08 +0800</pubDate><guid>https://finisky.github.io/dont-use-load-balancer-in-front-of-mongos/</guid><description>&lt;p&gt;在一个分片MongoDB集群上并发执行transaction时遇到许多&lt;code&gt;MongoCommandException&lt;/code&gt;错误: code 251, codename &lt;code&gt;NoSuchTransaction&lt;/code&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.&lt;/p&gt;</description></item><item><title>部署Kubernetes MongoDB Sharded Cluster</title><link>https://finisky.github.io/mongodb-om-create-sharded-cluster/</link><pubDate>Sat, 26 Dec 2020 20:13:42 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-create-sharded-cluster/</guid><description>&lt;p&gt;Sharded cluster是MongoDB部署中最复杂的形式，因为Sharded cluster的组件较多，部署步骤也更为繁琐。在实际部署中还有几个部署ReplicaSet时没遇到的证书和TLS问题。阅读本文前，强烈建议先阅读 
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt; 作为基础。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</title><link>https://finisky.github.io/mongodb-om-tls-auth/</link><pubDate>Sat, 12 Dec 2020 23:30:40 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-tls-auth/</guid><description>&lt;p&gt;本文为系列第五部分，用生成的自签名证书打开userdb的TLS和AUTH，并且完成userdb的公网域名访问。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="理解不同层面的tls加密"&gt;理解不同层面的TLS加密
+&lt;a class="header-anchor" href="#%e7%90%86%e8%a7%a3%e4%b8%8d%e5%90%8c%e5%b1%82%e9%9d%a2%e7%9a%84tls%e5%8a%a0%e5%af%86"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;开始之前，先解释下部署中不同层面的TLS加密：&lt;code&gt;Secure Connections to Ops Manager&lt;/code&gt;, &lt;code&gt;Secure Connections to Application Database&lt;/code&gt;, &lt;code&gt;Secure Connections to MongoDB Deployments&lt;/code&gt;，我们需要的是最后一个，&lt;code&gt;Enable TLS to MongoDB Deployments&lt;/code&gt;。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到&lt;code&gt;userdb&lt;/code&gt;的每个server上，然后才能配置这些证书所在的路径。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</title><link>https://finisky.github.io/mongodb-om-self-signed-certificates/</link><pubDate>Sat, 12 Dec 2020 23:30:39 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-self-signed-certificates/</guid><description>&lt;p&gt;本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;自签名证书&lt;strong&gt;不推荐&lt;/strong&gt;在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。&lt;strong&gt;Public Key Infrastructure&lt;/strong&gt; (PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</title><link>https://finisky.github.io/mongodb-om-expose-services/</link><pubDate>Sat, 12 Dec 2020 23:30:38 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-expose-services/</guid><description>&lt;p&gt;本文为系列第三部分，使用第二部分创建好的&lt;code&gt;userdb&lt;/code&gt;可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</title><link>https://finisky.github.io/mongodb-om-create-user-db/</link><pubDate>Sat, 12 Dec 2020 23:30:37 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-create-user-db/</guid><description>&lt;p&gt;本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所谓的&lt;code&gt;Application Database&lt;/code&gt;是MongoDB Ops Manager的后端DB，并不能用来存放用户数据，所以我们需要用Ops Manager创建用户数据库。使用Ops Manager创建的MongoDB叫做&lt;code&gt;Deployment&lt;/code&gt;，注意此&lt;code&gt;Deployment&lt;/code&gt;是&lt;code&gt;MongoDB Deployment&lt;/code&gt;，与kubernetes的&lt;code&gt;Deployment&lt;/code&gt;不是一码事。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</title><link>https://finisky.github.io/mongodb-ops-manager/</link><pubDate>Sat, 12 Dec 2020 23:30:36 +0800</pubDate><guid>https://finisky.github.io/mongodb-ops-manager/</guid><description>&lt;p&gt;MongoDB的入门配置门槛（单机）很低，但如果想达到生产环境的要求则有些技术含量。生产环境的配置要求包括Replica Set、Sharding、Scale up/down、数据备份、通信加密TLS和指标实时监控等。配置这些功能比较繁琐，有不少坑要踩。那么有没有好用的工具帮我们配置和管理呢？&lt;/p&gt;</description></item><item><title>MongoDB证书所有者和文件权限</title><link>https://finisky.github.io/mongodb-cert-permission/</link><pubDate>Mon, 30 Nov 2020 23:37:32 +0800</pubDate><guid>https://finisky.github.io/mongodb-cert-permission/</guid><description>&lt;p&gt;如果你按官方文档 
+&lt;a href="https://docs.mongodb.com/manual/tutorial/configure-ssl/" title="Configure mongod and mongos for TLS/SSL" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Configure mongod and mongos for TLS/SSL
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 配置MongoDB证书，可能会遇到如下问题：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&amp;#34;t&amp;#34;:{&amp;#34;$date&amp;#34;:&amp;#34;2020-11-30T08:02:19.406+00:00&amp;#34;},&amp;#34;s&amp;#34;:&amp;#34;E&amp;#34;, &amp;#34;c&amp;#34;:&amp;#34;NETWORK&amp;#34;, &amp;#34;id&amp;#34;:23248, &amp;#34;ctx&amp;#34;:&amp;#34;main&amp;#34;,&amp;#34;msg&amp;#34;:&amp;#34;Cannot read certificate file&amp;#34;,&amp;#34;attr&amp;#34;:{&amp;#34;keyFile&amp;#34;:&amp;#34;/etc/ssl/testserver1.pem&amp;#34;,&amp;#34;error&amp;#34;:&amp;#34;error:0200100D:system library:fopen:Permission denied&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&amp;#34;t&amp;#34;:{&amp;#34;$date&amp;#34;:&amp;#34;2020-11-30T08:02:19.406+00:00&amp;#34;},&amp;#34;s&amp;#34;:&amp;#34;F&amp;#34;, &amp;#34;c&amp;#34;:&amp;#34;CONTROL&amp;#34;, &amp;#34;id&amp;#34;:20574, &amp;#34;ctx&amp;#34;:&amp;#34;main&amp;#34;,&amp;#34;msg&amp;#34;:&amp;#34;Error during global initialization&amp;#34;,&amp;#34;attr&amp;#34;:{&amp;#34;error&amp;#34;:{&amp;#34;code&amp;#34;:140,&amp;#34;codeName&amp;#34;:&amp;#34;InvalidSSLConfiguration&amp;#34;,&amp;#34;errmsg&amp;#34;:&amp;#34;Can not set up PEM key file.&amp;#34;}}}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;or&lt;/p&gt;</description></item><item><title>mysql表中是否需要自增主键？</title><link>https://finisky.github.io/mysql-primary-key-uuid/</link><pubDate>Sun, 22 Nov 2020 00:46:51 +0800</pubDate><guid>https://finisky.github.io/mysql-primary-key-uuid/</guid><description>&lt;p&gt;最近遇到个数据库表设计的问题，一张账号表，业务逻辑存在一列唯一accountId，是否还要在数据库表中加一列自增int作为主键？这应该是实践中普遍存在的问题，于是研究了下推荐做法。&lt;/p&gt;</description></item><item><title>Mysqlbench服务器性能指标含义</title><link>https://finisky.github.io/mysql-server-status-metrics/</link><pubDate>Sun, 15 Nov 2020 23:41:56 +0800</pubDate><guid>https://finisky.github.io/mysql-server-status-metrics/</guid><description>&lt;p&gt;对一个DBA来说监控mysql服务器的性能指标是非常重要的。我们可以通过mysqlbench中的Server Status来轻松监测服务器最近一段时间的状态。但是这些指标具体代表了什么含义？比如，&lt;code&gt;Selects per second&lt;/code&gt; 和&lt;code&gt;Innodb reads per second&lt;/code&gt;的区别是什么？如何评估服务器当前写入的性能？&lt;/p&gt;</description></item><item><title>Hexo博客备份</title><link>https://finisky.github.io/hexo-backup-to-github/</link><pubDate>Sun, 06 Sep 2020 13:18:39 +0800</pubDate><guid>https://finisky.github.io/hexo-backup-to-github/</guid><description>&lt;p&gt;博客越写越多，将markdown源文件备份到github变得非常重要。github pages要求免费账户的username.github.io必须是public repository。网上主要有两种方案，一个是用hexo-git-backup插件，另一个是在username.github.io上创建另一个分支进行备份。&lt;/p&gt;</description></item><item><title>Linux服务器使用BBR提升网速</title><link>https://finisky.github.io/google-bbr/</link><pubDate>Sat, 29 Aug 2020 12:36:25 +0800</pubDate><guid>https://finisky.github.io/google-bbr/</guid><description>&lt;p&gt;
+&lt;a href="https://cloud.google.com/blog/products/gcp/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster" title="BBR" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ BBR
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 是Google 2016年提出的TCP 拥塞控制算法，可以显著地提升Server的吞吐率并降低延迟。在VPS上实测效果非常明显，将VPS的下载速度由10Mbps左右提升至约50Mbps，自动视频质量也由240p升至1080p。&lt;/p&gt;</description></item><item><title>肩颈部位疼痛缓解方案亲测总结</title><link>https://finisky.github.io/shoulder-pain/</link><pubDate>Sat, 25 Jul 2020 18:21:52 +0800</pubDate><guid>https://finisky.github.io/shoulder-pain/</guid><description>&lt;p&gt;&lt;strong&gt;2020-11-28更新：&lt;/strong&gt; 经过四个多月的肌肉练习（引体向上，核心肌群训练，跑步，羽毛球），肩颈疼痛症状显著缓解，坚持锻炼两个月后，落枕、脖子活动受限的情况基本就没再发生过，现在的情况就更好了。全身性的肌肉训练效果还是很好的，亲测推荐！&lt;/p&gt;</description></item><item><title>清理Linux的磁盘使用空间</title><link>https://finisky.github.io/cleanup-linux-disk/</link><pubDate>Wed, 22 Jul 2020 18:35:26 +0800</pubDate><guid>https://finisky.github.io/cleanup-linux-disk/</guid><description>&lt;p&gt;硬盘虽然并不值钱，但对于一个强迫症来说，看到莫名其妙地内容占据了好些空间也非常不爽。记录下在Linux中如何发现空间占用大户，以及可以删除什么以缩减使用空间。&lt;/p&gt;</description></item><item><title>Hexo升级插件版本解决兼容性问题</title><link>https://finisky.github.io/update-hexo-plugin/</link><pubDate>Sat, 18 Jul 2020 19:32:15 +0800</pubDate><guid>https://finisky.github.io/update-hexo-plugin/</guid><description>&lt;p&gt;为了精简hexo安装的npm modules，用&lt;code&gt;rm -rf node_modules/&lt;/code&gt;删除了已安装的包，再&lt;code&gt;npm install&lt;/code&gt;把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，&lt;code&gt;hexo g&lt;/code&gt;时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。&lt;/p&gt;</description></item><item><title>996是自己选择的福报</title><link>https://finisky.github.io/nine-nine-six/</link><pubDate>Mon, 13 Jul 2020 00:50:05 +0800</pubDate><guid>https://finisky.github.io/nine-nine-six/</guid><description>&lt;p&gt;自从有了 
+&lt;a href="https://996.icu/" title="996.icu" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 996.icu
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 和马云的“996福报”理论之后，关于996工作制的讨论就从未停止。我有不少同学同事加入或离开了996公司，我想说的是，福报不福报都是自己的选择，自己选的路，跪着也要走完。都希望挣更多的钱，抵制996并不是抵制高收入，本质上是希望用955的工作制挣到996开的工资。但理性思考后会发现它并不合理，单位时间的工资高低是由市场决定的，在一个充分竞争的市场上，同样性质不同公司的时薪差别不会太大。一家公司的package远高于另一家，工作强度和时长增加情理之中。&lt;/p&gt;</description></item><item><title>熵，交叉熵，KL散度公式与计算实例</title><link>https://finisky.github.io/cross-entropy-loss/</link><pubDate>Thu, 09 Jul 2020 16:49:42 +0800</pubDate><guid>https://finisky.github.io/cross-entropy-loss/</guid><description>&lt;p&gt;交叉熵(Cross Entropy)和KL散度(Kullback–Leibler Divergence)是机器学习中极其常用的两个指标，用来衡量两个概率分布的相似度，常被作为Loss Function。本文给出熵、相对熵、交叉熵的定义，用python实现算法并与pytorch中对应的函数结果对比验证。&lt;/p&gt;</description></item><item><title>TextCNN pytorch实现</title><link>https://finisky.github.io/text-cnn-mvp/</link><pubDate>Fri, 03 Jul 2020 19:49:43 +0800</pubDate><guid>https://finisky.github.io/text-cnn-mvp/</guid><description>&lt;p&gt;
+&lt;a href="https://arxiv.org/abs/1408.5882" title="TextCNN" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ TextCNN
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。&lt;/p&gt;</description></item><item><title>MultiHeadAttention实现详解</title><link>https://finisky.github.io/multi-head-attention/</link><pubDate>Mon, 25 May 2020 19:32:15 +0800</pubDate><guid>https://finisky.github.io/multi-head-attention/</guid><description>&lt;p&gt;Transformer自2017年推出之后，已经横扫NLP领域，成为当之无愧的state-of-the-art。原始paper “Attention is All you Need”中对attention提出了通用的query/key/value抽象，开始时觉得很难理解，后来随着读的文献更多，慢慢体会到了其中的意思。关于Transformer和attention的各种解释类文章有很多，不再赘述，本文仅就其中的核心，MultiHeadAttention的实现进行源码剖析。&lt;/p&gt;</description></item><item><title>Find Peak Element 寻找峰值</title><link>https://finisky.github.io/find-peak-element/</link><pubDate>Fri, 22 May 2020 14:31:43 +0800</pubDate><guid>https://finisky.github.io/find-peak-element/</guid><description>&lt;p&gt;
+&lt;a href="https://leetcode.com/problems/find-peak-element/" title="Find Peak Element" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Find Peak Element
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;
+给定一个数组，其中任意两个相邻元素的值不等，寻找数组中某峰值的index i，使得&lt;code&gt;n[i - 1] &amp;lt; n[i] &amp;gt; n[i + 1]&lt;/code&gt;。保证峰值一定存在，如果有多个峰值，可返回任意一个。&lt;/p&gt;</description></item><item><title>简约的哲学</title><link>https://finisky.github.io/simplicity/</link><pubDate>Sun, 03 May 2020 12:12:16 +0800</pubDate><guid>https://finisky.github.io/simplicity/</guid><description>&lt;p&gt;维护过中型以上系统的工程师，一定都有看到某处代码或设计后脱口而出&amp;quot;What the fuck&amp;quot;,&amp;ldquo;这TMD是谁设计的系统&amp;rdquo;,&amp;ldquo;写这代码的人脑子有坑吧?&amp;ldquo;的经历。&lt;/p&gt;</description></item><item><title>代码面试C++/STL Cheat Sheet</title><link>https://finisky.github.io/coding-interview-cpp-cheatsheet/</link><pubDate>Fri, 01 May 2020 20:27:09 +0800</pubDate><guid>https://finisky.github.io/coding-interview-cpp-cheatsheet/</guid><description>&lt;p&gt;在以前的面试指南中，写代码不限定编程语言，主要考察算法。近几年机器学习火了之后，作为面试官，面试科班出身的面试者我会要求对方使用C或C++而非Python。原因很简单，现在许多科班出身的同学基本功不扎实，恨不能大一上来就搞深度学习，对计算机科学没有大局观和底层的认识，往往不能很好地胜任日常的工作。而C/C++作为科班的必修课，可以作为一个简单的分类器判断对方的功底。&lt;/p&gt;</description></item><item><title>中文GPT2预训练实战</title><link>https://finisky.github.io/pretrain-chinese-gpt/</link><pubDate>Fri, 01 May 2020 18:32:30 +0800</pubDate><guid>https://finisky.github.io/pretrain-chinese-gpt/</guid><description>&lt;p&gt;GPT2是一个很好的长文本生成模型，但官方版本并没有开源中文预训练好的模型。因此，最近用开源的中文新闻，wiki，评论等从头训练了一个中文GPT2用于文本生成任务。&lt;/p&gt;</description></item><item><title>Windows下emacs输入法切换</title><link>https://finisky.github.io/emacs-input-switch/</link><pubDate>Tue, 28 Apr 2020 23:55:39 +0800</pubDate><guid>https://finisky.github.io/emacs-input-switch/</guid><description>&lt;p&gt;Windows下的emacs用起来体验不是太好，对中文的支持也不太行。偶尔打开一次需要输入个中文发现用Ctrl+Space或Win+Space都调不出第三方输入法（如腾讯或搜狗输入法）。&lt;/p&gt;</description></item><item><title>C# Exception的用法和注意事项</title><link>https://finisky.github.io/csharp-exception-guide/</link><pubDate>Mon, 30 Mar 2020 12:38:58 +0800</pubDate><guid>https://finisky.github.io/csharp-exception-guide/</guid><description>&lt;p&gt;正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。&lt;/p&gt;</description></item><item><title>.bashrc不起作用与bash初始化文件执行顺序</title><link>https://finisky.github.io/bash-startup-files/</link><pubDate>Sun, 29 Mar 2020 11:55:50 +0800</pubDate><guid>https://finisky.github.io/bash-startup-files/</guid><description>&lt;h1 id="bashrc不起作用"&gt;.bashrc不起作用
+&lt;a class="header-anchor" href="#bashrc%e4%b8%8d%e8%b5%b7%e4%bd%9c%e7%94%a8"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动&lt;code&gt;source .bashrc&lt;/code&gt;，在&lt;code&gt;~/&lt;/code&gt;目录增加.bash_profile或.profile解决：&lt;/p&gt;</description></item><item><title>荧光灯改装LED灯板</title><link>https://finisky.github.io/fluorescent-lamp-to-led/</link><pubDate>Sat, 28 Mar 2020 19:50:28 +0800</pubDate><guid>https://finisky.github.io/fluorescent-lamp-to-led/</guid><description>&lt;p&gt;半年前写过篇如何换启辉器和环形灯管，得，家里的老式日光灯又坏了，灯开着嗡嗡响，看起来像是镇流器出了问题，但环形灯管的头部也发黑了，灯的频闪也比较重，所以想买镇流器和灯管给换上。&lt;/p&gt;</description></item><item><title>点到超平面距离推导</title><link>https://finisky.github.io/point-to-hyperplane/</link><pubDate>Mon, 24 Feb 2020 23:38:26 +0800</pubDate><guid>https://finisky.github.io/point-to-hyperplane/</guid><description>&lt;p&gt;SVM的函数间隔定义中会用到点到超平面距离的推导，《统计学习方法》中对此没有详细的解释，当然这个问题有许多解法，找到了一种比较直观的解法如下。&lt;/p&gt;</description></item><item><title>快速排序简洁实现</title><link>https://finisky.github.io/clean-quicksort/</link><pubDate>Sun, 23 Feb 2020 19:51:48 +0800</pubDate><guid>https://finisky.github.io/clean-quicksort/</guid><description>&lt;p&gt;QuickSort 快速排序是常见的考察代码基本功面试题。简洁易读的实现可以一定程度展现面试者的代码功底。&lt;/p&gt;
+&lt;p&gt;算法导论对于快排讲解的很透彻，也有伪代码，即便如此，网上许多实现还是错的，不能通过一些边界用例，如数组已排序或数组中有重复元素的情况。还有一些用python的实现不满足原位排序(in-place)的要求，直接新建两个新List，这种方法其实也是取巧，简化了partition函数的实现难度。&lt;/p&gt;</description></item><item><title>Hexo添加Google Auto Ads</title><link>https://finisky.github.io/google-auto-ads/</link><pubDate>Sat, 15 Feb 2020 20:26:20 +0800</pubDate><guid>https://finisky.github.io/google-auto-ads/</guid><description>&lt;p&gt;Google Ads是许多独立博客赢利维持自身运转的方案之一。不过近些年前已经不大流行了，因为转化率低，没有很大的基础流量支持，其实很难赚到钱。独立博客的流量如果不做PR的话，主要还是靠搜索引擎。而提升流量的根本需要有对应的用户群，相较而言，微信公众号、头条号上的平台流量足够大，用户粘度更高，赢利方式也更为多样，对作者来说更易变现。现在这年头还玩独立博客的人，我想都是有一份自己的坚持，一块独立的领地，完全自由掌控的感觉，想靠这个赚钱还是算了。&lt;/p&gt;</description></item><item><title>Kubernetes Dashboard语言设置为英文</title><link>https://finisky.github.io/k8s-dashboard-language/</link><pubDate>Mon, 06 Jan 2020 20:45:35 +0800</pubDate><guid>https://finisky.github.io/k8s-dashboard-language/</guid><description>&lt;p&gt;kubernetes dashborad是用来查看cluster各项指标的Web UI。但是直到目前依然不支持用户级别的语言设置。它默认根据浏览器的语言设置作为自己的界面语言，这样对于中文Chrome用户来说略有不便：k8s dashboard作为一个管理工具，由于需要中文反译回英文，严重影响了工作效率。感受一下中文界面：&lt;/p&gt;</description></item><item><title>selenium禁止页面加载javascript</title><link>https://finisky.github.io/selenium-page-load-strategy/</link><pubDate>Wed, 18 Dec 2019 23:58:15 +0800</pubDate><guid>https://finisky.github.io/selenium-page-load-strategy/</guid><description>&lt;p&gt;最近爬取几个页面总是失败，遇到如下错误：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# The HTTP request to the remote WebDriver server for URL http://localhost:xxx/ session timed out after 60 seconds.&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;后来发现原因是页面加载缓慢，debug发现页面其实已经在浏览器中成功渲染，只是还在等待一些后台javascript加载完毕，然后超时报错。&lt;/p&gt;</description></item><item><title>interface还是abstract class?</title><link>https://finisky.github.io/interface-or-abstract-class/</link><pubDate>Sun, 15 Dec 2019 11:36:10 +0800</pubDate><guid>https://finisky.github.io/interface-or-abstract-class/</guid><description>&lt;p&gt;使用interface还是abstract class在许多地方都有讨论。但许多讨论更专注于术的层面，即二者在语法上的区别和细节差异，如
+&lt;a href="https://stackoverflow.com/questions/1165332/interface-or-abstract-class" title="Interface or abstract class?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Interface or abstract class?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 中排名第二的回答。实际上，从逻辑抽象层次出发，选用interface或abstract class才是正道。&lt;/p&gt;</description></item><item><title>迁移Hexo博客到GitHub Pages</title><link>https://finisky.github.io/migrate-github-pages/</link><pubDate>Wed, 11 Dec 2019 20:21:40 +0800</pubDate><guid>https://finisky.github.io/migrate-github-pages/</guid><description>&lt;p&gt;finisky博客 (
+&lt;a href="https://finisky.azurewebsites.net" title="https://finisky.azurewebsites.net" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://finisky.azurewebsites.net
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;) 本是搭在Azure App Service (WebApp)，基于Hexo的静态页面博客在Azure App Service中使用IIS进行host。现在看起来没有太大必要host在Azure上，遂考虑迁移到GitHub Pages (
+&lt;a href="https://finisky.github.io" title="https://finisky.github.io" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://finisky.github.io
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;) 。&lt;/p&gt;</description></item><item><title>参数或返回值为派生类的接口或抽象方法</title><link>https://finisky.github.io/interface-derived-parameter/</link><pubDate>Mon, 09 Dec 2019 22:11:45 +0800</pubDate><guid>https://finisky.github.io/interface-derived-parameter/</guid><description>&lt;p&gt;如果一个interface或abstract method的参数为基类形参，而有另一个类实现了该interface，但却使用了派生类形参，会发生什么？或者考虑另一种情况，一个interface或abstract method的返回值为基类对象，而它的实现返回的却是派生类对象，会发生什么？&lt;/p&gt;</description></item><item><title>Hexo NexT主题侧边栏展示相关文章</title><link>https://finisky.github.io/sidebar-related-posts/</link><pubDate>Thu, 05 Dec 2019 22:39:00 +0800</pubDate><guid>https://finisky.github.io/sidebar-related-posts/</guid><description>&lt;p&gt;&lt;strong&gt;2023-01-30 更新&lt;/strong&gt;: NexT主题已经支持相关文章功能 (使用
+&lt;a href="https://github.com/sergeyzwezdin/hexo-related-posts" title="hexo-related-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; )，更新到最新版本即可，可参考
+&lt;a href="https://finisky.github.io/how-to-set-hexo-env/" title="这里" &gt;
+ 这里
+ 
+&lt;/a&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Hexo的NexT主题展示相关文章和热门文章使用 
+&lt;a href="https://github.com/tea3/hexo-related-popular-posts" title="hexo-related-popular-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-popular-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 插件，但hexo-related-popular-posts 默认展示位置是在页面底部，而页面底部本身内容较多，多数人注意不到相关文章。因此，考虑将相关文章展示在侧边栏。&lt;/p&gt;</description></item><item><title>开封人的开封话</title><link>https://finisky.github.io/kaifeng-hua/</link><pubDate>Sun, 01 Dec 2019 12:33:39 +0800</pubDate><guid>https://finisky.github.io/kaifeng-hua/</guid><description>&lt;p&gt;大概五、六年前看过一个很逗的开封话图解趣谈，形象生动。文章结合了北宋时期包公日常对话的题材，很是风趣幽默。 今日与友人谈起想找下原贴发现找不到了，搜到的几个贴子中链接大多已失效。有趣的内容不可负也，这里转载备份一份以飨众人~&lt;/p&gt;</description></item><item><title>谈谈static和util/helper类</title><link>https://finisky.github.io/static-and-util/</link><pubDate>Sat, 30 Nov 2019 12:25:56 +0800</pubDate><guid>https://finisky.github.io/static-and-util/</guid><description>&lt;p&gt;今天先聊聊static方法的那些事儿，然后再引出static使用的“极致” util/helper类，说说它们的问题。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="static方法什么时候用"&gt;static方法什么时候用？
+&lt;a class="header-anchor" href="#static%e6%96%b9%e6%b3%95%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e7%94%a8"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;简单说在面向对象的场景下，绝大多数情况都不应使用static方法。这里有一些关于static使用场景的讨论：
+
+&lt;a href="https://stackoverflow.com/questions/33705976/when-should-i-use-static-methods" title="When should I use static methods?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ When should I use static methods?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>升级Hexo和NexT主题趟坑小记</title><link>https://finisky.github.io/upgrade-next/</link><pubDate>Wed, 27 Nov 2019 11:48:52 +0800</pubDate><guid>https://finisky.github.io/upgrade-next/</guid><description>&lt;p&gt;事情源起于心血来潮把Hexo从v3.9.0升级到了v4.0.0，Hexo本身的升级倒是不难，它由npm管理，改下package.json，运行npm update即可。但之后发现在archives的分页显示有问题……&lt;/p&gt;</description></item><item><title>CS常见读错名词集锦</title><link>https://finisky.github.io/cs-pronounciation/</link><pubDate>Mon, 25 Nov 2019 19:53:55 +0800</pubDate><guid>https://finisky.github.io/cs-pronounciation/</guid><description>&lt;p&gt;计算机圈中有些常见被中国人读错的单词，现列举部分如下：&lt;/p&gt;
+&lt;h2 id="ajax"&gt;AJAX
+&lt;a class="header-anchor" href="#ajax"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;/'eɪdʒæks/，不读阿假克斯。&lt;/p&gt;
+&lt;h2 id="ascii"&gt;ASCII
+&lt;a class="header-anchor" href="#ascii"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;/'æski/，不读[ask]。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h2 id="cache"&gt;cache
+&lt;a class="header-anchor" href="#cache"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;/kæʃ/，不读[catch]。&lt;/p&gt;</description></item><item><title>返回null还是空List?</title><link>https://finisky.github.io/null-or-empty-list/</link><pubDate>Sun, 24 Nov 2019 12:52:57 +0800</pubDate><guid>https://finisky.github.io/null-or-empty-list/</guid><description>&lt;p&gt;有这样的一个interface:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="nc"&gt;Filter&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;IList&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;IList&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;responses&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;在实现它时，如果过滤后没有结果，返回null还是new List&lt;string&gt;()?&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="一段流水线处理代码"&gt;一段流水线处理代码
+&lt;a class="header-anchor" href="#%e4%b8%80%e6%ae%b5%e6%b5%81%e6%b0%b4%e7%ba%bf%e5%a4%84%e7%90%86%e4%bb%a3%e7%a0%81"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;先看下面一段流水线处理的&lt;strong&gt;内部方法&lt;/strong&gt;，即GenerateCandidates(), FilterA()和FilterB()都没有用户输入等边界：&lt;/p&gt;</description></item><item><title>RegisterFactory(InjectionFactory)的应用</title><link>https://finisky.github.io/register-factory-application/</link><pubDate>Wed, 20 Nov 2019 18:35:31 +0800</pubDate><guid>https://finisky.github.io/register-factory-application/</guid><description>&lt;p&gt;Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register：&lt;/p&gt;</description></item><item><title>IUnityContainer.RegisterFactory例子</title><link>https://finisky.github.io/register-factory-exp/</link><pubDate>Tue, 19 Nov 2019 18:53:10 +0800</pubDate><guid>https://finisky.github.io/register-factory-exp/</guid><description>&lt;p&gt;使用Unity的InjectionFactory进行依赖注入遇到如下提示：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;lsquo;InjectionFactory&amp;rsquo; is obsolete: &amp;lsquo;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(&amp;hellip;) method instead.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;提示InjectionFactory将被淘汰的注入代码：&lt;/p&gt;</description></item><item><title>await与Task.ContinueWith()的区别</title><link>https://finisky.github.io/task-continue-with/</link><pubDate>Sun, 17 Nov 2019 16:29:12 +0800</pubDate><guid>https://finisky.github.io/task-continue-with/</guid><description>&lt;p&gt;在代码库里看到不少Task.ContinueWith()的代码，查了下语法，没太理解下面两种写法的区别(借用MSDN的代码)：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt;6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt;7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt;8&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt; &lt;span class="n"&gt;ContinueWithExample&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Execute the antecedent.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;taskA&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Execute the continuation when the antecedent finishes.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;taskA&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ContinueWith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;antecedent&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Today is {0}.&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;antecedent&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Result&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- more --&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-2"&gt;&lt;a class="lnlinks" href="#hl-1-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-3"&gt;&lt;a class="lnlinks" href="#hl-1-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-4"&gt;&lt;a class="lnlinks" href="#hl-1-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-5"&gt;&lt;a class="lnlinks" href="#hl-1-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-6"&gt;&lt;a class="lnlinks" href="#hl-1-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-7"&gt;&lt;a class="lnlinks" href="#hl-1-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-8"&gt;&lt;a class="lnlinks" href="#hl-1-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-9"&gt;&lt;a class="lnlinks" href="#hl-1-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-10"&gt;&lt;a class="lnlinks" href="#hl-1-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-11"&gt;&lt;a class="lnlinks" href="#hl-1-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-12"&gt;&lt;a class="lnlinks" href="#hl-1-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt; &lt;span class="n"&gt;AwaitExample&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;DayOfWeek&lt;/span&gt; &lt;span class="n"&gt;dayOfWeek&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Today is {0}.&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dayOfWeek&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Enter DayOfWeekAsync()&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Delay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;500&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;DateTime&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Today&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h1 id="await与continuewith的区别"&gt;await与ContinueWith的区别
+&lt;a class="header-anchor" href="#await%e4%b8%8econtinuewith%e7%9a%84%e5%8c%ba%e5%88%ab"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;标题有些标题党，但实际上await是continuewith的替代者，是一种更先进和简洁的语法。&lt;/p&gt;</description></item><item><title>AIMD算法在工程上的应用</title><link>https://finisky.github.io/aimd-app/</link><pubDate>Sun, 17 Nov 2019 10:38:24 +0800</pubDate><guid>https://finisky.github.io/aimd-app/</guid><description>&lt;p&gt;AIMD (additive-increase/multiplicative-decrease)是用于TCP拥塞控制的算法。AIMD思想虽然简单，但我认为它非常符合“simple but elegant”的哲学。尤其是在多连接拥塞控制中的公平性分析，还挺巧妙。这里主要探讨AIMD在非TCP场景下的应用，不对其原理进行深度剖析。&lt;/p&gt;</description></item><item><title>selenium ChromeDriver不匹配问题</title><link>https://finisky.github.io/chrome-driver/</link><pubDate>Fri, 08 Nov 2019 10:16:57 +0800</pubDate><guid>https://finisky.github.io/chrome-driver/</guid><description>&lt;p&gt;Crawler运行一段时间后可能会莫名其妙地停止工作，查看日志发现如下错误：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;session not created: This version of ChromeDriver only supports Chrome version 76&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;原因是用selenium创建ChromeDriver时，ChromeDriver与ChromeBrowser的版本不匹配（这玩意儿兼容性看起来不是很好），而此问题总是发生的原因在于ChromeBrowser会自动升级，因此需要手动将ChromeDriver也升级到对应版本。&lt;/p&gt;</description></item><item><title>京城卤煮之我见</title><link>https://finisky.github.io/lu-zhu/</link><pubDate>Tue, 05 Nov 2019 00:16:05 +0800</pubDate><guid>https://finisky.github.io/lu-zhu/</guid><description>&lt;p&gt;卤煮火烧是一道地道的北京小吃，如果你爱吃内脏，那它必定是你不能错过的美味; 反之则是吾之蜜糖，彼之砒霜，唯恐避之不及。其实许多北京小吃还是挺好吃的，只是术业有专攻，吃每样小吃得找对店铺，自然得花些功夫。加之街头许多店挂羊头卖狗肉，打着名吃的旗号却做不出那个味儿，大部分人尤其是游客只想尝个鲜，随口一吃就下了结论“这东西真难吃”，殊不知只是没找对地方。而许多景点又有太多所谓小吃一条街，表面看来方便了食客将美食一“街”打尽，实际却砸了招牌，几无回头客。&lt;/p&gt;</description></item><item><title>Markdown并排显示图片</title><link>https://finisky.github.io/two-column-pic/</link><pubDate>Tue, 15 Oct 2019 18:50:20 +0800</pubDate><guid>https://finisky.github.io/two-column-pic/</guid><description>&lt;p&gt;一行中并排显示两图片，搜索了下，有说两张并排这么写的：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;figure&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;half&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;img&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;http://xxx.jpg&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;img&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;http://yyy.jpg&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;试了下，在Hexo中并不好使，估计这个需要额外安装包支持。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;想了下解决方案应该很简单，直接使用自带的表格功能实现即可，无需增加额外依赖：&lt;/p&gt;</description></item><item><title>工厂模式和抽象工厂模式的区别</title><link>https://finisky.github.io/factory-diff/</link><pubDate>Tue, 15 Oct 2019 18:16:05 +0800</pubDate><guid>https://finisky.github.io/factory-diff/</guid><description>&lt;p&gt;工厂模式是一种常见设计模式，大多数资料会将其分为三种：简单工厂模式(Simple Factory)，工厂模式(Factory Method)和抽象工厂模式(Abstract Factory)。按照《HeadFirst Design Pattern》的说法，Simple Factory其实不能称之为一种设计模式，因为它主要思想是把对象创建的功能隔离开来，也是工厂模式思想的基础。本文主要讨论工厂模式和抽象工厂模式的对比及不同应用场景，假设读者对两种模式已有基本了解。&lt;/p&gt;</description></item><item><title>青甘大环线9月自驾游记及攻略</title><link>https://finisky.github.io/qg/</link><pubDate>Fri, 27 Sep 2019 10:03:58 +0800</pubDate><guid>https://finisky.github.io/qg/</guid><description>&lt;p&gt;9月中旬休假，选了一下休假目的地，主要以自然景观为主，开始想去稻城亚丁，但看了下景点平均海拔在4700米，想到之前在香格里拉3500米有点轻微高反的情形并考虑到旅途的休闲和舒适性，最终选择了青甘大环线。&lt;/p&gt;</description></item><item><title>重温87版《红楼梦》</title><link>https://finisky.github.io/dream-of-the-red-chamber/</link><pubDate>Sun, 11 Aug 2019 21:55:52 +0800</pubDate><guid>https://finisky.github.io/dream-of-the-red-chamber/</guid><description>&lt;p&gt;记忆中只有儿时看过电视上放映《红楼梦》，尤其在暑期，四大名著循环放映，如果是西游记则百看不遍，如果看到红楼梦就换台，小时眼中的红楼梦只是一个娘了吧叽的纨绔子弟与一群小姐在大观园中每日嬉戏的故事。后来高中时得空看了原著，原著中诗词甚多，又是半文言，加上人物关系繁杂，看到一半终于还是弃了，从此再不愿碰。&lt;/p&gt;</description></item><item><title>吸顶灯启辉器和灯管更换图解</title><link>https://finisky.github.io/ceiling-lamp/</link><pubDate>Sun, 28 Jul 2019 10:39:25 +0800</pubDate><guid>https://finisky.github.io/ceiling-lamp/</guid><description>&lt;p&gt;卧室荧光吸顶灯是易耗品，自己动手更换启辉器和灯管是常规操作。百度和知乎了半天，发现带有“更换方法详解”之类的文章全是类似软文的屁话，文章写得臭长，关键信息一点没有。换个灯管是个非常简单的事情，不过还是图解下更换流程，供爱动手的小白参考。&lt;/p&gt;</description></item><item><title>stunnel配置实例</title><link>https://finisky.github.io/stunnel/</link><pubDate>Sun, 21 Jul 2019 08:50:06 +0800</pubDate><guid>https://finisky.github.io/stunnel/</guid><description>&lt;h1 id="stunnel简介"&gt;stunnel简介
+&lt;a class="header-anchor" href="#stunnel%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;
+&lt;a href="https://www.stunnel.org/" title="stunnel" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ stunnel
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;是一个开源跨平台进行通信加密的软件。它可以对原生不支持加密通信的服务(如FTP, Telnet等)在上层提供加密功能，而无须修改这些服务的代码。&lt;/p&gt;</description></item><item><title>Selenium爬取网页实战</title><link>https://finisky.github.io/selenium/</link><pubDate>Sat, 20 Jul 2019 18:58:02 +0800</pubDate><guid>https://finisky.github.io/selenium/</guid><description>&lt;h1 id="selenium简介"&gt;Selenium简介
+&lt;a class="header-anchor" href="#selenium%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;
+&lt;a href="https://www.seleniumhq.org/" title="Selenium" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Selenium
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;是一个浏览器自动测试框架，可以通过模拟各种浏览器行为完成各种测试任务。但它能做的远不止这些，一个更实用的功能是作网页内容爬取。&lt;/p&gt;</description></item><item><title>概率论中的分号表示</title><link>https://finisky.github.io/stat-semicolon/</link><pubDate>Sun, 12 May 2019 18:34:50 +0800</pubDate><guid>https://finisky.github.io/stat-semicolon/</guid><description>&lt;p&gt;在贝叶斯推断和参数估计等相关文献中常见$P(X|Y)$与$P(X;Y)$两种不同的表示方法，常常令初学者感到困惑：参数$Y$和随机变量$X$到底是什么关系？二者有什么区别？&lt;/p&gt;</description></item><item><title>人类简史中的宗教观</title><link>https://finisky.github.io/sapiens/</link><pubDate>Fri, 26 Apr 2019 10:16:31 +0800</pubDate><guid>https://finisky.github.io/sapiens/</guid><description>&lt;p&gt;《人类简史》的作者在“宗教的法则”一章中对于宗教的出现和解释非常犀利，从成文来看，作者看起来应该像是一个无神论者。搜索引擎上也能看到许多关于基督教徒如何看待《人类简史》的搜索。此处引用一些原文中比较精彩的片段，梳理下宗教发展的轨迹。&lt;/p&gt;</description></item><item><title>计算机界有趣的名言金句</title><link>https://finisky.github.io/computer-quotes/</link><pubDate>Sun, 14 Apr 2019 21:58:30 +0800</pubDate><guid>https://finisky.github.io/computer-quotes/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies. The first method is far more difficult.
+— C. A. R. Hoare&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The Law of Leaky Abstractions: All non-trivial abstractions, to some degree, are leaky.
+— Joel Spolsky&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;hr&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;There are only two hard things in Computer Science: cache invalidation and naming things.
+— PHIL KARLTON&lt;/p&gt;</description></item><item><title>Hexo添加自定义分类菜单项并定制页面布局</title><link>https://finisky.github.io/customized-category/</link><pubDate>Sun, 24 Feb 2019 19:17:25 +0800</pubDate><guid>https://finisky.github.io/customized-category/</guid><description>&lt;p&gt;&lt;strong&gt;2021-06-20:&lt;/strong&gt; 使用Hexo扩展的方式可以更简洁地定制页面，避免了本文实现的一些弊端。
+&lt;a href="https://finisky.github.io/customizecategorybyextension/" title="Hexo添加自定义分类菜单项并定制页面布局(简洁版)" &gt;
+ Hexo添加自定义分类菜单项并定制页面布局(简洁版)
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2020-07-22:&lt;/strong&gt; 更新hexo-generator-category到v1.0.0后，对应的generator.js代码进行了修改。
+&lt;strong&gt;2019-11-27:&lt;/strong&gt; 更新NexT v7.5.0的customcategory.swig文件，与老版本v6.6.0不同。&lt;/p&gt;</description></item><item><title>C#异步接口的同步实现</title><link>https://finisky.github.io/task-from-result/</link><pubDate>Sun, 17 Feb 2019 21:29:12 +0800</pubDate><guid>https://finisky.github.io/task-from-result/</guid><description>&lt;p&gt;实际工程中有时需要将同步方法包装在异步方法之中。比如一个类实现了异步接口，而实际实现可能是本地计算的同步操作，也可能是需要HTTP请求的异步操作。对于前者，如果实现中没有await关键字，编译器会提示该方法缺少await运算符，将以同步方式运行。将二者统一的解决方案是使用Task.FromResult将结果包装成一个已完成的Task返回。举例：&lt;/p&gt;</description></item><item><title>TCP为什么需要三次握手四次挥手</title><link>https://finisky.github.io/tcp-three-way/</link><pubDate>Sat, 16 Feb 2019 16:23:02 +0800</pubDate><guid>https://finisky.github.io/tcp-three-way/</guid><description>&lt;h1 id="tcp为什么需要三次握手"&gt;TCP为什么需要三次握手
+&lt;a class="header-anchor" href="#tcp%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;简单答案：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;client与server需要交换各自的Initial Sequence Number (ISN)，至少需要三次交换。&lt;/li&gt;
+&lt;li&gt;若采用两次握手，server可能会浪费资源为延迟到达的SYN包建立连接。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- more --&gt;
+&lt;h2 id="isn交换至少需要三次"&gt;ISN交换至少需要三次
+&lt;a class="header-anchor" href="#isn%e4%ba%a4%e6%8d%a2%e8%87%b3%e5%b0%91%e9%9c%80%e8%a6%81%e4%b8%89%e6%ac%a1"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;典型的TCP三次握手过程如下图（Computer Networking: A Top-Down Approach）：
+&lt;img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/tcpthreewayhandshake.png" width="50%" height="50%"&gt;&lt;/p&gt;</description></item><item><title>软件设计中的SOLID原则</title><link>https://finisky.github.io/solid/</link><pubDate>Mon, 04 Feb 2019 12:58:03 +0800</pubDate><guid>https://finisky.github.io/solid/</guid><description>&lt;h1 id="简介"&gt;简介
+&lt;a class="header-anchor" href="#%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;面向对象软件设计中，如何使软件易读、易维护和灵活适应需求是一个永恒的话题。SOLID原则即为大家在概念上指明了我们应如何达到这些设计目标。相较于设计模式，SOLID是高层次的抽象思想指导，可以说具体的设计模式是SOLID原则的实现。&lt;/p&gt;</description></item><item><title>C# async/await编程模型的执行逻辑解析</title><link>https://finisky.github.io/await/</link><pubDate>Thu, 31 Jan 2019 17:58:02 +0800</pubDate><guid>https://finisky.github.io/await/</guid><description>&lt;h1 id="简介"&gt;简介
+&lt;a class="header-anchor" href="#%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;C# 5引入了async/await异步编程模型，旨在进一步简化异步编程的难度，让异步执行的代码看起来像同步代码一样简洁和容易理解。但初学者往往会将此异步编程模型与多线程编程模型混淆，以致引起一些不必要的错误如死锁或性能损失。&lt;/p&gt;</description></item><item><title>Hexo NexT主题图标显示为方块的可能原因及解决方案</title><link>https://finisky.github.io/font-awesome-issue/</link><pubDate>Sun, 20 Jan 2019 09:58:02 +0800</pubDate><guid>https://finisky.github.io/font-awesome-issue/</guid><description>&lt;h1 id="问题描述"&gt;问题描述
+&lt;a class="header-anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Hexo中的NexT主题在部署到server端后，所有页面图标显示为方块。
+&lt;img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/fontsquare.png" width="40%" height="40%"&gt;&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="分析原因"&gt;分析原因
+&lt;a class="header-anchor" href="#%e5%88%86%e6%9e%90%e5%8e%9f%e5%9b%a0"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;NexT主题使用的页面图标是fontawesome)。本地hexo s启动无此问题，仅在Chrome出现，IE无此问题。&lt;/p&gt;</description></item></channel></rss>

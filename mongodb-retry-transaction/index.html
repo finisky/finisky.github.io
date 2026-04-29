@@ -1,0 +1,520 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="MongoDB事务重试实现"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Transaction,C#"><meta property="og:type" content="article"><meta property="og:title" content="MongoDB事务重试实现"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-retry-transaction/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2021-02-20 20:36:59 +0800 CST"><meta property="article:modified_time" content="2021-02-20 20:36:59 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-retry-transaction/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-retry-transaction/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>MongoDB事务重试实现 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#重现writeconflict错误>重现WriteConflict错误</a><ul><li><a href=#旧版transactions-api>旧版Transactions API</a></li><li><a href=#writeconflict示例>WriteConflict示例</a></li></ul></li><li><a href=#解决方案>解决方案</a><ul><li><a href=#应用层手动重试>应用层手动重试</a></li><li><a href=#新版transactions-api-recommended>新版Transactions API (recommended)</a></li></ul></li><li><a href=#完整代码>完整代码</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-endless-retry/>MongoDB BulkWrite无限重试问题解决</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-slave-sync/>MongoDB使用Change Stream主从复制</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-strongly-typed-collection-example/>MongoDB强类型Collection用法示例</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/dont-use-load-balancer-in-front-of-mongos/>别在mongos前做负载均衡</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/solving-double-spending-with-mongodb/>用MongoDB解决双花问题: 基于事务还是基于版本</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-retry-transaction/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="MongoDB事务重试实现"><meta itemprop=description content="MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:
+
+  
+    Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction.."></span><header class=post-header><h1 class=post-title itemprop="name headline">MongoDB事务重试实现</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2021-02-20 20:36:59 +08:00" itemprop="dateCreated datePublished" datetime="2021-02-20 20:36:59 +0800 CST">2021-02-20
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>5分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-retry-transaction/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-retry-transaction/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>MongoDB事务是个很好的功能，但对于高并发场景下的多文档事务，写冲突难以避免。一个写冲突的实例:</p><blockquote><p>Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..</p><a id=more></a></blockquote><p>那么如何正确实现事务的重试？</p><p>最直接的想法就是在应用层进行手动重试，一旦发现有异常，就开始重试。但是重试的实现并没有那么简单，要考虑的问题很多：这个异常是什么类型的？它是
+<a href=https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/ title=瞬时异常还是持续异常 rel="noopener external nofollow noreferrer" target=_blank class=exturl>瞬时异常还是持续异常
+<i class="fa fa-external-link-alt"></i>
+</a>? 要重试多少次? 如何实现重试机制的同时保证代码的简洁？</p><p>好消息是新的MongoDB driver已经帮我们解决了重试的问题。它内置了重试机制：https://docs.mongodb.com/manual/core/transactions/#transactions-api</p><blockquote><p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p></blockquote><p>我们需要做的就是使用新的transaction API来实现事务。但我不太理解的是即使是在官方C# MongoDB driver文档上依然使用的是旧的API，也就是不带重试的版本。所以本文比较了新老API的差异，并给出了使用实例。</p><h1 id=重现writeconflict错误>重现WriteConflict错误
+<a class=header-anchor href=#%e9%87%8d%e7%8e%b0writeconflict%e9%94%99%e8%af%af></a></h1><h2 id=旧版transactions-api>旧版Transactions API
+<a class=header-anchor href=#%e6%97%a7%e7%89%88transactions-api></a></h2><p>来自官方文档
+<a href=https://mongodb.github.io/mongo-csharp-driver/2.11/reference/driver/crud/sessions_and_transactions/#starttransaction title="C# MongoDB driver documentation" rel="noopener external nofollow noreferrer" target=_blank class=exturl>C# MongoDB driver documentation
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=n>client</span><span class=p>.</span><span class=n>StartSession</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>session</span><span class=p>.</span><span class=n>StartTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// execute operations using the session</span>
+</span></span><span class=line><span class=cl>    <span class=n>session</span><span class=p>.</span><span class=n>CommitTransaction</span><span class=p>();</span> <span class=c1>// if an exception is thrown before reaching here the transaction will be implicitly aborted</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=writeconflict示例>WriteConflict示例
+<a class=header-anchor href=#writeconflict%e7%a4%ba%e4%be%8b></a></h2><p>我们用旧版API实现一个写冲突的例子。创建两个task更新同一个文档，为了让它稳定复现，刻意让第一个task在commit之前等上两秒：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span><span class=lnt id=hl-1-35><a class=lnlinks href=#hl-1-35>35</a>
+</span><span class=lnt id=hl-1-36><a class=lnlinks href=#hl-1-36>36</a>
+</span><span class=lnt id=hl-1-37><a class=lnlinks href=#hl-1-37>37</a>
+</span><span class=lnt id=hl-1-38><a class=lnlinks href=#hl-1-38>38</a>
+</span><span class=lnt id=hl-1-39><a class=lnlinks href=#hl-1-39>39</a>
+</span><span class=lnt id=hl-1-40><a class=lnlinks href=#hl-1-40>40</a>
+</span><span class=lnt id=hl-1-41><a class=lnlinks href=#hl-1-41>41</a>
+</span><span class=lnt id=hl-1-42><a class=lnlinks href=#hl-1-42>42</a>
+</span><span class=lnt id=hl-1-43><a class=lnlinks href=#hl-1-43>43</a>
+</span><span class=lnt id=hl-1-44><a class=lnlinks href=#hl-1-44>44</a>
+</span><span class=lnt id=hl-1-45><a class=lnlinks href=#hl-1-45>45</a>
+</span><span class=lnt id=hl-1-46><a class=lnlinks href=#hl-1-46>46</a>
+</span><span class=lnt id=hl-1-47><a class=lnlinks href=#hl-1-47>47</a>
+</span><span class=lnt id=hl-1-48><a class=lnlinks href=#hl-1-48>48</a>
+</span><span class=lnt id=hl-1-49><a class=lnlinks href=#hl-1-49>49</a>
+</span><span class=lnt id=hl-1-50><a class=lnlinks href=#hl-1-50>50</a>
+</span><span class=lnt id=hl-1-51><a class=lnlinks href=#hl-1-51>51</a>
+</span><span class=lnt id=hl-1-52><a class=lnlinks href=#hl-1-52>52</a>
+</span><span class=lnt id=hl-1-53><a class=lnlinks href=#hl-1-53>53</a>
+</span><span class=lnt id=hl-1-54><a class=lnlinks href=#hl-1-54>54</a>
+</span><span class=lnt id=hl-1-55><a class=lnlinks href=#hl-1-55>55</a>
+</span><span class=lnt id=hl-1-56><a class=lnlinks href=#hl-1-56>56</a>
+</span><span class=lnt id=hl-1-57><a class=lnlinks href=#hl-1-57>57</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Threading.Tasks</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>MongoTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>RetryableTransaction</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>CollectionName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>WriteConflictAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>uuid</span> <span class=p>=</span> <span class=s>&#34;conflict1&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;init&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------ Bare Replace ------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>slowReplaceTask</span> <span class=p>=</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;slow&#34;</span><span class=p>,</span> <span class=m>2000</span><span class=p>);</span> <span class=c1>// Execute at least 2s</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=m>20</span><span class=p>);</span> <span class=c1>// Wait a moment to make sure the slow task enter into a transaction</span>
+</span></span><span class=line><span class=cl>            <span class=k>try</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;fast&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Exception: &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>slowReplaceTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Completed...&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>mongoClient</span><span class=p>,</span> <span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>string</span> <span class=k>value</span><span class=p>,</span> <span class=kt>int</span> <span class=n>delay</span> <span class=p>=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>session</span><span class=p>.</span><span class=n>StartTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>session</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span> <span class=p>{</span> <span class=p>{</span> <span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span> <span class=p>},</span> <span class=p>{</span> <span class=s>&#34;op&#34;</span><span class=p>,</span> <span class=k>value</span> <span class=p>}</span> <span class=p>},</span> <span class=k>new</span> <span class=n>ReplaceOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>});</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=n>delay</span><span class=p>);</span> <span class=c1>// Intentionally slow the transaction</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>CommitTransactionAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Done [{value}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>WriteConflictAsync() 执行结果:</p><blockquote><p>[2021/2/19 13:35:51] Done [init]
+&mdash;&mdash; Bare Replace &mdash;&mdash;
+[2021/2/19 13:35:51] Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..
+[2021/2/19 13:35:53] Done [slow]</p></blockquote><p>显然，第二个更新task因为写冲突失败了。如果我们看看抛出的 <code>MongoDBCommandException</code>, 会发现在这个异常的ErrorLabel里有个<code>TransientTransactionError</code>。也就是说异常本身就告诉我们这是个瞬时错误，可以通过重试解决。</p><h1 id=解决方案>解决方案
+<a class=header-anchor href=#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88></a></h1><h2 id=应用层手动重试>应用层手动重试
+<a class=header-anchor href=#%e5%ba%94%e7%94%a8%e5%b1%82%e6%89%8b%e5%8a%a8%e9%87%8d%e8%af%95></a></h2><p><a href=https://stackoverflow.com/questions/53202345/how-does-mongodb-deal-with-transactional-conflicts title=这篇文章 rel="noopener external nofollow noreferrer" target=_blank class=exturl>这篇文章
+<i class="fa fa-external-link-alt"></i>
+</a>给了一个对<code>TransientTransactionError</code>手动重试的实现方法。但这种方法并不推荐使用，更优雅的做法是用MongoDB driver的重试机制。需要升级driver到最新版本，并且保证server的版本>=4.2（不太确定）?</p><h2 id=新版transactions-api-recommended>新版Transactions API (recommended)
+<a class=header-anchor href=#%e6%96%b0%e7%89%88transactions-api-recommended></a></h2><p>新的Driver天然集成了重试机制：
+<a href=https://docs.mongodb.com/manual/core/transactions/#transactions-api title=https://docs.mongodb.com/manual/core/transactions/#transactions-api rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://docs.mongodb.com/manual/core/transactions/#transactions-api
+<i class="fa fa-external-link-alt"></i></a></p><blockquote><p>The new callback API also incorporates retry logic for <code>TransientTransactionError</code> or <code>UnknownTransactionCommitResult</code> commit errors.</p></blockquote><p><code>WithTransactionAsync</code> 定义:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>// Summary:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     Executes a callback within a transaction, with retries if needed.</span>
+</span></span><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>// Parameters:</span>
+</span></span><span class=line><span class=cl><span class=c1>//   callbackAsync:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     The user defined callback.</span>
+</span></span><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>//   transactionOptions:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     The transaction options.</span>
+</span></span><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>//   cancellationToken:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     The cancellation token.</span>
+</span></span><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>// Type parameters:</span>
+</span></span><span class=line><span class=cl><span class=c1>//   TResult:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     The type of callback result.</span>
+</span></span><span class=line><span class=cl><span class=c1>//</span>
+</span></span><span class=line><span class=cl><span class=c1>// Returns:</span>
+</span></span><span class=line><span class=cl><span class=c1>//     The callback result.</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span><span class=p>&lt;</span><span class=n>TResult</span><span class=p>&gt;</span> <span class=n>WithTransactionAsync</span><span class=p>&lt;</span><span class=n>TResult</span><span class=p>&gt;(</span><span class=n>Func</span><span class=p>&lt;</span><span class=n>IClientSessionHandle</span><span class=p>,</span> <span class=n>CancellationToken</span><span class=p>,</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>TResult</span><span class=p>&gt;&gt;</span> <span class=n>callbackAsync</span><span class=p>,</span> <span class=n>TransactionOptions</span> <span class=n>transactionOptions</span> <span class=p>=</span> <span class=kc>null</span><span class=p>,</span> <span class=n>CancellationToken</span> <span class=n>cancellationToken</span> <span class=p>=</span> <span class=k>default</span><span class=p>(</span><span class=n>CancellationToken</span><span class=p>));</span></span></span></code></pre></td></tr></table></div></div><p>注意<code>WithTransactionAsync</code> 是个<code>Func</code>而不是<code>Action</code>, 也没有<code>Action</code>的重载，必须在callback中返回一个值(这里是string.Empty)。</p><p>示例用法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3>3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4>4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5>5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6>6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7>7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8>8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>		<span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=c1>// execute operations using the session</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span> <span class=kt>string</span><span class=p>.</span><span class=n>Empty</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>		<span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>与旧版API对比:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=n>client</span><span class=p>.</span><span class=n>StartSession</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>session</span><span class=p>.</span><span class=n>StartTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// execute operations using the session</span>
+</span></span><span class=line><span class=cl>    <span class=n>session</span><span class=p>.</span><span class=n>CommitTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>现在可以写一个<code>RetryReplaceAsync</code> (相对于<code>BareReplaceAsync</code>):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14>14</a>
+</span><span class=lnt id=hl-5-15><a class=lnlinks href=#hl-5-15>15</a>
+</span><span class=lnt id=hl-5-16><a class=lnlinks href=#hl-5-16>16</a>
+</span><span class=lnt id=hl-5-17><a class=lnlinks href=#hl-5-17>17</a>
+</span><span class=lnt id=hl-5-18><a class=lnlinks href=#hl-5-18>18</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RetryReplaceAsync</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>mongoClient</span><span class=p>,</span> <span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>string</span> <span class=k>value</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>			<span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span> <span class=p>{</span> <span class=p>{</span> <span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span> <span class=p>},</span> <span class=p>{</span> <span class=s>&#34;op&#34;</span><span class=p>,</span> <span class=k>value</span> <span class=p>}</span> <span class=p>},</span> <span class=k>new</span> <span class=n>ReplaceOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>},</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=kt>string</span><span class=p>.</span><span class=n>Empty</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>			<span class=p>});</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Done [{value}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>在<code>WriteConflictAsync</code> try block中，用<code>RetryReplaceAsync</code>替换<code>BareReplaceAsync</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>WriteConflictAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>mongoClient</span> <span class=p>=</span> <span class=n>GetMongoClient</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>uuid</span> <span class=p>=</span> <span class=s>&#34;conflict1&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;init&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------ Retry Replace ------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>slowReplaceTask</span> <span class=p>=</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;slow&#34;</span><span class=p>,</span> <span class=m>2000</span><span class=p>);</span> <span class=c1>// Execute at least 2s</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=m>20</span><span class=p>);</span> <span class=c1>// Wait a moment to make the slow task enter into a transaction</span>
+</span></span><span class=line><span class=cl>	<span class=k>try</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>await</span> <span class=n>RetryReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;fast&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Exception: &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>slowReplaceTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Completed...&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>执行结果:</p><blockquote><p>[2021/2/19 17:55:00] Done [init]
+&mdash;&mdash; Retry Replace &mdash;&mdash;
+[2021/2/19 17:55:02] Done [slow]
+[2021/2/19 17:55:03] Done [fast]</p><p>[2021/2/19 17:55:03] Completed&mldr;</p></blockquote><p>没有异常抛出，第二个task在两秒后执行成功，可见重试逻辑已经生效。经过测试发现即使第一个task拖了很长时间(20秒)，上面代码总是可以执行成功。但在实际应用中应该通过传入cancellation token实现超时机制，此处不再赘述。</p><p>实际上，即使不加超时机制，写冲突也很少发生。在生产环境中，写冲突的错误率在 0.00001% 以下。加上重试机制之后，这错误基本没再出现过。</p><p>一些其他事务实现的建议，可参考：
+<a href=/mongodbendlessretry/ title="# MongoDB BulkWrite无限重试问题解决"># MongoDB BulkWrite无限重试问题解决</a></p><h1 id=完整代码>完整代码
+<a class=header-anchor href=#%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81></a></h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span><span class=lnt id=hl-7-18><a class=lnlinks href=#hl-7-18>18</a>
+</span><span class=lnt id=hl-7-19><a class=lnlinks href=#hl-7-19>19</a>
+</span><span class=lnt id=hl-7-20><a class=lnlinks href=#hl-7-20>20</a>
+</span><span class=lnt id=hl-7-21><a class=lnlinks href=#hl-7-21>21</a>
+</span><span class=lnt id=hl-7-22><a class=lnlinks href=#hl-7-22>22</a>
+</span><span class=lnt id=hl-7-23><a class=lnlinks href=#hl-7-23>23</a>
+</span><span class=lnt id=hl-7-24><a class=lnlinks href=#hl-7-24>24</a>
+</span><span class=lnt id=hl-7-25><a class=lnlinks href=#hl-7-25>25</a>
+</span><span class=lnt id=hl-7-26><a class=lnlinks href=#hl-7-26>26</a>
+</span><span class=lnt id=hl-7-27><a class=lnlinks href=#hl-7-27>27</a>
+</span><span class=lnt id=hl-7-28><a class=lnlinks href=#hl-7-28>28</a>
+</span><span class=lnt id=hl-7-29><a class=lnlinks href=#hl-7-29>29</a>
+</span><span class=lnt id=hl-7-30><a class=lnlinks href=#hl-7-30>30</a>
+</span><span class=lnt id=hl-7-31><a class=lnlinks href=#hl-7-31>31</a>
+</span><span class=lnt id=hl-7-32><a class=lnlinks href=#hl-7-32>32</a>
+</span><span class=lnt id=hl-7-33><a class=lnlinks href=#hl-7-33>33</a>
+</span><span class=lnt id=hl-7-34><a class=lnlinks href=#hl-7-34>34</a>
+</span><span class=lnt id=hl-7-35><a class=lnlinks href=#hl-7-35>35</a>
+</span><span class=lnt id=hl-7-36><a class=lnlinks href=#hl-7-36>36</a>
+</span><span class=lnt id=hl-7-37><a class=lnlinks href=#hl-7-37>37</a>
+</span><span class=lnt id=hl-7-38><a class=lnlinks href=#hl-7-38>38</a>
+</span><span class=lnt id=hl-7-39><a class=lnlinks href=#hl-7-39>39</a>
+</span><span class=lnt id=hl-7-40><a class=lnlinks href=#hl-7-40>40</a>
+</span><span class=lnt id=hl-7-41><a class=lnlinks href=#hl-7-41>41</a>
+</span><span class=lnt id=hl-7-42><a class=lnlinks href=#hl-7-42>42</a>
+</span><span class=lnt id=hl-7-43><a class=lnlinks href=#hl-7-43>43</a>
+</span><span class=lnt id=hl-7-44><a class=lnlinks href=#hl-7-44>44</a>
+</span><span class=lnt id=hl-7-45><a class=lnlinks href=#hl-7-45>45</a>
+</span><span class=lnt id=hl-7-46><a class=lnlinks href=#hl-7-46>46</a>
+</span><span class=lnt id=hl-7-47><a class=lnlinks href=#hl-7-47>47</a>
+</span><span class=lnt id=hl-7-48><a class=lnlinks href=#hl-7-48>48</a>
+</span><span class=lnt id=hl-7-49><a class=lnlinks href=#hl-7-49>49</a>
+</span><span class=lnt id=hl-7-50><a class=lnlinks href=#hl-7-50>50</a>
+</span><span class=lnt id=hl-7-51><a class=lnlinks href=#hl-7-51>51</a>
+</span><span class=lnt id=hl-7-52><a class=lnlinks href=#hl-7-52>52</a>
+</span><span class=lnt id=hl-7-53><a class=lnlinks href=#hl-7-53>53</a>
+</span><span class=lnt id=hl-7-54><a class=lnlinks href=#hl-7-54>54</a>
+</span><span class=lnt id=hl-7-55><a class=lnlinks href=#hl-7-55>55</a>
+</span><span class=lnt id=hl-7-56><a class=lnlinks href=#hl-7-56>56</a>
+</span><span class=lnt id=hl-7-57><a class=lnlinks href=#hl-7-57>57</a>
+</span><span class=lnt id=hl-7-58><a class=lnlinks href=#hl-7-58>58</a>
+</span><span class=lnt id=hl-7-59><a class=lnlinks href=#hl-7-59>59</a>
+</span><span class=lnt id=hl-7-60><a class=lnlinks href=#hl-7-60>60</a>
+</span><span class=lnt id=hl-7-61><a class=lnlinks href=#hl-7-61>61</a>
+</span><span class=lnt id=hl-7-62><a class=lnlinks href=#hl-7-62>62</a>
+</span><span class=lnt id=hl-7-63><a class=lnlinks href=#hl-7-63>63</a>
+</span><span class=lnt id=hl-7-64><a class=lnlinks href=#hl-7-64>64</a>
+</span><span class=lnt id=hl-7-65><a class=lnlinks href=#hl-7-65>65</a>
+</span><span class=lnt id=hl-7-66><a class=lnlinks href=#hl-7-66>66</a>
+</span><span class=lnt id=hl-7-67><a class=lnlinks href=#hl-7-67>67</a>
+</span><span class=lnt id=hl-7-68><a class=lnlinks href=#hl-7-68>68</a>
+</span><span class=lnt id=hl-7-69><a class=lnlinks href=#hl-7-69>69</a>
+</span><span class=lnt id=hl-7-70><a class=lnlinks href=#hl-7-70>70</a>
+</span><span class=lnt id=hl-7-71><a class=lnlinks href=#hl-7-71>71</a>
+</span><span class=lnt id=hl-7-72><a class=lnlinks href=#hl-7-72>72</a>
+</span><span class=lnt id=hl-7-73><a class=lnlinks href=#hl-7-73>73</a>
+</span><span class=lnt id=hl-7-74><a class=lnlinks href=#hl-7-74>74</a>
+</span><span class=lnt id=hl-7-75><a class=lnlinks href=#hl-7-75>75</a>
+</span><span class=lnt id=hl-7-76><a class=lnlinks href=#hl-7-76>76</a>
+</span><span class=lnt id=hl-7-77><a class=lnlinks href=#hl-7-77>77</a>
+</span><span class=lnt id=hl-7-78><a class=lnlinks href=#hl-7-78>78</a>
+</span><span class=lnt id=hl-7-79><a class=lnlinks href=#hl-7-79>79</a>
+</span><span class=lnt id=hl-7-80><a class=lnlinks href=#hl-7-80>80</a>
+</span><span class=lnt id=hl-7-81><a class=lnlinks href=#hl-7-81>81</a>
+</span><span class=lnt id=hl-7-82><a class=lnlinks href=#hl-7-82>82</a>
+</span><span class=lnt id=hl-7-83><a class=lnlinks href=#hl-7-83>83</a>
+</span><span class=lnt id=hl-7-84><a class=lnlinks href=#hl-7-84>84</a>
+</span><span class=lnt id=hl-7-85><a class=lnlinks href=#hl-7-85>85</a>
+</span><span class=lnt id=hl-7-86><a class=lnlinks href=#hl-7-86>86</a>
+</span><span class=lnt id=hl-7-87><a class=lnlinks href=#hl-7-87>87</a>
+</span><span class=lnt id=hl-7-88><a class=lnlinks href=#hl-7-88>88</a>
+</span><span class=lnt id=hl-7-89><a class=lnlinks href=#hl-7-89>89</a>
+</span><span class=lnt id=hl-7-90><a class=lnlinks href=#hl-7-90>90</a>
+</span><span class=lnt id=hl-7-91><a class=lnlinks href=#hl-7-91>91</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Threading.Tasks</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>MongoTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=k>class</span> <span class=nc>RetryableTransaction</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>CollectionName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>WriteConflictAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>uuid</span> <span class=p>=</span> <span class=s>&#34;conflict1&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;init&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------ Bare Replace ------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>slowReplaceTask</span> <span class=p>=</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;slow&#34;</span><span class=p>,</span> <span class=m>2000</span><span class=p>);</span> <span class=c1>// Execute at least 2s</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=m>20</span><span class=p>);</span> <span class=c1>// Wait a moment to make sure the slow task enter into a transaction</span>
+</span></span><span class=line><span class=cl>            <span class=k>try</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;fast&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Exception: &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>slowReplaceTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;------ Retry Replace ------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>slowReplaceTask</span> <span class=p>=</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;slow&#34;</span><span class=p>,</span> <span class=m>2000</span><span class=p>);</span> <span class=c1>// Execute at least 2s</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=m>20</span><span class=p>);</span> <span class=c1>// Wait a moment to make the slow task enter into a transaction</span>
+</span></span><span class=line><span class=cl>            <span class=k>try</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>RetryReplaceAsync</span><span class=p>(</span><span class=n>mongoClient</span><span class=p>,</span> <span class=n>uuid</span><span class=p>,</span> <span class=s>&#34;fast&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Exception: &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>slowReplaceTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Completed...&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>BareReplaceAsync</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>mongoClient</span><span class=p>,</span> <span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>string</span> <span class=k>value</span><span class=p>,</span> <span class=kt>int</span> <span class=n>delay</span> <span class=p>=</span> <span class=m>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>session</span><span class=p>.</span><span class=n>StartTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>session</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span> <span class=p>{</span> <span class=p>{</span> <span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span> <span class=p>},</span> <span class=p>{</span> <span class=s>&#34;op&#34;</span><span class=p>,</span> <span class=k>value</span> <span class=p>}</span> <span class=p>},</span> <span class=k>new</span> <span class=n>ReplaceOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>});</span>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>Delay</span><span class=p>(</span><span class=n>delay</span><span class=p>);</span> <span class=c1>// Intentionally slow the transaction</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>CommitTransactionAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Done [{value}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>RetryReplaceAsync</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>mongoClient</span><span class=p>,</span> <span class=kt>string</span> <span class=n>uuid</span><span class=p>,</span> <span class=kt>string</span> <span class=k>value</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                    <span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span> <span class=p>{</span> <span class=p>{</span> <span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid</span> <span class=p>},</span> <span class=p>{</span> <span class=s>&#34;op&#34;</span><span class=p>,</span> <span class=k>value</span> <span class=p>}</span> <span class=p>},</span> <span class=k>new</span> <span class=n>ReplaceOptions</span> <span class=p>{</span> <span class=n>IsUpsert</span> <span class=p>=</span> <span class=kc>true</span> <span class=p>},</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                        <span class=k>return</span> <span class=kt>string</span><span class=p>.</span><span class=n>Empty</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>});</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DateTime.Now}] Done [{value}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/transaction/>Transaction
+</a><a href=/tags/c/>C#</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/mongodb-strongly-typed-collection-example/ rel=next title=MongoDB强类型Collection用法示例><i class="fa fa-chevron-left"></i> MongoDB强类型Collection用法示例</a></div><div class="post-nav-prev post-nav-item"><a href=/dont-use-load-balancer-in-front-of-mongos/ rel=prev title=别在mongos前做负载均衡>别在mongos前做负载均衡
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-retry-transaction/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-retry-transaction","permalink":"https://finisky.github.io/mongodb-retry-transaction/","title":"MongoDB事务重试实现","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

@@ -1,0 +1,252 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Don't Use Load Balancer In front of Mongos"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,.NET Core,C#,Sharding"><meta property="og:type" content="article"><meta property="og:title" content="Don't Use Load Balancer In front of Mongos"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2021-01-13 23:38:36 +0800 CST"><meta property="article:modified_time" content="2021-01-13 23:38:36 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/dont-use-load-balancer-in-front-of-mongos/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Don't Use Load Balancer In front of Mongos - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#problem-analysis>Problem Analysis</a></li><li><a href=#expose-each-mongos-as-a-dedicated-service>Expose Each Mongos as a Dedicated Service</a></li><li><a href=#error-reproduce-code>Error Reproduce Code</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-chunk-migration-failed/>MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-create-sharded-cluster/>Deploy MongoDB Sharded Cluster by Ops Manager</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-get-chunk-size/>How to Get the MongoDB Chunk Size</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-ops-mgr-multiple-backup-daemons/>How to Use Multiple Backup Daemons in MongoDB Kubernetes Operator</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-slave-sync/>MongoDB Master-Slave Replication by Change Stream</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Don't Use Load Balancer In front of Mongos"><meta itemprop=description content="When I execute MongoDB transactions in parallel, I encounter lots of MongoCommandException: code 251, codename NoSuchTransaction:
+
+  
+    Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.
+
+  
+
+Problem Analysis
+
+I performed some tests to pinpoint the issue:"></span><header class=post-header><h1 class=post-title itemprop="name headline">Don't Use Load Balancer In front of Mongos</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2021-01-13 23:38:36 +08:00" itemprop="dateCreated datePublished" datetime="2021-01-13 23:38:36 +0800 CST">2021-01-13
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>3min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/dont-use-load-balancer-in-front-of-mongos/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/dont-use-load-balancer-in-front-of-mongos/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>When I execute MongoDB transactions in parallel, I encounter lots of <code>MongoCommandException</code>: code 251, codename <code>NoSuchTransaction</code>:</p><blockquote><p>Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.</p></blockquote><h1 id=problem-analysis>Problem Analysis
+<a class=header-anchor href=#problem-analysis></a></h1><p>I performed some tests to pinpoint the issue:</p><a id=more></a><ul><li>Use single thread to execute transaction, no error</li><li>Use a dedicated MongoClient for each thread (each transaction), no error</li></ul><p>It seems that it&rsquo;s a MongoDB driver bug related to the MongoClient. Then I create a issue here:
+<a href=https://jira.mongodb.org/browse/CSHARP-3301 title="# Multi-thread Transaction Failure for Sharded Cluster" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Multi-thread Transaction Failure for Sharded Cluster
+<i class="fa fa-external-link-alt"></i>
+</a>.</p><p>However, the culprit is <strong>the load balancer in front of mongos</strong>. <strong>A MongoDB transaction in sharded cluster must be executed in the same mongos instance.</strong> If you put a load balancer in front of mongos instances, the operations inside a transaction might be executed in different mongos then the above errors happen.</p><p>Refer to:
+<a href=https://github.com/zookzook/elixir-mongodb-driver/issues/61 title="# Transactions issue on sharded cluster" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Transactions issue on sharded cluster
+<i class="fa fa-external-link-alt"></i></a></p><p>Look at
+<a href=https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#mongos-pinning title="Mongos Pinning" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Mongos Pinning
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><blockquote><p>Drivers MUST send all commands for a single transaction to the same mongos (excluding retries of commitTransaction and abortTransaction).</p><p>After the driver selects a mongos for the first command within a transaction, the driver MUST pin the ClientSession to the selected mongos. Drivers MUST send all subsequent commands that are part of the same transaction (excluding certain retries of commitTransaction and abortTransaction) to the same mongos.</p></blockquote><h1 id=expose-each-mongos-as-a-dedicated-service>Expose Each Mongos as a Dedicated Service
+<a class=header-anchor href=#expose-each-mongos-as-a-dedicated-service></a></h1><p>So we need to expose every mongos to public seperately. I finally understand why
+<a href=https://docs.mongodb.com/kubernetes-operator/v1.9/tutorial/connect-from-outside-k8s/ title="the official document" rel="noopener external nofollow noreferrer" target=_blank class=exturl>the official document
+<i class="fa fa-external-link-alt"></i>
+</a>uses nodeport instead of kubernetes service to expose externally.</p><p>Here is a sample <code>mongos-service.yaml</code> which creates a dedicated service for each mongos instance (e.g. 2 mongoses), the trick is to explicitly specify the pod name in the <code>spec.selector</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span><span class=lnt id=hl-0-22><a class=lnlinks href=#hl-0-22>22</a>
+</span><span class=lnt id=hl-0-23><a class=lnlinks href=#hl-0-23>23</a>
+</span><span class=lnt id=hl-0-24><a class=lnlinks href=#hl-0-24>24</a>
+</span><span class=lnt id=hl-0-25><a class=lnlinks href=#hl-0-25>25</a>
+</span><span class=lnt id=hl-0-26><a class=lnlinks href=#hl-0-26>26</a>
+</span><span class=lnt id=hl-0-27><a class=lnlinks href=#hl-0-27>27</a>
+</span><span class=lnt id=hl-0-28><a class=lnlinks href=#hl-0-28>28</a>
+</span><span class=lnt id=hl-0-29><a class=lnlinks href=#hl-0-29>29</a>
+</span><span class=lnt id=hl-0-30><a class=lnlinks href=#hl-0-30>30</a>
+</span><span class=lnt id=hl-0-31><a class=lnlinks href=#hl-0-31>31</a>
+</span><span class=lnt id=hl-0-32><a class=lnlinks href=#hl-0-32>32</a>
+</span><span class=lnt id=hl-0-33><a class=lnlinks href=#hl-0-33>33</a>
+</span><span class=lnt id=hl-0-34><a class=lnlinks href=#hl-0-34>34</a>
+</span><span class=lnt id=hl-0-35><a class=lnlinks href=#hl-0-35>35</a>
+</span><span class=lnt id=hl-0-36><a class=lnlinks href=#hl-0-36>36</a>
+</span><span class=lnt id=hl-0-37><a class=lnlinks href=#hl-0-37>37</a>
+</span><span class=lnt id=hl-0-38><a class=lnlinks href=#hl-0-38>38</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Service</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mongos-svc-0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>LoadBalancer</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-mongos-0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Service</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mongos-svc-1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>LoadBalancer</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-mongos-1</span></span></span></code></pre></td></tr></table></div></div><p>Refer to:
+<a href=/en/mongodb-om-create-sharded-cluster/ title="# Deploy MongoDB Sharded Cluster by Ops Manager"># Deploy MongoDB Sharded Cluster by Ops Manager</a></p><h1 id=error-reproduce-code>Error Reproduce Code
+<a class=header-anchor href=#error-reproduce-code></a></h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span><span class=lnt id=hl-1-35><a class=lnlinks href=#hl-1-35>35</a>
+</span><span class=lnt id=hl-1-36><a class=lnlinks href=#hl-1-36>36</a>
+</span><span class=lnt id=hl-1-37><a class=lnlinks href=#hl-1-37>37</a>
+</span><span class=lnt id=hl-1-38><a class=lnlinks href=#hl-1-38>38</a>
+</span><span class=lnt id=hl-1-39><a class=lnlinks href=#hl-1-39>39</a>
+</span><span class=lnt id=hl-1-40><a class=lnlinks href=#hl-1-40>40</a>
+</span><span class=lnt id=hl-1-41><a class=lnlinks href=#hl-1-41>41</a>
+</span><span class=lnt id=hl-1-42><a class=lnlinks href=#hl-1-42>42</a>
+</span><span class=lnt id=hl-1-43><a class=lnlinks href=#hl-1-43>43</a>
+</span><span class=lnt id=hl-1-44><a class=lnlinks href=#hl-1-44>44</a>
+</span><span class=lnt id=hl-1-45><a class=lnlinks href=#hl-1-45>45</a>
+</span><span class=lnt id=hl-1-46><a class=lnlinks href=#hl-1-46>46</a>
+</span><span class=lnt id=hl-1-47><a class=lnlinks href=#hl-1-47>47</a>
+</span><span class=lnt id=hl-1-48><a class=lnlinks href=#hl-1-48>48</a>
+</span><span class=lnt id=hl-1-49><a class=lnlinks href=#hl-1-49>49</a>
+</span><span class=lnt id=hl-1-50><a class=lnlinks href=#hl-1-50>50</a>
+</span><span class=lnt id=hl-1-51><a class=lnlinks href=#hl-1-51>51</a>
+</span><span class=lnt id=hl-1-52><a class=lnlinks href=#hl-1-52>52</a>
+</span><span class=lnt id=hl-1-53><a class=lnlinks href=#hl-1-53>53</a>
+</span><span class=lnt id=hl-1-54><a class=lnlinks href=#hl-1-54>54</a>
+</span><span class=lnt id=hl-1-55><a class=lnlinks href=#hl-1-55>55</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>TransactionTest</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>DatabaseName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>CollectionName</span> <span class=p>=</span> <span class=s>&#34;Test&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>const</span> <span class=kt>string</span> <span class=n>ConnectionString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>MongoClient</span> <span class=n>GetMongoClient</span><span class=p>(</span><span class=kt>int</span> <span class=n>timeout</span> <span class=p>=</span> <span class=m>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>clientSettings</span> <span class=p>=</span> <span class=n>MongoClientSettings</span><span class=p>.</span><span class=n>FromConnectionString</span><span class=p>(</span><span class=n>ConnectionString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>clientSettings</span><span class=p>.</span><span class=n>ConnectTimeout</span> <span class=p>=</span> <span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>5</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>clientSettings</span><span class=p>.</span><span class=n>ServerSelectionTimeout</span> <span class=p>=</span> <span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=n>timeout</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>clientSettings</span><span class=p>.</span><span class=n>AllowInsecureTls</span> <span class=p>=</span> <span class=kc>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>mongoClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>clientSettings</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>mongoClient</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>TestTransactionAsync</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=n>GetMongoClient</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>tasks</span> <span class=p>=</span> <span class=k>new</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span> <span class=n>i</span> <span class=p>&lt;</span> <span class=m>5</span><span class=p>;</span> <span class=p>++</span><span class=n>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=c1>//var client = GetMongoClient(i + 5);</span>
+</span></span><span class=line><span class=cl>            <span class=n>tasks</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=n>DoAsync</span><span class=p>(</span><span class=n>client</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>Task</span><span class=p>.</span><span class=n>WhenAll</span><span class=p>(</span><span class=n>tasks</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>DoAsync</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>mongoClient</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;Client hashcode: &#34;</span> <span class=p>+</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetHashCode</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>DatabaseName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>CollectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=p>(</span><span class=kc>true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>uuid1</span> <span class=p>=</span> <span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>(</span><span class=s>&#34;N&#34;</span><span class=p>).</span><span class=n>Substring</span><span class=p>(</span><span class=m>24</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>uuid2</span> <span class=p>=</span> <span class=n>Guid</span><span class=p>.</span><span class=n>NewGuid</span><span class=p>().</span><span class=n>ToString</span><span class=p>(</span><span class=s>&#34;N&#34;</span><span class=p>).</span><span class=n>Substring</span><span class=p>(</span><span class=m>24</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>try</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>mongoClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>session</span><span class=p>.</span><span class=n>StartTransaction</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                    <span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>session</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid1</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>                    <span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>session</span><span class=p>,</span> <span class=k>new</span> <span class=n>BsonDocument</span><span class=p>(</span><span class=s>&#34;Uuid&#34;</span><span class=p>,</span> <span class=n>uuid2</span><span class=p>));</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>                    <span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>CommitTransactionAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{uuid1}] [{uuid2}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;$$$ &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/kubernetes/>Kubernetes
+</a><a href=/en/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/en/tags/.net-core/>.NET Core
+</a><a href=/en/tags/c/>C#
+</a><a href=/en/tags/sharding/>Sharding</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/mongodb-host-discovery-issue/ rel=next title="MongoDB Agent Host Discovery Issue"><i class="fa fa-chevron-left"></i> MongoDB Agent Host Discovery Issue</a></div><div class="post-nav-prev post-nav-item"><a href=/en/lightsquid-hardcode-year/ rel=prev title="Lightsquid Stop Working in 2021">Lightsquid Stop Working in 2021
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/dont-use-load-balancer-in-front-of-mongos/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"dont-use-load-balancer-in-front-of-mongos","permalink":"https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/","title":"Don't Use Load Balancer In front of Mongos","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

@@ -1,0 +1,422 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="MongoDB Master-Slave Replication by Change Stream"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,MongoDB Ops Manager,Change Stream,C#"><meta property="og:type" content="article"><meta property="og:title" content="MongoDB Master-Slave Replication by Change Stream"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/mongodb-slave-sync/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2021-07-22 20:27:32 +0800 CST"><meta property="article:modified_time" content="2021-07-22 20:27:32 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-slave-sync/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-slave-sync/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>MongoDB Master-Slave Replication by Change Stream - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#how-to-construct-startatoperationtime>How to construct startAtOperationTime</a></li><li><a href=#how-to-replay-the-change>How to replay the change</a></li><li><a href=#full-code>Full Code</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/change-stream-cause-server-restart/>MongoDB Change Stream Makes the Cluster Down</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/dont-use-load-balancer-in-front-of-mongos/>Don't Use Load Balancer In front of Mongos</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-endless-retry/>MongoDB Transaction BulkWrite Endless Retry</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-chunk-migration-failed/>MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-ops-mgr-multiple-backup-daemons/>How to Use Multiple Backup Daemons in MongoDB Kubernetes Operator</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/mongodb-slave-sync/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="MongoDB Master-Slave Replication by Change Stream"><meta itemprop=description content="By the 
+
+    official manual
+    
+    
+    
+:
+
+  
+    Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will."></span><header class=post-header><h1 class=post-title itemprop="name headline">MongoDB Master-Slave Replication by Change Stream</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2021-07-22 20:27:32 +08:00" itemprop="dateCreated datePublished" datetime="2021-07-22 20:27:32 +0800 CST">2021-07-22
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>6min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/mongodb-slave-sync/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/mongodb-slave-sync/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>By the
+<a href=https://docs.mongodb.com/v4.4/changeStreams/ title="official manual" rel="noopener external nofollow noreferrer" target=_blank class=exturl>official manual
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><blockquote><p>Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.</p><a id=more></a></blockquote><p>Here we leverage change stream to replicate data from one MongoDB to another <strong>in realtime</strong>.</p><p>There is some existing tools such as
+<a href=https://github.com/alibaba/MongoShake title=MongoShake rel="noopener external nofollow noreferrer" target=_blank class=exturl>MongoShake
+<i class="fa fa-external-link-alt"></i>
+</a>do the same thing. However, MongoShake is a little bit complicated to use. We encoutered two issues:</p><ul><li>Modify the source code to use TLS authentication</li><li>Cannot perform increment sync in <code>all</code> sync_mode</li></ul><p>Since our goal is realtime replication, we choose a more straightforward and controllable way: MongoDB Ops Manager cluster restore and change stream to apply realtime changes.</p><p><strong>Notes</strong>: we use <code>master</code> and <code>slave</code> to represent the source and the target MongoDB for simplicity. They are not formal MongoDB concepts. They are also different from <code>primary</code> and <code>secondary</code> (
+<a href=https://docs.mongodb.com/manual/replication/ title=Replication rel="noopener external nofollow noreferrer" target=_blank class=exturl>Replication
+<i class="fa fa-external-link-alt"></i>
+</a>).</p><p>Our replication method can be applied to any MongoDB architectures (including both source and target): standalone, replica set and sharded cluster.</p><p>The replication process:</p><ul><li>Restore a recent source snapshot to the target cluster</li><li>Set the start point before the snapshot timestamp and start the realtime replication program</li><li>Wait the target to keep up with the source (small replication lag)</li></ul><p>The change stream interface is pretty simple. For instance, use the following code to watch changes in all collections in all databases (refer to
+<a href=https://mongodb.github.io/mongo-csharp-driver/2.9/reference/driver/change_streams/#watching-changes-in-all-collections-in-all-databases title=this rel="noopener external nofollow noreferrer" target=_blank class=exturl>this
+<i class="fa fa-external-link-alt"></i>
+</a>):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cursor</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>WatchAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>cursor</span><span class=p>.</span><span class=n>ForEachAsync</span><span class=p>(</span><span class=n>change</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// process change event</span>
+</span></span><span class=line><span class=cl>    <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>So the realtime replication needs to solve the following problems:</p><ul><li>How to setup the change stream start point on the source cluster</li><li>How to replay the change to the target cluster</li></ul><h1 id=how-to-construct-startatoperationtime>How to construct startAtOperationTime
+<a class=header-anchor href=#how-to-construct-startatoperationtime></a></h1><p>According to the
+<a href=https://docs.mongodb.com/v4.4/changeStreams/ title=manual rel="noopener external nofollow noreferrer" target=_blank class=exturl>manual
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><blockquote><p>Change streams are resumable by specifying a resume token to either resumeAfter or startAfter when opening the cursor.</p></blockquote><p>However, the <code>resumeAfter</code> or <code>startAfter</code> must be retrieved from the last change stream. So how to set the start point before now?</p><p>We finally found the solution: use <code>StartAtOperationTime</code> in the <code>ChangeStreamOptions</code> to specify the start time like this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1>1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2>2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3>3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4>4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5>5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ChangeStreamOptions</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=n>BatchSize</span> <span class=p>=</span> <span class=m>2000</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>StartAtOperationTime</span> <span class=p>=</span> <span class=k>new</span> <span class=n>BsonTimestamp</span><span class=p>((</span><span class=kt>int</span><span class=p>)</span><span class=n>startPoint</span><span class=p>.</span><span class=n>ToUnixTimeSeconds</span><span class=p>(),</span> <span class=m>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>	<span class=n>FullDocument</span> <span class=p>=</span> <span class=n>ChangeStreamFullDocumentOption</span><span class=p>.</span><span class=n>UpdateLookup</span>
+</span></span><span class=line><span class=cl><span class=p>};</span></span></span></code></pre></td></tr></table></div></div><p><code>BsonTimestamp</code>
+<a href=https://mongodb.github.io/mongo-csharp-driver/2.5/apidocs/html/M_MongoDB_Bson_BsonTimestamp__ctor.htm title=definition rel="noopener external nofollow noreferrer" target=_blank class=exturl>definition
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=n>BsonTimestamp</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=kt>int</span> <span class=n>timestamp</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=kt>int</span> <span class=n>increment</span>
+</span></span><span class=line><span class=cl><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><h1 id=how-to-replay-the-change>How to replay the change
+<a class=header-anchor href=#how-to-replay-the-change></a></h1><p>Note that another <code>ChangeStreamOptions</code> <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> means the change&rsquo;s <code>FullDocument</code> property will contains the full updated documents for update operations. We use this property to replay the update change to the target.</p><p>Replay the change needs to handle different change types, our implementation refer to
+<a href=https://github.com/Lailaimonkey/mongo-sync/blob/master/mongo/sync.go title=this rel="noopener external nofollow noreferrer" target=_blank class=exturl>this
+<i class="fa fa-external-link-alt"></i>
+</a>.</p><p><code>ChangeStreamOperationType</code> definition:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>ChangeStreamOperationType</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=n>Insert</span> <span class=p>=</span> <span class=m>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Update</span> <span class=p>=</span> <span class=m>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Replace</span> <span class=p>=</span> <span class=m>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Delete</span> <span class=p>=</span> <span class=m>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Invalidate</span> <span class=p>=</span> <span class=m>4</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Rename</span> <span class=p>=</span> <span class=m>5</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=n>Drop</span> <span class=p>=</span> <span class=m>6</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Code to handle these types:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span><span class=lnt id=hl-4-11><a class=lnlinks href=#hl-4-11>11</a>
+</span><span class=lnt id=hl-4-12><a class=lnlinks href=#hl-4-12>12</a>
+</span><span class=lnt id=hl-4-13><a class=lnlinks href=#hl-4-13>13</a>
+</span><span class=lnt id=hl-4-14><a class=lnlinks href=#hl-4-14>14</a>
+</span><span class=lnt id=hl-4-15><a class=lnlinks href=#hl-4-15>15</a>
+</span><span class=lnt id=hl-4-16><a class=lnlinks href=#hl-4-16>16</a>
+</span><span class=lnt id=hl-4-17><a class=lnlinks href=#hl-4-17>17</a>
+</span><span class=lnt id=hl-4-18><a class=lnlinks href=#hl-4-18>18</a>
+</span><span class=lnt id=hl-4-19><a class=lnlinks href=#hl-4-19>19</a>
+</span><span class=lnt id=hl-4-20><a class=lnlinks href=#hl-4-20>20</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Insert</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Delete</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>id</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>DocumentKey</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>).</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>,</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>DeleteOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Update</span> <span class=p>||</span> <span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Replace</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>id</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>).</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>	<span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>,</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Unknown type: [{change.OperationType}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Actually, we only process insert, delete, replace and update operations. Moreover, replace and update operations are handled by the same logic as we leverage the <code>FullDocument = ChangeStreamFullDocumentOption.UpdateLookup</code> option.</p><p>Sometimes the <code>FullDocument</code> is null for the update operation. This is caused by document deletion. Refer to
+<a href=https://developer.mongodb.com/community/forums/t/how-can-change-stream-update-operations-come-with-null-fulldocument-when-changestreamfulldocumentoption-updatelookup-was-used/2537 title=this rel="noopener external nofollow noreferrer" target=_blank class=exturl>this
+<i class="fa fa-external-link-alt"></i>
+</a>.</p><h1 id=full-code>Full Code
+<a class=header-anchor href=#full-code></a></h1><p>See this repo:
+<a href=https://github.com/finisky/MongoDBSync title=https://github.com/finisky/MongoDBSync rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/MongoDBSync
+<i class="fa fa-external-link-alt"></i></a></p><p>Implementation notes:</p><ul><li>Use transaction to guarantee replay operation success</li><li>NOT use bulkwrite for simplicity</li><li>Make sure your source MongoDB version >= v4.4.4, see also:
+<a href=/en/change-stream-cause-server-restart/ title="# MongoDB Change Stream Makes the Cluster Down"># MongoDB Change Stream Makes the Cluster Down</a></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>  1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>  2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>  3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>  4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5>  5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6>  6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7>  7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8>  8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9>  9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10> 10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11> 11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12> 12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13> 13</a>
+</span><span class=lnt id=hl-5-14><a class=lnlinks href=#hl-5-14> 14</a>
+</span><span class=lnt id=hl-5-15><a class=lnlinks href=#hl-5-15> 15</a>
+</span><span class=lnt id=hl-5-16><a class=lnlinks href=#hl-5-16> 16</a>
+</span><span class=lnt id=hl-5-17><a class=lnlinks href=#hl-5-17> 17</a>
+</span><span class=lnt id=hl-5-18><a class=lnlinks href=#hl-5-18> 18</a>
+</span><span class=lnt id=hl-5-19><a class=lnlinks href=#hl-5-19> 19</a>
+</span><span class=lnt id=hl-5-20><a class=lnlinks href=#hl-5-20> 20</a>
+</span><span class=lnt id=hl-5-21><a class=lnlinks href=#hl-5-21> 21</a>
+</span><span class=lnt id=hl-5-22><a class=lnlinks href=#hl-5-22> 22</a>
+</span><span class=lnt id=hl-5-23><a class=lnlinks href=#hl-5-23> 23</a>
+</span><span class=lnt id=hl-5-24><a class=lnlinks href=#hl-5-24> 24</a>
+</span><span class=lnt id=hl-5-25><a class=lnlinks href=#hl-5-25> 25</a>
+</span><span class=lnt id=hl-5-26><a class=lnlinks href=#hl-5-26> 26</a>
+</span><span class=lnt id=hl-5-27><a class=lnlinks href=#hl-5-27> 27</a>
+</span><span class=lnt id=hl-5-28><a class=lnlinks href=#hl-5-28> 28</a>
+</span><span class=lnt id=hl-5-29><a class=lnlinks href=#hl-5-29> 29</a>
+</span><span class=lnt id=hl-5-30><a class=lnlinks href=#hl-5-30> 30</a>
+</span><span class=lnt id=hl-5-31><a class=lnlinks href=#hl-5-31> 31</a>
+</span><span class=lnt id=hl-5-32><a class=lnlinks href=#hl-5-32> 32</a>
+</span><span class=lnt id=hl-5-33><a class=lnlinks href=#hl-5-33> 33</a>
+</span><span class=lnt id=hl-5-34><a class=lnlinks href=#hl-5-34> 34</a>
+</span><span class=lnt id=hl-5-35><a class=lnlinks href=#hl-5-35> 35</a>
+</span><span class=lnt id=hl-5-36><a class=lnlinks href=#hl-5-36> 36</a>
+</span><span class=lnt id=hl-5-37><a class=lnlinks href=#hl-5-37> 37</a>
+</span><span class=lnt id=hl-5-38><a class=lnlinks href=#hl-5-38> 38</a>
+</span><span class=lnt id=hl-5-39><a class=lnlinks href=#hl-5-39> 39</a>
+</span><span class=lnt id=hl-5-40><a class=lnlinks href=#hl-5-40> 40</a>
+</span><span class=lnt id=hl-5-41><a class=lnlinks href=#hl-5-41> 41</a>
+</span><span class=lnt id=hl-5-42><a class=lnlinks href=#hl-5-42> 42</a>
+</span><span class=lnt id=hl-5-43><a class=lnlinks href=#hl-5-43> 43</a>
+</span><span class=lnt id=hl-5-44><a class=lnlinks href=#hl-5-44> 44</a>
+</span><span class=lnt id=hl-5-45><a class=lnlinks href=#hl-5-45> 45</a>
+</span><span class=lnt id=hl-5-46><a class=lnlinks href=#hl-5-46> 46</a>
+</span><span class=lnt id=hl-5-47><a class=lnlinks href=#hl-5-47> 47</a>
+</span><span class=lnt id=hl-5-48><a class=lnlinks href=#hl-5-48> 48</a>
+</span><span class=lnt id=hl-5-49><a class=lnlinks href=#hl-5-49> 49</a>
+</span><span class=lnt id=hl-5-50><a class=lnlinks href=#hl-5-50> 50</a>
+</span><span class=lnt id=hl-5-51><a class=lnlinks href=#hl-5-51> 51</a>
+</span><span class=lnt id=hl-5-52><a class=lnlinks href=#hl-5-52> 52</a>
+</span><span class=lnt id=hl-5-53><a class=lnlinks href=#hl-5-53> 53</a>
+</span><span class=lnt id=hl-5-54><a class=lnlinks href=#hl-5-54> 54</a>
+</span><span class=lnt id=hl-5-55><a class=lnlinks href=#hl-5-55> 55</a>
+</span><span class=lnt id=hl-5-56><a class=lnlinks href=#hl-5-56> 56</a>
+</span><span class=lnt id=hl-5-57><a class=lnlinks href=#hl-5-57> 57</a>
+</span><span class=lnt id=hl-5-58><a class=lnlinks href=#hl-5-58> 58</a>
+</span><span class=lnt id=hl-5-59><a class=lnlinks href=#hl-5-59> 59</a>
+</span><span class=lnt id=hl-5-60><a class=lnlinks href=#hl-5-60> 60</a>
+</span><span class=lnt id=hl-5-61><a class=lnlinks href=#hl-5-61> 61</a>
+</span><span class=lnt id=hl-5-62><a class=lnlinks href=#hl-5-62> 62</a>
+</span><span class=lnt id=hl-5-63><a class=lnlinks href=#hl-5-63> 63</a>
+</span><span class=lnt id=hl-5-64><a class=lnlinks href=#hl-5-64> 64</a>
+</span><span class=lnt id=hl-5-65><a class=lnlinks href=#hl-5-65> 65</a>
+</span><span class=lnt id=hl-5-66><a class=lnlinks href=#hl-5-66> 66</a>
+</span><span class=lnt id=hl-5-67><a class=lnlinks href=#hl-5-67> 67</a>
+</span><span class=lnt id=hl-5-68><a class=lnlinks href=#hl-5-68> 68</a>
+</span><span class=lnt id=hl-5-69><a class=lnlinks href=#hl-5-69> 69</a>
+</span><span class=lnt id=hl-5-70><a class=lnlinks href=#hl-5-70> 70</a>
+</span><span class=lnt id=hl-5-71><a class=lnlinks href=#hl-5-71> 71</a>
+</span><span class=lnt id=hl-5-72><a class=lnlinks href=#hl-5-72> 72</a>
+</span><span class=lnt id=hl-5-73><a class=lnlinks href=#hl-5-73> 73</a>
+</span><span class=lnt id=hl-5-74><a class=lnlinks href=#hl-5-74> 74</a>
+</span><span class=lnt id=hl-5-75><a class=lnlinks href=#hl-5-75> 75</a>
+</span><span class=lnt id=hl-5-76><a class=lnlinks href=#hl-5-76> 76</a>
+</span><span class=lnt id=hl-5-77><a class=lnlinks href=#hl-5-77> 77</a>
+</span><span class=lnt id=hl-5-78><a class=lnlinks href=#hl-5-78> 78</a>
+</span><span class=lnt id=hl-5-79><a class=lnlinks href=#hl-5-79> 79</a>
+</span><span class=lnt id=hl-5-80><a class=lnlinks href=#hl-5-80> 80</a>
+</span><span class=lnt id=hl-5-81><a class=lnlinks href=#hl-5-81> 81</a>
+</span><span class=lnt id=hl-5-82><a class=lnlinks href=#hl-5-82> 82</a>
+</span><span class=lnt id=hl-5-83><a class=lnlinks href=#hl-5-83> 83</a>
+</span><span class=lnt id=hl-5-84><a class=lnlinks href=#hl-5-84> 84</a>
+</span><span class=lnt id=hl-5-85><a class=lnlinks href=#hl-5-85> 85</a>
+</span><span class=lnt id=hl-5-86><a class=lnlinks href=#hl-5-86> 86</a>
+</span><span class=lnt id=hl-5-87><a class=lnlinks href=#hl-5-87> 87</a>
+</span><span class=lnt id=hl-5-88><a class=lnlinks href=#hl-5-88> 88</a>
+</span><span class=lnt id=hl-5-89><a class=lnlinks href=#hl-5-89> 89</a>
+</span><span class=lnt id=hl-5-90><a class=lnlinks href=#hl-5-90> 90</a>
+</span><span class=lnt id=hl-5-91><a class=lnlinks href=#hl-5-91> 91</a>
+</span><span class=lnt id=hl-5-92><a class=lnlinks href=#hl-5-92> 92</a>
+</span><span class=lnt id=hl-5-93><a class=lnlinks href=#hl-5-93> 93</a>
+</span><span class=lnt id=hl-5-94><a class=lnlinks href=#hl-5-94> 94</a>
+</span><span class=lnt id=hl-5-95><a class=lnlinks href=#hl-5-95> 95</a>
+</span><span class=lnt id=hl-5-96><a class=lnlinks href=#hl-5-96> 96</a>
+</span><span class=lnt id=hl-5-97><a class=lnlinks href=#hl-5-97> 97</a>
+</span><span class=lnt id=hl-5-98><a class=lnlinks href=#hl-5-98> 98</a>
+</span><span class=lnt id=hl-5-99><a class=lnlinks href=#hl-5-99> 99</a>
+</span><span class=lnt id=hl-5-100><a class=lnlinks href=#hl-5-100>100</a>
+</span><span class=lnt id=hl-5-101><a class=lnlinks href=#hl-5-101>101</a>
+</span><span class=lnt id=hl-5-102><a class=lnlinks href=#hl-5-102>102</a>
+</span><span class=lnt id=hl-5-103><a class=lnlinks href=#hl-5-103>103</a>
+</span><span class=lnt id=hl-5-104><a class=lnlinks href=#hl-5-104>104</a>
+</span><span class=lnt id=hl-5-105><a class=lnlinks href=#hl-5-105>105</a>
+</span><span class=lnt id=hl-5-106><a class=lnlinks href=#hl-5-106>106</a>
+</span><span class=lnt id=hl-5-107><a class=lnlinks href=#hl-5-107>107</a>
+</span><span class=lnt id=hl-5-108><a class=lnlinks href=#hl-5-108>108</a>
+</span><span class=lnt id=hl-5-109><a class=lnlinks href=#hl-5-109>109</a>
+</span><span class=lnt id=hl-5-110><a class=lnlinks href=#hl-5-110>110</a>
+</span><span class=lnt id=hl-5-111><a class=lnlinks href=#hl-5-111>111</a>
+</span><span class=lnt id=hl-5-112><a class=lnlinks href=#hl-5-112>112</a>
+</span><span class=lnt id=hl-5-113><a class=lnlinks href=#hl-5-113>113</a>
+</span><span class=lnt id=hl-5-114><a class=lnlinks href=#hl-5-114>114</a>
+</span><span class=lnt id=hl-5-115><a class=lnlinks href=#hl-5-115>115</a>
+</span><span class=lnt id=hl-5-116><a class=lnlinks href=#hl-5-116>116</a>
+</span><span class=lnt id=hl-5-117><a class=lnlinks href=#hl-5-117>117</a>
+</span><span class=lnt id=hl-5-118><a class=lnlinks href=#hl-5-118>118</a>
+</span><span class=lnt id=hl-5-119><a class=lnlinks href=#hl-5-119>119</a>
+</span><span class=lnt id=hl-5-120><a class=lnlinks href=#hl-5-120>120</a>
+</span><span class=lnt id=hl-5-121><a class=lnlinks href=#hl-5-121>121</a>
+</span><span class=lnt id=hl-5-122><a class=lnlinks href=#hl-5-122>122</a>
+</span><span class=lnt id=hl-5-123><a class=lnlinks href=#hl-5-123>123</a>
+</span><span class=lnt id=hl-5-124><a class=lnlinks href=#hl-5-124>124</a>
+</span><span class=lnt id=hl-5-125><a class=lnlinks href=#hl-5-125>125</a>
+</span><span class=lnt id=hl-5-126><a class=lnlinks href=#hl-5-126>126</a>
+</span><span class=lnt id=hl-5-127><a class=lnlinks href=#hl-5-127>127</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Bson</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>MongoDB.Driver</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Linq</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Threading</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=nn>System.Threading.Tasks</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nn>ConsoleApp1</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=nc>Program</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=k>void</span> <span class=n>Main</span><span class=p>(</span><span class=kt>string</span><span class=p>[]</span> <span class=n>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>sourceConnString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>targetConnString</span> <span class=p>=</span> <span class=s>&#34;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>sourceClientSettings</span> <span class=p>=</span> <span class=n>MongoClientSettings</span><span class=p>.</span><span class=n>FromConnectionString</span><span class=p>(</span><span class=n>sourceConnString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>targetClientSettings</span> <span class=p>=</span> <span class=n>MongoClientSettings</span><span class=p>.</span><span class=n>FromConnectionString</span><span class=p>(</span><span class=n>targetConnString</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>sourceClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>sourceClientSettings</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>targetClient</span> <span class=p>=</span> <span class=k>new</span> <span class=n>MongoClient</span><span class=p>(</span><span class=n>targetClientSettings</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>startPoint</span> <span class=p>=</span> <span class=n>DateTimeOffset</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>.</span><span class=n>AddHours</span><span class=p>(-</span><span class=m>10</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=n>SyncDb</span><span class=p>(</span><span class=n>sourceClient</span><span class=p>,</span> <span class=n>targetClient</span><span class=p>,</span> <span class=n>startPoint</span><span class=p>).</span><span class=n>Wait</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=n>Console</span><span class=p>.</span><span class=n>ReadLine</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>private</span> <span class=kd>static</span> <span class=kt>long</span> <span class=n>DelaySeconds</span><span class=p>(</span><span class=kt>int</span> <span class=n>clusterTimestamp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span> <span class=n>DateTimeOffset</span><span class=p>.</span><span class=n>UtcNow</span><span class=p>.</span><span class=n>ToUnixTimeSeconds</span><span class=p>()</span> <span class=p>-</span> <span class=n>clusterTimestamp</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>private</span> <span class=kd>static</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>SyncDb</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>sourceClient</span><span class=p>,</span> <span class=n>IMongoClient</span> <span class=n>targetClient</span><span class=p>,</span> <span class=n>DateTimeOffset</span> <span class=n>startPoint</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>options</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ChangeStreamOptions</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=n>BatchSize</span> <span class=p>=</span> <span class=m>2000</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>				<span class=n>StartAtOperationTime</span> <span class=p>=</span> <span class=k>new</span> <span class=n>BsonTimestamp</span><span class=p>((</span><span class=kt>int</span><span class=p>)</span><span class=n>startPoint</span><span class=p>.</span><span class=n>ToUnixTimeSeconds</span><span class=p>(),</span> <span class=m>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>				<span class=n>FullDocument</span> <span class=p>=</span> <span class=n>ChangeStreamFullDocumentOption</span><span class=p>.</span><span class=n>UpdateLookup</span>
+</span></span><span class=line><span class=cl>			<span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cursor</span> <span class=p>=</span> <span class=k>await</span> <span class=n>sourceClient</span><span class=p>.</span><span class=n>WatchAsync</span><span class=p>(</span><span class=n>options</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=kt>long</span> <span class=n>count</span> <span class=p>=</span> <span class=m>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>				<span class=k>while</span> <span class=p>(</span><span class=k>await</span> <span class=n>cursor</span><span class=p>.</span><span class=n>MoveNextAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>				<span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=k>if</span> <span class=p>(!</span><span class=n>cursor</span><span class=p>.</span><span class=n>Current</span><span class=p>.</span><span class=n>Any</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>					<span class=p>{</span>
+</span></span><span class=line><span class=cl>						<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;No changes, skip...&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>						<span class=k>continue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>					<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>					<span class=kt>var</span> <span class=n>token</span> <span class=p>=</span> <span class=n>cursor</span><span class=p>.</span><span class=n>GetResumeToken</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>					<span class=kt>var</span> <span class=n>headDoc</span> <span class=p>=</span> <span class=n>cursor</span><span class=p>.</span><span class=n>Current</span><span class=p>.</span><span class=n>First</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>					<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DelaySeconds(headDoc.ClusterTime.Timestamp)}s] [{count}] Token: {token} ----------------------------&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>					<span class=k>foreach</span> <span class=p>(</span><span class=kt>var</span> <span class=n>change</span> <span class=k>in</span> <span class=n>cursor</span><span class=p>.</span><span class=n>Current</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>					<span class=p>{</span>
+</span></span><span class=line><span class=cl>						<span class=p>++</span><span class=n>count</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>						<span class=k>await</span> <span class=n>ReplayChangeToTarget</span><span class=p>(</span><span class=n>targetClient</span><span class=p>,</span> <span class=n>change</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>					<span class=p>}</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>private</span> <span class=kd>static</span> <span class=kd>async</span> <span class=n>Task</span> <span class=n>ReplayChangeToTarget</span><span class=p>(</span><span class=n>IMongoClient</span> <span class=n>targetClient</span><span class=p>,</span> <span class=n>ChangeStreamDocument</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;</span> <span class=n>change</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>dbName</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>CollectionNamespace</span><span class=p>.</span><span class=n>DatabaseNamespace</span><span class=p>.</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>collectionName</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>CollectionNamespace</span><span class=p>.</span><span class=n>CollectionName</span><span class=p>.</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>			<span class=kt>var</span> <span class=n>collection</span> <span class=p>=</span> <span class=n>targetClient</span><span class=p>.</span><span class=n>GetDatabase</span><span class=p>(</span><span class=n>dbName</span><span class=p>).</span><span class=n>GetCollection</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;(</span><span class=n>collectionName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1>// Uncomment the following two lines to print changes without replaying to the target</span>
+</span></span><span class=line><span class=cl>			<span class=c1>//Console.WriteLine($&#34;[{DelaySeconds(change.ClusterTime.Timestamp)}s] {change.CollectionNamespace.FullName}&#34;);</span>
+</span></span><span class=line><span class=cl>			<span class=c1>//return;</span>
+</span></span><span class=line><span class=cl>			
+</span></span><span class=line><span class=cl>			<span class=k>try</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>session</span> <span class=p>=</span> <span class=k>await</span> <span class=n>targetClient</span><span class=p>.</span><span class=n>StartSessionAsync</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>				<span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>(</span><span class=n>TimeSpan</span><span class=p>.</span><span class=n>FromSeconds</span><span class=p>(</span><span class=m>2</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>				<span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=k>await</span> <span class=n>session</span><span class=p>.</span><span class=n>WithTransactionAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>						<span class=kd>async</span> <span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>ct</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>						<span class=p>{</span>
+</span></span><span class=line><span class=cl>							<span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Insert</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>							<span class=p>{</span>
+</span></span><span class=line><span class=cl>								<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>InsertOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>							<span class=p>}</span>
+</span></span><span class=line><span class=cl>							<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Delete</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>							<span class=p>{</span>
+</span></span><span class=line><span class=cl>								<span class=kt>var</span> <span class=n>id</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>DocumentKey</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>).</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>								<span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>,</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>								<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>DeleteOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>							<span class=p>}</span>
+</span></span><span class=line><span class=cl>							<span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Update</span> <span class=p>||</span> <span class=n>change</span><span class=p>.</span><span class=n>OperationType</span> <span class=p>==</span> <span class=n>ChangeStreamOperationType</span><span class=p>.</span><span class=n>Replace</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>							<span class=p>{</span>
+</span></span><span class=line><span class=cl>								<span class=kt>var</span> <span class=n>id</span> <span class=p>=</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>).</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>								<span class=kt>var</span> <span class=n>filter</span> <span class=p>=</span> <span class=n>Builders</span><span class=p>&lt;</span><span class=n>BsonDocument</span><span class=p>&gt;.</span><span class=n>Filter</span><span class=p>.</span><span class=n>Eq</span><span class=p>(</span><span class=s>&#34;_id&#34;</span><span class=p>,</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>								<span class=k>await</span> <span class=n>collection</span><span class=p>.</span><span class=n>ReplaceOneAsync</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=n>filter</span><span class=p>,</span> <span class=n>change</span><span class=p>.</span><span class=n>FullDocument</span><span class=p>,</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>ct</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>							<span class=p>}</span>
+</span></span><span class=line><span class=cl>							<span class=k>else</span>
+</span></span><span class=line><span class=cl>							<span class=p>{</span>
+</span></span><span class=line><span class=cl>								<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;Unknown type: [{change.OperationType}]&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>							<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>							<span class=k>return</span> <span class=kt>string</span><span class=p>.</span><span class=n>Empty</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>						<span class=p>},</span> <span class=n>cancellationToken</span><span class=p>:</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=k>catch</span> <span class=p>(</span><span class=n>MongoWriteException</span> <span class=n>ex</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>if</span> <span class=p>(</span><span class=n>ex</span><span class=p>.</span><span class=n>WriteError</span><span class=p>.</span><span class=n>Code</span> <span class=p>==</span> <span class=m>11000</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>				<span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DelaySeconds(change.ClusterTime.Timestamp)}s] Dup key: {change.FullDocument.GetValue(&#34;</span><span class=n>_id</span><span class=s>&#34;)}, ignore...&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>				<span class=k>else</span>
+</span></span><span class=line><span class=cl>				<span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DelaySeconds(change.ClusterTime.Timestamp)}s] [# {change.OperationType}] MongoWriteException: {change.ToJson()}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>ex</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;[{DelaySeconds(change.ClusterTime.Timestamp)}s] [# {change.OperationType}] Exception [{change.DocumentKey.ToJson()}] [{ex.GetType()}]: {ex.Message}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Other references:</p><ul><li><a href=https://stackoverflow.com/questions/48665409/how-do-i-resume-a-mongodb-changestream-at-the-first-document-and-not-just-change title=https://stackoverflow.com/questions/48665409/how-do-i-resume-a-mongodb-changestream-at-the-first-document-and-not-just-change rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://stackoverflow.com/questions/48665409/how-do-i-resume-a-mongodb-changestream-at-the-first-document-and-not-just-change
+<i class="fa fa-external-link-alt"></i></a></li><li><a href=https://vinta.ws/code/mongodb-change-stream-react-to-real-time-data-changes.html title=https://vinta.ws/code/mongodb-change-stream-react-to-real-time-data-changes.html rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://vinta.ws/code/mongodb-change-stream-react-to-real-time-data-changes.html
+<i class="fa fa-external-link-alt"></i></a></li><li><a href=https://medium.com/expedia-group-tech/mongo-change-streams-in-production-97a07c7c0420 title=https://medium.com/expedia-group-tech/mongo-change-streams-in-production-97a07c7c0420 rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://medium.com/expedia-group-tech/mongo-change-streams-in-production-97a07c7c0420
+<i class="fa fa-external-link-alt"></i></a></li></ul></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/en/tags/change-stream/>Change Stream
+</a><a href=/en/tags/c/>C#</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/apex-primary-expression-error/ rel=next title="Apex Compile Error: expected primary-expression before ‘>’ token"><i class="fa fa-chevron-left"></i> Apex Compile Error: expected primary-expression before ‘>’ token</a></div><div class="post-nav-prev post-nav-item"><a href=/en/change-stream-cause-server-restart/ rel=prev title="MongoDB Change Stream Makes the Cluster Down">MongoDB Change Stream Makes the Cluster Down
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/mongodb-slave-sync/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-slave-sync","permalink":"https://finisky.github.io/en/mongodb-slave-sync/","title":"MongoDB Master-Slave Replication by Change Stream","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

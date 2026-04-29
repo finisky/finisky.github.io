@@ -1,0 +1,225 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="stunnel配置实例"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="openssl,Networking"><meta property="og:type" content="article"><meta property="og:title" content="stunnel配置实例"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/stunnel/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2019-07-21 08:50:06 +0800 CST"><meta property="article:modified_time" content="2019-07-21 08:50:06 +0800 CST"><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>stunnel配置实例 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#stunnel简介>stunnel简介</a></li><li><a href=#stunnel证书生成>stunnel证书生成</a></li><li><a href=#stunnel配置说明>stunnel配置说明</a><ul><li><a href=#server配置>Server配置</a></li><li><a href=#client配置>Client配置</a></li></ul></li><li><a href=#references>References</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/aimd-app/>AIMD算法在工程上的应用</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/tcp-three-way/>TCP为什么需要三次握手四次挥手</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/switchyomega-no-longer-be-supported-solution/>SwitchyOmega已无法再使用的解决方案</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/chrome-using-proxy-dns-is-done-client-side-or-proxy-side/>Chrome加代理使用本地DNS还是远程DNS？</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/google-bbr/>Linux服务器使用BBR提升网速</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/stunnel/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="stunnel配置实例"><meta itemprop=description content="stunnel简介
+
+
+
+    stunnel
+    
+    
+    
+是一个开源跨平台进行通信加密的软件。它可以对原生不支持加密通信的服务(如FTP, Telnet等)在上层提供加密功能，而无须修改这些服务的代码。"></span><header class=post-header><h1 class=post-title itemprop="name headline">stunnel配置实例</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2019-07-21 08:50:06 +08:00" itemprop="dateCreated datePublished" datetime="2019-07-21 08:50:06 +0800 CST">2019-07-21
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/networking/ itemprop=url rel=index><span itemprop=name>Networking</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>3分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/stunnel/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/stunnel/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><h1 id=stunnel简介>stunnel简介
+<a class=header-anchor href=#stunnel%e7%ae%80%e4%bb%8b></a></h1><p><a href=https://www.stunnel.org/ title=stunnel rel="noopener external nofollow noreferrer" target=_blank class=exturl>stunnel
+<i class="fa fa-external-link-alt"></i>
+</a>是一个开源跨平台进行通信加密的软件。它可以对原生不支持加密通信的服务(如FTP, Telnet等)在上层提供加密功能，而无须修改这些服务的代码。</p><a id=more></a><p>stunnel分为client和server两种不同的角色，二者之间的通信使用X509证书进行加密。在初装时，stunnel会自动生成一个自签名的证书用于加密，但它更推荐用户使用自己生成的证书。</p><h1 id=stunnel证书生成>stunnel证书生成
+<a class=header-anchor href=#stunnel%e8%af%81%e4%b9%a6%e7%94%9f%e6%88%90></a></h1><p>用OpenSSL生成自签名的证书其实非常容易，在已安装OpenSSL的Linux环境下:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl req -new -x509 -days <span class=m>365</span> -nodes -out stunnel.pem -keyout stunnel.pem</span></span></code></pre></td></tr></table></div></div><p>上述命令中唯一需要注意的是-days 365参数，声明该自签名证书的有效期，可自行按需更改。运行后需要键入一些信息，可一路回车使用默认值。</p><p>输出内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Generating a 2048 bit RSA private key
+</span></span><span class=line><span class=cl>..+++
+</span></span><span class=line><span class=cl>.............................+++
+</span></span><span class=line><span class=cl>unable to write &#39;random state&#39;
+</span></span><span class=line><span class=cl>writing new private key to &#39;stunnel.pem&#39;
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>You are about to be asked to enter information that will be incorporated
+</span></span><span class=line><span class=cl>into your certificate request.
+</span></span><span class=line><span class=cl>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span class=line><span class=cl>There are quite a few fields but you can leave some blank
+</span></span><span class=line><span class=cl>For some fields there will be a default value,
+</span></span><span class=line><span class=cl>If you enter &#39;.&#39;, the field will be left blank.
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>Country Name (2 letter code) [AU]:
+</span></span><span class=line><span class=cl>State or Province Name (full name) [Some-State]:
+</span></span><span class=line><span class=cl>Locality Name (eg, city) []:
+</span></span><span class=line><span class=cl>Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+</span></span><span class=line><span class=cl>Organizational Unit Name (eg, section) []:
+</span></span><span class=line><span class=cl>Common Name (e.g. server FQDN or YOUR name) []:
+</span></span><span class=line><span class=cl>Email Address []:</span></span></code></pre></td></tr></table></div></div><p>此时，证书已经在当前目录生成好了，包括了私钥和证书，cat stunnel.pem显示它大概长这样</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span><span class=lnt id=hl-2-22><a class=lnlinks href=#hl-2-22>22</a>
+</span><span class=lnt id=hl-2-23><a class=lnlinks href=#hl-2-23>23</a>
+</span><span class=lnt id=hl-2-24><a class=lnlinks href=#hl-2-24>24</a>
+</span><span class=lnt id=hl-2-25><a class=lnlinks href=#hl-2-25>25</a>
+</span><span class=lnt id=hl-2-26><a class=lnlinks href=#hl-2-26>26</a>
+</span><span class=lnt id=hl-2-27><a class=lnlinks href=#hl-2-27>27</a>
+</span><span class=lnt id=hl-2-28><a class=lnlinks href=#hl-2-28>28</a>
+</span><span class=lnt id=hl-2-29><a class=lnlinks href=#hl-2-29>29</a>
+</span><span class=lnt id=hl-2-30><a class=lnlinks href=#hl-2-30>30</a>
+</span><span class=lnt id=hl-2-31><a class=lnlinks href=#hl-2-31>31</a>
+</span><span class=lnt id=hl-2-32><a class=lnlinks href=#hl-2-32>32</a>
+</span><span class=lnt id=hl-2-33><a class=lnlinks href=#hl-2-33>33</a>
+</span><span class=lnt id=hl-2-34><a class=lnlinks href=#hl-2-34>34</a>
+</span><span class=lnt id=hl-2-35><a class=lnlinks href=#hl-2-35>35</a>
+</span><span class=lnt id=hl-2-36><a class=lnlinks href=#hl-2-36>36</a>
+</span><span class=lnt id=hl-2-37><a class=lnlinks href=#hl-2-37>37</a>
+</span><span class=lnt id=hl-2-38><a class=lnlinks href=#hl-2-38>38</a>
+</span><span class=lnt id=hl-2-39><a class=lnlinks href=#hl-2-39>39</a>
+</span><span class=lnt id=hl-2-40><a class=lnlinks href=#hl-2-40>40</a>
+</span><span class=lnt id=hl-2-41><a class=lnlinks href=#hl-2-41>41</a>
+</span><span class=lnt id=hl-2-42><a class=lnlinks href=#hl-2-42>42</a>
+</span><span class=lnt id=hl-2-43><a class=lnlinks href=#hl-2-43>43</a>
+</span><span class=lnt id=hl-2-44><a class=lnlinks href=#hl-2-44>44</a>
+</span><span class=lnt id=hl-2-45><a class=lnlinks href=#hl-2-45>45</a>
+</span><span class=lnt id=hl-2-46><a class=lnlinks href=#hl-2-46>46</a>
+</span><span class=lnt id=hl-2-47><a class=lnlinks href=#hl-2-47>47</a>
+</span><span class=lnt id=hl-2-48><a class=lnlinks href=#hl-2-48>48</a>
+</span><span class=lnt id=hl-2-49><a class=lnlinks href=#hl-2-49>49</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-----BEGIN PRIVATE KEY-----
+</span></span><span class=line><span class=cl>MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDFfPlpkHBRLadK
+</span></span><span class=line><span class=cl>wJP9+bfRflQzmGUAYiy6DaXPzYuHboVAKblTGqinMD9tqSWbTG6nbA+d30xc2eFM
+</span></span><span class=line><span class=cl>+4YiXgvMCHh+uszimcRZHAOmePCN4AjJTOcT8WmSBdyiq4OT6a0URPhWpE7pCDqQ
+</span></span><span class=line><span class=cl>KPa394vJbXK+T1UfGVDLEOiNXGsohx3CVEnTlSSo3BaODNpM2zUn3JQZSZY80Vxt
+</span></span><span class=line><span class=cl>bfsg2dxP/ssoS62YPqsTNn7sZvkDR8AIR+Q4tW4CZXyu0nrOwcvSx3f44QPiIMj6
+</span></span><span class=line><span class=cl>dflVtLXj6Wfjrzjx2Q9ZWJTZRetgmvFru77p9fmdnbA450hdy87moIUxdrMI9etN
+</span></span><span class=line><span class=cl>v7JE71CpAgMBAAECggEAbMPdoVQZZ7wbDMJvP0tO/6Pxv9DIn6NyOq3VilML63Tl
+</span></span><span class=line><span class=cl>EmdoV+qwxBOAe2bS/Wrk7nRHTY1zwxeETB+iyj69hIuNwU4kFRDW4LTbFc45vgmL
+</span></span><span class=line><span class=cl>DUK7aXJl0DRGRZjsiIQD/MvXcfBgPVt41XiaGMvPQwpyTXnnyY7pvkz7pw8lPVXk
+</span></span><span class=line><span class=cl>pa7vp6JlLFiEFgmqAAdE5/iLyg8ud1Xwrkq2qV5PPQGS2+8VZ/RSDhtXRtKzZLCJ
+</span></span><span class=line><span class=cl>2cLbh8u7tgNYHh84hN3Jk5RVH2/59nN/Kp7c8U04DZCMNfY78kIkMVsphJQF05+f
+</span></span><span class=line><span class=cl>KVWVtFSnRot/XEyVcPtoJKxcBLrZbZWOXLrmokToeQKBgQDyJ6S2xVAiXCerCnQ8
+</span></span><span class=line><span class=cl>UfW7aXMJgBFW5ZEReK13YABvLStY8yqW0AOL8XNH8BSY7Z2HiQ0F2Zo+SiI4J53a
+</span></span><span class=line><span class=cl>LGbmhsZ/je81X48OlYQatzcctsnZ99+YCHoR6hWsxaVNnjYA0uwGBeDjQqhA7+hd
+</span></span><span class=line><span class=cl>1gki6znFvjrLB5FjNl3SqrrgYwKBgQDQx454jcQA0bFsgMoNXUL6R/hJ4aRywil3
+</span></span><span class=line><span class=cl>/gwvk+6g/NxTtn+frQ3XqfVy6rfXJSt45UXshhBd2g7+jnHYn1wcyzeXsMx9XiVB
+</span></span><span class=line><span class=cl>uFp9Cb5fWhYGBgIHd4xsAv2MiqFSmDYjKQqDL7q7AidsiN8+EednSFo3qW3vsNP8
+</span></span><span class=line><span class=cl>JwinNTzqgwJ/RvFWUDV+RJK7DGEDrKhWVZGPIjli2xJmbbftGgwGFIwnJugWkhhe
+</span></span><span class=line><span class=cl>8aDLJUgwwJzcidic+BnIFnehjtIMbN6VRvQ1Mylh60ETqDIlga4rdz4V5MW5u9C/
+</span></span><span class=line><span class=cl>8n+h2fwNca/oIlWo0Brox6u/n0apzNPn2VMQmd4hW1ncPjSvSAi8twKBgQCrDtXs
+</span></span><span class=line><span class=cl>cDrncOetvtfNm1wFNHJ6FiZm4C6Z4cyaLtqVjJf4/s4SRffRe69fOHDoFcxIgZGI
+</span></span><span class=line><span class=cl>+U7vlnoylwMwOWF/NgGWh4UEMt7Tufhp+lHATk89IC8JbyneVZToUa1bvtqcdEPo
+</span></span><span class=line><span class=cl>uHKGRn2Gr545fPHb7av9bxRkDr2hG1o7paMDgQKBgQDxTTM8IzFCNW5QwOHAKigl
+</span></span><span class=line><span class=cl>3PMzHL7us1/AN5mNKH18CBuJB52KBuGBi9k2VhWQcSLQGkwtO6sb+zRp9e0m8SM6
+</span></span><span class=line><span class=cl>b6D1Kci7FOtHIffOm1EomEB8XSIQr44cOseWNRJOccTXgYsshBT2PKCIKYxyIIdW
+</span></span><span class=line><span class=cl>u7tI7RFevK+10e/jC0TvDA==
+</span></span><span class=line><span class=cl>-----END PRIVATE KEY-----
+</span></span><span class=line><span class=cl>-----BEGIN CERTIFICATE-----
+</span></span><span class=line><span class=cl>MIIDXTCCAkWgAwIBAgIJAL27yfp8t3ofMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
+</span></span><span class=line><span class=cl>BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX
+</span></span><span class=line><span class=cl>aWRnaXRzIFB0eSBMdGQwHhcNMTkwNzIxMDIxMTI1WhcNMjAwNzIwMDIxMTI1WjBF
+</span></span><span class=line><span class=cl>MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50
+</span></span><span class=line><span class=cl>ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+</span></span><span class=line><span class=cl>CgKCAQEAxXz5aZBwUS2nSsCT/fm30X5UM5hlAGIsug2lz82Lh26FQCm5UxqopzA/
+</span></span><span class=line><span class=cl>baklm0xup2wPnd9MXNnhTPuGIl4LzAh4frrM4pnEWRwDpnjwjeAIyUznE/FpkgXc
+</span></span><span class=line><span class=cl>oquDk+mtFET4VqRO6Qg6kCj2t/eLyW1yvk9VHxlQyxDojVxrKIcdwlRJ05UkqNwW
+</span></span><span class=line><span class=cl>jgzaTNs1J9yUGUmWPNFcbW37INncT/7LKEutmD6rEzZ+7Gb5A0fACEfkOLVuAmV8
+</span></span><span class=line><span class=cl>rtJ6zsHL0sd3+OED4iDI+nX5VbS14+ln46848dkPWViU2UXrYJrxa7u+6fX5nZ2w
+</span></span><span class=line><span class=cl>OOdIXcvO5qCFMXazCPXrTb+yRO9QqQIDAQABo1AwTjAdBgNVHQ4EFgQUSX6484h5
+</span></span><span class=line><span class=cl>FuRhJi13z0LSFMmxh1MwHwYDVR0jBBgwFoAUSX6484h5FuRhJi13z0LSFMmxh1Mw
+</span></span><span class=line><span class=cl>DAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAlM7Bt8Vp//mtUBmLxiQI
+</span></span><span class=line><span class=cl>XLTThPAxjgGvMaoyhPGRajuENpQuQlqlAw92kw8hMAYxx5I1PGRSx4Hdok1RWaTo
+</span></span><span class=line><span class=cl>cmbio6VhID3iDWpBHShv8ZlfAILnBq6RXNc+/c6nOIsnB8/wt43XxdVmEiHK/PmX
+</span></span><span class=line><span class=cl>jdtJV9IW9doavXLb36iOh6Z5EvJFvegJsUB4Vjbtvz8Ukr9vEviWCaMbinFueT1G
+</span></span><span class=line><span class=cl>BIw7mhyUrQhVHTAapQ9d2JvecQyolzxvDsUMU1qedTyowsoJ/eCs9uu/cHrae3Va
+</span></span><span class=line><span class=cl>YGRSJ1Un/k9LzbXiliAOVpSVAMbwHfJZtSVLn0b2GRqHO5SKSnPAtABCCbifuLvZ
+</span></span><span class=line><span class=cl>9g==
+</span></span><span class=line><span class=cl>-----END CERTIFICATE-----</span></span></code></pre></td></tr></table></div></div><p>此时需要将此生成的证书放在一个稳妥的目录下，如下文所提到的默认配置文件目录。</p><h1 id=stunnel配置说明>stunnel配置说明
+<a class=header-anchor href=#stunnel%e9%85%8d%e7%bd%ae%e8%af%b4%e6%98%8e></a></h1><p>stunnel的默认配置文件存放目录：</p><ul><li>Linux：/etc/stunnel</li><li>Windows：C:\Program Files (x86)\stunnel\config</li></ul><h2 id=server配置>Server配置
+<a class=header-anchor href=#server%e9%85%8d%e7%bd%ae></a></h2><p>典型的Server配置如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>cert = /etc/stunnel/stunnel.pem # server使用的证书
+</span></span><span class=line><span class=cl>key = /etc/stunnel/stunnel.pem # server使用的私钥
+</span></span><span class=line><span class=cl>CAfile = /etc/stunnel/stunnel.pem # 验证client合法性的证书
+</span></span><span class=line><span class=cl>verify = 3 # 验证方式，下面详述
+</span></span><span class=line><span class=cl>client = no # server配置成no
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[telnet]
+</span></span><span class=line><span class=cl>accept = 1234 # [HOST:]PORT, 不指定HOST, 则监听所有IPv4地址
+</span></span><span class=line><span class=cl>connect = 127.0.0.1:6789 # [HOST:]PORT
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ftp]
+</span></span><span class=line><span class=cl>accept = 12345
+</span></span><span class=line><span class=cl>connect = 127.0.0.1:67890</span></span></code></pre></td></tr></table></div></div><p>其中verify这个参数用于指定对对方的验证方式：</p><ul><li>不指定：不验证客户端出示的证书。</li><li>verify = 1：如果对方出示了证书，则验证；不出示则通过。</li><li>verify = 2：证书的CA必须与CAfile指定的匹配，否则不通过。</li><li>verify = 3：证书的CA与证书内容必须与CAfile指定的匹配，否则不通过。</li></ul><p>对于自签名的证书，建议使用verify = 3的方式，然后需要通过安全的方式线下将证书分发到client。</p><h2 id=client配置>Client配置
+<a class=header-anchor href=#client%e9%85%8d%e7%bd%ae></a></h2><p>对应的client配置示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>cert = /etc/stunnel/stunnel.pem # client使用的证书，与server端CAfile一致才能通过验证
+</span></span><span class=line><span class=cl>client = yes # client配置成yes
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[telnet]
+</span></span><span class=line><span class=cl>accept = 127.0.0.1:6789 # [HOST:]PORT
+</span></span><span class=line><span class=cl>connect = {serverip}:1234 # 替换serverip</span></span></code></pre></td></tr></table></div></div><p>此处不再设置verify参数，一般无须验证server的合法性。</p><h1 id=references>References
+<a class=header-anchor href=#references></a></h1><p><a href=https://www.stunnel.org/ title=stunnel rel="noopener external nofollow noreferrer" target=_blank class=exturl>stunnel
+<i class="fa fa-external-link-alt"></i></a></p><p><a href=https://www.stunnel.org/howto.html title="stunnel HOWTO" rel="noopener external nofollow noreferrer" target=_blank class=exturl>stunnel HOWTO
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/openssl/>openssl
+</a><a href=/tags/networking/>Networking</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/ceiling-lamp/ rel=next title=吸顶灯启辉器和灯管更换图解><i class="fa fa-chevron-left"></i> 吸顶灯启辉器和灯管更换图解</a></div><div class="post-nav-prev post-nav-item"><a href=/selenium/ rel=prev title=Selenium爬取网页实战>Selenium爬取网页实战
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i></span></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"stunnel","permalink":"https://finisky.github.io/stunnel/","title":"stunnel配置实例","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

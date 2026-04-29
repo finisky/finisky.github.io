@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Markdown on Finisky Garden</title><link>https://finisky.github.io/en/tags/markdown/</link><description>Recent content in Markdown on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Mon, 12 Sep 2022 00:01:03 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/markdown/rss.xml" rel="self" type="application/rss+xml"/><item><title>'pandoc exited with code null' Solution</title><link>https://finisky.github.io/en/pandoc-exited-with-code-null-solution/</link><pubDate>Mon, 12 Sep 2022 00:01:03 +0800</pubDate><guid>https://finisky.github.io/en/pandoc-exited-with-code-null-solution/</guid><description>&lt;p&gt;As the post number increases, Hexo generate posts slower and slower. Recently, it usually generates posts for several minutes and report the following error:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;[ERROR][hexo-renderer-pandoc] pandoc exited with code null.
+at Object._prettifyError (/home/finisky/node_modules/nunjucks/src/lib.js:36:11)&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;I spent several hours to figure out the issue. Finally, I found the root cause is &amp;hellip; VM memory is too small &amp;hellip; :-(&lt;/p&gt;</description></item><item><title>'pandoc exited with code 64' Solution</title><link>https://finisky.github.io/en/pandoc-code64-bug/</link><pubDate>Wed, 04 May 2022 12:39:08 +0800</pubDate><guid>https://finisky.github.io/en/pandoc-code64-bug/</guid><description>&lt;p&gt;After I upgraded pandoc from &lt;code&gt;2.14.0.3&lt;/code&gt; to &lt;code&gt;2.18&lt;/code&gt;, &lt;code&gt;hexo-renderer-pandoc&lt;/code&gt; cannot render one of my post correctly. Everything works fine in &lt;code&gt;2.14.0.3&lt;/code&gt;. The error looks like:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;INFO Start processing
+FATAL {
+err: Error:
+[ERROR][hexo-renderer-pandoc] On /home/finisky/source/_posts/test.md
+[ERROR][hexo-renderer-pandoc] pandoc exited with code 64: YAML parse exception at line 4, column 0,
+while scanning a simple key:
+could not find expected &amp;lsquo;:&amp;rsquo;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; at Hexo.pandocRenderer (/home/finisky/node_modules/hexo-renderer-pandoc/index.js:114:11)
+ at Hexo.tryCatcher (/home/finisky/node_modules/bluebird/js/release/util.js:16:23)
+ at Hexo.&amp;lt;anonymous&amp;gt; (/home/finisky/node_modules/bluebird/js/release/method.js:15:34)
+ at /home/finisky/node_modules/hexo/lib/hexo/render.js:75:22
+ at tryCatcher (/home/finisky/node_modules/bluebird/js/release/util.js:16:23)
+ at Promise._settlePromiseFromHandler (/home/finisky/node_modules/bluebird/js/release/promise.js:547:31)
+ at Promise._settlePromise (/home/finisky/node_modules/bluebird/js/release/promise.js:604:18)
+ at Promise._settlePromiseCtx (/home/finisky/node_modules/bluebird/js/release/promise.js:641:10)
+ at _drainQueueStep (/home/finisky/node_modules/bluebird/js/release/async.js:97:12)
+ at _drainQueue (/home/finisky/node_modules/bluebird/js/release/async.js:86:9)
+ at Async._drainQueues (/home/finisky/node_modules/bluebird/js/release/async.js:102:5)
+ at Immediate.Async.drainQueues [as _onImmediate] (/home/finisky/node_modules/bluebird/js/release/async.js:15:14)
+ at processImmediate (node:internal/timers:464:21)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;} Something&amp;rsquo;s wrong. Maybe you can find the solution here: %s 
+&lt;a href="https://hexo.io/docs/troubleshooting.html" title="https://hexo.io/docs/troubleshooting.html" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://hexo.io/docs/troubleshooting.html
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Speed Up Github Image Hosting By Jsdelivr CDN</title><link>https://finisky.github.io/en/speedup-github-by-cdn/</link><pubDate>Mon, 20 Dec 2021 19:43:59 +0800</pubDate><guid>https://finisky.github.io/en/speedup-github-by-cdn/</guid><description>&lt;p&gt;This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading speed by jsdelivr CDN.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="jsdelivr-image-url-format"&gt;Jsdelivr Image Url Format
+&lt;a class="header-anchor" href="#jsdelivr-image-url-format"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Assume the original github image url is:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://raw.githubusercontent.com/{user}/{repo}/master/{folderpath}/{filename}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;To leverage jsdelivr CDN, just convert the url to this:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://cdn.jsdelivr.net/gh/{user}/{repo}/{folderpath}/{filename}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Or just do a prefix replacement:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-2-1"&gt;&lt;a class="lnlinks" href="#hl-2-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-2"&gt;&lt;a class="lnlinks" href="#hl-2-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-3"&gt;&lt;a class="lnlinks" href="#hl-2-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-4"&gt;&lt;a class="lnlinks" href="#hl-2-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-5"&gt;&lt;a class="lnlinks" href="#hl-2-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://raw.githubusercontent.com/{user}/{repo}/master/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://cdn.jsdelivr.net/gh/{user}/{repo}/&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;For example, for image &lt;code&gt;p.png&lt;/code&gt; in github user &lt;code&gt;user&lt;/code&gt;&amp;rsquo;s repository &lt;code&gt;repo&lt;/code&gt;, folder &lt;code&gt;a/&lt;/code&gt;:&lt;/p&gt;</description></item></channel></rss>

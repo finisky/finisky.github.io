@@ -1,0 +1,189 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="C# Exception的用法和注意事项"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="Software Engineering"><meta property="og:type" content="article"><meta property="og:title" content="C# Exception的用法和注意事项"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/csharp-exception-guide/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-03-30 12:38:58 +0800 CST"><meta property="article:modified_time" content="2020-03-30 12:38:58 +0800 CST"><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>C# Exception的用法和注意事项 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#何时用exception>何时用Exception?</a></li><li><a href=#用exception时不要做什么>用Exception时不要做什么</a></li><li><a href=#推荐阅读>推荐阅读</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/static-and-util/>谈谈static和util/helper类</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/null-or-empty-list/>返回null还是空List?</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/register-factory-application/>RegisterFactory(InjectionFactory)的应用</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/register-factory-exp/>IUnityContainer.RegisterFactory例子</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/simplicity/>简约的哲学</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/csharp-exception-guide/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="C# Exception的用法和注意事项"><meta itemprop=description content="正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。"></span><header class=post-header><h1 class=post-title itemprop="name headline">C# Exception的用法和注意事项</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-03-30 12:38:58 +08:00" itemprop="dateCreated datePublished" datetime="2020-03-30 12:38:58 +0800 CST">2020-03-30
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/c#/ itemprop=url rel=index><span itemprop=name>C#</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>4分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/csharp-exception-guide/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/csharp-exception-guide/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。</p><a id=more></a><h1 id=何时用exception>何时用Exception?
+<a class=header-anchor href=#%e4%bd%95%e6%97%b6%e7%94%a8exception></a></h1><p>《The Pragmatic Programmer》第24节探讨了这个问题：When to Use Exceptions? 在程序中常常要检查各种可能存在的错误，但检查可能存在于比较深层的嵌套或多层函数调用之中，于是代码会变得非常难看。问题主要存在于两个方面：</p><ul><li>如何将底层调用的错误处理传回顶层？</li><li>是否要对下层调用的返回值进行检查并处理？</li></ul><p>笔者在code review中见过不少蹩脚的Exception使用，根本原因在于没有理解上面两个问题。Exception使用不当不仅不能使代码变得简洁，反而会隐藏底层的问题，并且掩盖了主逻辑想要做什么。笔者将这种异常使用方法叫做“满篇的try-catch-check-null”(切克闹切克闹) :-)，生怕你看懂代码真正想要做什么。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>try</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>book</span> <span class=p>=</span> <span class=n>GetBook</span><span class=p>(</span><span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>book</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>Logger</span><span class=p>.</span><span class=n>Error</span><span class=p>(</span><span class=s>&#34;Book is null&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>ex</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Logger</span><span class=p>.</span><span class=n>Error</span><span class=p>(</span><span class=n>ex</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>throw</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>这段“切克闹”其实有用的就一行代码<code>var book = GetBook(id);</code>，但却写了十几行。更恶心之处在于catch Exception之后又re-throw，只为输出一行错误日志。但这还算好的，至少catch的是GetBook()里的Exception。还见过更奇葩的用法，把try-catch当goto用:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=k>try</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>condition</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=n>CustomException</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>catch</span> <span class=p>(</span><span class=n>Exception</span> <span class=n>ex</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Logger</span><span class=p>.</span><span class=n>Error</span><span class=p>(</span><span class=n>ex</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>这样的用法自产自销除了增加开销，与goto有什么区别？把catch中的处理异常语句直接放在if字段中即可。</p><p>再引用《The Pragmatic Programmer》中的例子:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span><span class=lnt id=hl-2-22><a class=lnlinks href=#hl-2-22>22</a>
+</span><span class=lnt id=hl-2-23><a class=lnlinks href=#hl-2-23>23</a>
+</span><span class=lnt id=hl-2-24><a class=lnlinks href=#hl-2-24>24</a>
+</span><span class=lnt id=hl-2-25><a class=lnlinks href=#hl-2-25>25</a>
+</span><span class=lnt id=hl-2-26><a class=lnlinks href=#hl-2-26>26</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>retcode</span> <span class=p>=</span> <span class=n>OK</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>name</span><span class=p>)</span> <span class=p>!=</span> <span class=n>OK</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>retcode</span> <span class=p>=</span> <span class=n>BAD_READ</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>processName</span><span class=p>(</span><span class=n>name</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>address</span><span class=p>)</span> <span class=p>!=</span> <span class=n>OK</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>retcode</span> <span class=p>=</span> <span class=n>BAD_READ</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>processAddress</span><span class=p>(</span><span class=n>address</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>telNo</span><span class=p>)</span> <span class=p>!=</span> <span class=n>OK</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>retcode</span> <span class=p>=</span> <span class=n>BAD_READ</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=p>...</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=n>retcode</span><span class=p>;</span></span></span></code></pre></td></tr></table></div></div><p>在主流程中判断了每个中间处理函数可能出现的错误，导致if嵌套很多，喧宾夺主，主逻辑不清晰。如果使用exception改进，代码清晰不少：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>retcode</span> <span class=p>=</span> <span class=n>OK</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>try</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>name</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>processName</span><span class=p>(</span><span class=n>name</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>address</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>processAddress</span><span class=p>(</span><span class=n>address</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>socket</span><span class=p>.</span><span class=n>read</span><span class=p>(</span><span class=n>telNo</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>catch</span> <span class=p>(</span><span class=n>IOException</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>retcode</span> <span class=p>=</span> <span class=n>BAD_READ</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>Logger</span><span class=p>.</span><span class=n>Error</span><span class=p>(</span><span class=s>&#34;Error reading individual: &#34;</span> <span class=p>+</span> <span class=n>e</span><span class=p>.</span><span class=n>Message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=n>retcode</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>并且这只是个非常简单的示例，实践中对于调用层数很深的代码，只在顶层捕捉Exception可以大大简化中间每层的检查逻辑，同时可以轻松地将底层的错误直接传递回顶层。</p><p>但Exception其实是一种类似goto的语句，如果不当使用，反而会降低程序的可维护性和效率。因此，作者给出建议：</p><blockquote><p>Tips: Use Exceptions for Exceptional Problems</p></blockquote><p>而对于什么是<code>exceptional</code>，要根据情况而定。比如一个变量为null，那么抛异常好还是return null好？判断标准是要看null的出现有多么频繁，以及它是否影响了主流程的继续。如果null在80%的时候都会出现，则它不是exceptional的， 而变成了normal。抛异常的目的是警示，这种情况下如果遇到null就抛异常，起不到警示的作用，反倒由于频繁处理异常导致性能降低。因此，此时使用return null进行处理更为妥当。</p><h1 id=用exception时不要做什么>用Exception时不要做什么
+<a class=header-anchor href=#%e7%94%a8exception%e6%97%b6%e4%b8%8d%e8%a6%81%e5%81%9a%e4%bb%80%e4%b9%88></a></h1><p>这里的建议就与C#语言相关了，本段摘自：
+<a href=https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/exceptions/creating-and-throwing-exceptions#things-to-avoid-when-throwing-exceptions title="Things to Avoid When Throwing Exceptions" rel="noopener external nofollow noreferrer" target=_blank class=exturl>Things to Avoid When Throwing Exceptions
+<i class="fa fa-external-link-alt"></i></a></p><p>The following list identifies practices to avoid when throwing exceptions:</p><ul><li>Exceptions should not be used to change the flow of a program as part of ordinary execution. Exceptions should only be used to report and handle error conditions.</li><li>Exceptions should not be returned as a return value or parameter instead of being thrown.</li><li>Do not throw
+<a href=https://docs.microsoft.com/en-us/dotnet/api/system.exception title=System.Exception rel="noopener external nofollow noreferrer" target=_blank class=exturl>System.Exception
+<i class="fa fa-external-link-alt"></i>
+</a>,
+<a href=https://docs.microsoft.com/en-us/dotnet/api/system.systemexception title=System.SystemException rel="noopener external nofollow noreferrer" target=_blank class=exturl>System.SystemException
+<i class="fa fa-external-link-alt"></i>
+</a>,
+<a href=https://docs.microsoft.com/en-us/dotnet/api/system.nullreferenceexception title=System.NullReferenceException rel="noopener external nofollow noreferrer" target=_blank class=exturl>System.NullReferenceException
+<i class="fa fa-external-link-alt"></i>
+</a>, or
+<a href=https://docs.microsoft.com/en-us/dotnet/api/system.indexoutofrangeexception title=System.IndexOutOfRangeException rel="noopener external nofollow noreferrer" target=_blank class=exturl>System.IndexOutOfRangeException
+<i class="fa fa-external-link-alt"></i>
+</a>intentionally from your own source code.</li><li>Do not create exceptions that can be thrown in debug mode but not release mode. To identify run-time errors during the development phase, use Debug Assert instead.</li></ul><p>这里特别说下第三条：throw new Exception(&ldquo;xxx&rdquo;)。在上面Programming Guide上只说不要这么做，却没解释是为什么。原因在这个帖子中有讨论：
+<a href=https://stackoverflow.com/questions/22453650/why-are-we-not-to-throw-these-exceptions title="# Why are we not to throw these exceptions?" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Why are we not to throw these exceptions?
+<i class="fa fa-external-link-alt"></i></a></p><p>总结起来，如果直接new Exception()的话，第一Exception太宽泛，相当于啥也没说，Exception的定义讲究尽量详细和具体，以便给调用者提供明确的错误信息。第二外面的try block中就必须catch (Exception)，即catch所有的异常，这也是不好的做法。同理，MSDN上也不建议抛ApplicationException。其实与其这样告诉大家Guideline，还不如直接将Exception声明为abstract，这样就无法创建实例了，也就从根本上避免了这种做法。个人猜想可能因为兼容性的问题才没有改成这样。。</p><p>至于NullReferenceException和IndexOutOfRangeException，它们是由系统在运行时自动抛出的异常，属于“reserved exception”，手动抛这样的异常出去就很不合理。
+<a href="https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2201?view=vs-2019" title="# Exception Handling (C# Programming Guide)" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Exception Handling (C# Programming Guide)
+<i class="fa fa-external-link-alt"></i></a></p><h1 id=推荐阅读>推荐阅读
+<a class=header-anchor href=#%e6%8e%a8%e8%8d%90%e9%98%85%e8%af%bb></a></h1><p><a href=https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions title="# Best practices for exceptions" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Best practices for exceptions
+<i class="fa fa-external-link-alt"></i></a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/software-engineering/>Software Engineering</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/emacs-input-switch/ rel=next title=Windows下emacs输入法切换><i class="fa fa-chevron-left"></i> Windows下emacs输入法切换</a></div><div class="post-nav-prev post-nav-item"><a href=/bash-startup-files/ rel=prev title=.bashrc不起作用与bash初始化文件执行顺序>.bashrc不起作用与bash初始化文件执行顺序
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i></span></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"csharp-exception-guide","permalink":"https://finisky.github.io/csharp-exception-guide/","title":"C# Exception的用法和注意事项","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

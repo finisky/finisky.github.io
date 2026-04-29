@@ -1,0 +1,427 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Dissecting Claude Code's RAG Mechanism"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="LLM,LLM Agent,NLP"><meta property="og:type" content="article"><meta property="og:title" content="Dissecting Claude Code's RAG Mechanism"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/claude-code-rag/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2026-04-02 23:54:23 +0800 CST"><meta property="article:modified_time" content="2026-04-02 23:54:23 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/claude-code-rag/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/claude-code-rag/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Dissecting Claude Code's RAG Mechanism - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><ul><li><a href=#this-isnt-the-rag-you-know>This Isn&rsquo;t the RAG You Know</a></li><li><a href=#four-layer-retrieval-architecture>Four-Layer Retrieval Architecture</a><ul><li><a href=#layer-0-static-context>Layer 0: Static Context</a></li><li><a href=#layer-1-smart-pre-injection>Layer 1: Smart Pre-Injection</a></li><li><a href=#layer-2-model-driven-retrieval>Layer 2: Model-Driven Retrieval</a></li><li><a href=#layer-3-sub-agent-delegated-retrieval>Layer 3: Sub-Agent Delegated Retrieval</a></li></ul></li><li><a href=#engineering-highlights>Engineering Highlights</a><ul><li><a href=#search-result-token-budget-controls>Search Result Token Budget Controls</a></li><li><a href=#read-tool-deduplication>Read Tool Deduplication</a></li><li><a href=#path-relativization>Path Relativization</a></li><li><a href=#system-prompt-cache-partitioning>System Prompt Cache Partitioning</a></li></ul></li><li><a href=#end-to-end-flow>End-to-End Flow</a></li><li><a href=#comparison>Comparison</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/dive-into-claude-code/>Claude Code: 1.6% AI, 98.4% Scaffolding</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/prompt-context-harness-engineering/>Three Evolutions of Agent Engineering</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/openclaw-vs-claude-code-agent-arch/>Context Management in Claude Code vs OpenClaw</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/foundation-model-plateau-application-era/>Foundation Models Plateau, Applications Take Off</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/claude-code-deferred-tools/>Deferred Tool Loading in Claude Code</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/claude-code-rag/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Dissecting Claude Code's RAG Mechanism"><meta itemprop=description content="
+    Claude Code has no vector database and no embedding index, yet it can pinpoint the exact file you need in a million-line codebase. Behind this is a retrieval architecture completely different from traditional RAG.
+
+  
+This Isn&rsquo;t the RAG You Know
+
+If you&rsquo;ve used RAG before, the pipeline should be familiar: build an offline index, user asks a question, vector-search for Top-K chunks, inject into prompt, generate an answer. A straight line, one pass, done.
+Claude Code doesn&rsquo;t work like that at all. It has no offline index. The model itself drives the retrieval process."></span><header class=post-header><h1 class=post-title itemprop="name headline">Dissecting Claude Code's RAG Mechanism</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-02 23:54:23 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 23:54:23 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>10min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/claude-code-rag/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/claude-code-rag/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><blockquote><p>Claude Code has no vector database and no embedding index, yet it can pinpoint the exact file you need in a million-line codebase. Behind this is a retrieval architecture completely different from traditional RAG.</p></blockquote><h2 id=this-isnt-the-rag-you-know>This Isn&rsquo;t the RAG You Know
+<a class=header-anchor href=#this-isnt-the-rag-you-know></a></h2><p>If you&rsquo;ve used RAG before, the pipeline should be familiar: build an offline index, user asks a question, vector-search for Top-K chunks, inject into prompt, generate an answer. A straight line, one pass, done.</p><p>Claude Code doesn&rsquo;t work like that at all. It has no offline index. The model itself drives the retrieval process.</p><a id=more></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Traditional RAG:
+</span></span><span class=line><span class=cl>+--------+     +-----------+     +----------+     +--------+
+</span></span><span class=line><span class=cl>| Query  | --&gt; | Vector DB | --&gt; | Top-K    | --&gt; | LLM    |
+</span></span><span class=line><span class=cl>|        |     | (offline  |     | chunks   |     | answer |
+</span></span><span class=line><span class=cl>|        |     |  indexed) |     | injected |     |        |
+</span></span><span class=line><span class=cl>+--------+     +-----------+     +----------+     +--------+
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      One-shot: retrieve once, generate once.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Claude Code (Agentic RAG):
+</span></span><span class=line><span class=cl>+--------+     +------------------+     +--------+
+</span></span><span class=line><span class=cl>| Query  | --&gt; | LLM decides what | --&gt; | Tool   |
+</span></span><span class=line><span class=cl>|        |     | to search for    |     | result |
+</span></span><span class=line><span class=cl>+--------+     +-------+----------+     +---+----+
+</span></span><span class=line><span class=cl>                       ^                    |
+</span></span><span class=line><span class=cl>                       |   not enough?      |
+</span></span><span class=line><span class=cl>                       +--------------------+
+</span></span><span class=line><span class=cl>                       loop until satisfied
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      Multi-hop: model drives retrieval in a loop.</span></span></code></pre></td></tr></table></div></div><p>Traditional RAG has a fixed retrieval strategy, hardcoded in the pipeline. Claude Code&rsquo;s retrieval strategy is dynamic: the model decides what to search for, how many times, and which tool to use, all based on the current context.</p><h2 id=four-layer-retrieval-architecture>Four-Layer Retrieval Architecture
+<a class=header-anchor href=#four-layer-retrieval-architecture></a></h2><p>Claude Code&rsquo;s context isn&rsquo;t assembled all at once. It&rsquo;s injected progressively across four layers:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+===============================================================+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                     <span class=n>CONTEXT</span> <span class=n>WINDOW</span>                            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+===============================================================+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>0</span><span class=p>:</span> <span class=n>STATIC</span> <span class=n>CONTEXT</span> <span class=p>(</span><span class=n>loaded</span> <span class=n>once</span> <span class=n>at</span> <span class=n>session</span> <span class=n>start</span><span class=p>)</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>System</span> <span class=n>Prompt</span> <span class=o>|</span> <span class=n>CLAUDE</span><span class=o>.</span><span class=n>md</span> <span class=o>|</span> <span class=n>Git</span> <span class=n>Status</span> <span class=o>|</span> <span class=n>Memory</span> <span class=n>Index</span>   <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>1</span><span class=p>:</span> <span class=n>SMART</span> <span class=n>PRE</span><span class=o>-</span><span class=n>INJECTION</span> <span class=p>(</span><span class=n>before</span> <span class=n>model</span> <span class=n>sees</span> <span class=n>the</span> <span class=n>query</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Sonnet</span> <span class=n>Memory</span> <span class=n>Recall</span> <span class=o>|</span> <span class=err>@</span><span class=n>file</span> <span class=n>mentions</span> <span class=o>|</span> <span class=n>Skill</span> <span class=n>Discovery</span> <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>2</span><span class=p>:</span> <span class=n>MODEL</span><span class=o>-</span><span class=n>DRIVEN</span> <span class=n>RETRIEVAL</span> <span class=p>(</span><span class=k>tool</span> <span class=n>use</span> <span class=n>loop</span><span class=p>)</span>              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Glob</span> <span class=o>-&gt;</span> <span class=n>Grep</span> <span class=o>-&gt;</span> <span class=n>Read</span> <span class=o>-&gt;</span> <span class=o>...</span> <span class=p>(</span><span class=n>model</span> <span class=n>decides</span><span class=p>)</span>             <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Layer</span> <span class=mi>3</span><span class=p>:</span> <span class=n>DELEGATED</span> <span class=n>RETRIEVAL</span> <span class=p>(</span><span class=n>sub</span><span class=o>-</span><span class=n>agents</span><span class=p>)</span>                    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Explore</span> <span class=n>Agent</span> <span class=o>|</span> <span class=n>Fork</span> <span class=n>Agent</span> <span class=p>(</span><span class=n>parallel</span> <span class=n>research</span><span class=p>)</span>          <span class=o>|</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+---------------------------------------------------------+</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+===============================================================+</span></span></span></code></pre></td></tr></table></div></div><h3 id=layer-0-static-context>Layer 0: Static Context
+<a class=header-anchor href=#layer-0-static-context></a></h3><p>At the start of every session, the system automatically loads a set of resident context: the System Prompt (tool usage guide, behavioral rules, environment info), CLAUDE.md (project-level configuration), Git Status (current branch, last 5 commits), and the MEMORY.md index file.</p><p>There&rsquo;s a key design detail here: the System Prompt is split into a static region and a dynamic region, separated by a boundary marker.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>system_prompt</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=c1># --- Static (cross-session cacheable) ---</span>
+</span></span><span class=line><span class=cl>    <span class=n>intro_section</span><span class=p>,</span>          <span class=c1># identity &amp; rules</span>
+</span></span><span class=line><span class=cl>    <span class=n>system_section</span><span class=p>,</span>         <span class=c1># tool instructions</span>
+</span></span><span class=line><span class=cl>    <span class=n>doing_tasks_section</span><span class=p>,</span>    <span class=c1># task guidelines</span>
+</span></span><span class=line><span class=cl>    <span class=n>actions_section</span><span class=p>,</span>        <span class=c1># safety rules</span>
+</span></span><span class=line><span class=cl>    <span class=n>using_tools_section</span><span class=p>,</span>    <span class=c1># tool selection guide</span>
+</span></span><span class=line><span class=cl>    <span class=n>tone_and_style</span><span class=p>,</span>         <span class=c1># output style</span>
+</span></span><span class=line><span class=cl>    <span class=n>output_efficiency</span><span class=p>,</span>      <span class=c1># brevity rules</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__&#34;</span><span class=p>,</span>  <span class=c1># &lt;-- cache boundary</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># --- Dynamic (changes per session) ---</span>
+</span></span><span class=line><span class=cl>    <span class=n>session_guidance</span><span class=p>,</span>       <span class=c1># session-specific guidance</span>
+</span></span><span class=line><span class=cl>    <span class=n>memory_prompt</span><span class=p>,</span>          <span class=c1># persistent memory</span>
+</span></span><span class=line><span class=cl>    <span class=n>env_info</span><span class=p>,</span>               <span class=c1># environment info</span>
+</span></span><span class=line><span class=cl>    <span class=n>language</span><span class=p>,</span>               <span class=c1># language preference</span>
+</span></span><span class=line><span class=cl>    <span class=n>mcp_instructions</span><span class=p>,</span>       <span class=c1># MCP server instructions</span>
+</span></span><span class=line><span class=cl><span class=p>]</span></span></span></code></pre></td></tr></table></div></div><p>Everything before the boundary marker can share Prompt Cache across sessions, with all users sharing the same cached copy. Everything after differs per session. The static portion costs essentially nothing.</p><h3 id=layer-1-smart-pre-injection>Layer 1: Smart Pre-Injection
+<a class=header-anchor href=#layer-1-smart-pre-injection></a></h3><p>After the user sends a message but before the model starts reasoning, the system runs a batch of pre-retrieval operations in parallel:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>User sends message: &#34;Fix the auth bug in payment API&#34;
+</span></span><span class=line><span class=cl>                |
+</span></span><span class=line><span class=cl>                v  (parallel, before model sees anything)
+</span></span><span class=line><span class=cl>    +-----------+-----------+-----------+
+</span></span><span class=line><span class=cl>    |           |           |           |
+</span></span><span class=line><span class=cl>    v           v           v           v
+</span></span><span class=line><span class=cl> @mention   Memory      Skill       Agent
+</span></span><span class=line><span class=cl> file scan  Prefetch    Discovery   Listing
+</span></span><span class=line><span class=cl>    |           |           |           |
+</span></span><span class=line><span class=cl>    +-----+-----+-----+-----+-----+----+
+</span></span><span class=line><span class=cl>          |                        |
+</span></span><span class=line><span class=cl>          v                        v
+</span></span><span class=line><span class=cl>   [Attachment Messages injected into conversation]</span></span></code></pre></td></tr></table></div></div><p>The most elegant piece is Memory Prefetch. It uses the Sonnet model to run a lightweight sideQuery, selecting up to 5 relevant files from persistent memory:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1> 1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2> 2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3> 3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4> 4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5> 5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6> 6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7> 7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8> 8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9> 9</a>
+</span><span class=lnt id=hl-4-10><a class=lnlinks href=#hl-4-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>prefetch_relevant_memories</span><span class=p>(</span><span class=n>user_query</span><span class=p>,</span> <span class=n>messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>already_surfaced</span> <span class=o>=</span> <span class=n>collect_surfaced_memories</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>recent_tools</span> <span class=o>=</span> <span class=n>collect_recent_successful_tools</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>selected</span> <span class=o>=</span> <span class=n>sonnet_side_query</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>system</span><span class=o>=</span><span class=s2>&#34;Select up to 5 memories useful for the query&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>user</span><span class=o>=</span><span class=sa>f</span><span class=s2>&#34;Query: </span><span class=si>{</span><span class=n>user_query</span><span class=si>}</span><span class=se>\n</span><span class=s2>Available: </span><span class=si>{</span><span class=n>memory_manifest</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>recent_tools</span><span class=o>=</span><span class=n>recent_tools</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>load_selected_memories</span><span class=p>(</span><span class=n>selected</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><p>The sideQuery is a key pattern in Claude Code: outside the main loop, a smaller model makes auxiliary decisions, and the results are injected as attachments into the next conversation turn. The cost is minimal (Sonnet is much cheaper than Opus), but context relevance improves dramatically.</p><h3 id=layer-2-model-driven-retrieval>Layer 2: Model-Driven Retrieval
+<a class=header-anchor href=#layer-2-model-driven-retrieval></a></h3><p>This is the core of Agentic RAG. The model has three search tools and autonomously decides the calling order and frequency:</p><table><thead><tr><th>Tool</th><th>Capability</th><th>Typical Use</th></tr></thead><tbody><tr><td>Glob</td><td>Match files by name pattern</td><td><code>src/**/*.ts</code>, find file structure</td></tr><tr><td>Grep</td><td>Search content by regex</td><td><code>function handleAuth</code>, find implementation</td></tr><tr><td>Read</td><td>Read file content</td><td>Read target file precisely</td></tr></tbody></table><p>The model typically narrows scope in a funnel pattern of Glob → Grep → Read:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span><span class=lnt id=hl-5-12><a class=lnlinks href=#hl-5-12>12</a>
+</span><span class=lnt id=hl-5-13><a class=lnlinks href=#hl-5-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Model thinks: &#34;I need to find the auth handler&#34;
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Glob(&#34;src/**/*auth*.ts&#34;)        --&gt; 8 files found
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Grep(&#34;handleAuth&#34;, path=&#34;src/&#34;) --&gt; 3 files match
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>Read(&#34;src/api/auth/handler.ts&#34;) --&gt; full content
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>(enough context, start working)</span></span></code></pre></td></tr></table></div></div><p>The key point is that this isn&rsquo;t a fixed pipeline. The model might Read directly (if the user provided a file path), Grep multiple times (first attempt missed, try different keywords), or launch multiple parallel searches simultaneously. This flexibility is something traditional RAG simply can&rsquo;t match.</p><h3 id=layer-3-sub-agent-delegated-retrieval>Layer 3: Sub-Agent Delegated Retrieval
+<a class=header-anchor href=#layer-3-sub-agent-delegated-retrieval></a></h3><p>When the search task is heavy (e.g., &ldquo;help me understand this project&rsquo;s authentication architecture&rdquo;), the model can spin up an Explore Agent to do the work:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>Main</span> <span class=n>Agent</span> <span class=n>context</span><span class=p>:</span>                <span class=n>Explore</span> <span class=n>Agent</span> <span class=n>context</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=o>+---------------------------+</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>User</span> <span class=n>query</span>                <span class=o>|</span>      <span class=o>|</span> <span class=n>Search</span> <span class=n>directive</span>          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>valuable</span> <span class=n>context</span><span class=p>)</span>    <span class=o>|</span>      <span class=o>|</span> <span class=n>Glob</span><span class=p>,</span> <span class=n>Grep</span><span class=p>,</span> <span class=n>Read</span> <span class=n>results</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>raw</span> <span class=n>search</span> <span class=n>output</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>[</span><span class=n>Agent</span> <span class=k>tool</span> <span class=n>call</span><span class=p>]</span>  <span class=o>-------|----&gt;</span> <span class=o>|</span> <span class=o>...</span> <span class=p>(</span><span class=n>lots</span> <span class=n>of</span> <span class=n>content</span><span class=p>)</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>[</span><span class=n>Agent</span> <span class=n>result</span><span class=p>:</span> <span class=n>summary</span><span class=p>]</span> <span class=o>&lt;-|----</span>  <span class=o>|</span> <span class=n>Final</span> <span class=n>summary</span> <span class=p>(</span><span class=n>concise</span><span class=p>)</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                           <span class=o>|</span>      <span class=o>+---------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>(</span><span class=n>context</span> <span class=n>stays</span> <span class=n>clean</span><span class=o>!</span><span class=p>)</span>    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+---------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>The Explore Agent&rsquo;s design is deliberately restrained: read-only (can&rsquo;t create, modify, or delete any files), runs on Haiku (the fastest model), keeps all raw search results in its own context, returns only a refined summary, and doesn&rsquo;t even load CLAUDE.md (the main Agent already has it).</p><p>This solves a core problem with Agentic RAG: the search process itself consumes massive context. If all Glob/Grep/Read results stayed in the main context, a few rounds of searching would fill it up. The sub-agent acts as a context firewall.</p><h2 id=engineering-highlights>Engineering Highlights
+<a class=header-anchor href=#engineering-highlights></a></h2><h3 id=search-result-token-budget-controls>Search Result Token Budget Controls
+<a class=header-anchor href=#search-result-token-budget-controls></a></h3><p>Every search tool has a result trimming mechanism to prevent a single search from flooding the context:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span><span class=lnt id=hl-7-18><a class=lnlinks href=#hl-7-18>18</a>
+</span><span class=lnt id=hl-7-19><a class=lnlinks href=#hl-7-19>19</a>
+</span><span class=lnt id=hl-7-20><a class=lnlinks href=#hl-7-20>20</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>+-- Search Result Budget Controls --+
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Grep:                            |
+</span></span><span class=line><span class=cl>|    Default head_limit = 250 lines |
+</span></span><span class=line><span class=cl>|    Max result size = 20KB chars   |
+</span></span><span class=line><span class=cl>|    Max line width = 500 chars     |
+</span></span><span class=line><span class=cl>|    (base64/minified auto-trimmed) |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Glob:                            |
+</span></span><span class=line><span class=cl>|    Max 100 files returned         |
+</span></span><span class=line><span class=cl>|    Sorted by mtime (newest first) |
+</span></span><span class=line><span class=cl>|    Paths relativized to save toks |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>|  Read:                            |
+</span></span><span class=line><span class=cl>|    Max 25,000 tokens per read     |
+</span></span><span class=line><span class=cl>|    Max 256KB file size            |
+</span></span><span class=line><span class=cl>|    Default 2000 lines             |
+</span></span><span class=line><span class=cl>|    Supports offset + limit paging |
+</span></span><span class=line><span class=cl>|                                   |
+</span></span><span class=line><span class=cl>+-----------------------------------+</span></span></code></pre></td></tr></table></div></div><p>Grep&rsquo;s head_limit=250 is a well-chosen default: large enough to cover the vast majority of exploratory searches, small enough to avoid dumping 6000+ tokens of search results in one shot. If the model knows it needs more, it can pass head_limit=0 (unlimited) or paginate with offset.</p><h3 id=read-tool-deduplication>Read Tool Deduplication
+<a class=header-anchor href=#read-tool-deduplication></a></h3><p>Reading the same file twice is common — first discovered via search, then re-read before editing to confirm. Claude Code detects this automatically:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>read_file</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>existing</span> <span class=o>=</span> <span class=n>read_file_state</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>existing</span> <span class=ow>and</span> <span class=n>existing</span><span class=o>.</span><span class=n>offset</span> <span class=o>==</span> <span class=n>offset</span> <span class=ow>and</span> <span class=n>existing</span><span class=o>.</span><span class=n>limit</span> <span class=o>==</span> <span class=n>limit</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>mtime</span> <span class=o>=</span> <span class=n>get_file_mtime</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>mtime</span> <span class=o>==</span> <span class=n>existing</span><span class=o>.</span><span class=n>timestamp</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=s2>&#34;File unchanged since last read.&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=c1># saves ~25K tokens per hit</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=n>read_file_content</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>read_file_state</span><span class=o>.</span><span class=n>set</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=n>content</span><span class=p>,</span> <span class=n>mtime</span><span class=p>,</span> <span class=n>offset</span><span class=p>,</span> <span class=n>limit</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>content</span></span></span></code></pre></td></tr></table></div></div><p>Roughly 18% of Read calls hit the dedup cache, saving an entire file&rsquo;s worth of tokens each time.</p><h3 id=path-relativization>Path Relativization
+<a class=header-anchor href=#path-relativization></a></h3><p>An inconspicuous but ubiquitous optimization: all absolute paths in search results are converted to relative paths.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4>4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5>5</a>
+</span><span class=lnt id=hl-9-6><a class=lnlinks href=#hl-9-6>6</a>
+</span><span class=lnt id=hl-9-7><a class=lnlinks href=#hl-9-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># Before (absolute paths waste tokens):
+</span></span><span class=line><span class=cl>/Users/john/projects/my-app/src/components/auth/LoginForm.tsx
+</span></span><span class=line><span class=cl>/Users/john/projects/my-app/src/components/auth/AuthProvider.tsx
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># After (relative to cwd):
+</span></span><span class=line><span class=cl>src/components/auth/LoginForm.tsx
+</span></span><span class=line><span class=cl>src/components/auth/AuthProvider.tsx</span></span></code></pre></td></tr></table></div></div><p>Seems trivial, but across a session with dozens of searches, this saves thousands of tokens.</p><h3 id=system-prompt-cache-partitioning>System Prompt Cache Partitioning
+<a class=header-anchor href=#system-prompt-cache-partitioning></a></h3><p>The <code>__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__</code> mentioned earlier works with Anthropic API&rsquo;s scope: &lsquo;global&rsquo; caching strategy to share the static portion across all users:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1> 1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2> 2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3> 3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4> 4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5> 5</a>
+</span><span class=lnt id=hl-10-6><a class=lnlinks href=#hl-10-6> 6</a>
+</span><span class=lnt id=hl-10-7><a class=lnlinks href=#hl-10-7> 7</a>
+</span><span class=lnt id=hl-10-8><a class=lnlinks href=#hl-10-8> 8</a>
+</span><span class=lnt id=hl-10-9><a class=lnlinks href=#hl-10-9> 9</a>
+</span><span class=lnt id=hl-10-10><a class=lnlinks href=#hl-10-10>10</a>
+</span><span class=lnt id=hl-10-11><a class=lnlinks href=#hl-10-11>11</a>
+</span><span class=lnt id=hl-10-12><a class=lnlinks href=#hl-10-12>12</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>API</span> <span class=n>Request</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>0</span><span class=p>]:</span> <span class=n>intro</span> <span class=o>+</span> <span class=n>tools</span> <span class=o>+</span> <span class=n>rules</span>                 <span class=o>|</span>  <span class=n>scope</span><span class=p>:</span> <span class=s1>&#39;global&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>1</span><span class=p>]:</span> <span class=n>actions</span> <span class=o>+</span> <span class=n>style</span>                       <span class=o>|</span>  <span class=p>(</span><span class=n>shared</span> <span class=n>across</span> <span class=n>ALL</span> <span class=n>users</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>----</span> <span class=n>DYNAMIC</span> <span class=n>BOUNDARY</span> <span class=o>----</span>                      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>2</span><span class=p>]:</span> <span class=n>session</span> <span class=n>guidance</span>                      <span class=o>|</span>  <span class=n>scope</span><span class=p>:</span> <span class=s1>&#39;session&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>system</span><span class=p>[</span><span class=mi>3</span><span class=p>]:</span> <span class=n>memory</span> <span class=o>+</span> <span class=n>env</span> <span class=n>info</span>                     <span class=o>|</span>  <span class=p>(</span><span class=n>per</span><span class=o>-</span><span class=n>user</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>messages</span><span class=p>:</span> <span class=p>[</span><span class=n>user</span><span class=p>,</span> <span class=n>assistant</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+--------------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>Everything before the boundary (tool descriptions, behavioral rules, etc.) is identical across all users and only needs to be cached once. Your very first request might hit a system prompt prefix that someone else already cached. This is deduplication at the global level.</p><h2 id=end-to-end-flow>End-to-End Flow
+<a class=header-anchor href=#end-to-end-flow></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1> 1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2> 2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3> 3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4> 4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5> 5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6> 6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7> 7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8> 8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9> 9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10>10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11>11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12>12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13>13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14>14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15>15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16>16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17>17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18>18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19>19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20>20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21>21</a>
+</span><span class=lnt id=hl-11-22><a class=lnlinks href=#hl-11-22>22</a>
+</span><span class=lnt id=hl-11-23><a class=lnlinks href=#hl-11-23>23</a>
+</span><span class=lnt id=hl-11-24><a class=lnlinks href=#hl-11-24>24</a>
+</span><span class=lnt id=hl-11-25><a class=lnlinks href=#hl-11-25>25</a>
+</span><span class=lnt id=hl-11-26><a class=lnlinks href=#hl-11-26>26</a>
+</span><span class=lnt id=hl-11-27><a class=lnlinks href=#hl-11-27>27</a>
+</span><span class=lnt id=hl-11-28><a class=lnlinks href=#hl-11-28>28</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SESSION START
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- Load system prompt (static + dynamic)
+</span></span><span class=line><span class=cl>+-- Load CLAUDE.md into user context
+</span></span><span class=line><span class=cl>+-- Load MEMORY.md index
+</span></span><span class=line><span class=cl>+-- Snapshot git status + recent commits
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>USER SENDS: &#34;Fix the auth bug in payment API&#34;
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- [Parallel prefetch, before model runs]
+</span></span><span class=line><span class=cl>|   +-- Sonnet memory recall -&gt; api_gotchas.md, user_prefs.md
+</span></span><span class=line><span class=cl>|   +-- @file scan -&gt; (none mentioned)
+</span></span><span class=line><span class=cl>|   +-- Skill discovery -&gt; (no matching skills)
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>+-- Prefetch results injected as attachment messages
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>MODEL TURN 1:
+</span></span><span class=line><span class=cl>|   Thinks: &#34;I need to find auth-related files&#34;
+</span></span><span class=line><span class=cl>|   +-- Grep(&#34;auth.*bug|payment.*auth&#34;, type=&#34;ts&#34;)    --&gt; 5 files
+</span></span><span class=line><span class=cl>|   +-- Read(&#34;src/api/payment/auth.ts&#34;)                --&gt; 800 lines
+</span></span><span class=line><span class=cl>|   +-- Read(&#34;src/api/payment/__tests__/auth.test.ts&#34;) --&gt; 400 lines
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>MODEL TURN 2:
+</span></span><span class=line><span class=cl>|   Thinks: &#34;Found the bug, now fix it&#34;
+</span></span><span class=line><span class=cl>|   +-- Edit(&#34;src/api/payment/auth.ts&#34;, ...)
+</span></span><span class=line><span class=cl>|   +-- Bash(&#34;npm test -- auth&#34;)
+</span></span><span class=line><span class=cl>|
+</span></span><span class=line><span class=cl>DONE (2 turns of retrieval + 1 turn of action)</span></span></code></pre></td></tr></table></div></div><h2 id=comparison>Comparison
+<a class=header-anchor href=#comparison></a></h2><table><thead><tr><th>Dimension</th><th>Traditional RAG</th><th>Claude Code</th></tr></thead><tbody><tr><td>Index</td><td>Offline vectorization</td><td>No index, real-time search</td></tr><tr><td>Retrieval strategy</td><td>Fixed (Top-K)</td><td>Dynamic (model decides)</td></tr><tr><td>Retrieval rounds</td><td>Single</td><td>Multi-round loop</td></tr><tr><td>Retrieval granularity</td><td>Fixed chunks</td><td>Filename → content → line-level</td></tr><tr><td>Context protection</td><td>None</td><td>Sub-agent isolation</td></tr><tr><td>Result trimming</td><td>Truncation</td><td>Multi-layer budget controls</td></tr><tr><td>Caching</td><td>Vector cache</td><td>Prompt Cache partitioning + Read dedup</td></tr></tbody></table><p>Claude Code&rsquo;s RAG is fundamentally not &ldquo;retrieval-augmented generation&rdquo; but &ldquo;generation-driven retrieval&rdquo;: the model first understands the need, then decides what to search, evaluates whether the results are sufficient, and searches again if not. It trades a bit of latency for precision and flexibility far beyond traditional RAG.</p></div><footer class=post-footer><div class=post-tags><a href=/en/tags/llm/>LLM
+</a><a href=/en/tags/llm-agent/>LLM Agent
+</a><a href=/en/tags/nlp/>NLP</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/claude-code-auto-mode-security/ rel=next title="Inside Claude Code's YOLO Classifier"><i class="fa fa-chevron-left"></i> Inside Claude Code's YOLO Classifier</a></div><div class="post-nav-prev post-nav-item"><a href=/en/llm-infinite-monkeys/ rel=prev title="LLMs Are the Monkeys That Finally Typed Shakespeare">LLMs Are the Monkeys That Finally Typed Shakespeare
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/claude-code-rag/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"claude-code-rag","permalink":"https://finisky.github.io/en/claude-code-rag/","title":"Dissecting Claude Code's RAG Mechanism","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

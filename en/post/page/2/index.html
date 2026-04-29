@@ -1,0 +1,498 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Posts"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="NLP, LLM, LLM Agent, AI, Machine Learning, Software Engineering, Product Design"><meta property="og:type" content="website"><meta property="og:title" content="Posts"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/post/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/post/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/post/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480355"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480355"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>post - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-overview-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner index posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/claude-code-auto-mode-security/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Inside Claude Code's YOLO Classifier"><meta itemprop=description content="
+    Claude Code has an auto mode that executes operations without confirmation. But &ldquo;auto&rdquo; doesn&rsquo;t mean &ldquo;unreviewed&rdquo; — there&rsquo;s a classifier watching every action.
+
+  
+The Auto Mode Paradox
+
+One of the most annoying things about using Claude Code is the permission popups. Every Bash command, every file write requires a confirmation click. Power users turn on auto mode, letting Claude execute everything autonomously without asking.
+This creates an obvious problem: what if the model decides to rm -rf /, push to the production branch, or write a backdoor into .bashrc?"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/claude-code-auto-mode-security/ itemprop=url class=post-title-link>Inside Claude Code's YOLO Classifier</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-05 20:02:56 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-05 20:02:56 +0800 CST">2026-04-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>8min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/claude-code-auto-mode-security/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/claude-code-auto-mode-security/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><blockquote><p>Claude Code has an auto mode that executes operations without confirmation. But &ldquo;auto&rdquo; doesn&rsquo;t mean &ldquo;unreviewed&rdquo; — there&rsquo;s a classifier watching every action.</p></blockquote><h2 id=the-auto-mode-paradox>The Auto Mode Paradox
+<a class=header-anchor href=#the-auto-mode-paradox></a></h2><p>One of the most annoying things about using Claude Code is the permission popups. Every Bash command, every file write requires a confirmation click. Power users turn on auto mode, letting Claude execute everything autonomously without asking.</p><p>This creates an obvious problem: what if the model decides to <code>rm -rf /</code>, push to the production branch, or write a backdoor into <code>.bashrc</code>?</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/claude-code-auto-mode-security/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/claude-code-rag/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Dissecting Claude Code's RAG Mechanism"><meta itemprop=description content="
+    Claude Code has no vector database and no embedding index, yet it can pinpoint the exact file you need in a million-line codebase. Behind this is a retrieval architecture completely different from traditional RAG.
+
+  
+This Isn&rsquo;t the RAG You Know
+
+If you&rsquo;ve used RAG before, the pipeline should be familiar: build an offline index, user asks a question, vector-search for Top-K chunks, inject into prompt, generate an answer. A straight line, one pass, done.
+Claude Code doesn&rsquo;t work like that at all. It has no offline index. The model itself drives the retrieval process."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/claude-code-rag/ itemprop=url class=post-title-link>Dissecting Claude Code's RAG Mechanism</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-02 23:54:23 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 23:54:23 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>10min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/claude-code-rag/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/claude-code-rag/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><blockquote><p>Claude Code has no vector database and no embedding index, yet it can pinpoint the exact file you need in a million-line codebase. Behind this is a retrieval architecture completely different from traditional RAG.</p></blockquote><h2 id=this-isnt-the-rag-you-know>This Isn&rsquo;t the RAG You Know
+<a class=header-anchor href=#this-isnt-the-rag-you-know></a></h2><p>If you&rsquo;ve used RAG before, the pipeline should be familiar: build an offline index, user asks a question, vector-search for Top-K chunks, inject into prompt, generate an answer. A straight line, one pass, done.</p><p>Claude Code doesn&rsquo;t work like that at all. It has no offline index. The model itself drives the retrieval process.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/claude-code-rag/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/llm-infinite-monkeys/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="LLMs Are the Monkeys That Finally Typed Shakespeare"><meta itemprop=description content="Nassim Taleb proposed a thought experiment in Fooled by Randomness: given infinite monkeys typing on infinite typewriters, one of them will eventually produce the complete text of the Iliad.
+The more I think about it, the more I believe this story&rsquo;s endgame is today&rsquo;s large language models."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/llm-infinite-monkeys/ itemprop=url class=post-title-link>LLMs Are the Monkeys That Finally Typed Shakespeare</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-02 13:17:23 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 13:17:23 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>8min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/llm-infinite-monkeys/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/llm-infinite-monkeys/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Nassim Taleb proposed a thought experiment in <em>Fooled by Randomness</em>: given infinite monkeys typing on infinite typewriters, one of them will eventually produce the complete text of the <em>Iliad</em>.</p><p>The more I think about it, the more I believe this story&rsquo;s endgame is today&rsquo;s large language models.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/llm-infinite-monkeys/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/claude-code-memory-management/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="A Deep Dive into Claude Code's Memory Management"><meta itemprop=description content="Developers who&rsquo;ve used Claude Code probably share this experience: even in an ultra-long conversation where dozens of files have been modified, it seems to always &ldquo;remember&rdquo; what it did before. Even more remarkably, if you told it &ldquo;I prefer bun over npm&rdquo; in a previous session, it automatically follows that preference next time.
+Behind this is a sophisticated memory management system. Let&rsquo;s tear apart Claude Code&rsquo;s memory mechanism layer by layer."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/claude-code-memory-management/ itemprop=url class=post-title-link>A Deep Dive into Claude Code's Memory Management</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-02 00:03:17 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 00:03:17 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>19min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/claude-code-memory-management/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/claude-code-memory-management/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Developers who&rsquo;ve used Claude Code probably share this experience: even in an ultra-long conversation where dozens of files have been modified, it seems to always &ldquo;remember&rdquo; what it did before. Even more remarkably, if you told it &ldquo;I prefer bun over npm&rdquo; in a previous session, it automatically follows that preference next time.</p><p>Behind this is a sophisticated memory management system. Let&rsquo;s tear apart Claude Code&rsquo;s memory mechanism layer by layer.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/claude-code-memory-management/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/why-agents-make-us-more-tired/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Agents Are Supposed to Help, So Why Are We More Exhausted?"><meta itemprop=description content="I haven&rsquo;t updated my blog in over a year. Not out of laziness, nor because I&rsquo;ve fallen behind on technology. It&rsquo;s more of a conviction: once AI became powerful enough, the value of technical blogs dropped significantly. People shifted from searching and reading to learning through direct conversations with AI. On top of that, AI-generated content floods social media the moment anything happens, making me feel there&rsquo;s little point in writing after the fact. Blog traffic has plummeted over the past year, which further killed my motivation to spend hours crafting a post. I miss the days when every article was painstakingly typed out, word by word, over hours or even days.
+AI tools have made remarkable progress in the past six months. As a heavy user, I want to talk about this: if agents are supposed to be our helpers, why do we feel more exhausted than ever?"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/why-agents-make-us-more-tired/ itemprop=url class=post-title-link>Agents Are Supposed to Help, So Why Are We More Exhausted?</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-03-26 09:01:00 +08:00" itemprop="dateCreated datePublished" datetime="2026-03-26 09:01:00 +0800 CST">2026-03-26
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>5min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/why-agents-make-us-more-tired/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/why-agents-make-us-more-tired/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>I haven&rsquo;t updated my blog in over a year. Not out of laziness, nor because I&rsquo;ve fallen behind on technology. It&rsquo;s more of a conviction: once AI became powerful enough, the value of technical blogs dropped significantly. People shifted from searching and reading to learning through direct conversations with AI. On top of that, AI-generated content floods social media the moment anything happens, making me feel there&rsquo;s little point in writing after the fact. Blog traffic has plummeted over the past year, which further killed my motivation to spend hours crafting a post. I miss the days when every article was painstakingly typed out, word by word, over hours or even days.</p><p>AI tools have made remarkable progress in the past six months. As a heavy user, I want to talk about this: if agents are supposed to be our helpers, why do we feel more exhausted than ever?</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/why-agents-make-us-more-tired/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/tex-mktexmf-cannot-find-font/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="TeX Live mktexmf cannot find font solution"><meta itemprop=description content="When compiling a LaTeX document that uses a customized font in TeX Live on Windows, you might encounter the following error:
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+
+
+kpathsea: Running mktextfm Fontin
+
+The command name is F:\texlive\2025\bin\windows\mktextfm
+name = Fontin, rootname = Fontin, pointsize =
+mktexmf: empty or non-existent rootfile!
+
+kpathsea: Running mktexmf Fontin.mf
+
+The command name is F:\texlive\2025\bin\windows\mktexmf
+Cannot find Fontin.mf.
+kpathsea: Appending font creation commands to missfont.log.
+
+kpathsea: Running mktextfm Fontin
+
+The command name is F:\texlive\2025\bin\windows\mktextfm
+name = Fontin, rootname = Fontin, pointsize =
+mktexmf: empty or non-existent rootfile!
+
+kpathsea: Running mktexmf Fontin.mf
+
+The command name is F:\texlive\2025\bin\windows\mktexmf
+Cannot find Fontin.mf.
+
+
+
+This error occurs because the TeX system cannot find the necessary font files (specifically .mf or .tfm files) for Fontin, and fails to generate them. The weird part is that you have installed the font already."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/tex-mktexmf-cannot-find-font/ itemprop=url class=post-title-link>TeX Live mktexmf cannot find font solution</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2025-06-18 23:48:12 +08:00" itemprop="dateCreated datePublished" datetime="2025-06-18 23:48:12 +0800 CST">2025-06-18
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/tex-mktexmf-cannot-find-font/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/tex-mktexmf-cannot-find-font/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>When compiling a LaTeX document that uses a customized font in TeX Live on Windows, you might encounter the following error:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span><span class=lnt id=hl-0-14><a class=lnlinks href=#hl-0-14>14</a>
+</span><span class=lnt id=hl-0-15><a class=lnlinks href=#hl-0-15>15</a>
+</span><span class=lnt id=hl-0-16><a class=lnlinks href=#hl-0-16>16</a>
+</span><span class=lnt id=hl-0-17><a class=lnlinks href=#hl-0-17>17</a>
+</span><span class=lnt id=hl-0-18><a class=lnlinks href=#hl-0-18>18</a>
+</span><span class=lnt id=hl-0-19><a class=lnlinks href=#hl-0-19>19</a>
+</span><span class=lnt id=hl-0-20><a class=lnlinks href=#hl-0-20>20</a>
+</span><span class=lnt id=hl-0-21><a class=lnlinks href=#hl-0-21>21</a>
+</span><span class=lnt id=hl-0-22><a class=lnlinks href=#hl-0-22>22</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>kpathsea: Running mktextfm Fontin
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>The command name is F:\texlive\2025\bin\windows\mktextfm
+</span></span><span class=line><span class=cl>name = Fontin, rootname = Fontin, pointsize =
+</span></span><span class=line><span class=cl>mktexmf: empty or non-existent rootfile!
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>kpathsea: Running mktexmf Fontin.mf
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>The command name is F:\texlive\2025\bin\windows\mktexmf
+</span></span><span class=line><span class=cl>Cannot find Fontin.mf.
+</span></span><span class=line><span class=cl>kpathsea: Appending font creation commands to missfont.log.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>kpathsea: Running mktextfm Fontin
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>The command name is F:\texlive\2025\bin\windows\mktextfm
+</span></span><span class=line><span class=cl>name = Fontin, rootname = Fontin, pointsize =
+</span></span><span class=line><span class=cl>mktexmf: empty or non-existent rootfile!
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>kpathsea: Running mktexmf Fontin.mf
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>The command name is F:\texlive\2025\bin\windows\mktexmf
+</span></span><span class=line><span class=cl>Cannot find Fontin.mf.</span></span></code></pre></td></tr></table></div></div><p>This error occurs because the TeX system cannot find the necessary font files (specifically <code>.mf</code> or <code>.tfm</code> files) for Fontin, and fails to generate them. The weird part is that you have installed the font already.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/tex-mktexmf-cannot-find-font/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Mastering MongoDB Aggregation Pipeline for Efficient Data Processing"><meta itemprop=description content="MongoDB&rsquo;s Aggregation Pipeline is a powerful tool for processing and analyzing data, suitable for both real-time queries and offline data analysis. It allows developers to use multiple stages to transform, filter, group, and sort data, enabling efficient execution of complex computations. This article will explore the basic concepts, application examples, performance analysis, and optimization strategies of the Aggregation Pipeline."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/ itemprop=url class=post-title-link>Mastering MongoDB Aggregation Pipeline for Efficient Data Processing</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2025-03-26 22:48:39 +08:00" itemprop="dateCreated datePublished" datetime="2025-03-26 22:48:39 +0800 CST">2025-03-26
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>9min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>MongoDB&rsquo;s Aggregation Pipeline is a powerful tool for processing and analyzing data, suitable for both real-time queries and offline data analysis. It allows developers to use multiple stages to transform, filter, group, and sort data, enabling efficient execution of complex computations. This article will explore the basic concepts, application examples, performance analysis, and optimization strategies of the Aggregation Pipeline.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/mastering-mongodb-aggregation-pipeline-for-efficient-data-processing/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/switchyomega-no-longer-be-supported-solution/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="SwitchyOmega No Longer Be Supported Solution"><meta itemprop=description content="Today, when I opened Chrome, I suddenly received a prompt saying that SwitchyOmega &ldquo;# This extension may soon no longer be supported because it doesn&rsquo;t follow best practices for Chrome extensions.&rdquo; It seems that the plugin was disabled after Chrome automatically updated. Another bad news: the Stylish plugin has also been rendered unusable for the same reason.
+Moreover, the Chrome Web Store is inaccessible, preventing the installation of other extensions—deadlock."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/switchyomega-no-longer-be-supported-solution/ itemprop=url class=post-title-link>SwitchyOmega No Longer Be Supported Solution</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2025-03-04 23:01:52 +08:00" itemprop="dateCreated datePublished" datetime="2025-03-04 23:01:52 +0800 CST">2025-03-04
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/networking/ itemprop=url rel=index><span itemprop=name>Networking</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/switchyomega-no-longer-be-supported-solution/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/switchyomega-no-longer-be-supported-solution/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Today, when I opened Chrome, I suddenly received a prompt saying that SwitchyOmega &ldquo;# This extension may soon no longer be supported because it doesn&rsquo;t follow best practices for Chrome extensions.&rdquo; It seems that the plugin was disabled after Chrome automatically updated. Another bad news: the Stylish plugin has also been rendered unusable for the same reason.</p><p>Moreover, the Chrome Web Store is inaccessible, preventing the installation of other extensions—deadlock.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/switchyomega-no-longer-be-supported-solution/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/solving-double-spending-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Solving Double-Spending with MongoDB: Transactions vs. Versioning"><meta itemprop=description content="The double-spending problem is a critical challenge in transaction systems, especially when managing account balances or funds. It occurs when a system allows the same funds to be spent multiple times due to concurrent operations or race conditions. In this article, we explore two approaches to resolving this issue using MongoDB: transaction-based handling and versioning-based handling.
+This post is an in-depth discussion of the double-spending problem from the 
+
+    Building a Transaction System with MongoDB
+    
+ blog."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/solving-double-spending-with-mongodb/ itemprop=url class=post-title-link>Solving Double-Spending with MongoDB: Transactions vs. Versioning</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2025-01-01 09:36:52 +08:00" itemprop="dateCreated datePublished" datetime="2025-01-01 09:36:52 +0800 CST">2025-01-01
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>10min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/solving-double-spending-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/solving-double-spending-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>The double-spending problem is a critical challenge in transaction systems, especially when managing account balances or funds. It occurs when a system allows the same funds to be spent multiple times due to concurrent operations or race conditions. In this article, we explore two approaches to resolving this issue using MongoDB: <strong>transaction-based handling</strong> and <strong>versioning-based handling</strong>.</p><p>This post is an in-depth discussion of the double-spending problem from the
+<a href=/building-a-transaction-system-with-mongodb/ title="Building a Transaction System with MongoDB">Building a Transaction System with MongoDB
+</a>blog.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/solving-double-spending-with-mongodb/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/how-to-fix-win11-rdp-black-screen/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="How to Fix Windows 11 RDP Black Screen After Windows Update"><meta itemprop=description content="After a Windows Update, RDP on Windows 11 might stop working correctly. Symptoms include a black screen upon connection, no visible mouse or interface, and an automatic disconnection after about a minute. This forces users to return to the local machine to investigate the issue."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/how-to-fix-win11-rdp-black-screen/ itemprop=url class=post-title-link>How to Fix Windows 11 RDP Black Screen After Windows Update</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-12-14 10:06:35 +08:00" itemprop="dateCreated datePublished" datetime="2024-12-14 10:06:35 +0800 CST">2024-12-14
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/how-to-fix-win11-rdp-black-screen/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/how-to-fix-win11-rdp-black-screen/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>After a Windows Update, RDP on Windows 11 might stop working correctly. Symptoms include a black screen upon connection, no visible mouse or interface, and an automatic disconnection after about a minute. This forces users to return to the local machine to investigate the issue.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/how-to-fix-win11-rdp-black-screen/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/how-to-set-crontab-timezone/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="How to Set Crontab Timezone"><meta itemprop=description content="If you’ve ever struggled to set the correct timezone for your cron jobs on Ubuntu 22.04, you’re not alone. In this blog, we’ll walk you through a troubleshooting journey that highlights common pitfalls and the ultimate solution."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/how-to-set-crontab-timezone/ itemprop=url class=post-title-link>How to Set Crontab Timezone</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-12-06 20:48:15 +08:00" itemprop="dateCreated datePublished" datetime="2024-12-06 20:48:15 +0800 CST">2024-12-06
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/how-to-set-crontab-timezone/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/how-to-set-crontab-timezone/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>If you’ve ever struggled to set the correct timezone for your cron jobs on Ubuntu 22.04, you’re not alone. In this blog, we’ll walk you through a troubleshooting journey that highlights common pitfalls and the ultimate solution.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/how-to-set-crontab-timezone/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/use-az-cli-to-query-vm-cpu-credits/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Use az cli to Query VM Remaining CPU Credits"><meta itemprop=description content="When working with Azure Virtual Machines (VMs), monitoring performance metrics is essential for ensuring optimal operation. A common scenario involves tracking the CPU Credits Remaining for a B-series burstable VM instance.
+Typically, we use az vm monitor metrics tail to get the CPU Credits Remaining  metric:"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/use-az-cli-to-query-vm-cpu-credits/ itemprop=url class=post-title-link>Use az cli to Query VM Remaining CPU Credits</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-12-02 19:30:40 +08:00" itemprop="dateCreated datePublished" datetime="2024-12-02 19:30:40 +0800 CST">2024-12-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/use-az-cli-to-query-vm-cpu-credits/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/use-az-cli-to-query-vm-cpu-credits/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>When working with Azure Virtual Machines (VMs), monitoring performance metrics is essential for ensuring optimal operation. A common scenario involves tracking the <code>CPU Credits Remaining</code> for a B-series burstable VM instance.</p><p>Typically, we use <code>az vm monitor metrics tail</code> to get the <code>CPU Credits Remaining</code> metric:</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/use-az-cli-to-query-vm-cpu-credits/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/building-a-transaction-system-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Building a Transaction System with MongoDB"><meta itemprop=description content="Transaction systems are at the heart of modern commerce and financial activities, spanning a wide range of scenarios from e-commerce order processing to real-time settlements in financial institutions. Such systems demand high concurrency handling, real-time data storage, and efficient retrieval capabilities, all while balancing data consistency and performance. As transaction data continues to grow in scale and complexity, traditional transaction system architectures often struggle to meet these challenges due to rigid table structures and limited horizontal scalability.
+MongoDB, as a distributed document-oriented database, provides a modern solution for building complex and efficient transaction systems. With its flexible schema design, high throughput capabilities, and built-in transaction support, MongoDB addresses diverse business needs effectively."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/building-a-transaction-system-with-mongodb/ itemprop=url class=post-title-link>Building a Transaction System with MongoDB</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-24 12:58:00 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-24 12:58:00 +0800 CST">2024-11-24
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>18min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/building-a-transaction-system-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/building-a-transaction-system-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Transaction systems are at the heart of modern commerce and financial activities, spanning a wide range of scenarios from e-commerce order processing to real-time settlements in financial institutions. Such systems demand high concurrency handling, real-time data storage, and efficient retrieval capabilities, all while balancing data consistency and performance. As transaction data continues to grow in scale and complexity, traditional transaction system architectures often struggle to meet these challenges due to rigid table structures and limited horizontal scalability.</p><p>MongoDB, as a distributed document-oriented database, provides a modern solution for building complex and efficient transaction systems. With its flexible schema design, high throughput capabilities, and built-in transaction support, MongoDB addresses diverse business needs effectively.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/building-a-transaction-system-with-mongodb/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/certbot-automating-nginx-ssl-renewal/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Certbot: Automating Nginx SSL Renewal"><meta itemprop=description content="Received a certificate renewal notification from Tencent Cloud, but when applying for a new certificate, I found out that Tencent Cloud no longer offers free one-year certificates:
+
+  
+    Starting from April 25, 2024, the validity period of new free certificates issued by Tencent Cloud will be adjusted to 90 days.
+
+  
+Since I’ve always updated certificates manually, doing it every three months feels quite tedious. So, I decided to explore Certbot from Let&rsquo;s Encrypt. My only concern was how to prove ownership of a subdomain. After trying it out, I realized this wasn’t an issue at all, as Certbot only issues certificates and doesn’t pose any threat to the website itself.
+Here are the configuration steps for Certbot. In fact, it’s very simple and only requires running a few commands."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/certbot-automating-nginx-ssl-renewal/ itemprop=url class=post-title-link>Certbot: Automating Nginx SSL Renewal</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-17 13:03:35 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-17 13:03:35 +0800 CST">2024-11-17
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>6min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/certbot-automating-nginx-ssl-renewal/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/certbot-automating-nginx-ssl-renewal/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Received a certificate renewal notification from Tencent Cloud, but when applying for a new certificate, I found out that Tencent Cloud no longer offers free one-year certificates:</p><blockquote><p>Starting from April 25, 2024, the validity period of new free certificates issued by Tencent Cloud will be adjusted to 90 days.</p></blockquote><p>Since I’ve always updated certificates manually, doing it every three months feels quite tedious. So, I decided to explore Certbot from Let&rsquo;s Encrypt. My only concern was how to prove ownership of a subdomain. After trying it out, I realized this wasn’t an issue at all, as Certbot only issues certificates and doesn’t pose any threat to the website itself.</p><p>Here are the configuration steps for Certbot. In fact, it’s very simple and only requires running a few commands.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/certbot-automating-nginx-ssl-renewal/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/building-large-scale-social-network-graphs-with-mongodb/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Building Large-Scale Social Network Graphs with MongoDB"><meta itemprop=description content="Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no small feat. Building and maintaining a scalable social network infrastructure requires careful planning and strategic data modeling. In fact, specialized social networking applications like Facebook have dedicated teams focusing solely on optimizing their performance to the highest level. However, for smaller apps or startup projects looking to add social networking capabilities, creating a full team to handle such architecture is often impractical and unnecessary.
+So, is it possible to build a high-performance, scalable social network using the right data modeling and storage solutions? The answer is yes. Early versions of Facebook used MySQL as the underlying storage to construct their social network, but today we have more advanced and efficient storage options available: MongoDB."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/building-large-scale-social-network-graphs-with-mongodb/ itemprop=url class=post-title-link>Building Large-Scale Social Network Graphs with MongoDB</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-05 00:59:12 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-05 00:59:12 +0800 CST">2024-11-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>5min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/building-large-scale-social-network-graphs-with-mongodb/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/building-large-scale-social-network-graphs-with-mongodb/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Nowadays, many popular apps incorporate social network features, such as Twitter, WhatsApp, and Facebook. These platforms need to scale to accommodate billions of users (graph nodes), which is no small feat. Building and maintaining a scalable social network infrastructure requires careful planning and strategic data modeling. In fact, specialized social networking applications like Facebook have dedicated teams focusing solely on optimizing their performance to the highest level. However, for smaller apps or startup projects looking to add social networking capabilities, creating a full team to handle such architecture is often impractical and unnecessary.</p><p>So, is it possible to build a high-performance, scalable social network using the right data modeling and storage solutions? The answer is yes. Early versions of Facebook used MySQL as the underlying storage to construct their social network, but today we have more advanced and efficient storage options available: MongoDB.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/building-large-scale-social-network-graphs-with-mongodb/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/argument-incorrect-type-expected-ndarray/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) Solution"><meta itemprop=description content="After upgrading packages in a conda env, talib cannot accept dataframe as input, the error message looks like TypeError: Argument 'xxx' has incorrect type (expected numpy.ndarray, got DataFrame):
+
+
+
+1
+2
+3
+4
+5
+6
+
+
+Traceback (most recent call last):
+  File &#34;/data/1.py&#34;, line 7, in <module>
+    df['SMA_5'] = ta.SMA(df['Close'], timeperiod=5)
+  File &#34;/data/miniconda3/envs/a/lib/python3.10/site-packages/talib/__init__.py&#34;, line 64, in wrapper
+    result = func(*_args, **_kwds)
+TypeError: Argument 'real' has incorrect type (expected numpy.ndarray, got DataFrame)
+
+
+
+Most of the web search results are misleading, like changing the df into np array. Since the code works before updating packages, the problem should be package incompatibility issue."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/argument-incorrect-type-expected-ndarray/ itemprop=url class=post-title-link>TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) Solution</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-11-02 12:06:56 +08:00" itemprop="dateCreated datePublished" datetime="2024-11-02 12:06:56 +0800 CST">2024-11-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/argument-incorrect-type-expected-ndarray/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/argument-incorrect-type-expected-ndarray/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>After upgrading packages in a conda env, talib cannot accept dataframe as input, the error message looks like <code>TypeError: Argument 'xxx' has incorrect type (expected numpy.ndarray, got DataFrame)</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Traceback (most recent call last):
+</span></span><span class=line><span class=cl>  File &#34;/data/1.py&#34;, line 7, in &lt;module&gt;
+</span></span><span class=line><span class=cl>    df[&#39;SMA_5&#39;] = ta.SMA(df[&#39;Close&#39;], timeperiod=5)
+</span></span><span class=line><span class=cl>  File &#34;/data/miniconda3/envs/a/lib/python3.10/site-packages/talib/__init__.py&#34;, line 64, in wrapper
+</span></span><span class=line><span class=cl>    result = func(*_args, **_kwds)
+</span></span><span class=line><span class=cl>TypeError: Argument &#39;real&#39; has incorrect type (expected numpy.ndarray, got DataFrame)</span></span></code></pre></td></tr></table></div></div><p>Most of the web search results are misleading, like changing the df into np array. Since the code works before updating packages, the problem should be package incompatibility issue.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/argument-incorrect-type-expected-ndarray/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/drive-d-usable-but-not-visible-in-file-explorer/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Windows 11 drive D usable but not visible in File Explorer"><meta itemprop=description content="Today, I encountered a strange issue in Windows 11 where the D drive was visible in the Disk Management tool but not in File Explorer. I searched online for many solutions, such as updating drivers in Device Manager, disabling and re-enabling the device, using diskpart to delete and recreate the partition, changing the volume label, changing the drive letter, etc., but none worked.
+Problem Description
+
+
+A new D drive, visible in diskmgmt.msc Disk Management, everything seemed normal. It could even be accessed in File Explorer (though the drive wasn’t displayed in the left sidebar).
+The D drive could be used normally, such as via the command line.
+Changing the drive letter to “E” or another letter made it visible in File Explorer, but switching it back to “D” caused it to disappear again.
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/drive-d-usable-but-not-visible-in-file-explorer/ itemprop=url class=post-title-link>Windows 11 drive D usable but not visible in File Explorer</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-10-13 00:40:35 +08:00" itemprop="dateCreated datePublished" datetime="2024-10-13 00:40:35 +0800 CST">2024-10-13
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/misc/ itemprop=url rel=index><span itemprop=name>Misc</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/drive-d-usable-but-not-visible-in-file-explorer/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/drive-d-usable-but-not-visible-in-file-explorer/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Today, I encountered a strange issue in Windows 11 where the D drive was visible in the Disk Management tool but not in File Explorer. I searched online for many solutions, such as updating drivers in Device Manager, disabling and re-enabling the device, using <code>diskpart</code> to delete and recreate the partition, changing the volume label, changing the drive letter, etc., but none worked.</p><h2 id=problem-description>Problem Description
+<a class=header-anchor href=#problem-description></a></h2><ul><li>A new D drive, visible in <code>diskmgmt.msc</code> Disk Management, everything seemed normal. It could even be accessed in File Explorer (though the drive wasn’t displayed in the left sidebar).</li><li>The D drive could be used normally, such as via the command line.</li><li>Changing the drive letter to “E” or another letter made it visible in File Explorer, but switching it back to “D” caused it to disappear again.</li></ul></div><footer class=post-footer><div class=post-button><a class=btn href=/en/drive-d-usable-but-not-visible-in-file-explorer/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/use-az-cli-to-query-multiple-fields/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Use az cli to Query Multiple Fields of Resource Information"><meta itemprop=description content="Use az cli to query multiple fields of VM information. Here we need to use JMESPath language to implement it.
+Typically, we will use az vm show to get the detailed VM information:
+
+
+
+1
+2
+3
+4
+
+
+$ az vm show -g Linux -n alpha -d -o table
+Name    ResourceGroup    PowerState    PublicIps     Fqdns    Location    Zones
+------  ---------------  ------------  ------------  -------  ----------  -------
+alpha   Linux            VM running    11.1.111.111           eastasia    1
+
+"></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/use-az-cli-to-query-multiple-fields/ itemprop=url class=post-title-link>Use az cli to Query Multiple Fields of Resource Information</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-09-11 21:53:33 +08:00" itemprop="dateCreated datePublished" datetime="2024-09-11 21:53:33 +0800 CST">2024-09-11
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/use-az-cli-to-query-multiple-fields/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/use-az-cli-to-query-multiple-fields/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Use <code>az cli</code> to query multiple fields of VM information. Here we need to use JMESPath language to implement it.</p><p>Typically, we will use <code>az vm show</code> to get the detailed VM information:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ az vm show -g Linux -n alpha -d -o table
+</span></span><span class=line><span class=cl>Name    ResourceGroup    PowerState    PublicIps     Fqdns    Location    Zones
+</span></span><span class=line><span class=cl>------  ---------------  ------------  ------------  -------  ----------  -------
+</span></span><span class=line><span class=cl>alpha   Linux            VM running    11.1.111.111           eastasia    <span class=m>1</span></span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-button><a class=btn href=/en/use-az-cli-to-query-multiple-fields/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/winscp-transfer-to-temp-filename-not-working/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="WinSCP Transfer to Temporary Filename Not Working"><meta itemprop=description content="In WinSCP, I found that when uploading file to the server, the file doesn&rsquo;t have a temporary filename extension &ldquo;.filepart&rdquo;.
+Enable temporary filename for all files in &ldquo;Preferences -> Transfer -> Endurance&rdquo; still does not work."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/winscp-transfer-to-temp-filename-not-working/ itemprop=url class=post-title-link>WinSCP Transfer to Temporary Filename Not Working</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-05-08 09:10:23 +08:00" itemprop="dateCreated datePublished" datetime="2024-05-08 09:10:23 +0800 CST">2024-05-08
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>1min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/winscp-transfer-to-temp-filename-not-working/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/winscp-transfer-to-temp-filename-not-working/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>In WinSCP, I found that when uploading file to the server, the file doesn&rsquo;t have a temporary filename extension &ldquo;.filepart&rdquo;.</p><p>Enable temporary filename for all files in &ldquo;Preferences -> Transfer -> Endurance&rdquo; still does not work.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/winscp-transfer-to-temp-filename-not-working/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/ubuntu-freezes-after-several-minutes/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Ubuntu Server Freezes After Several Minutes"><meta itemprop=description content="After upgrading Ubuntu 20.04 LTS to Ubuntu 22.04LTS, the server always freezes after ~10 minutes. All services are down, cannot ssh, connect to serial console but cannot input. However, this issue never happen before release upgrade."></span><header class=post-header><h2 class=post-title itemprop="name headline"><a href=/en/ubuntu-freezes-after-several-minutes/ itemprop=url class=post-title-link>Ubuntu Server Freezes After Several Minutes</a></h2><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2024-04-18 12:36:16 +08:00" itemprop="dateCreated datePublished" datetime="2024-04-18 12:36:16 +0800 CST">2024-04-18
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/linux/ itemprop=url rel=index><span itemprop=name>Linux</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>2min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/ubuntu-freezes-after-several-minutes/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/ubuntu-freezes-after-several-minutes/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>After upgrading Ubuntu 20.04 LTS to Ubuntu 22.04LTS, the server always freezes after ~10 minutes. All services are down, cannot ssh, connect to serial console but cannot input. However, this issue never happen before release upgrade.</p></div><footer class=post-footer><div class=post-button><a class=btn href=/en/ubuntu-freezes-after-several-minutes/#more rel=contents>Read More &#187;</a></div><div class=post-eof></div></footer></article></div><nav class=pagination><a class="extend prev" rel=prev href=/en/post/><i class="fa fa-angle-left"></i>
+</a><a class=page-number href=/en/post/>1</a>
+<span class="page-number current">2</span>
+<a class=page-number href=/en/post/page/3/>3</a>
+<a class=page-number href=/en/post/page/4/>4</a>
+<a class=page-number href=/en/post/page/5/>5</a>
+<a class=page-number href=/en/post/page/6/>6</a>
+<a class="extend next" rel=next href=/en/post/page/3/><i class="fa fa-angle-right"></i></a></nav></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/post/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"comments":true,"expired":false,"isHome":false,"isPage":false,"path":"post","permalink":"https://finisky.github.io/en/post/","title":"Posts","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script></body></html>

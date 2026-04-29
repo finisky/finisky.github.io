@@ -1,0 +1,566 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="部署Kubernetes MongoDB Sharded Cluster"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS,Sharding"><meta property="og:type" content="article"><meta property="og:title" content="部署Kubernetes MongoDB Sharded Cluster"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/mongodb-om-create-sharded-cluster/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-26 20:13:42 +0800 CST"><meta property="article:modified_time" content="2020-12-26 20:13:42 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-create-sharded-cluster/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-create-sharded-cluster/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>部署Kubernetes MongoDB Sharded Cluster - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#创建一个api-key>创建一个API Key</a><ul><li><a href=#创建存储apikey的secret>创建存储APIkey的secret</a></li></ul></li><li><a href=#创建sharded-cluster>创建Sharded Cluster</a><ul><li><a href=#初始部署>初始部署</a></li><li><a href=#暴露mongos服务>暴露mongos服务</a></li><li><a href=#生成server证书>生成server证书</a><ul><li><a href=#配置servercnf>配置server.cnf</a></li><li><a href=#生成证书>生成证书</a></li><li><a href=#copy-11个server证书>Copy 11个Server证书</a></li></ul></li><li><a href=#创建证书secret和configmap>创建证书Secret和ConfigMap</a><ul><li><a href=#创建shards-tls证书>创建Shards TLS证书</a></li><li><a href=#创建configserver-tls证书>创建ConfigServer TLS证书</a></li><li><a href=#创建mongos-tls证书>创建Mongos TLS证书</a></li><li><a href=#创建ca-configmap>创建CA ConfigMap</a></li></ul></li><li><a href=#开启tls>开启TLS</a></li><li><a href=#增加shard的mongod实例到多个>增加shard的mongod实例到多个</a></li></ul></li><li><a href=#常见错误及处理>常见错误及处理</a><ul><li><a href=#证书无效>证书无效</a></li><li><a href=#mongodspershardcount为3时打开tls>mongodsPerShardCount为3时打开TLS</a></li></ul></li><li><a href=#删除sharded-cluster>删除Sharded Cluster</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-tls-auth/>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-self-signed-certificates/>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-expose-services/>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-om-create-user-db/>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/mongodb-ops-manager/>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/mongodb-om-create-sharded-cluster/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="部署Kubernetes MongoDB Sharded Cluster"><meta itemprop=description content="Sharded cluster是MongoDB部署中最复杂的形式，因为Sharded cluster的组件较多，部署步骤也更为繁琐。在实际部署中还有几个部署ReplicaSet时没遇到的证书和TLS问题。阅读本文前，强烈建议先阅读 
+
+    创建用户数据库(replicaset)
+    
+ 作为基础。"></span><header class=post-header><h1 class=post-title itemprop="name headline">部署Kubernetes MongoDB Sharded Cluster</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-12-26 20:13:42 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-26 20:13:42 +0800 CST">2020-12-26
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>11分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/mongodb-om-create-sharded-cluster/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/mongodb-om-create-sharded-cluster/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Sharded cluster是MongoDB部署中最复杂的形式，因为Sharded cluster的组件较多，部署步骤也更为繁琐。在实际部署中还有几个部署ReplicaSet时没遇到的证书和TLS问题。阅读本文前，强烈建议先阅读
+<a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)
+</a>作为基础。</p><a id=more></a><p>一个Sharded cluster由三部分构成：</p><ul><li>shard server: 存储一部分数据，每个shard可由一个replica set构成。</li><li>mongos: query router，可以认为是整个cluster的前端，客户端通过mongos与cluster交互。</li><li>config server: 存储cluster的metadata。</li></ul><p>本文以创建一个2个Shard（每个由3实例ReplicaSet构成），2个mongos及3个config server的sharded cluster为例，演示具体部署流程。本文可做为Kubernetes部署MongoDB集群的番外篇。</p><p>整个系列：</p><ol><li><a href=/mongodb-ops-manager/ title="安装MongoDB Ops Manager">安装MongoDB Ops Manager</a></li><li><a href=/mongodb-om-create-user-db/ title=创建用户数据库(replicaset)>创建用户数据库(replicaset)</a></li><li><a href=/mongodb-om-expose-services/ title=用户数据库服务配置公网访问>用户数据库服务配置公网访问</a></li><li><a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></li><li><a href=/mongodb-om-tls-auth/ title=打开用户数据库TLS通信加密和Auth授权>打开用户数据库TLS通信加密和Auth授权</a></li></ol><h1 id=创建一个api-key>创建一个API Key
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e4%b8%80%e4%b8%aaapi-key></a></h1><p>如果已有<code>ops-manager-admin-secret</code>，此步可略过。</p><p>用户数据库需要有权限访问Ops Manager，所以要生成一个Key。</p><p>“UserName -> Account -> Public API Access”，点页面最右上角的用户名，弹出菜单中有"Account"。
+<img src=/imgs/img-lazy-loading.gif data-src=https://webassets.mongodb.com/_com_assets/cms/account_settings-fva9elw8gg.png alt="Generate Public API key"></p><p>注意这个<code>&lt;apikey></code>只显示一次，妥善保存。</p><h2 id=创建存储apikey的secret>创建存储APIkey的secret
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e5%ad%98%e5%82%a8apikey%e7%9a%84secret></a></h2><p>创建API Key Secret时使用的用户名要与上面点开的Account用户名一致，这里是<code>ops-manager-admin-secret</code>中的用户名。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic om-user-credentials --from-literal=&#34;user=xxx@xxx.com&#34; --from-literal=&#34;publicApiKey=&lt;apikey&gt;&#34; -n mongodb
+</span></span><span class=line><span class=cl>secret/om-user-credentials created</span></span></code></pre></td></tr></table></div></div><h1 id=创建sharded-cluster>创建Sharded Cluster
+<a class=header-anchor href=#%e5%88%9b%e5%bb%basharded-cluster></a></h1><p>创建sharded cluster比较复杂需要三步，原因在于sharded cluster更新TLS的计划生成似乎有BUG，如果像ReplicaSet一样的方式进行部署，会出现TLS打开失败的情况，且死锁无法恢复。具体解释可见最后一节“常见错误”。</p><p>创建过程主要分为如下三步：</p><ol><li><code>mongodsPerShardCount</code>设置为1，即每个shard都由一个单机ReplicaSet构成</li><li>配置证书，打开TLS，增加<code>security</code>部分</li><li><code>mongodsPerShardCount</code>设置为3，将shard变成3成员的ReplicaSet</li></ol><h2 id=初始部署>初始部署
+<a class=header-anchor href=#%e5%88%9d%e5%a7%8b%e9%83%a8%e7%bd%b2></a></h2><p>第一步的配置文件<code>sharddb-step1.yaml</code>如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongodsPerShardCount</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configServerCount</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ShardedCluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>om-user-credentials</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>exposedExternally</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configSrvPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span></span></span></code></pre></td></tr></table></div></div><p>注意：</p><ol><li>这里一定不要加security字段，否则打开了tls会出现部署完成后servers之间互相不能通信，选不出Primary/Secondary节点的问题。即创建时一定是<code>TLS disabled</code>，配好证书后再将TLS打开。</li><li><code>exposedExternally: false</code>是因为默认暴露服务的方法是NodePort，而这种方式在更新服务的时候可能会影响服务外部地址。所以干脆不用自带暴露地址的方式，而是自己手动写一个service。</li><li>shardPodSpec, configSrvPodSpec中可以指定cpu, memory和persistent volume的大小；mongosPodSpec由于仅可以指定cpu和memory。此外，还可以在同级使用<code>cpuRequests</code>和<code>memoryRequests</code>设置最小请求值，如果不用这两个参数，默认与前面的最大值一样。参考 [MongoDB Database Resource Specification](
+<a href=https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/ title=https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/ rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/
+<i class="fa fa-external-link-alt"></i>
+</a>）</li></ol><p>部署完毕之后在Ops Manager中的效果如下，共7个server:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep1servers.png alt="MongoDB Sharded Cluster Step1"></p><h2 id=暴露mongos服务>暴露mongos服务
+<a class=header-anchor href=#%e6%9a%b4%e9%9c%b2mongos%e6%9c%8d%e5%8a%a1></a></h2><p>mongos服务暴露与replica set相同，需要将每个mongos都暴露到公网，让client自主选择连接哪个mongos实例，这一点在transaction执行时更为重要，一个transaction的所有事务必须在同一个mongos上执行。参考
+<a href=/dont-use-load-balancer-in-front-of-mongos/ title=别在mongos前做负载均衡>别在mongos前做负载均衡</a></p><p>直接apply <code>sharddbmongosservice.yaml</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span><span class=lnt id=hl-2-22><a class=lnlinks href=#hl-2-22>22</a>
+</span><span class=lnt id=hl-2-23><a class=lnlinks href=#hl-2-23>23</a>
+</span><span class=lnt id=hl-2-24><a class=lnlinks href=#hl-2-24>24</a>
+</span><span class=lnt id=hl-2-25><a class=lnlinks href=#hl-2-25>25</a>
+</span><span class=lnt id=hl-2-26><a class=lnlinks href=#hl-2-26>26</a>
+</span><span class=lnt id=hl-2-27><a class=lnlinks href=#hl-2-27>27</a>
+</span><span class=lnt id=hl-2-28><a class=lnlinks href=#hl-2-28>28</a>
+</span><span class=lnt id=hl-2-29><a class=lnlinks href=#hl-2-29>29</a>
+</span><span class=lnt id=hl-2-30><a class=lnlinks href=#hl-2-30>30</a>
+</span><span class=lnt id=hl-2-31><a class=lnlinks href=#hl-2-31>31</a>
+</span><span class=lnt id=hl-2-32><a class=lnlinks href=#hl-2-32>32</a>
+</span><span class=lnt id=hl-2-33><a class=lnlinks href=#hl-2-33>33</a>
+</span><span class=lnt id=hl-2-34><a class=lnlinks href=#hl-2-34>34</a>
+</span><span class=lnt id=hl-2-35><a class=lnlinks href=#hl-2-35>35</a>
+</span><span class=lnt id=hl-2-36><a class=lnlinks href=#hl-2-36>36</a>
+</span><span class=lnt id=hl-2-37><a class=lnlinks href=#hl-2-37>37</a>
+</span><span class=lnt id=hl-2-38><a class=lnlinks href=#hl-2-38>38</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Service</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mongos-svc-0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>LoadBalancer</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-mongos-0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Service</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>mongos-svc-1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>LoadBalancer</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>TCP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>targetPort</span><span class=p>:</span><span class=w> </span><span class=m>27017</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>selector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>controller</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-enterprise-operator</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>statefulset.kubernetes.io/pod-name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb-mongos-1</span></span></span></code></pre></td></tr></table></div></div><h2 id=生成server证书>生成server证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90server%e8%af%81%e4%b9%a6></a></h2><p>CA证书生成可以参考：
+<a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书</a></p><h3 id=配置servercnf>配置server.cnf
+<a class=header-anchor href=#%e9%85%8d%e7%bd%aeservercnf></a></h3><p>根据前面的介绍可知我们共有2*3=6个shard server，2个mongos server和3个config server，共11个server。</p><p><code>server.cnf</code>中<code>[ alt_nams ]</code>字段要把所有server的私域地址加上：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>sharddb-mongos0.com
+</span></span><span class=line><span class=cl>sharddb-mongos1.com
+</span></span><span class=line><span class=cl>sharddb-0-0.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-0-1.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-0-2.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-1-0.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-1-1.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-1-2.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-config-0.sharddb-cs.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-config-1.sharddb-cs.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-config-2.sharddb-cs.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>sharddb-mongos-1.sharddb-svc.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>其中前两个是mongos的域名，其余的11个是各server的内网地址。为了省事，可以把上面13个地址用通配符写成：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = sharddb-mongos0.com
+</span></span><span class=line><span class=cl>DNS.2 = sharddb-mongos1.com
+</span></span><span class=line><span class=cl>DNS.3 = *.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>DNS.4 = *.sharddb-cs.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>DNS.5 = *.sharddb-svc.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>注意不能写成简写成如下形式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = sharddb-mongos0.com
+</span></span><span class=line><span class=cl>DNS.2 = sharddb-mongos1.com
+</span></span><span class=line><span class=cl>DNS.3 = *.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>通配符地址只能作用于一级，参考：
+<a href=https://www.globalsign.com/en/blog/top-ssl-certificate-errors-and-solutions title="# Common SSL Certificate Errors and How to Fix Them" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Common SSL Certificate Errors and How to Fix Them
+<i class="fa fa-external-link-alt"></i></a></p><blockquote><p>Subdomain SANs are applicable to all host names extending the Common Name by one level. For example:
+support.domain.com could be a Subdomain SAN for a certificate with the Common Name domain.com
+advanced.support.domain.com could NOT be covered by a Subdomain SAN in a certificate issued to domain.com, as it is not a direct subdomain of domain.com</p></blockquote><p><code>server.cnf</code>最终配置如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25>25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26>26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27>27</a>
+</span><span class=lnt id=hl-6-28><a class=lnlinks href=#hl-6-28>28</a>
+</span><span class=lnt id=hl-6-29><a class=lnlinks href=#hl-6-29>29</a>
+</span><span class=lnt id=hl-6-30><a class=lnlinks href=#hl-6-30>30</a>
+</span><span class=lnt id=hl-6-31><a class=lnlinks href=#hl-6-31>31</a>
+</span><span class=lnt id=hl-6-32><a class=lnlinks href=#hl-6-32>32</a>
+</span><span class=lnt id=hl-6-33><a class=lnlinks href=#hl-6-33>33</a>
+</span><span class=lnt id=hl-6-34><a class=lnlinks href=#hl-6-34>34</a>
+</span><span class=lnt id=hl-6-35><a class=lnlinks href=#hl-6-35>35</a>
+</span><span class=lnt id=hl-6-36><a class=lnlinks href=#hl-6-36>36</a>
+</span><span class=lnt id=hl-6-37><a class=lnlinks href=#hl-6-37>37</a>
+</span><span class=lnt id=hl-6-38><a class=lnlinks href=#hl-6-38>38</a>
+</span><span class=lnt id=hl-6-39><a class=lnlinks href=#hl-6-39>39</a>
+</span><span class=lnt id=hl-6-40><a class=lnlinks href=#hl-6-40>40</a>
+</span><span class=lnt id=hl-6-41><a class=lnlinks href=#hl-6-41>41</a>
+</span><span class=lnt id=hl-6-42><a class=lnlinks href=#hl-6-42>42</a>
+</span><span class=lnt id=hl-6-43><a class=lnlinks href=#hl-6-43>43</a>
+</span><span class=lnt id=hl-6-44><a class=lnlinks href=#hl-6-44>44</a>
+</span><span class=lnt id=hl-6-45><a class=lnlinks href=#hl-6-45>45</a>
+</span><span class=lnt id=hl-6-46><a class=lnlinks href=#hl-6-46>46</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ req ]
+</span></span><span class=line><span class=cl>default_bits = 4096
+</span></span><span class=line><span class=cl>default_md = sha256
+</span></span><span class=line><span class=cl>distinguished_name = req_dn
+</span></span><span class=line><span class=cl>req_extensions = v3_req
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_req ]
+</span></span><span class=line><span class=cl>subjectKeyIdentifier  = hash
+</span></span><span class=line><span class=cl>basicConstraints = CA:FALSE
+</span></span><span class=line><span class=cl>keyUsage = critical, digitalSignature, keyEncipherment
+</span></span><span class=line><span class=cl>nsComment = &#34;OpenSSL Generated Certificate for TESTING only.  NOT FOR PRODUCTION USE.&#34;
+</span></span><span class=line><span class=cl>extendedKeyUsage  = serverAuth, clientAuth
+</span></span><span class=line><span class=cl>subjectAltName = @alt_names
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = sharddb-mongos0.com
+</span></span><span class=line><span class=cl>DNS.2 = sharddb-mongos1.com
+</span></span><span class=line><span class=cl>DNS.3 = *.sharddb-sh.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>DNS.4 = *.sharddb-cs.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>DNS.5 = *.sharddb-svc.mongodb.svc.cluster.local
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req_dn ]
+</span></span><span class=line><span class=cl>countryName = Country Name (2 letter code)
+</span></span><span class=line><span class=cl>countryName_default = CN
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>countryName_min = 2
+</span></span><span class=line><span class=cl>countryName_max = 2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>stateOrProvinceName = State or Province Name (full name)
+</span></span><span class=line><span class=cl>stateOrProvinceName_default = Beijing
+</span></span><span class=line><span class=cl>stateOrProvinceName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>localityName = Locality Name (eg, city)
+</span></span><span class=line><span class=cl>localityName_default = Beijing
+</span></span><span class=line><span class=cl>localityName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationName = Organization Name (eg, company)
+</span></span><span class=line><span class=cl>organizationName_default = TestComp
+</span></span><span class=line><span class=cl>organizationName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationalUnitName = Organizational Unit Name (eg, section)
+</span></span><span class=line><span class=cl>organizationalUnitName_default = TestComp
+</span></span><span class=line><span class=cl>organizationalUnitName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commonName = Common Name (eg, YOUR name)
+</span></span><span class=line><span class=cl>commonName_max = 64</span></span></code></pre></td></tr></table></div></div><h3 id=生成证书>生成证书
+<a class=header-anchor href=#%e7%94%9f%e6%88%90%e8%af%81%e4%b9%a6></a></h3><p>用下面四个命令生成私钥<code>server.key</code>，用<code>rootca.key</code>签名，并生成最终证书文件<code>server.pem</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3>3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out server.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>$ openssl req -new -key server.key -out server.csr -config server.cnf
+</span></span><span class=line><span class=cl>$ openssl x509 -sha256 -req -days <span class=m>3650</span> -in server.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out server.crt -extfile server.cnf -extensions v3_req
+</span></span><span class=line><span class=cl>$ cat server.crt server.key &gt; server.pem</span></span></code></pre></td></tr></table></div></div><p>示例输出可以参考：
+<a href=/mongodb-om-self-signed-certificates/ title=openssl生成自签名CA证书和server证书>openssl生成自签名CA证书和server证书
+</a>，此处不再赘述。</p><h3 id=copy-11个server证书>Copy 11个Server证书
+<a class=header-anchor href=#copy-11%e4%b8%aaserver%e8%af%81%e4%b9%a6></a></h3><p>文件名没有扩展名，把<code>server.pem</code>复制11份（rootca除外），命名规则如下：</p><table><thead><tr><th>File</th><th>Save as</th></tr></thead><tbody><tr><td>CA</td><td>ca-pem</td></tr><tr><td>Each shard in your sharded cluster</td><td><code>sharddb-&lt;Y>-&lt;X>-pem</code></td></tr><tr><td>Each member of your config server replica set</td><td><code>sharddb-config-&lt;X>-pem</code></td></tr><tr><td>Each mongos</td><td><code>sharddb-mongos-&lt;X>-pem</code></td></tr></tbody></table><ul><li>Replace <code>&lt;Y></code> with a 0-based number for the sharded cluster.</li><li>Replace <code>&lt;X></code> with the member of a shard or replica set.</li></ul><h2 id=创建证书secret和configmap>创建证书Secret和ConfigMap
+<a class=header-anchor href=#%e5%88%9b%e5%bb%ba%e8%af%81%e4%b9%a6secret%e5%92%8cconfigmap></a></h2><h3 id=创建shards-tls证书>创建Shards TLS证书
+<a class=header-anchor href=#%e5%88%9b%e5%bb%bashards-tls%e8%af%81%e4%b9%a6></a></h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1>1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic sharddb-0-cert --from-file=sharddb-0-0-pem --from-file=sharddb-0-1-pem --from-file=sharddb-0-2-pem
+</span></span><span class=line><span class=cl>$ kubectl create secret generic sharddb-1-cert --from-file=sharddb-1-0-pem --from-file=sharddb-1-1-pem --from-file=sharddb-1-2-pem</span></span></code></pre></td></tr></table></div></div><h3 id=创建configserver-tls证书>创建ConfigServer TLS证书
+<a class=header-anchor href=#%e5%88%9b%e5%bb%baconfigserver-tls%e8%af%81%e4%b9%a6></a></h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic sharddb-config-cert --from-file=sharddb-config-0-pem --from-file=sharddb-config-1-pem --from-file=sharddb-config-2-pem</span></span></code></pre></td></tr></table></div></div><h3 id=创建mongos-tls证书>创建Mongos TLS证书
+<a class=header-anchor href=#%e5%88%9b%e5%bb%bamongos-tls%e8%af%81%e4%b9%a6></a></h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic sharddb-mongos-cert --from-file=sharddb-mongos-0-pem --from-file=sharddb-mongos-1-pem</span></span></code></pre></td></tr></table></div></div><h3 id=创建ca-configmap>创建CA ConfigMap
+<a class=header-anchor href=#%e5%88%9b%e5%bb%baca-configmap></a></h3><p>重命名：<code>rootca.crt -> ca-pem</code>，然后：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>kubectl create configmap custom-ca --from-file=ca-pem</span></span></code></pre></td></tr></table></div></div><h2 id=开启tls>开启TLS
+<a class=header-anchor href=#%e5%bc%80%e5%90%aftls></a></h2><p>可参考：
+<a href=https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/#configure-tls-for-a-sharded-cluster title="# Configure TLS for a Sharded Cluster" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Configure TLS for a Sharded Cluster
+<i class="fa fa-external-link-alt"></i></a></p><p>与步骤1相比，<code>sharddb-step2.yaml</code>仅增加了最后的<code>security</code>段，注意此时<code>mongodsPerShardCount</code>仍为1：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-12-1><a class=lnlinks href=#hl-12-1> 1</a>
+</span><span class=lnt id=hl-12-2><a class=lnlinks href=#hl-12-2> 2</a>
+</span><span class=lnt id=hl-12-3><a class=lnlinks href=#hl-12-3> 3</a>
+</span><span class=lnt id=hl-12-4><a class=lnlinks href=#hl-12-4> 4</a>
+</span><span class=lnt id=hl-12-5><a class=lnlinks href=#hl-12-5> 5</a>
+</span><span class=lnt id=hl-12-6><a class=lnlinks href=#hl-12-6> 6</a>
+</span><span class=lnt id=hl-12-7><a class=lnlinks href=#hl-12-7> 7</a>
+</span><span class=lnt id=hl-12-8><a class=lnlinks href=#hl-12-8> 8</a>
+</span><span class=lnt id=hl-12-9><a class=lnlinks href=#hl-12-9> 9</a>
+</span><span class=lnt id=hl-12-10><a class=lnlinks href=#hl-12-10>10</a>
+</span><span class=lnt id=hl-12-11><a class=lnlinks href=#hl-12-11>11</a>
+</span><span class=lnt id=hl-12-12><a class=lnlinks href=#hl-12-12>12</a>
+</span><span class=lnt id=hl-12-13><a class=lnlinks href=#hl-12-13>13</a>
+</span><span class=lnt id=hl-12-14><a class=lnlinks href=#hl-12-14>14</a>
+</span><span class=lnt id=hl-12-15><a class=lnlinks href=#hl-12-15>15</a>
+</span><span class=lnt id=hl-12-16><a class=lnlinks href=#hl-12-16>16</a>
+</span><span class=lnt id=hl-12-17><a class=lnlinks href=#hl-12-17>17</a>
+</span><span class=lnt id=hl-12-18><a class=lnlinks href=#hl-12-18>18</a>
+</span><span class=lnt id=hl-12-19><a class=lnlinks href=#hl-12-19>19</a>
+</span><span class=lnt id=hl-12-20><a class=lnlinks href=#hl-12-20>20</a>
+</span><span class=lnt id=hl-12-21><a class=lnlinks href=#hl-12-21>21</a>
+</span><span class=lnt id=hl-12-22><a class=lnlinks href=#hl-12-22>22</a>
+</span><span class=lnt id=hl-12-23><a class=lnlinks href=#hl-12-23>23</a>
+</span><span class=lnt id=hl-12-24><a class=lnlinks href=#hl-12-24>24</a>
+</span><span class=lnt id=hl-12-25><a class=lnlinks href=#hl-12-25>25</a>
+</span><span class=lnt id=hl-12-26><a class=lnlinks href=#hl-12-26>26</a>
+</span><span class=lnt id=hl-12-27><a class=lnlinks href=#hl-12-27>27</a>
+</span><span class=lnt id=hl-12-28><a class=lnlinks href=#hl-12-28>28</a>
+</span><span class=lnt id=hl-12-29><a class=lnlinks href=#hl-12-29>29</a>
+</span><span class=lnt id=hl-12-30><a class=lnlinks href=#hl-12-30>30</a>
+</span><span class=lnt id=hl-12-31><a class=lnlinks href=#hl-12-31>31</a>
+</span><span class=lnt id=hl-12-32><a class=lnlinks href=#hl-12-32>32</a>
+</span><span class=lnt id=hl-12-33><a class=lnlinks href=#hl-12-33>33</a>
+</span><span class=lnt id=hl-12-34><a class=lnlinks href=#hl-12-34>34</a>
+</span><span class=lnt id=hl-12-35><a class=lnlinks href=#hl-12-35>35</a>
+</span><span class=lnt id=hl-12-36><a class=lnlinks href=#hl-12-36>36</a>
+</span><span class=lnt id=hl-12-37><a class=lnlinks href=#hl-12-37>37</a>
+</span><span class=lnt id=hl-12-38><a class=lnlinks href=#hl-12-38>38</a>
+</span><span class=lnt id=hl-12-39><a class=lnlinks href=#hl-12-39>39</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongodsPerShardCount</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configServerCount</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ShardedCluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>om-user-credentials</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>exposedExternally</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configSrvPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ca</span><span class=p>:</span><span class=w> </span><span class=l>custom-ca</span></span></span></code></pre></td></tr></table></div></div><p>注意这里<code>mongodsPerShardCount: 1</code>非常关键，如果不为1，在打开TLS时会出现卡死的情况，看起来是Ops Manager的BUG，生成的SSL迁移计划有问题。正常迁移计划是同一replica set的三个server一步步进入到SSL下一状态：<code>disabled -> sslAllowed -> sslPreferred -> sslRequired</code>。而在shard server的三个实例中，其中一个会率先变成requireTLS，导致另外两个实例不不能连接这个server（以为它已经挂了），为保证高可用性自己也就停止继续更新，整个流程卡死。</p><p>应用<code>sharddb-step2.yaml</code>之后即可开启TLS，可以从Ops Manager的servers界面中看到server由configServer到shardServer倒序依次更新。
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbtlsupdating.png alt="MongoDB Sharded Cluster Step2 Updating"></p><p>开启TLS成功的状态：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep2processes.png alt="MongoDB Sharded Cluster Step2 Processes"></p><h2 id=增加shard的mongod实例到多个>增加shard的mongod实例到多个
+<a class=header-anchor href=#%e5%a2%9e%e5%8a%a0shard%e7%9a%84mongod%e5%ae%9e%e4%be%8b%e5%88%b0%e5%a4%9a%e4%b8%aa></a></h2><p>与步骤2相比，<code>sharddb-step3.yaml</code>仅将<code>mongodsPerShardCount</code>改为3：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-13-1><a class=lnlinks href=#hl-13-1> 1</a>
+</span><span class=lnt id=hl-13-2><a class=lnlinks href=#hl-13-2> 2</a>
+</span><span class=lnt id=hl-13-3><a class=lnlinks href=#hl-13-3> 3</a>
+</span><span class=lnt id=hl-13-4><a class=lnlinks href=#hl-13-4> 4</a>
+</span><span class=lnt id=hl-13-5><a class=lnlinks href=#hl-13-5> 5</a>
+</span><span class=lnt id=hl-13-6><a class=lnlinks href=#hl-13-6> 6</a>
+</span><span class=lnt id=hl-13-7><a class=lnlinks href=#hl-13-7> 7</a>
+</span><span class=lnt id=hl-13-8><a class=lnlinks href=#hl-13-8> 8</a>
+</span><span class=lnt id=hl-13-9><a class=lnlinks href=#hl-13-9> 9</a>
+</span><span class=lnt id=hl-13-10><a class=lnlinks href=#hl-13-10>10</a>
+</span><span class=lnt id=hl-13-11><a class=lnlinks href=#hl-13-11>11</a>
+</span><span class=lnt id=hl-13-12><a class=lnlinks href=#hl-13-12>12</a>
+</span><span class=lnt id=hl-13-13><a class=lnlinks href=#hl-13-13>13</a>
+</span><span class=lnt id=hl-13-14><a class=lnlinks href=#hl-13-14>14</a>
+</span><span class=lnt id=hl-13-15><a class=lnlinks href=#hl-13-15>15</a>
+</span><span class=lnt id=hl-13-16><a class=lnlinks href=#hl-13-16>16</a>
+</span><span class=lnt id=hl-13-17><a class=lnlinks href=#hl-13-17>17</a>
+</span><span class=lnt id=hl-13-18><a class=lnlinks href=#hl-13-18>18</a>
+</span><span class=lnt id=hl-13-19><a class=lnlinks href=#hl-13-19>19</a>
+</span><span class=lnt id=hl-13-20><a class=lnlinks href=#hl-13-20>20</a>
+</span><span class=lnt id=hl-13-21><a class=lnlinks href=#hl-13-21>21</a>
+</span><span class=lnt id=hl-13-22><a class=lnlinks href=#hl-13-22>22</a>
+</span><span class=lnt id=hl-13-23><a class=lnlinks href=#hl-13-23>23</a>
+</span><span class=lnt id=hl-13-24><a class=lnlinks href=#hl-13-24>24</a>
+</span><span class=lnt id=hl-13-25><a class=lnlinks href=#hl-13-25>25</a>
+</span><span class=lnt id=hl-13-26><a class=lnlinks href=#hl-13-26>26</a>
+</span><span class=lnt id=hl-13-27><a class=lnlinks href=#hl-13-27>27</a>
+</span><span class=lnt id=hl-13-28><a class=lnlinks href=#hl-13-28>28</a>
+</span><span class=lnt id=hl-13-29><a class=lnlinks href=#hl-13-29>29</a>
+</span><span class=lnt id=hl-13-30><a class=lnlinks href=#hl-13-30>30</a>
+</span><span class=lnt id=hl-13-31><a class=lnlinks href=#hl-13-31>31</a>
+</span><span class=lnt id=hl-13-32><a class=lnlinks href=#hl-13-32>32</a>
+</span><span class=lnt id=hl-13-33><a class=lnlinks href=#hl-13-33>33</a>
+</span><span class=lnt id=hl-13-34><a class=lnlinks href=#hl-13-34>34</a>
+</span><span class=lnt id=hl-13-35><a class=lnlinks href=#hl-13-35>35</a>
+</span><span class=lnt id=hl-13-36><a class=lnlinks href=#hl-13-36>36</a>
+</span><span class=lnt id=hl-13-37><a class=lnlinks href=#hl-13-37>37</a>
+</span><span class=lnt id=hl-13-38><a class=lnlinks href=#hl-13-38>38</a>
+</span><span class=lnt id=hl-13-39><a class=lnlinks href=#hl-13-39>39</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>sharddb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongodsPerShardCount</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosCount</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configServerCount</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ShardedCluster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>om-user-credentials</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>exposedExternally</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>shardPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>configSrvPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>persistence</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>single</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>storage</span><span class=p>:</span><span class=w> </span><span class=l>5Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mongosPodSpec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=l>1Gi</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ca</span><span class=p>:</span><span class=w> </span><span class=l>custom-ca</span></span></span></code></pre></td></tr></table></div></div><p>应用后最终效果，共11个server:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3servers.png alt="MongoDB Sharded Cluster Step3 Servers"></p><p>最终更新成功的状态(界面开启AUTH)：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/sharddbstep3processes.png alt="MongoDB Sharded Cluster Deploy Success"></p><h1 id=常见错误及处理>常见错误及处理
+<a class=header-anchor href=#%e5%b8%b8%e8%a7%81%e9%94%99%e8%af%af%e5%8f%8a%e5%a4%84%e7%90%86></a></h1><h2 id=证书无效>证书无效
+<a class=header-anchor href=#%e8%af%81%e4%b9%a6%e6%97%a0%e6%95%88></a></h2><p>如果证书配置的SAN不正确，如通配符地址无效，在打开TLS后，Cluster更新时会出现如下错误：</p><blockquote><p>Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>Failed to compute states : <sharddb-0-0>[06:36:25.568] Error calling ComputeState : <sharddb-0-0>[06:36:25.568] Error getting fickle state for current state : <sharddb-0-0>[06:36:25.568] Error checking if mongos = sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) is up : <sharddb-0-0>[06:36:25.568] Error executing WithClientFor() for cp=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : <sharddb-0-0>[06:36:25.568] Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>Failed to planAndExecute : <sharddb-0-0>[06:36:25.568] Failed to compute states : <sharddb-0-0>[06:36:25.568] Error calling ComputeState : <sharddb-0-0>[06:36:25.568] Error getting fickle state for current state : <sharddb-0-0>[06:36:25.568] Error checking if mongos = sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) is up : <sharddb-0-0>[06:36:25.568] Error executing WithClientFor() for cp=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : <sharddb-0-0>[06:36:25.568] Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>Error checking if mongos = sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) is up : <sharddb-0-0>[06:36:25.568] Error executing WithClientFor() for cp=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : <sharddb-0-0>[06:36:25.568] Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>Error getting fickle state for current state : <sharddb-0-0>[06:36:25.568] Error checking if mongos = sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) is up : <sharddb-0-0>[06:36:25.568] Error executing WithClientFor() for cp=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : <sharddb-0-0>[06:36:25.568] Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>Error calling ComputeState : <sharddb-0-0>[06:36:25.568] Error getting fickle state for current state : <sharddb-0-0>[06:36:25.568] Error checking if mongos = sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) is up : <sharddb-0-0>[06:36:25.568] Error executing WithClientFor() for cp=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : <sharddb-0-0>[06:36:25.568] Error checking out client (0x0) for connParam=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [06:36:25.568] Error dialing to connParams=sharddb-mongos-0.sharddb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 1 identities, but none of them worked. They were ()</p><p>mongod cannot perform Global Update Action because configSvr process = (sharddb-config-2.sharddb-cs.mongodb.svc.cluster.local:27017) is not healthy and done</p></blockquote><p>与ReplicaSet类似，这个问题也是由于证书问题导致的。检查<code>server.cnf</code>中<code>[alt_names]</code>段，看是否配置正确。修正后重新生成11个server证书，并重新部署。</p><h2 id=mongodspershardcount为3时打开tls>mongodsPerShardCount为3时打开TLS
+<a class=header-anchor href=#mongodspershardcount%e4%b8%ba3%e6%97%b6%e6%89%93%e5%bc%80tls></a></h2><p>如果将三步变为两步，即创建cluster时就设定<code>mongodsPerShardCount</code>为3，在更新TLS时就会出现卡死的情况：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updateplanerror.png alt="MongoDB Sharded Cluster SSL Update Plan Error">
+具体查一下server上的log会发现，就是前面提到的Ops Manager生成的SSL迁移计划有问题。迁移计划必须三个server一步步来：<code>disabled -> sslAllowed -> sslPreferred -> sslRequired</code>。任何一个server步子迈大了，更新就不能继续了。</p><p>看一个卡住的shard server的log:</p><blockquote><p>{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:10.024] [.info] [cm/director/director.go:executePlan:866] <sharddb-0-0>[09:19:10.024] Running step &lsquo;WaitSSLUpdate&rsquo; as part of move &lsquo;UpgradeSSLModeFromAllowedToPrefered&rsquo;"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:10.024] [.info] [cm/director/director.go:tracef:771] <sharddb-0-0>[09:19:10.024] Precondition of &lsquo;WaitSSLUpdate&rsquo; applies because &ldquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:&rdquo;[&lsquo;currentState.Up&rsquo; = true]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:10.024] [.info] [cm/director/director.go:planAndExecute:534] <sharddb-0-0>[09:19:10.024] Step=WaitSSLUpdate as part of Move=UpgradeSSLModeFromAllowedToPrefered in plan failed : ."}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" Recomputing a plan&mldr;"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:10.132] [.info] [main/components/agent.go:LoadClusterConfig:197] [09:19:10.132] clusterConfig unchanged"}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:19:11.078+0000 I NETWORK [listener] connection accepted from 10.240.7.82:40502 #76924 (42 connections now open)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:19:11.088+0000 W NETWORK [conn76924] no SSL certificate provided by peer&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:11.142] [.info] [main/components/agent.go:LoadClusterConfig:197] [09:19:11.142] clusterConfig unchanged"}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:19:11.151+0000 I CONNPOOL [Replication] Connecting to sharddb-0-2.sharddb-sh.mongodb.svc.cluster.local:27017&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-stdout&rdquo;,&ldquo;contents&rdquo;:"<sharddb-0-0> [09:19:11.158] &mldr; process has a plan : UpgradeSSLModeFromAllowedToPrefered,UpgradeSSLModeFromPreferedToRequired"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-stdout&rdquo;,&ldquo;contents&rdquo;:"<sharddb-0-0> [09:19:11.158] Running step &lsquo;CheckSSLAllowedAndWantSSLPrefered&rsquo; as part of move &lsquo;UpgradeSSLModeFromAllowedToPrefered&rsquo;"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:11.158] [.info] [cm/director/director.go:computePlan:269] <sharddb-0-0>[09:19:11.158] &mldr; process has a plan : UpgradeSSLModeFromAllowedToPrefered,UpgradeSSLModeFromPreferedToRequired"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-stdout&rdquo;,&ldquo;contents&rdquo;:"<sharddb-0-0> [09:19:11.158] Running step &lsquo;WaitSSLUpdate&rsquo; as part of move &lsquo;UpgradeSSLModeFromAllowedToPrefered&rsquo;"}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:19:11.161+0000 I REPL_HB [replexec-8] Heartbeat to sharddb-0-2.sharddb-sh.mongodb.svc.cluster.local:27017 failed after 2 retries, response status: HostUnreachable: Connection closed by peer&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:11.158] [.info] [cm/director/director.go:executePlan:866] <sharddb-0-0>[09:19:11.158] Running step &lsquo;CheckSSLAllowedAndWantSSLPrefered&rsquo; as part of move &lsquo;UpgradeSSLModeFromAllowedToPrefered&rsquo;"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[2020/12/26 09:19:11.158] [.info] [cm/director/director.go:tracef:771] <sharddb-0-0>[09:19:11.158] Precondition of &lsquo;CheckSSLAllowedAndWantSSLPrefered&rsquo; applies because &ldquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"[All the following are true: &ldquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:&rdquo; [&lsquo;currentState.Up&rsquo; = true]&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [All the following are true: &ldquo;}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:&rdquo; [All BOUNCE_RESTART process args are equivalent :"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [&lt;&lsquo;storage.engine&rsquo; is equal: absent in desiredArgs=map[dbPath:/data], and default value=wiredTiger in currentArgs=map[dbPath:/data engine:wiredTiger]>]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [&lt;&lsquo;processManagement&rsquo; is equal: absent in desiredArgs=map[net:map[bindIp:0.0.0.0 port:27017 ssl:map[CAFile:/mongodb-automation/ca.pem PEMKeyFile:/mongodb-automation/server.pem allowConnectionsWithoutCertificates:true mode:requireSSL]] replication:map[replSetName:sharddb-0] sharding:map[clusterRole:shardsvr] storage:map[dbPath:/data] systemLog:map[destination:file path:/var/log/mongodb-mms-automation/mongodb.log]], and default value=map[] in currentArgs=map[net:map[bindIp:0.0.0.0 port:27017 ssl:map[CAFile:/mongodb-automation/ca.pem PEMKeyFile:/mongodb-automation/server.pem allowConnectionsWithoutCertificates:true mode:allowSSL]] processManagement:map[] replication:map[replSetName:sharddb-0] sharding:map[clusterRole:shardsvr] storage:map[dbPath:/data engine:wiredTiger] systemLog:map[destination:file path:/var/log/mongodb-mms-automation/mongodb.log]]>]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" ]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [<curauthinfo is nil>]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" ]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [&lsquo;SSL mode&rsquo; = allowSSL]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:" [&lsquo;SSL mode&rsquo; = requireSSL]"}
+{&ldquo;logType&rdquo;:&ldquo;automation-agent-verbose&rdquo;,&ldquo;contents&rdquo;:"]"}</p></blockquote><p>再来看看已经变成<code>Goal State</code>的一个shard server的log:</p><blockquote><p>{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.679+0000 I NETWORK [conn348143] end connection 10.240.7.120:51662 (19 connections now open)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.728+0000 I NETWORK [listener] connection accepted from 10.240.5.150:57414 #348144 (20 connections now open)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.728+0000 I NETWORK [conn348144] Error receiving request from client: SSLHandshakeFailed: The server is configured to only allow SSL connections. Ending connection from 10.240.5.150:57414 (connection id: 348144)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.728+0000 I NETWORK [conn348144] end connection 10.240.5.150:57414 (19 connections now open)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.733+0000 I NETWORK [listener] connection accepted from 10.240.5.150:57416 #348145 (20 connections now open)&rdquo;}
+{&ldquo;logType&rdquo;:&ldquo;mongodb&rdquo;,&ldquo;contents&rdquo;:&ldquo;2020-12-26T09:33:57.733+0000 I NETWORK [conn348145] Error receiving request from client: SSLHandshakeFailed: The server is configured to only allow SSL connections. Ending connection from 10.240.5.150:57416 (connection id: 348145)&rdquo;}</p></blockquote><p>可见就是<code>Goal State</code>的shard server更新太快变成<code>requireSSL</code>导致另外两个server不能连接的问题。没有找到好的解决办法，能想到的只是通过文中先把每个shard变为1个实例，打开TLS之后再更新为3个。这也是用MongoDB Ops Manager部署Sharded Cluster最坑的地方。</p><h1 id=删除sharded-cluster>删除Sharded Cluster
+<a class=header-anchor href=#%e5%88%a0%e9%99%a4sharded-cluster></a></h1><p>中间任何一步出错，都需要使用下面命令将sharddb删除：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-14-1><a class=lnlinks href=#hl-14-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>kubectl delete mdb sharddb</span></span></code></pre></td></tr></table></div></div><p>注意sharddb中的shardServer和configServer都是有状态的，即它们都外接了PV，上面这条命令并不会在Kubernetes中释放PV，下次重建后可能挂载的还是老的PV，可能会出现一些意想不到的错误(如删除前是3个server，重建后只有1个server，但它却还在试图与另外两个server通信出现错误)。因此，除了执行上述命令外，还需要在Kubernetes集群中将PV删除，从而将当前错误状态彻底清除。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/mongodb/>MongoDB
+</a><a href=/tags/kubernetes/>Kubernetes
+</a><a href=/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/tags/tls/>TLS
+</a><a href=/tags/sharding/>Sharding</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/dont-use-load-balancer-in-front-of-mongos/ rel=next title=别在mongos前做负载均衡><i class="fa fa-chevron-left"></i> 别在mongos前做负载均衡</a></div><div class="post-nav-prev post-nav-item"><a href=/mongodb-om-tls-auth/ rel=prev title=Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/mongodb-om-create-sharded-cluster/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-create-sharded-cluster","permalink":"https://finisky.github.io/mongodb-om-create-sharded-cluster/","title":"部署Kubernetes MongoDB Sharded Cluster","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

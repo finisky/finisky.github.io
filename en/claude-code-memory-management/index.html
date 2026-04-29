@@ -1,0 +1,995 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="A Deep Dive into Claude Code's Memory Management"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="NLP,LLM Agent,LLM,Product"><meta property="og:type" content="article"><meta property="og:title" content="A Deep Dive into Claude Code's Memory Management"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/claude-code-memory-management/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2026-04-02 00:03:17 +0800 CST"><meta property="article:modified_time" content="2026-04-02 00:03:17 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/claude-code-memory-management/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/claude-code-memory-management/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>A Deep Dive into Claude Code's Memory Management - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><ul><li><a href=#global-architecture-a-three-layer-memory-system>Global Architecture: A Three-Layer Memory System</a></li><li><a href=#layer-1-context-window-management--a-three-level-compaction-strategy>Layer 1: Context Window Management — A Three-Level Compaction Strategy</a><ul><li><a href=#11-when-does-compaction-trigger>1.1 When Does Compaction Trigger?</a></li><li><a href=#12-three-level-compaction-execution-order>1.2 Three-Level Compaction Execution Order</a></li><li><a href=#13-level-1-session-memory-compact--zero-cost-compaction>1.3 Level 1: Session Memory Compact — Zero-Cost Compaction</a></li><li><a href=#14-level-2-full-compact--traditional-api-compaction>1.4 Level 2: Full Compact — Traditional API Compaction</a></li><li><a href=#15-level-3-ptl-retry--the-last-safety-net>1.5 Level 3: PTL Retry — The Last Safety Net</a></li><li><a href=#16-state-restoration-after-compaction>1.6 State Restoration After Compaction</a></li></ul></li><li><a href=#layer-2-session-memory--the-background-continuous-summarization-engine>Layer 2: Session Memory — The Background Continuous Summarization Engine</a><ul><li><a href=#21-core-mechanism>2.1 Core Mechanism</a></li><li><a href=#22-trigger-conditions-dual-threshold-gating>2.2 Trigger Conditions: Dual-Threshold Gating</a></li><li><a href=#23-summary-file-structure>2.3 Summary File Structure</a></li><li><a href=#24-update-method-fork-agent-with-permission-isolation>2.4 Update Method: Fork Agent with Permission Isolation</a></li><li><a href=#25-user-customization>2.5 User Customization</a></li></ul></li><li><a href=#layer-3-persistent-memory-memdir--cross-session-long-term-memory>Layer 3: Persistent Memory (memdir) — Cross-Session Long-Term Memory</a><ul><li><a href=#31-architecture>3.1 Architecture</a></li><li><a href=#32-four-memory-types>3.2 Four Memory Types</a></li><li><a href=#33-index-file-constraints>3.3 Index File Constraints</a></li><li><a href=#34-intelligent-memory-retrieval>3.4 Intelligent Memory Retrieval</a></li><li><a href=#35-background-memory-extraction>3.5 Background Memory Extraction</a></li></ul></li><li><a href=#how-the-three-layers-work-together>How the Three Layers Work Together</a></li><li><a href=#engineering-highlights>Engineering Highlights</a><ul><li><a href=#prompt-cache-protection>Prompt Cache Protection</a></li><li><a href=#image-and-media-handling>Image and Media Handling</a></li><li><a href=#session-metadata-persistence>Session Metadata Persistence</a></li></ul></li><li><a href=#summary>Summary</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/why-agents-make-us-more-tired/>Agents Are Supposed to Help, So Why Are We More Exhausted?</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/dive-into-claude-code/>Claude Code: 1.6% AI, 98.4% Scaffolding</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/prompt-context-harness-engineering/>Three Evolutions of Agent Engineering</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/openclaw-vs-claude-code-agent-arch/>Context Management in Claude Code vs OpenClaw</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/foundation-model-plateau-application-era/>Foundation Models Plateau, Applications Take Off</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/claude-code-memory-management/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="A Deep Dive into Claude Code's Memory Management"><meta itemprop=description content="Developers who&rsquo;ve used Claude Code probably share this experience: even in an ultra-long conversation where dozens of files have been modified, it seems to always &ldquo;remember&rdquo; what it did before. Even more remarkably, if you told it &ldquo;I prefer bun over npm&rdquo; in a previous session, it automatically follows that preference next time.
+Behind this is a sophisticated memory management system. Let&rsquo;s tear apart Claude Code&rsquo;s memory mechanism layer by layer."></span><header class=post-header><h1 class=post-title itemprop="name headline">A Deep Dive into Claude Code's Memory Management</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2026-04-02 00:03:17 +08:00" itemprop="dateCreated datePublished" datetime="2026-04-02 00:03:17 +0800 CST">2026-04-02
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/nlp/ itemprop=url rel=index><span itemprop=name>NLP</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>19min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/claude-code-memory-management/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/claude-code-memory-management/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>Developers who&rsquo;ve used Claude Code probably share this experience: even in an ultra-long conversation where dozens of files have been modified, it seems to always &ldquo;remember&rdquo; what it did before. Even more remarkably, if you told it &ldquo;I prefer bun over npm&rdquo; in a previous session, it automatically follows that preference next time.</p><p>Behind this is a sophisticated memory management system. Let&rsquo;s tear apart Claude Code&rsquo;s memory mechanism layer by layer.</p><a id=more></a><h2 id=global-architecture-a-three-layer-memory-system>Global Architecture: A Three-Layer Memory System
+<a class=header-anchor href=#global-architecture-a-three-layer-memory-system></a></h2><p>Claude Code&rsquo;s memory management can be compared to the human memory system:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1> 1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2> 2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3> 3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4> 4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5> 5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6> 6</a>
+</span><span class=lnt id=hl-0-7><a class=lnlinks href=#hl-0-7> 7</a>
+</span><span class=lnt id=hl-0-8><a class=lnlinks href=#hl-0-8> 8</a>
+</span><span class=lnt id=hl-0-9><a class=lnlinks href=#hl-0-9> 9</a>
+</span><span class=lnt id=hl-0-10><a class=lnlinks href=#hl-0-10>10</a>
+</span><span class=lnt id=hl-0-11><a class=lnlinks href=#hl-0-11>11</a>
+</span><span class=lnt id=hl-0-12><a class=lnlinks href=#hl-0-12>12</a>
+</span><span class=lnt id=hl-0-13><a class=lnlinks href=#hl-0-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+----------------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>          <span class=n>Persistent</span> <span class=n>Memory</span> <span class=p>(</span><span class=n>Long</span><span class=o>-</span><span class=n>term</span> <span class=n>Memory</span><span class=p>)</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>memdir</span><span class=p>:</span> <span class=n>MEMORY</span><span class=o>.</span><span class=n>md</span> <span class=n>index</span> <span class=o>+</span> <span class=n>topic</span> <span class=n>files</span>                   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Persisted</span> <span class=n>across</span> <span class=n>sessions</span>                               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>          <span class=n>Session</span> <span class=n>Memory</span> <span class=p>(</span><span class=n>Working</span> <span class=n>Memory</span><span class=p>)</span>                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Background</span> <span class=n>sub</span><span class=o>-</span><span class=n>agent</span> <span class=n>maintains</span> <span class=n>Markdown</span> <span class=n>summary</span>         <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Valid</span> <span class=n>within</span> <span class=n>a</span> <span class=n>single</span> <span class=n>session</span>                           <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>          <span class=n>Context</span> <span class=n>Window</span> <span class=p>(</span><span class=n>Short</span><span class=o>-</span><span class=n>term</span> <span class=n>Memory</span><span class=p>)</span>              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Raw</span> <span class=n>messages</span> <span class=o>+</span> <span class=k>tool</span> <span class=n>call</span> <span class=n>results</span> <span class=ow>in</span> <span class=n>current</span> <span class=n>conversation</span><span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Immediately</span> <span class=n>available</span>                                   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>Let&rsquo;s examine each layer.</p><hr><h2 id=layer-1-context-window-management--a-three-level-compaction-strategy>Layer 1: Context Window Management — A Three-Level Compaction Strategy
+<a class=header-anchor href=#layer-1-context-window-management--a-three-level-compaction-strategy></a></h2><h3 id=11-when-does-compaction-trigger>1.1 When Does Compaction Trigger?
+<a class=header-anchor href=#11-when-does-compaction-trigger></a></h3><p>The auto-compaction trigger logic, expressed in pseudocode:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>BUFFER_TOKENS</span> <span class=o>=</span> <span class=mi>13_000</span>  <span class=c1># Reserved buffer</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>get_auto_compact_threshold</span><span class=p>(</span><span class=n>model</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Calculate auto-compact threshold ≈ ~93</span><span class=si>% o</span><span class=s2>f effective window&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>effective_window</span> <span class=o>=</span> <span class=n>get_context_window</span><span class=p>(</span><span class=n>model</span><span class=p>)</span> <span class=o>-</span> <span class=n>MAX_OUTPUT_TOKENS</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>effective_window</span> <span class=o>-</span> <span class=n>BUFFER_TOKENS</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>should_auto_compact</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>model</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>token_count</span> <span class=o>=</span> <span class=n>estimate_token_count</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>threshold</span> <span class=o>=</span> <span class=n>get_auto_compact_threshold</span><span class=p>(</span><span class=n>model</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>token_count</span> <span class=o>&gt;=</span> <span class=n>threshold</span></span></span></code></pre></td></tr></table></div></div><p>Using a 200K context window as an example, compaction kicks in at roughly <strong>93%</strong> utilization.</p><p>There&rsquo;s also a <strong>circuit breaker</strong> — after 3 consecutive failures, it stops retrying to prevent wasting API calls in a &ldquo;death loop&rdquo;:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>MAX_FAILURES</span> <span class=o>=</span> <span class=mi>3</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>auto_compact_if_needed</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>tracking</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Circuit breaker: too many consecutive failures, give up</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>tracking</span><span class=o>.</span><span class=n>consecutive_failures</span> <span class=o>&gt;=</span> <span class=n>MAX_FAILURES</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>NOT_COMPACTED</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=ow>not</span> <span class=n>should_auto_compact</span><span class=p>(</span><span class=n>messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>NOT_COMPACTED</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># ... execute compaction</span></span></span></code></pre></td></tr></table></div></div><h3 id=12-three-level-compaction-execution-order>1.2 Three-Level Compaction Execution Order
+<a class=header-anchor href=#12-three-level-compaction-execution-order></a></h3><p>When compaction triggers, the system tries three strategies in priority order:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span><span class=lnt id=hl-3-18><a class=lnlinks href=#hl-3-18>18</a>
+</span><span class=lnt id=hl-3-19><a class=lnlinks href=#hl-3-19>19</a>
+</span><span class=lnt id=hl-3-20><a class=lnlinks href=#hl-3-20>20</a>
+</span><span class=lnt id=hl-3-21><a class=lnlinks href=#hl-3-21>21</a>
+</span><span class=lnt id=hl-3-22><a class=lnlinks href=#hl-3-22>22</a>
+</span><span class=lnt id=hl-3-23><a class=lnlinks href=#hl-3-23>23</a>
+</span><span class=lnt id=hl-3-24><a class=lnlinks href=#hl-3-24>24</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>            +--------------------------+
+</span></span><span class=line><span class=cl>            |  Context reaching ~93%   |
+</span></span><span class=line><span class=cl>            +------------+-------------+
+</span></span><span class=line><span class=cl>                         |
+</span></span><span class=line><span class=cl>                         v
+</span></span><span class=line><span class=cl>          +---------------------------------+
+</span></span><span class=line><span class=cl>          |  Level 1: SM Compact            |
+</span></span><span class=line><span class=cl>          |  Replace old msgs with          |  &lt;-- Zero API calls
+</span></span><span class=line><span class=cl>          |  pre-built summary              |
+</span></span><span class=line><span class=cl>          +------+----------------+---------+
+</span></span><span class=line><span class=cl>            OK   |                | Fail / N/A
+</span></span><span class=line><span class=cl>                 v                v
+</span></span><span class=line><span class=cl>             return   +---------------------------------+
+</span></span><span class=line><span class=cl>                      |  Level 2: Full Compact          |
+</span></span><span class=line><span class=cl>                      |  Call API to generate           |  &lt;-- 1 API call
+</span></span><span class=line><span class=cl>                      |  structured summary             |
+</span></span><span class=line><span class=cl>                      +------+----------------+---------+
+</span></span><span class=line><span class=cl>                        OK   |                | prompt-too-long
+</span></span><span class=line><span class=cl>                             v                v
+</span></span><span class=line><span class=cl>                         return   +---------------------------------+
+</span></span><span class=line><span class=cl>                                  |  Level 3: PTL Retry             |
+</span></span><span class=line><span class=cl>                                  |  Truncate oldest messages,      |  &lt;-- Max 3 retries
+</span></span><span class=line><span class=cl>                                  |  retry compaction               |
+</span></span><span class=line><span class=cl>                                  +---------------------------------+</span></span></code></pre></td></tr></table></div></div><p>The overall flow in pseudocode:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span><span class=lnt id=hl-4-4><a class=lnlinks href=#hl-4-4>4</a>
+</span><span class=lnt id=hl-4-5><a class=lnlinks href=#hl-4-5>5</a>
+</span><span class=lnt id=hl-4-6><a class=lnlinks href=#hl-4-6>6</a>
+</span><span class=lnt id=hl-4-7><a class=lnlinks href=#hl-4-7>7</a>
+</span><span class=lnt id=hl-4-8><a class=lnlinks href=#hl-4-8>8</a>
+</span><span class=lnt id=hl-4-9><a class=lnlinks href=#hl-4-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>auto_compact_if_needed</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>context</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># === Try Session Memory compaction first (zero cost) ===</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>try_session_memory_compaction</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>result</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>result</span>  <span class=c1># Success! No API calls made</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># === Fall back to traditional API compaction ===</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>full_compact_conversation</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>context</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>result</span></span></span></code></pre></td></tr></table></div></div><hr><h3 id=13-level-1-session-memory-compact--zero-cost-compaction>1.3 Level 1: Session Memory Compact — Zero-Cost Compaction
+<a class=header-anchor href=#13-level-1-session-memory-compact--zero-cost-compaction></a></h3><p>This is the most elegant compaction strategy. When a Session Memory file is available, it <strong>directly replaces old conversation history without any additional API calls</strong>.</p><p>The message retention policy is controlled by three parameters:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>SM_COMPACT_CONFIG</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;min_tokens&#34;</span><span class=p>:</span> <span class=mi>10_000</span><span class=p>,</span>           <span class=c1># Keep at least 10K tokens of raw messages</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;min_text_messages&#34;</span><span class=p>:</span> <span class=mi>5</span><span class=p>,</span>          <span class=c1># Keep at least 5 text-containing messages</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;max_tokens&#34;</span><span class=p>:</span> <span class=mi>40_000</span><span class=p>,</span>           <span class=c1># Keep at most 40K tokens (hard cap)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Before and after comparison:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Before (context window almost full):
+</span></span><span class=line><span class=cl>+-----------------------------------------------------+
+</span></span><span class=line><span class=cl>| msg1 | msg2 | ... | msg50 | msg51 | ... | msg80     |
+</span></span><span class=line><span class=cl>|&lt;-- covered by SM summary --&gt;|&lt;-- recent messages --&gt;|
+</span></span><span class=line><span class=cl>+-----------------------------------------------------+
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                       | SM Compact
+</span></span><span class=line><span class=cl>                       v
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>After (lots of free space):
+</span></span><span class=line><span class=cl>+-----------------------------------------------------+
+</span></span><span class=line><span class=cl>| [boundary] | SM summary  | msg51 | ... | msg80      |
+</span></span><span class=line><span class=cl>|            | (~12K toks) |&lt;-- kept raw messages --&gt; |
+</span></span><span class=line><span class=cl>|            |             |   (10K ~ 40K tokens)     |
+</span></span><span class=line><span class=cl>| &lt;----- used -----------&gt; |&lt;---- free space --------&gt;|
+</span></span><span class=line><span class=cl>+-----------------------------------------------------+</span></span></code></pre></td></tr></table></div></div><p>The core algorithm for deciding which messages to keep:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1> 1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2> 2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3> 3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4> 4</a>
+</span><span class=lnt id=hl-7-5><a class=lnlinks href=#hl-7-5> 5</a>
+</span><span class=lnt id=hl-7-6><a class=lnlinks href=#hl-7-6> 6</a>
+</span><span class=lnt id=hl-7-7><a class=lnlinks href=#hl-7-7> 7</a>
+</span><span class=lnt id=hl-7-8><a class=lnlinks href=#hl-7-8> 8</a>
+</span><span class=lnt id=hl-7-9><a class=lnlinks href=#hl-7-9> 9</a>
+</span><span class=lnt id=hl-7-10><a class=lnlinks href=#hl-7-10>10</a>
+</span><span class=lnt id=hl-7-11><a class=lnlinks href=#hl-7-11>11</a>
+</span><span class=lnt id=hl-7-12><a class=lnlinks href=#hl-7-12>12</a>
+</span><span class=lnt id=hl-7-13><a class=lnlinks href=#hl-7-13>13</a>
+</span><span class=lnt id=hl-7-14><a class=lnlinks href=#hl-7-14>14</a>
+</span><span class=lnt id=hl-7-15><a class=lnlinks href=#hl-7-15>15</a>
+</span><span class=lnt id=hl-7-16><a class=lnlinks href=#hl-7-16>16</a>
+</span><span class=lnt id=hl-7-17><a class=lnlinks href=#hl-7-17>17</a>
+</span><span class=lnt id=hl-7-18><a class=lnlinks href=#hl-7-18>18</a>
+</span><span class=lnt id=hl-7-19><a class=lnlinks href=#hl-7-19>19</a>
+</span><span class=lnt id=hl-7-20><a class=lnlinks href=#hl-7-20>20</a>
+</span><span class=lnt id=hl-7-21><a class=lnlinks href=#hl-7-21>21</a>
+</span><span class=lnt id=hl-7-22><a class=lnlinks href=#hl-7-22>22</a>
+</span><span class=lnt id=hl-7-23><a class=lnlinks href=#hl-7-23>23</a>
+</span><span class=lnt id=hl-7-24><a class=lnlinks href=#hl-7-24>24</a>
+</span><span class=lnt id=hl-7-25><a class=lnlinks href=#hl-7-25>25</a>
+</span><span class=lnt id=hl-7-26><a class=lnlinks href=#hl-7-26>26</a>
+</span><span class=lnt id=hl-7-27><a class=lnlinks href=#hl-7-27>27</a>
+</span><span class=lnt id=hl-7-28><a class=lnlinks href=#hl-7-28>28</a>
+</span><span class=lnt id=hl-7-29><a class=lnlinks href=#hl-7-29>29</a>
+</span><span class=lnt id=hl-7-30><a class=lnlinks href=#hl-7-30>30</a>
+</span><span class=lnt id=hl-7-31><a class=lnlinks href=#hl-7-31>31</a>
+</span><span class=lnt id=hl-7-32><a class=lnlinks href=#hl-7-32>32</a>
+</span><span class=lnt id=hl-7-33><a class=lnlinks href=#hl-7-33>33</a>
+</span><span class=lnt id=hl-7-34><a class=lnlinks href=#hl-7-34>34</a>
+</span><span class=lnt id=hl-7-35><a class=lnlinks href=#hl-7-35>35</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>calculate_messages_to_keep</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>last_summarized_idx</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Start from the last summarized message, expand backward until conditions are met&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>config</span> <span class=o>=</span> <span class=n>SM_COMPACT_CONFIG</span>
+</span></span><span class=line><span class=cl>    <span class=n>start</span> <span class=o>=</span> <span class=n>last_summarized_idx</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=n>total_tokens</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>    <span class=n>text_msg_count</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># First count what&#39;s already after start</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>messages</span><span class=p>[</span><span class=n>start</span><span class=p>:]:</span>
+</span></span><span class=line><span class=cl>        <span class=n>total_tokens</span> <span class=o>+=</span> <span class=n>estimate_tokens</span><span class=p>(</span><span class=n>msg</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>has_text_content</span><span class=p>(</span><span class=n>msg</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>text_msg_count</span> <span class=o>+=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># If already at hard cap or both minimums satisfied, return</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>total_tokens</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;max_tokens&#34;</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>start</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>total_tokens</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;min_tokens&#34;</span><span class=p>]</span> <span class=ow>and</span> \
+</span></span><span class=line><span class=cl>       <span class=n>text_msg_count</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;min_text_messages&#34;</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>start</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Otherwise expand backward, pulling in more messages</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>start</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>total_tokens</span> <span class=o>+=</span> <span class=n>estimate_tokens</span><span class=p>(</span><span class=n>messages</span><span class=p>[</span><span class=n>i</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>has_text_content</span><span class=p>(</span><span class=n>messages</span><span class=p>[</span><span class=n>i</span><span class=p>]):</span>
+</span></span><span class=line><span class=cl>            <span class=n>text_msg_count</span> <span class=o>+=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>        <span class=n>start</span> <span class=o>=</span> <span class=n>i</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>total_tokens</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;max_tokens&#34;</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>total_tokens</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;min_tokens&#34;</span><span class=p>]</span> <span class=ow>and</span> \
+</span></span><span class=line><span class=cl>           <span class=n>text_msg_count</span> <span class=o>&gt;=</span> <span class=n>config</span><span class=p>[</span><span class=s2>&#34;min_text_messages&#34;</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Finally: protect tool_use/tool_result pairs from being split</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>adjust_for_tool_pairs</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>start</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><p>There&rsquo;s an elegant detail here — <strong>protecting tool_use/tool_result pairs from being split apart</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span><span class=lnt id=hl-8-13><a class=lnlinks href=#hl-8-13>13</a>
+</span><span class=lnt id=hl-8-14><a class=lnlinks href=#hl-8-14>14</a>
+</span><span class=lnt id=hl-8-15><a class=lnlinks href=#hl-8-15>15</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>adjust_for_tool_pairs</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>start_index</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Ensure every tool_result in the retained range has its matching tool_use&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Collect all tool_result IDs in the retained range</span>
+</span></span><span class=line><span class=cl>    <span class=n>needed_tool_use_ids</span> <span class=o>=</span> <span class=nb>set</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>messages</span><span class=p>[</span><span class=n>start_index</span><span class=p>:]:</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>block</span> <span class=ow>in</span> <span class=n>msg</span><span class=o>.</span><span class=n>content</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=n>block</span><span class=o>.</span><span class=n>type</span> <span class=o>==</span> <span class=s2>&#34;tool_result&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>needed_tool_use_ids</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>block</span><span class=o>.</span><span class=n>tool_use_id</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Search backward, pulling matching tool_use messages into retained range</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>start_index</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>has_matching_tool_use</span><span class=p>(</span><span class=n>messages</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>needed_tool_use_ids</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>start_index</span> <span class=o>=</span> <span class=n>i</span>  <span class=c1># Expand retained range</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>start_index</span></span></span></code></pre></td></tr></table></div></div><p>Why is this necessary? Because the Claude API requires every <code>tool_result</code> to have a corresponding <code>tool_use</code>, or it throws an error. If compaction happens to &ldquo;cut&rdquo; in the middle of a tool call pair, an &ldquo;orphan tool_result&rdquo; would cause subsequent API calls to fail.</p><h3 id=14-level-2-full-compact--traditional-api-compaction>1.4 Level 2: Full Compact — Traditional API Compaction
+<a class=header-anchor href=#14-level-2-full-compact--traditional-api-compaction></a></h3><p>When Session Memory isn&rsquo;t available, it calls the Claude API to generate a summary of the entire conversation.</p><p>The compaction prompt requires a structured summary with 9 sections:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1> 1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2> 2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3> 3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4> 4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5> 5</a>
+</span><span class=lnt id=hl-9-6><a class=lnlinks href=#hl-9-6> 6</a>
+</span><span class=lnt id=hl-9-7><a class=lnlinks href=#hl-9-7> 7</a>
+</span><span class=lnt id=hl-9-8><a class=lnlinks href=#hl-9-8> 8</a>
+</span><span class=lnt id=hl-9-9><a class=lnlinks href=#hl-9-9> 9</a>
+</span><span class=lnt id=hl-9-10><a class=lnlinks href=#hl-9-10>10</a>
+</span><span class=lnt id=hl-9-11><a class=lnlinks href=#hl-9-11>11</a>
+</span><span class=lnt id=hl-9-12><a class=lnlinks href=#hl-9-12>12</a>
+</span><span class=lnt id=hl-9-13><a class=lnlinks href=#hl-9-13>13</a>
+</span><span class=lnt id=hl-9-14><a class=lnlinks href=#hl-9-14>14</a>
+</span><span class=lnt id=hl-9-15><a class=lnlinks href=#hl-9-15>15</a>
+</span><span class=lnt id=hl-9-16><a class=lnlinks href=#hl-9-16>16</a>
+</span><span class=lnt id=hl-9-17><a class=lnlinks href=#hl-9-17>17</a>
+</span><span class=lnt id=hl-9-18><a class=lnlinks href=#hl-9-18>18</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>+------- Full Compact Summary Structure -------+
+</span></span><span class=line><span class=cl>|                                              |
+</span></span><span class=line><span class=cl>|  1. Primary Request and Intent               |
+</span></span><span class=line><span class=cl>|  2. Key Technical Concepts                   |
+</span></span><span class=line><span class=cl>|  3. Files and Code Sections                  |
+</span></span><span class=line><span class=cl>|  4. Errors and Fixes                         |
+</span></span><span class=line><span class=cl>|  5. Problem Solving                          |
+</span></span><span class=line><span class=cl>|  6. All User Messages  &lt;-- verbatim!         |
+</span></span><span class=line><span class=cl>|  7. Pending Tasks                            |
+</span></span><span class=line><span class=cl>|  8. Current Work                             |
+</span></span><span class=line><span class=cl>|  9. Optional Next Step                       |
+</span></span><span class=line><span class=cl>|                                              |
+</span></span><span class=line><span class=cl>+----------------------------------------------+
+</span></span><span class=line><span class=cl>        ^                          ^
+</span></span><span class=line><span class=cl>        |                          |
+</span></span><span class=line><span class=cl>  &lt;analysis&gt; scratchpad     #6 preserves user&#39;s
+</span></span><span class=line><span class=cl>  think-then-summarize      exact words to prevent
+</span></span><span class=line><span class=cl>  stripped before storing   intent drift</span></span></code></pre></td></tr></table></div></div><p>Three noteworthy design choices:</p><p><strong>Design 1: <code>&lt;analysis></code> scratchpad</strong> — The model first freely analyzes within <code>&lt;analysis></code> tags, then outputs the final summary within <code>&lt;summary></code> tags. The scratchpad is stripped by the program and never enters the context, but it significantly improves summary quality.</p><p><strong>Design 2: Tool use prohibited</strong> — The compaction agent is strictly limited to text output only. Since it has a budget of just 1 turn, attempting a tool call would waste that turn entirely.</p><p><strong>Design 3: Prompt cache sharing</strong> — The compaction agent launches via a &ldquo;Fork&rdquo; mechanism, sharing the same system prompt, tool list, and message prefix with the main conversation, thereby reusing the prompt cache and significantly reducing costs.</p><h3 id=15-level-3-ptl-retry--the-last-safety-net>1.5 Level 3: PTL Retry — The Last Safety Net
+<a class=header-anchor href=#15-level-3-ptl-retry--the-last-safety-net></a></h3><p>If the compaction request itself exceeds the token limit (prompt-too-long), truncation retry kicks in:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1> 1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2> 2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3> 3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4> 4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5> 5</a>
+</span><span class=lnt id=hl-10-6><a class=lnlinks href=#hl-10-6> 6</a>
+</span><span class=lnt id=hl-10-7><a class=lnlinks href=#hl-10-7> 7</a>
+</span><span class=lnt id=hl-10-8><a class=lnlinks href=#hl-10-8> 8</a>
+</span><span class=lnt id=hl-10-9><a class=lnlinks href=#hl-10-9> 9</a>
+</span><span class=lnt id=hl-10-10><a class=lnlinks href=#hl-10-10>10</a>
+</span><span class=lnt id=hl-10-11><a class=lnlinks href=#hl-10-11>11</a>
+</span><span class=lnt id=hl-10-12><a class=lnlinks href=#hl-10-12>12</a>
+</span><span class=lnt id=hl-10-13><a class=lnlinks href=#hl-10-13>13</a>
+</span><span class=lnt id=hl-10-14><a class=lnlinks href=#hl-10-14>14</a>
+</span><span class=lnt id=hl-10-15><a class=lnlinks href=#hl-10-15>15</a>
+</span><span class=lnt id=hl-10-16><a class=lnlinks href=#hl-10-16>16</a>
+</span><span class=lnt id=hl-10-17><a class=lnlinks href=#hl-10-17>17</a>
+</span><span class=lnt id=hl-10-18><a class=lnlinks href=#hl-10-18>18</a>
+</span><span class=lnt id=hl-10-19><a class=lnlinks href=#hl-10-19>19</a>
+</span><span class=lnt id=hl-10-20><a class=lnlinks href=#hl-10-20>20</a>
+</span><span class=lnt id=hl-10-21><a class=lnlinks href=#hl-10-21>21</a>
+</span><span class=lnt id=hl-10-22><a class=lnlinks href=#hl-10-22>22</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>MAX_PTL_RETRIES</span> <span class=o>=</span> <span class=mi>3</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>compact_with_retry</span><span class=p>(</span><span class=n>messages</span><span class=p>,</span> <span class=n>summary_request</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>attempt</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>MAX_PTL_RETRIES</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>response</span> <span class=o>=</span> <span class=n>call_api</span><span class=p>(</span><span class=n>messages</span> <span class=o>+</span> <span class=p>[</span><span class=n>summary_request</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>is_prompt_too_long</span><span class=p>(</span><span class=n>response</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>response</span>  <span class=c1># Success</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># Group by API round, discard from oldest</span>
+</span></span><span class=line><span class=cl>        <span class=n>groups</span> <span class=o>=</span> <span class=n>group_by_api_round</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>token_gap</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=c1># Precise mode: calculate exactly how many groups to drop</span>
+</span></span><span class=line><span class=cl>            <span class=n>drop_count</span> <span class=o>=</span> <span class=n>calculate_exact_drop</span><span class=p>(</span><span class=n>groups</span><span class=p>,</span> <span class=n>token_gap</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=c1># Fallback mode: drop oldest 20%</span>
+</span></span><span class=line><span class=cl>            <span class=n>drop_count</span> <span class=o>=</span> <span class=nb>max</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=n>groups</span><span class=p>)</span> <span class=o>*</span> <span class=mf>0.2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>messages</span> <span class=o>=</span> <span class=n>flatten</span><span class=p>(</span><span class=n>groups</span><span class=p>[</span><span class=n>drop_count</span><span class=p>:])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>raise</span> <span class=n>Error</span><span class=p>(</span><span class=s2>&#34;Conversation too long, cannot compact&#34;</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><h3 id=16-state-restoration-after-compaction>1.6 State Restoration After Compaction
+<a class=header-anchor href=#16-state-restoration-after-compaction></a></h3><p>Compaction isn&rsquo;t just about deleting messages. When old messages are discarded, much implicit context is lost too. The system needs to restore critical state:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1> 1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2> 2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3> 3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4> 4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5> 5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6> 6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7> 7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8> 8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9> 9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10>10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11>11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12>12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13>13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14>14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15>15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16>16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17>17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18>18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19>19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20>20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21>21</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl>  <span class=o>+---</span> <span class=mi>6</span> <span class=n>Types</span> <span class=n>of</span> <span class=n>State</span> <span class=n>to</span> <span class=n>Restore</span> <span class=n>After</span> <span class=n>Compaction</span> <span class=o>----+</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>1.</span> <span class=n>Recent</span> <span class=n>files</span> <span class=p>(</span><span class=nb>max</span> <span class=mi>5</span><span class=p>,</span> <span class=n>budget</span> <span class=mi>50</span><span class=n>K</span> <span class=n>tokens</span><span class=p>)</span>         <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Avoid</span> <span class=n>re</span><span class=o>-</span><span class=n>reading</span> <span class=n>same</span> <span class=n>files</span> <span class=n>after</span> <span class=n>compact</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>2.</span> <span class=n>Current</span> <span class=n>Plan</span> <span class=n>file</span>                               <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Keep</span> <span class=n>the</span> <span class=n>plan</span> <span class=k>if</span> <span class=n>one</span> <span class=n>is</span> <span class=ow>in</span> <span class=n>progress</span>             <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>3.</span> <span class=n>Invoked</span> <span class=n>Skills</span> <span class=n>content</span> <span class=p>(</span><span class=nb>max</span> <span class=mi>5</span><span class=n>K</span> <span class=n>tokens</span> <span class=n>each</span><span class=p>)</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Skill</span> <span class=n>instructions</span> <span class=n>must</span> <span class=n>survive</span> <span class=n>compact</span>         <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>4.</span> <span class=n>Async</span> <span class=n>Agent</span> <span class=n>status</span>                              <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Is</span> <span class=n>a</span> <span class=n>background</span> <span class=n>agent</span> <span class=n>done</span><span class=err>?</span> <span class=n>Where</span><span class=s1>&#39;s the result? |</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>5.</span> <span class=n>Deferred</span> <span class=k>tool</span> <span class=n>definitions</span>                       <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Re</span><span class=o>-</span><span class=n>register</span> <span class=n>tools</span> <span class=n>discovered</span> <span class=n>before</span> <span class=n>compact</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>  <span class=mf>6.</span> <span class=n>SessionStart</span> <span class=n>hooks</span> <span class=p>(</span><span class=n>CLAUDE</span><span class=o>.</span><span class=n>md</span> <span class=n>etc</span><span class=o>.</span><span class=p>)</span>             <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>     <span class=n>Project</span> <span class=n>config</span> <span class=n>must</span> <span class=n>be</span> <span class=n>re</span><span class=o>-</span><span class=n>injected</span> <span class=n>into</span> <span class=n>context</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>|</span>                                                     <span class=o>|</span>
+</span></span><span class=line><span class=cl>  <span class=o>+-----------------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><p>There&rsquo;s also a clever deduplication logic — if file contents are already visible in the retained messages, skip restoration to avoid wasting tokens:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-12-1><a class=lnlinks href=#hl-12-1> 1</a>
+</span><span class=lnt id=hl-12-2><a class=lnlinks href=#hl-12-2> 2</a>
+</span><span class=lnt id=hl-12-3><a class=lnlinks href=#hl-12-3> 3</a>
+</span><span class=lnt id=hl-12-4><a class=lnlinks href=#hl-12-4> 4</a>
+</span><span class=lnt id=hl-12-5><a class=lnlinks href=#hl-12-5> 5</a>
+</span><span class=lnt id=hl-12-6><a class=lnlinks href=#hl-12-6> 6</a>
+</span><span class=lnt id=hl-12-7><a class=lnlinks href=#hl-12-7> 7</a>
+</span><span class=lnt id=hl-12-8><a class=lnlinks href=#hl-12-8> 8</a>
+</span><span class=lnt id=hl-12-9><a class=lnlinks href=#hl-12-9> 9</a>
+</span><span class=lnt id=hl-12-10><a class=lnlinks href=#hl-12-10>10</a>
+</span><span class=lnt id=hl-12-11><a class=lnlinks href=#hl-12-11>11</a>
+</span><span class=lnt id=hl-12-12><a class=lnlinks href=#hl-12-12>12</a>
+</span><span class=lnt id=hl-12-13><a class=lnlinks href=#hl-12-13>13</a>
+</span><span class=lnt id=hl-12-14><a class=lnlinks href=#hl-12-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>restore_files_after_compact</span><span class=p>(</span><span class=n>read_file_cache</span><span class=p>,</span> <span class=n>kept_messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Collect Read result paths already in retained messages</span>
+</span></span><span class=line><span class=cl>    <span class=n>already_visible</span> <span class=o>=</span> <span class=n>collect_read_paths_from</span><span class=p>(</span><span class=n>kept_messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>recent_files</span> <span class=o>=</span> <span class=nb>sorted</span><span class=p>(</span><span class=n>read_file_cache</span><span class=p>,</span> <span class=n>key</span><span class=o>=</span><span class=k>lambda</span> <span class=n>f</span><span class=p>:</span> <span class=n>f</span><span class=o>.</span><span class=n>timestamp</span><span class=p>,</span> <span class=n>reverse</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>budget_used</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>file</span> <span class=ow>in</span> <span class=n>recent_files</span><span class=p>[:</span><span class=mi>5</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>file</span><span class=o>.</span><span class=n>path</span> <span class=ow>in</span> <span class=n>already_visible</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>continue</span>  <span class=c1># Skip! Already in the messages</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>budget_used</span> <span class=o>+</span> <span class=n>file</span><span class=o>.</span><span class=n>tokens</span> <span class=o>&gt;</span> <span class=mi>50_000</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>        <span class=n>restore_as_attachment</span><span class=p>(</span><span class=n>file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>budget_used</span> <span class=o>+=</span> <span class=n>file</span><span class=o>.</span><span class=n>tokens</span></span></span></code></pre></td></tr></table></div></div><hr><h2 id=layer-2-session-memory--the-background-continuous-summarization-engine>Layer 2: Session Memory — The Background Continuous Summarization Engine
+<a class=header-anchor href=#layer-2-session-memory--the-background-continuous-summarization-engine></a></h2><h3 id=21-core-mechanism>2.1 Core Mechanism
+<a class=header-anchor href=#21-core-mechanism></a></h3><p>Session Memory is one of Claude Code&rsquo;s most innovative designs. It runs an <strong>independent sub-agent in the background</strong> that continuously distills conversation content into a structured Markdown notes file.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-13-1><a class=lnlinks href=#hl-13-1> 1</a>
+</span><span class=lnt id=hl-13-2><a class=lnlinks href=#hl-13-2> 2</a>
+</span><span class=lnt id=hl-13-3><a class=lnlinks href=#hl-13-3> 3</a>
+</span><span class=lnt id=hl-13-4><a class=lnlinks href=#hl-13-4> 4</a>
+</span><span class=lnt id=hl-13-5><a class=lnlinks href=#hl-13-5> 5</a>
+</span><span class=lnt id=hl-13-6><a class=lnlinks href=#hl-13-6> 6</a>
+</span><span class=lnt id=hl-13-7><a class=lnlinks href=#hl-13-7> 7</a>
+</span><span class=lnt id=hl-13-8><a class=lnlinks href=#hl-13-8> 8</a>
+</span><span class=lnt id=hl-13-9><a class=lnlinks href=#hl-13-9> 9</a>
+</span><span class=lnt id=hl-13-10><a class=lnlinks href=#hl-13-10>10</a>
+</span><span class=lnt id=hl-13-11><a class=lnlinks href=#hl-13-11>11</a>
+</span><span class=lnt id=hl-13-12><a class=lnlinks href=#hl-13-12>12</a>
+</span><span class=lnt id=hl-13-13><a class=lnlinks href=#hl-13-13>13</a>
+</span><span class=lnt id=hl-13-14><a class=lnlinks href=#hl-13-14>14</a>
+</span><span class=lnt id=hl-13-15><a class=lnlinks href=#hl-13-15>15</a>
+</span><span class=lnt id=hl-13-16><a class=lnlinks href=#hl-13-16>16</a>
+</span><span class=lnt id=hl-13-17><a class=lnlinks href=#hl-13-17>17</a>
+</span><span class=lnt id=hl-13-18><a class=lnlinks href=#hl-13-18>18</a>
+</span><span class=lnt id=hl-13-19><a class=lnlinks href=#hl-13-19>19</a>
+</span><span class=lnt id=hl-13-20><a class=lnlinks href=#hl-13-20>20</a>
+</span><span class=lnt id=hl-13-21><a class=lnlinks href=#hl-13-21>21</a>
+</span><span class=lnt id=hl-13-22><a class=lnlinks href=#hl-13-22>22</a>
+</span><span class=lnt id=hl-13-23><a class=lnlinks href=#hl-13-23>23</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+--</span> <span class=n>Main</span> <span class=n>Conversation</span> <span class=n>Loop</span> <span class=o>----------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>User</span> <span class=n>query</span> <span class=o>-&gt;</span> <span class=n>Model</span> <span class=n>response</span> <span class=o>-&gt;</span> <span class=n>Tool</span> <span class=n>call</span> <span class=o>-&gt;</span> <span class=o>...</span> <span class=n>loop</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                     <span class=o>|</span>                                      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>           <span class=n>post_sampling_hook</span> <span class=n>fires</span>                         <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>           <span class=n>after</span> <span class=n>each</span> <span class=n>response</span>                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                     <span class=o>|</span>                                      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                     <span class=n>v</span>                                      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+--------------------------------------------+</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Should</span> <span class=n>Session</span> <span class=n>Memory</span> <span class=n>update</span><span class=err>?</span>              <span class=o>|</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=p>(</span><span class=n>check</span> <span class=n>token</span> <span class=n>threshold</span> <span class=o>&amp;</span> <span class=k>tool</span> <span class=n>call</span> <span class=n>count</span><span class=p>)</span>  <span class=o>|</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+--------+---------------------------+-------+</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>      <span class=n>Yes</span>  <span class=o>|</span>                           <span class=o>|</span> <span class=n>No</span>                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>           <span class=n>v</span>                           <span class=o>+---</span> <span class=n>skip</span>            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+------------------------+</span>                                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>Fork</span> <span class=n>sub</span><span class=o>-</span><span class=n>agent</span>         <span class=o>|</span> <span class=o>&lt;--</span> <span class=n>separate</span> <span class=n>context</span><span class=p>,</span>          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>only</span> <span class=n>allowed</span> <span class=n>to</span> <span class=n>Edit</span>   <span class=o>|</span>     <span class=n>non</span><span class=o>-</span><span class=n>blocking</span>               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>|</span> <span class=n>the</span> <span class=n>summary</span> <span class=n>file</span>       <span class=o>|</span>                                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-----------+------------+</span>                                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>              <span class=n>v</span>                                             <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Update</span> <span class=n>session_memory</span><span class=o>.</span><span class=n>md</span>                                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                                            <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+------------------------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><h3 id=22-trigger-conditions-dual-threshold-gating>2.2 Trigger Conditions: Dual-Threshold Gating
+<a class=header-anchor href=#22-trigger-conditions-dual-threshold-gating></a></h3><p>Not every conversation turn triggers a summary update — carefully designed conditions must be met:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-14-1><a class=lnlinks href=#hl-14-1> 1</a>
+</span><span class=lnt id=hl-14-2><a class=lnlinks href=#hl-14-2> 2</a>
+</span><span class=lnt id=hl-14-3><a class=lnlinks href=#hl-14-3> 3</a>
+</span><span class=lnt id=hl-14-4><a class=lnlinks href=#hl-14-4> 4</a>
+</span><span class=lnt id=hl-14-5><a class=lnlinks href=#hl-14-5> 5</a>
+</span><span class=lnt id=hl-14-6><a class=lnlinks href=#hl-14-6> 6</a>
+</span><span class=lnt id=hl-14-7><a class=lnlinks href=#hl-14-7> 7</a>
+</span><span class=lnt id=hl-14-8><a class=lnlinks href=#hl-14-8> 8</a>
+</span><span class=lnt id=hl-14-9><a class=lnlinks href=#hl-14-9> 9</a>
+</span><span class=lnt id=hl-14-10><a class=lnlinks href=#hl-14-10>10</a>
+</span><span class=lnt id=hl-14-11><a class=lnlinks href=#hl-14-11>11</a>
+</span><span class=lnt id=hl-14-12><a class=lnlinks href=#hl-14-12>12</a>
+</span><span class=lnt id=hl-14-13><a class=lnlinks href=#hl-14-13>13</a>
+</span><span class=lnt id=hl-14-14><a class=lnlinks href=#hl-14-14>14</a>
+</span><span class=lnt id=hl-14-15><a class=lnlinks href=#hl-14-15>15</a>
+</span><span class=lnt id=hl-14-16><a class=lnlinks href=#hl-14-16>16</a>
+</span><span class=lnt id=hl-14-17><a class=lnlinks href=#hl-14-17>17</a>
+</span><span class=lnt id=hl-14-18><a class=lnlinks href=#hl-14-18>18</a>
+</span><span class=lnt id=hl-14-19><a class=lnlinks href=#hl-14-19>19</a>
+</span><span class=lnt id=hl-14-20><a class=lnlinks href=#hl-14-20>20</a>
+</span><span class=lnt id=hl-14-21><a class=lnlinks href=#hl-14-21>21</a>
+</span><span class=lnt id=hl-14-22><a class=lnlinks href=#hl-14-22>22</a>
+</span><span class=lnt id=hl-14-23><a class=lnlinks href=#hl-14-23>23</a>
+</span><span class=lnt id=hl-14-24><a class=lnlinks href=#hl-14-24>24</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>should_extract_memory</span><span class=p>(</span><span class=n>messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_tokens</span> <span class=o>=</span> <span class=n>estimate_total_tokens</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Threshold 0: conversation just started, too little content</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=ow>not</span> <span class=n>initialized</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>current_tokens</span> <span class=o>&lt;</span> <span class=n>INIT_THRESHOLD</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=kc>False</span>
+</span></span><span class=line><span class=cl>        <span class=n>initialized</span> <span class=o>=</span> <span class=kc>True</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Threshold 1 (hard): has token growth since last extraction been sufficient?</span>
+</span></span><span class=line><span class=cl>    <span class=n>token_threshold_met</span> <span class=o>=</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>current_tokens</span> <span class=o>-</span> <span class=n>last_extraction_tokens</span> <span class=o>&gt;=</span> <span class=n>MIN_TOKENS_BETWEEN_UPDATE</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Threshold 2 (soft): have there been enough tool calls since last extraction?</span>
+</span></span><span class=line><span class=cl>    <span class=n>tool_call_threshold_met</span> <span class=o>=</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>count_tool_calls_since</span><span class=p>(</span><span class=n>last_extraction_msg</span><span class=p>)</span> <span class=o>&gt;=</span> <span class=n>TOOL_CALLS_BETWEEN_UPDATES</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Threshold 3 (opportunistic): did the last turn have no tool calls? (natural pause)</span>
+</span></span><span class=line><span class=cl>    <span class=n>at_natural_break</span> <span class=o>=</span> <span class=ow>not</span> <span class=n>has_tool_calls_in_last_turn</span><span class=p>(</span><span class=n>messages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Trigger: token threshold is mandatory, plus either of the other two</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>token_threshold_met</span> <span class=ow>and</span> <span class=p>(</span><span class=n>tool_call_threshold_met</span> <span class=ow>or</span> <span class=n>at_natural_break</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><p><strong>Design philosophy</strong>: The token threshold is a <strong>hard requirement</strong> (preventing overly frequent extraction that wastes costs), while tool call count and &ldquo;natural pause&rdquo; are <strong>soft triggers</strong> (extracting during moments when the model pauses to think, without interrupting the workflow).</p><h3 id=23-summary-file-structure>2.3 Summary File Structure
+<a class=header-anchor href=#23-summary-file-structure></a></h3><p>Session Memory maintains a Markdown file with a fixed template containing 10 sections:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-15-1><a class=lnlinks href=#hl-15-1> 1</a>
+</span><span class=lnt id=hl-15-2><a class=lnlinks href=#hl-15-2> 2</a>
+</span><span class=lnt id=hl-15-3><a class=lnlinks href=#hl-15-3> 3</a>
+</span><span class=lnt id=hl-15-4><a class=lnlinks href=#hl-15-4> 4</a>
+</span><span class=lnt id=hl-15-5><a class=lnlinks href=#hl-15-5> 5</a>
+</span><span class=lnt id=hl-15-6><a class=lnlinks href=#hl-15-6> 6</a>
+</span><span class=lnt id=hl-15-7><a class=lnlinks href=#hl-15-7> 7</a>
+</span><span class=lnt id=hl-15-8><a class=lnlinks href=#hl-15-8> 8</a>
+</span><span class=lnt id=hl-15-9><a class=lnlinks href=#hl-15-9> 9</a>
+</span><span class=lnt id=hl-15-10><a class=lnlinks href=#hl-15-10>10</a>
+</span><span class=lnt id=hl-15-11><a class=lnlinks href=#hl-15-11>11</a>
+</span><span class=lnt id=hl-15-12><a class=lnlinks href=#hl-15-12>12</a>
+</span><span class=lnt id=hl-15-13><a class=lnlinks href=#hl-15-13>13</a>
+</span><span class=lnt id=hl-15-14><a class=lnlinks href=#hl-15-14>14</a>
+</span><span class=lnt id=hl-15-15><a class=lnlinks href=#hl-15-15>15</a>
+</span><span class=lnt id=hl-15-16><a class=lnlinks href=#hl-15-16>16</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>+--------- session_memory.md ----------+
+</span></span><span class=line><span class=cl>|                                      |
+</span></span><span class=line><span class=cl>|  # Session Title      (5-10 words)   |
+</span></span><span class=line><span class=cl>|  # Current State      (important!)   |
+</span></span><span class=line><span class=cl>|  # Task Specification                |
+</span></span><span class=line><span class=cl>|  # Files and Functions               |
+</span></span><span class=line><span class=cl>|  # Workflow                          |
+</span></span><span class=line><span class=cl>|  # Errors &amp; Corrections              |
+</span></span><span class=line><span class=cl>|  # Codebase and System Docs          |
+</span></span><span class=line><span class=cl>|  # Learnings                         |
+</span></span><span class=line><span class=cl>|  # Key Results                       |
+</span></span><span class=line><span class=cl>|  # Worklog                           |
+</span></span><span class=line><span class=cl>|                                      |
+</span></span><span class=line><span class=cl>|  Per-section limit : ~2000 tokens    |
+</span></span><span class=line><span class=cl>|  Total file limit  : ~12000 tokens   |
+</span></span><span class=line><span class=cl>+--------------------------------------+</span></span></code></pre></td></tr></table></div></div><p>When the file exceeds its budget, the update prompt instructs the sub-agent to proactively trim:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-16-1><a class=lnlinks href=#hl-16-1> 1</a>
+</span><span class=lnt id=hl-16-2><a class=lnlinks href=#hl-16-2> 2</a>
+</span><span class=lnt id=hl-16-3><a class=lnlinks href=#hl-16-3> 3</a>
+</span><span class=lnt id=hl-16-4><a class=lnlinks href=#hl-16-4> 4</a>
+</span><span class=lnt id=hl-16-5><a class=lnlinks href=#hl-16-5> 5</a>
+</span><span class=lnt id=hl-16-6><a class=lnlinks href=#hl-16-6> 6</a>
+</span><span class=lnt id=hl-16-7><a class=lnlinks href=#hl-16-7> 7</a>
+</span><span class=lnt id=hl-16-8><a class=lnlinks href=#hl-16-8> 8</a>
+</span><span class=lnt id=hl-16-9><a class=lnlinks href=#hl-16-9> 9</a>
+</span><span class=lnt id=hl-16-10><a class=lnlinks href=#hl-16-10>10</a>
+</span><span class=lnt id=hl-16-11><a class=lnlinks href=#hl-16-11>11</a>
+</span><span class=lnt id=hl-16-12><a class=lnlinks href=#hl-16-12>12</a>
+</span><span class=lnt id=hl-16-13><a class=lnlinks href=#hl-16-13>13</a>
+</span><span class=lnt id=hl-16-14><a class=lnlinks href=#hl-16-14>14</a>
+</span><span class=lnt id=hl-16-15><a class=lnlinks href=#hl-16-15>15</a>
+</span><span class=lnt id=hl-16-16><a class=lnlinks href=#hl-16-16>16</a>
+</span><span class=lnt id=hl-16-17><a class=lnlinks href=#hl-16-17>17</a>
+</span><span class=lnt id=hl-16-18><a class=lnlinks href=#hl-16-18>18</a>
+</span><span class=lnt id=hl-16-19><a class=lnlinks href=#hl-16-19>19</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>build_update_prompt</span><span class=p>(</span><span class=n>current_notes</span><span class=p>,</span> <span class=n>notes_path</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>prompt</span> <span class=o>=</span> <span class=n>render_template</span><span class=p>(</span><span class=n>TEMPLATE</span><span class=p>,</span> <span class=n>current_notes</span><span class=p>,</span> <span class=n>notes_path</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Analyze each section&#39;s size</span>
+</span></span><span class=line><span class=cl>    <span class=n>section_sizes</span> <span class=o>=</span> <span class=n>analyze_sections</span><span class=p>(</span><span class=n>current_notes</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>total</span> <span class=o>=</span> <span class=n>estimate_tokens</span><span class=p>(</span><span class=n>current_notes</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Over total budget → force trimming</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>total</span> <span class=o>&gt;</span> <span class=mi>12_000</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>prompt</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>        CRITICAL: File is currently ~</span><span class=si>{</span><span class=n>total</span><span class=si>}</span><span class=s2> tokens, exceeding the 12000 limit.
+</span></span></span><span class=line><span class=cl><span class=s2>        You must significantly trim, prioritizing Current State and Errors.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Individual section over limit → remind to trim that section</span>
+</span></span><span class=line><span class=cl>    <span class=n>oversized</span> <span class=o>=</span> <span class=p>[</span><span class=n>s</span> <span class=k>for</span> <span class=n>s</span> <span class=ow>in</span> <span class=n>section_sizes</span> <span class=k>if</span> <span class=n>s</span><span class=o>.</span><span class=n>tokens</span> <span class=o>&gt;</span> <span class=mi>2000</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>oversized</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>prompt</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>The following sections need trimming: </span><span class=si>{</span><span class=n>oversized</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>prompt</span></span></span></code></pre></td></tr></table></div></div><h3 id=24-update-method-fork-agent-with-permission-isolation>2.4 Update Method: Fork Agent with Permission Isolation
+<a class=header-anchor href=#24-update-method-fork-agent-with-permission-isolation></a></h3><p>Session Memory updates are executed through a restricted Fork Agent. The key design — <strong>only allowed to edit the summary file, nothing else</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-17-1><a class=lnlinks href=#hl-17-1> 1</a>
+</span><span class=lnt id=hl-17-2><a class=lnlinks href=#hl-17-2> 2</a>
+</span><span class=lnt id=hl-17-3><a class=lnlinks href=#hl-17-3> 3</a>
+</span><span class=lnt id=hl-17-4><a class=lnlinks href=#hl-17-4> 4</a>
+</span><span class=lnt id=hl-17-5><a class=lnlinks href=#hl-17-5> 5</a>
+</span><span class=lnt id=hl-17-6><a class=lnlinks href=#hl-17-6> 6</a>
+</span><span class=lnt id=hl-17-7><a class=lnlinks href=#hl-17-7> 7</a>
+</span><span class=lnt id=hl-17-8><a class=lnlinks href=#hl-17-8> 8</a>
+</span><span class=lnt id=hl-17-9><a class=lnlinks href=#hl-17-9> 9</a>
+</span><span class=lnt id=hl-17-10><a class=lnlinks href=#hl-17-10>10</a>
+</span><span class=lnt id=hl-17-11><a class=lnlinks href=#hl-17-11>11</a>
+</span><span class=lnt id=hl-17-12><a class=lnlinks href=#hl-17-12>12</a>
+</span><span class=lnt id=hl-17-13><a class=lnlinks href=#hl-17-13>13</a>
+</span><span class=lnt id=hl-17-14><a class=lnlinks href=#hl-17-14>14</a>
+</span><span class=lnt id=hl-17-15><a class=lnlinks href=#hl-17-15>15</a>
+</span><span class=lnt id=hl-17-16><a class=lnlinks href=#hl-17-16>16</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>create_memory_file_permission</span><span class=p>(</span><span class=n>memory_path</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Create permission function: only allow Edit tool on the specified summary file&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>can_use_tool</span><span class=p>(</span><span class=n>tool</span><span class=p>,</span> <span class=nb>input</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>tool</span><span class=o>.</span><span class=n>name</span> <span class=o>==</span> <span class=s2>&#34;FileEdit&#34;</span> <span class=ow>and</span> <span class=nb>input</span><span class=p>[</span><span class=s2>&#34;file_path&#34;</span><span class=p>]</span> <span class=o>==</span> <span class=n>memory_path</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>ALLOW</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>DENY</span>  <span class=c1># Deny any other operation</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>can_use_tool</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Launch Fork Agent</span>
+</span></span><span class=line><span class=cl><span class=n>run_forked_agent</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>prompt</span>       <span class=o>=</span> <span class=n>build_update_prompt</span><span class=p>(</span><span class=n>current_notes</span><span class=p>,</span> <span class=n>path</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>can_use_tool</span> <span class=o>=</span> <span class=n>create_memory_file_permission</span><span class=p>(</span><span class=n>path</span><span class=p>),</span>  <span class=c1># Strict permissions</span>
+</span></span><span class=line><span class=cl>    <span class=n>query_source</span> <span class=o>=</span> <span class=s2>&#34;session_memory&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Fork Agent shares main conversation&#39;s prompt cache, lower cost</span>
+</span></span><span class=line><span class=cl><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><h3 id=25-user-customization>2.5 User Customization
+<a class=header-anchor href=#25-user-customization></a></h3><p>Session Memory supports custom templates and prompts, which users can place in:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-18-1><a class=lnlinks href=#hl-18-1>1</a>
+</span><span class=lnt id=hl-18-2><a class=lnlinks href=#hl-18-2>2</a>
+</span><span class=lnt id=hl-18-3><a class=lnlinks href=#hl-18-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>~/.</span><span class=n>claude</span><span class=o>/</span><span class=n>session</span><span class=o>-</span><span class=n>memory</span><span class=o>/</span><span class=n>config</span><span class=o>/</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>template</span><span class=o>.</span><span class=n>md</span>    <span class=err>←</span> <span class=n>Custom</span> <span class=n>summary</span> <span class=n>template</span> <span class=p>(</span><span class=n>replaces</span> <span class=n>the</span> <span class=n>default</span> <span class=mi>10</span> <span class=n>sections</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>└──</span> <span class=n>prompt</span><span class=o>.</span><span class=n>md</span>      <span class=err>←</span> <span class=n>Custom</span> <span class=n>update</span> <span class=n>instructions</span> <span class=p>(</span><span class=n>supports</span> <span class=p>{{</span><span class=n>currentNotes</span><span class=p>}}</span> <span class=ow>and</span> <span class=n>other</span> <span class=n>variables</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><hr><h2 id=layer-3-persistent-memory-memdir--cross-session-long-term-memory>Layer 3: Persistent Memory (memdir) — Cross-Session Long-Term Memory
+<a class=header-anchor href=#layer-3-persistent-memory-memdir--cross-session-long-term-memory></a></h2><h3 id=31-architecture>3.1 Architecture
+<a class=header-anchor href=#31-architecture></a></h3><p>Persistent memory is a file-system-based knowledge base:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-19-1><a class=lnlinks href=#hl-19-1> 1</a>
+</span><span class=lnt id=hl-19-2><a class=lnlinks href=#hl-19-2> 2</a>
+</span><span class=lnt id=hl-19-3><a class=lnlinks href=#hl-19-3> 3</a>
+</span><span class=lnt id=hl-19-4><a class=lnlinks href=#hl-19-4> 4</a>
+</span><span class=lnt id=hl-19-5><a class=lnlinks href=#hl-19-5> 5</a>
+</span><span class=lnt id=hl-19-6><a class=lnlinks href=#hl-19-6> 6</a>
+</span><span class=lnt id=hl-19-7><a class=lnlinks href=#hl-19-7> 7</a>
+</span><span class=lnt id=hl-19-8><a class=lnlinks href=#hl-19-8> 8</a>
+</span><span class=lnt id=hl-19-9><a class=lnlinks href=#hl-19-9> 9</a>
+</span><span class=lnt id=hl-19-10><a class=lnlinks href=#hl-19-10>10</a>
+</span><span class=lnt id=hl-19-11><a class=lnlinks href=#hl-19-11>11</a>
+</span><span class=lnt id=hl-19-12><a class=lnlinks href=#hl-19-12>12</a>
+</span><span class=lnt id=hl-19-13><a class=lnlinks href=#hl-19-13>13</a>
+</span><span class=lnt id=hl-19-14><a class=lnlinks href=#hl-19-14>14</a>
+</span><span class=lnt id=hl-19-15><a class=lnlinks href=#hl-19-15>15</a>
+</span><span class=lnt id=hl-19-16><a class=lnlinks href=#hl-19-16>16</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>~/.</span><span class=n>claude</span><span class=o>/</span><span class=n>projects</span><span class=o>/&lt;</span><span class=n>project</span><span class=o>&gt;/</span><span class=n>memory</span><span class=o>/</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>MEMORY</span><span class=o>.</span><span class=n>md</span>                <span class=err>←</span> <span class=n>Index</span> <span class=n>file</span> <span class=p>(</span><span class=n>always</span> <span class=n>loaded</span> <span class=n>into</span> <span class=n>system</span> <span class=n>prompt</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>   <span class=n>Example</span> <span class=n>contents</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>   <span class=o>-</span> <span class=p>[</span><span class=n>User</span> <span class=n>Preferences</span><span class=p>](</span><span class=n>user_preferences</span><span class=o>.</span><span class=n>md</span><span class=p>)</span> <span class=err>—</span> <span class=n>Prefers</span> <span class=n>bun</span><span class=p>,</span> <span class=n>uses</span> <span class=n>Go</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>   <span class=o>-</span> <span class=p>[</span><span class=n>Project</span> <span class=n>Setup</span><span class=p>](</span><span class=n>project_setup</span><span class=o>.</span><span class=n>md</span><span class=p>)</span> <span class=err>—</span> <span class=n>K8s</span> <span class=n>deploy</span><span class=p>,</span> <span class=n>GH</span> <span class=n>Actions</span> <span class=n>CI</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>   <span class=o>-</span> <span class=p>[</span><span class=n>API</span> <span class=n>Gotchas</span><span class=p>](</span><span class=n>api_gotchas</span><span class=o>.</span><span class=n>md</span><span class=p>)</span> <span class=err>—</span> <span class=n>Auth</span> <span class=n>token</span> <span class=n>must</span> <span class=n>be</span> <span class=n>refreshed</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>user_preferences</span><span class=o>.</span><span class=n>md</span>      <span class=err>←</span> <span class=n>User</span> <span class=n>preferences</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>project_setup</span><span class=o>.</span><span class=n>md</span>         <span class=err>←</span> <span class=n>Project</span> <span class=n>config</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>feedback_testing</span><span class=o>.</span><span class=n>md</span>      <span class=err>←</span> <span class=n>Feedback</span> <span class=n>records</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>api_gotchas</span><span class=o>.</span><span class=n>md</span>           <span class=err>←</span> <span class=ne>Reference</span> <span class=n>info</span>
+</span></span><span class=line><span class=cl><span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>└──</span> <span class=n>team</span><span class=o>/</span>                    <span class=err>←</span> <span class=n>Shared</span> <span class=n>team</span> <span class=n>memory</span> <span class=p>(</span><span class=n>optional</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=err>├──</span> <span class=n>MEMORY</span><span class=o>.</span><span class=n>md</span>
+</span></span><span class=line><span class=cl>    <span class=err>└──</span> <span class=n>coding_standards</span><span class=o>.</span><span class=n>md</span></span></span></code></pre></td></tr></table></div></div><h3 id=32-four-memory-types>3.2 Four Memory Types
+<a class=header-anchor href=#32-four-memory-types></a></h3><p>The system defines a strict taxonomy where each type has clear boundaries:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-20-1><a class=lnlinks href=#hl-20-1> 1</a>
+</span><span class=lnt id=hl-20-2><a class=lnlinks href=#hl-20-2> 2</a>
+</span><span class=lnt id=hl-20-3><a class=lnlinks href=#hl-20-3> 3</a>
+</span><span class=lnt id=hl-20-4><a class=lnlinks href=#hl-20-4> 4</a>
+</span><span class=lnt id=hl-20-5><a class=lnlinks href=#hl-20-5> 5</a>
+</span><span class=lnt id=hl-20-6><a class=lnlinks href=#hl-20-6> 6</a>
+</span><span class=lnt id=hl-20-7><a class=lnlinks href=#hl-20-7> 7</a>
+</span><span class=lnt id=hl-20-8><a class=lnlinks href=#hl-20-8> 8</a>
+</span><span class=lnt id=hl-20-9><a class=lnlinks href=#hl-20-9> 9</a>
+</span><span class=lnt id=hl-20-10><a class=lnlinks href=#hl-20-10>10</a>
+</span><span class=lnt id=hl-20-11><a class=lnlinks href=#hl-20-11>11</a>
+</span><span class=lnt id=hl-20-12><a class=lnlinks href=#hl-20-12>12</a>
+</span><span class=lnt id=hl-20-13><a class=lnlinks href=#hl-20-13>13</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>   <span class=n>Type</span>    <span class=o>|</span>       <span class=n>Description</span>          <span class=o>|</span>         <span class=n>Example</span>               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>user</span>     <span class=o>|</span> <span class=n>Identity</span><span class=p>,</span> <span class=n>role</span><span class=p>,</span> <span class=n>prefs</span>      <span class=o>|</span> <span class=s2>&#34;Backend dev, prefers Go&#34;</span>     <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>feedback</span>  <span class=o>|</span> <span class=n>Corrections</span> <span class=o>&amp;</span> <span class=n>feedback</span>     <span class=o>|</span> <span class=s2>&#34;Use const, not var&#34;</span>          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>project</span>   <span class=o>|</span> <span class=n>Non</span><span class=o>-</span><span class=n>code</span> <span class=n>project</span> <span class=n>knowledge</span> <span class=o>|</span> <span class=s2>&#34;Deploy: k8s, CI: GH Actions&#34;</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>reference</span> <span class=o>|</span> <span class=n>Tool</span> <span class=o>/</span> <span class=n>API</span> <span class=n>usage</span> <span class=n>notes</span>     <span class=o>|</span> <span class=s2>&#34;Internal API auth method&#34;</span>    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+-----------+----------------------------+-------------------------------+</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>     <span class=n>X</span>  <span class=n>NOT</span> <span class=n>saved</span><span class=p>:</span> <span class=n>info</span> <span class=n>derivable</span> <span class=n>from</span> <span class=n>code</span> <span class=p>(</span><span class=n>architecture</span><span class=p>,</span> <span class=n>git</span> <span class=n>history</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><p>Each memory file uses YAML frontmatter to annotate metadata:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-21-1><a class=lnlinks href=#hl-21-1>1</a>
+</span><span class=lnt id=hl-21-2><a class=lnlinks href=#hl-21-2>2</a>
+</span><span class=lnt id=hl-21-3><a class=lnlinks href=#hl-21-3>3</a>
+</span><span class=lnt id=hl-21-4><a class=lnlinks href=#hl-21-4>4</a>
+</span><span class=lnt id=hl-21-5><a class=lnlinks href=#hl-21-5>5</a>
+</span><span class=lnt id=hl-21-6><a class=lnlinks href=#hl-21-6>6</a>
+</span><span class=lnt id=hl-21-7><a class=lnlinks href=#hl-21-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>user_preferences</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>User&#39;s coding style preferences</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>feedback</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nn>---</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=l>Use bun instead of npm for all package management.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=l>Prefer functional components over class components.</span></span></span></code></pre></td></tr></table></div></div><h3 id=33-index-file-constraints>3.3 Index File Constraints
+<a class=header-anchor href=#33-index-file-constraints></a></h3><p><code>MEMORY.md</code> is always loaded into the system prompt, so it has strict limits to prevent unbounded growth:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-22-1><a class=lnlinks href=#hl-22-1> 1</a>
+</span><span class=lnt id=hl-22-2><a class=lnlinks href=#hl-22-2> 2</a>
+</span><span class=lnt id=hl-22-3><a class=lnlinks href=#hl-22-3> 3</a>
+</span><span class=lnt id=hl-22-4><a class=lnlinks href=#hl-22-4> 4</a>
+</span><span class=lnt id=hl-22-5><a class=lnlinks href=#hl-22-5> 5</a>
+</span><span class=lnt id=hl-22-6><a class=lnlinks href=#hl-22-6> 6</a>
+</span><span class=lnt id=hl-22-7><a class=lnlinks href=#hl-22-7> 7</a>
+</span><span class=lnt id=hl-22-8><a class=lnlinks href=#hl-22-8> 8</a>
+</span><span class=lnt id=hl-22-9><a class=lnlinks href=#hl-22-9> 9</a>
+</span><span class=lnt id=hl-22-10><a class=lnlinks href=#hl-22-10>10</a>
+</span><span class=lnt id=hl-22-11><a class=lnlinks href=#hl-22-11>11</a>
+</span><span class=lnt id=hl-22-12><a class=lnlinks href=#hl-22-12>12</a>
+</span><span class=lnt id=hl-22-13><a class=lnlinks href=#hl-22-13>13</a>
+</span><span class=lnt id=hl-22-14><a class=lnlinks href=#hl-22-14>14</a>
+</span><span class=lnt id=hl-22-15><a class=lnlinks href=#hl-22-15>15</a>
+</span><span class=lnt id=hl-22-16><a class=lnlinks href=#hl-22-16>16</a>
+</span><span class=lnt id=hl-22-17><a class=lnlinks href=#hl-22-17>17</a>
+</span><span class=lnt id=hl-22-18><a class=lnlinks href=#hl-22-18>18</a>
+</span><span class=lnt id=hl-22-19><a class=lnlinks href=#hl-22-19>19</a>
+</span><span class=lnt id=hl-22-20><a class=lnlinks href=#hl-22-20>20</a>
+</span><span class=lnt id=hl-22-21><a class=lnlinks href=#hl-22-21>21</a>
+</span><span class=lnt id=hl-22-22><a class=lnlinks href=#hl-22-22>22</a>
+</span><span class=lnt id=hl-22-23><a class=lnlinks href=#hl-22-23>23</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>MAX_LINES</span> <span class=o>=</span> <span class=mi>200</span>       <span class=c1># Maximum 200 lines</span>
+</span></span><span class=line><span class=cl><span class=n>MAX_BYTES</span> <span class=o>=</span> <span class=mi>25_000</span>    <span class=c1># Maximum 25KB</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>truncate_memory_index</span><span class=p>(</span><span class=n>raw_content</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>lines</span> <span class=o>=</span> <span class=n>raw_content</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># First truncate by line count</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>lines</span><span class=p>)</span> <span class=o>&gt;</span> <span class=n>MAX_LINES</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>lines</span> <span class=o>=</span> <span class=n>lines</span><span class=p>[:</span><span class=n>MAX_LINES</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>truncated_by_lines</span> <span class=o>=</span> <span class=kc>True</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Then truncate by byte count (guards against very long individual lines)</span>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>lines</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>content</span><span class=p>)</span> <span class=o>&gt;</span> <span class=n>MAX_BYTES</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>cut_at</span> <span class=o>=</span> <span class=n>content</span><span class=o>.</span><span class=n>rfind</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=n>MAX_BYTES</span><span class=p>)</span>  <span class=c1># Truncate at line boundary</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>content</span><span class=p>[:</span><span class=n>cut_at</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>truncated_by_bytes</span> <span class=o>=</span> <span class=kc>True</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>truncated_by_lines</span> <span class=ow>or</span> <span class=n>truncated_by_bytes</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>+=</span> <span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&gt; WARNING: MEMORY.md is too large, only partial content loaded.&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>+=</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&gt; Keep index entries under ~200 chars per line, put details in topic files.&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>content</span></span></span></code></pre></td></tr></table></div></div><h3 id=34-intelligent-memory-retrieval>3.4 Intelligent Memory Retrieval
+<a class=header-anchor href=#34-intelligent-memory-retrieval></a></h3><p>Not all memory files are loaded for every conversation. The system uses a lightweight <strong>Sonnet model</strong> for real-time retrieval, loading only the most relevant memories on demand:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-23-1><a class=lnlinks href=#hl-23-1> 1</a>
+</span><span class=lnt id=hl-23-2><a class=lnlinks href=#hl-23-2> 2</a>
+</span><span class=lnt id=hl-23-3><a class=lnlinks href=#hl-23-3> 3</a>
+</span><span class=lnt id=hl-23-4><a class=lnlinks href=#hl-23-4> 4</a>
+</span><span class=lnt id=hl-23-5><a class=lnlinks href=#hl-23-5> 5</a>
+</span><span class=lnt id=hl-23-6><a class=lnlinks href=#hl-23-6> 6</a>
+</span><span class=lnt id=hl-23-7><a class=lnlinks href=#hl-23-7> 7</a>
+</span><span class=lnt id=hl-23-8><a class=lnlinks href=#hl-23-8> 8</a>
+</span><span class=lnt id=hl-23-9><a class=lnlinks href=#hl-23-9> 9</a>
+</span><span class=lnt id=hl-23-10><a class=lnlinks href=#hl-23-10>10</a>
+</span><span class=lnt id=hl-23-11><a class=lnlinks href=#hl-23-11>11</a>
+</span><span class=lnt id=hl-23-12><a class=lnlinks href=#hl-23-12>12</a>
+</span><span class=lnt id=hl-23-13><a class=lnlinks href=#hl-23-13>13</a>
+</span><span class=lnt id=hl-23-14><a class=lnlinks href=#hl-23-14>14</a>
+</span><span class=lnt id=hl-23-15><a class=lnlinks href=#hl-23-15>15</a>
+</span><span class=lnt id=hl-23-16><a class=lnlinks href=#hl-23-16>16</a>
+</span><span class=lnt id=hl-23-17><a class=lnlinks href=#hl-23-17>17</a>
+</span><span class=lnt id=hl-23-18><a class=lnlinks href=#hl-23-18>18</a>
+</span><span class=lnt id=hl-23-19><a class=lnlinks href=#hl-23-19>19</a>
+</span><span class=lnt id=hl-23-20><a class=lnlinks href=#hl-23-20>20</a>
+</span><span class=lnt id=hl-23-21><a class=lnlinks href=#hl-23-21>21</a>
+</span><span class=lnt id=hl-23-22><a class=lnlinks href=#hl-23-22>22</a>
+</span><span class=lnt id=hl-23-23><a class=lnlinks href=#hl-23-23>23</a>
+</span><span class=lnt id=hl-23-24><a class=lnlinks href=#hl-23-24>24</a>
+</span><span class=lnt id=hl-23-25><a class=lnlinks href=#hl-23-25>25</a>
+</span><span class=lnt id=hl-23-26><a class=lnlinks href=#hl-23-26>26</a>
+</span><span class=lnt id=hl-23-27><a class=lnlinks href=#hl-23-27>27</a>
+</span><span class=lnt id=hl-23-28><a class=lnlinks href=#hl-23-28>28</a>
+</span><span class=lnt id=hl-23-29><a class=lnlinks href=#hl-23-29>29</a>
+</span><span class=lnt id=hl-23-30><a class=lnlinks href=#hl-23-30>30</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>User</span> <span class=n>sends</span><span class=p>:</span> <span class=s2>&#34;Help me fix auth logic in the payment API&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=o>|</span>
+</span></span><span class=line><span class=cl>    <span class=n>v</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>Scan</span> <span class=n>memory</span><span class=o>/</span> <span class=n>dir</span> <span class=k>for</span> <span class=n>all</span> <span class=o>.</span><span class=n>md</span> <span class=n>files</span>           <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>Read</span> <span class=n>each</span> <span class=n>file</span><span class=s1>&#39;s frontmatter                 |</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=p>(</span><span class=n>name</span> <span class=o>+</span> <span class=n>description</span> <span class=o>+</span> <span class=n>type</span><span class=p>)</span>                  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>Exclude</span> <span class=n>files</span> <span class=n>already</span> <span class=n>shown</span> <span class=n>this</span> <span class=n>turn</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------+-----------------------+</span>
+</span></span><span class=line><span class=cl>                       <span class=o>|</span>
+</span></span><span class=line><span class=cl>                       <span class=n>v</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------------------------------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>Call</span> <span class=n>Sonnet</span> <span class=p>(</span><span class=n>lightweight</span><span class=p>,</span> <span class=n>fast</span><span class=p>)</span>              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>System</span><span class=p>:</span> <span class=s2>&#34;Select up to 5 memories that        |</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>will</span> <span class=n>be</span> <span class=n>useful</span> <span class=k>for</span> <span class=n>the</span> <span class=n>current</span> <span class=n>query</span><span class=s2>&#34;       |</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=n>User</span><span class=p>:</span> <span class=s2>&#34;Query: fix payment API auth logic     |</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Available</span> <span class=n>memories</span><span class=p>:</span>                         <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>-</span> <span class=n>api_gotchas</span><span class=o>.</span><span class=n>md</span><span class=p>:</span> <span class=n>API</span> <span class=n>auth</span> <span class=n>caveats</span>    <span class=p>[</span><span class=n>HIT</span><span class=p>]</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>-</span> <span class=n>user_prefs</span><span class=o>.</span><span class=n>md</span><span class=p>:</span> <span class=n>coding</span> <span class=n>preferences</span>   <span class=p>[</span><span class=n>HIT</span><span class=p>]</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>-</span> <span class=n>old_deploy</span><span class=o>.</span><span class=n>md</span><span class=p>:</span> <span class=n>old</span> <span class=n>deploy</span> <span class=n>notes</span>    <span class=p>[</span><span class=n>SKIP</span><span class=p>]</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>Recent</span> <span class=n>tools</span><span class=p>:</span> <span class=n>FileEdit</span><span class=p>,</span> <span class=n>Bash</span><span class=s2>&#34;               |</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                              <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span> <span class=o>-&gt;</span> <span class=n>Returns</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;api_gotchas.md&#34;</span><span class=p>,</span>               <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>              <span class=s2>&#34;user_prefs.md&#34;</span><span class=p>]</span>                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+----------------------+-----------------------+</span>
+</span></span><span class=line><span class=cl>                       <span class=o>|</span>
+</span></span><span class=line><span class=cl>                       <span class=n>v</span>
+</span></span><span class=line><span class=cl>         <span class=n>Load</span> <span class=n>selected</span> <span class=n>memory</span> <span class=n>files</span> <span class=n>into</span> <span class=n>context</span></span></span></code></pre></td></tr></table></div></div><p>Two clever filtering mechanisms:</p><ul><li><strong>Deduplication</strong>: If a memory file was already shown in a previous turn, it won&rsquo;t be recommended again, freeing up slots for new candidates</li><li><strong>Tool awareness</strong>: If the user recently used a specific tool (e.g., <code>mcp__X__spawn</code>), the system won&rsquo;t recommend that tool&rsquo;s usage docs (since usage examples are already in the conversation), but it <strong>still recommends</strong> memories containing warnings/gotchas</li></ul><h3 id=35-background-memory-extraction>3.5 Background Memory Extraction
+<a class=header-anchor href=#35-background-memory-extraction></a></h3><p>Beyond users explicitly saying &ldquo;remember this,&rdquo; Claude Code also <strong>automatically extracts</strong> noteworthy content in the background. The extraction agent has strict constraints:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-24-1><a class=lnlinks href=#hl-24-1> 1</a>
+</span><span class=lnt id=hl-24-2><a class=lnlinks href=#hl-24-2> 2</a>
+</span><span class=lnt id=hl-24-3><a class=lnlinks href=#hl-24-3> 3</a>
+</span><span class=lnt id=hl-24-4><a class=lnlinks href=#hl-24-4> 4</a>
+</span><span class=lnt id=hl-24-5><a class=lnlinks href=#hl-24-5> 5</a>
+</span><span class=lnt id=hl-24-6><a class=lnlinks href=#hl-24-6> 6</a>
+</span><span class=lnt id=hl-24-7><a class=lnlinks href=#hl-24-7> 7</a>
+</span><span class=lnt id=hl-24-8><a class=lnlinks href=#hl-24-8> 8</a>
+</span><span class=lnt id=hl-24-9><a class=lnlinks href=#hl-24-9> 9</a>
+</span><span class=lnt id=hl-24-10><a class=lnlinks href=#hl-24-10>10</a>
+</span><span class=lnt id=hl-24-11><a class=lnlinks href=#hl-24-11>11</a>
+</span><span class=lnt id=hl-24-12><a class=lnlinks href=#hl-24-12>12</a>
+</span><span class=lnt id=hl-24-13><a class=lnlinks href=#hl-24-13>13</a>
+</span><span class=lnt id=hl-24-14><a class=lnlinks href=#hl-24-14>14</a>
+</span><span class=lnt id=hl-24-15><a class=lnlinks href=#hl-24-15>15</a>
+</span><span class=lnt id=hl-24-16><a class=lnlinks href=#hl-24-16>16</a>
+</span><span class=lnt id=hl-24-17><a class=lnlinks href=#hl-24-17>17</a>
+</span><span class=lnt id=hl-24-18><a class=lnlinks href=#hl-24-18>18</a>
+</span><span class=lnt id=hl-24-19><a class=lnlinks href=#hl-24-19>19</a>
+</span><span class=lnt id=hl-24-20><a class=lnlinks href=#hl-24-20>20</a>
+</span><span class=lnt id=hl-24-21><a class=lnlinks href=#hl-24-21>21</a>
+</span><span class=lnt id=hl-24-22><a class=lnlinks href=#hl-24-22>22</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=o>+---</span> <span class=n>Memory</span> <span class=n>Extraction</span> <span class=n>Agent</span> <span class=n>Rules</span> <span class=o>--------+</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>ALLOWED</span><span class=p>:</span>                                <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Read</span> <span class=o>/</span> <span class=n>Grep</span> <span class=o>/</span> <span class=n>Glob</span> <span class=n>memory</span> <span class=n>dir</span> <span class=n>files</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Read</span><span class=o>-</span><span class=n>only</span> <span class=n>Bash</span> <span class=p>(</span><span class=n>ls</span><span class=o>/</span><span class=n>find</span><span class=o>/</span><span class=n>cat</span><span class=o>/</span><span class=n>stat</span><span class=p>)</span>    <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Edit</span> <span class=o>/</span> <span class=n>Write</span> <span class=n>files</span> <span class=n>inside</span> <span class=n>memory</span> <span class=n>dir</span> <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>DENIED</span><span class=p>:</span>                                 <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>X</span>  <span class=n>Read</span> <span class=ow>or</span> <span class=n>modify</span> <span class=n>source</span> <span class=n>code</span> <span class=n>files</span>  <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>X</span>  <span class=n>Write</span><span class=o>-</span><span class=n>capable</span> <span class=n>Bash</span> <span class=n>commands</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>X</span>  <span class=n>MCP</span><span class=p>,</span> <span class=n>Agent</span><span class=p>,</span> <span class=ow>or</span> <span class=n>other</span> <span class=n>tools</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>X</span>  <span class=n>Bash</span> <span class=n>rm</span> <span class=p>(</span><span class=n>no</span> <span class=n>deleting</span> <span class=n>files</span><span class=p>)</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>EFFICIENCY</span> <span class=p>(</span><span class=n>limited</span> <span class=n>turn</span> <span class=n>budget</span><span class=p>):</span>       <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Turn</span> <span class=mi>1</span><span class=p>:</span> <span class=n>all</span> <span class=n>Read</span> <span class=n>calls</span> <span class=ow>in</span> <span class=n>parallel</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Turn</span> <span class=mi>2</span><span class=p>:</span> <span class=n>all</span> <span class=n>Write</span><span class=o>/</span><span class=n>Edit</span> <span class=ow>in</span> <span class=n>parallel</span>   <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=n>CONTENT</span> <span class=n>CONSTRAINT</span><span class=p>:</span>                     <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>  <span class=o>+-</span> <span class=n>Extract</span> <span class=n>from</span> <span class=n>conversation</span> <span class=n>only</span><span class=p>,</span>      <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>     <span class=n>never</span> <span class=n>investigate</span> <span class=n>source</span> <span class=n>code</span>        <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>|</span>                                          <span class=o>|</span>
+</span></span><span class=line><span class=cl><span class=o>+------------------------------------------+</span></span></span></code></pre></td></tr></table></div></div><hr><h2 id=how-the-three-layers-work-together>How the Three Layers Work Together
+<a class=header-anchor href=#how-the-three-layers-work-together></a></h2><p>Here&rsquo;s a complete timeline showing how the three memory layers collaborate:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-25-1><a class=lnlinks href=#hl-25-1> 1</a>
+</span><span class=lnt id=hl-25-2><a class=lnlinks href=#hl-25-2> 2</a>
+</span><span class=lnt id=hl-25-3><a class=lnlinks href=#hl-25-3> 3</a>
+</span><span class=lnt id=hl-25-4><a class=lnlinks href=#hl-25-4> 4</a>
+</span><span class=lnt id=hl-25-5><a class=lnlinks href=#hl-25-5> 5</a>
+</span><span class=lnt id=hl-25-6><a class=lnlinks href=#hl-25-6> 6</a>
+</span><span class=lnt id=hl-25-7><a class=lnlinks href=#hl-25-7> 7</a>
+</span><span class=lnt id=hl-25-8><a class=lnlinks href=#hl-25-8> 8</a>
+</span><span class=lnt id=hl-25-9><a class=lnlinks href=#hl-25-9> 9</a>
+</span><span class=lnt id=hl-25-10><a class=lnlinks href=#hl-25-10>10</a>
+</span><span class=lnt id=hl-25-11><a class=lnlinks href=#hl-25-11>11</a>
+</span><span class=lnt id=hl-25-12><a class=lnlinks href=#hl-25-12>12</a>
+</span><span class=lnt id=hl-25-13><a class=lnlinks href=#hl-25-13>13</a>
+</span><span class=lnt id=hl-25-14><a class=lnlinks href=#hl-25-14>14</a>
+</span><span class=lnt id=hl-25-15><a class=lnlinks href=#hl-25-15>15</a>
+</span><span class=lnt id=hl-25-16><a class=lnlinks href=#hl-25-16>16</a>
+</span><span class=lnt id=hl-25-17><a class=lnlinks href=#hl-25-17>17</a>
+</span><span class=lnt id=hl-25-18><a class=lnlinks href=#hl-25-18>18</a>
+</span><span class=lnt id=hl-25-19><a class=lnlinks href=#hl-25-19>19</a>
+</span><span class=lnt id=hl-25-20><a class=lnlinks href=#hl-25-20>20</a>
+</span><span class=lnt id=hl-25-21><a class=lnlinks href=#hl-25-21>21</a>
+</span><span class=lnt id=hl-25-22><a class=lnlinks href=#hl-25-22>22</a>
+</span><span class=lnt id=hl-25-23><a class=lnlinks href=#hl-25-23>23</a>
+</span><span class=lnt id=hl-25-24><a class=lnlinks href=#hl-25-24>24</a>
+</span><span class=lnt id=hl-25-25><a class=lnlinks href=#hl-25-25>25</a>
+</span><span class=lnt id=hl-25-26><a class=lnlinks href=#hl-25-26>26</a>
+</span><span class=lnt id=hl-25-27><a class=lnlinks href=#hl-25-27>27</a>
+</span><span class=lnt id=hl-25-28><a class=lnlinks href=#hl-25-28>28</a>
+</span><span class=lnt id=hl-25-29><a class=lnlinks href=#hl-25-29>29</a>
+</span><span class=lnt id=hl-25-30><a class=lnlinks href=#hl-25-30>30</a>
+</span><span class=lnt id=hl-25-31><a class=lnlinks href=#hl-25-31>31</a>
+</span><span class=lnt id=hl-25-32><a class=lnlinks href=#hl-25-32>32</a>
+</span><span class=lnt id=hl-25-33><a class=lnlinks href=#hl-25-33>33</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>Timeline</span> <span class=err>─────────────────────────────────────────────────────►</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=n>SESSION</span> <span class=n>START</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>Load</span> <span class=n>MEMORY</span><span class=o>.</span><span class=n>md</span> <span class=n>index</span> <span class=n>into</span> <span class=n>system</span> <span class=n>prompt</span> <span class=err>··········</span>  <span class=n>Persistent</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>Sonnet</span> <span class=n>retrieves</span> <span class=n>relevant</span> <span class=n>memory</span> <span class=n>files</span> <span class=err>···········</span>  <span class=n>Persistent</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=n>CONVERSATION</span> <span class=n>IN</span> <span class=n>PROGRESS</span><span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>Each</span> <span class=n>model</span> <span class=n>response</span> <span class=o>-&gt;</span> <span class=n>post_sampling_hook</span> <span class=err>········</span>  <span class=n>Session</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>                                                     <span class=p>(</span><span class=n>background</span> <span class=n>update</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=p>[</span><span class=n>Conversation</span> <span class=n>grows</span> <span class=o>~</span><span class=mi>5</span><span class=n>K</span> <span class=n>tokens</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>└─</span> <span class=n>Session</span> <span class=n>Memory</span> <span class=n>updates</span> <span class=n>session_memory</span><span class=o>.</span><span class=n>md</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=p>[</span><span class=n>Conversation</span> <span class=n>continues</span><span class=o>...</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>└─</span> <span class=n>Memory</span> <span class=n>Extraction</span> <span class=n>Agent</span> <span class=n>checks</span> <span class=k>for</span> <span class=err>············</span>  <span class=n>Persistent</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>     <span class=n>save</span><span class=o>-</span><span class=n>worthy</span> <span class=n>content</span> <span class=p>(</span><span class=n>preferences</span><span class=p>,</span> <span class=n>feedback</span><span class=p>)</span>      <span class=p>(</span><span class=n>background</span> <span class=n>write</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=p>[</span><span class=n>Context</span> <span class=n>approaching</span> <span class=mi>93</span><span class=o>%</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>├─</span> <span class=n>Try</span> <span class=n>SM</span> <span class=n>Compact</span> <span class=err>································</span>  <span class=n>Context</span> <span class=n>Management</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>│</span>   <span class=err>├─</span> <span class=n>Success</span> <span class=o>-&gt;</span> <span class=n>keep</span> <span class=n>recent</span> <span class=mi>10</span><span class=n>K</span><span class=o>-</span><span class=mi>40</span><span class=n>K</span> <span class=n>tokens</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>│</span>   <span class=err>└─</span> <span class=n>Fail</span> <span class=o>-&gt;</span> <span class=n>Full</span> <span class=n>Compact</span> <span class=o>-&gt;</span> <span class=n>PTL</span> <span class=n>Retry</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=err>└─</span> <span class=n>Restore</span> <span class=n>files</span><span class=p>,</span> <span class=n>Plan</span><span class=p>,</span> <span class=n>Skills</span><span class=p>,</span> <span class=n>Agent</span> <span class=n>state</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>│</span>  <span class=p>[</span><span class=n>Conversation</span> <span class=n>continues</span><span class=o>...</span> <span class=p>(</span><span class=n>loop</span><span class=p>)]</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=n>SESSION</span> <span class=n>END</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>session_memory</span><span class=o>.</span><span class=n>md</span> <span class=n>preserved</span> <span class=p>(</span><span class=n>resumable</span><span class=p>)</span> <span class=err>··········</span>  <span class=n>Session</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>└─</span> <span class=n>memory</span><span class=o>/*.</span><span class=n>md</span> <span class=n>persisted</span> <span class=n>permanently</span> <span class=err>················</span>  <span class=n>Persistent</span> <span class=n>Memory</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=n>NEXT</span> <span class=n>SESSION</span> <span class=n>START</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>Reload</span> <span class=n>MEMORY</span><span class=o>.</span><span class=n>md</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>├─</span> <span class=n>Retrieve</span> <span class=n>relevant</span> <span class=n>memory</span> <span class=n>files</span>
+</span></span><span class=line><span class=cl><span class=err>▎</span> <span class=err>└─</span> <span class=n>If</span> <span class=n>resuming</span> <span class=o>-&gt;</span> <span class=n>read</span> <span class=n>session_memory</span><span class=o>.</span><span class=n>md</span> <span class=n>as</span> <span class=n>context</span></span></span></code></pre></td></tr></table></div></div><hr><h2 id=engineering-highlights>Engineering Highlights
+<a class=header-anchor href=#engineering-highlights></a></h2><h3 id=prompt-cache-protection>Prompt Cache Protection
+<a class=header-anchor href=#prompt-cache-protection></a></h3><p>Compaction is the natural enemy of prompt cache — all messages change, so the cache invalidates. The system&rsquo;s counterstrategy:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-26-1><a class=lnlinks href=#hl-26-1> 1</a>
+</span><span class=lnt id=hl-26-2><a class=lnlinks href=#hl-26-2> 2</a>
+</span><span class=lnt id=hl-26-3><a class=lnlinks href=#hl-26-3> 3</a>
+</span><span class=lnt id=hl-26-4><a class=lnlinks href=#hl-26-4> 4</a>
+</span><span class=lnt id=hl-26-5><a class=lnlinks href=#hl-26-5> 5</a>
+</span><span class=lnt id=hl-26-6><a class=lnlinks href=#hl-26-6> 6</a>
+</span><span class=lnt id=hl-26-7><a class=lnlinks href=#hl-26-7> 7</a>
+</span><span class=lnt id=hl-26-8><a class=lnlinks href=#hl-26-8> 8</a>
+</span><span class=lnt id=hl-26-9><a class=lnlinks href=#hl-26-9> 9</a>
+</span><span class=lnt id=hl-26-10><a class=lnlinks href=#hl-26-10>10</a>
+</span><span class=lnt id=hl-26-11><a class=lnlinks href=#hl-26-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>Before</span> <span class=n>compaction</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=n>Main</span> <span class=n>prompt</span> <span class=n>cache</span><span class=p>:</span> <span class=p>[</span><span class=n>system_prompt</span> <span class=o>|</span> <span class=n>tools</span> <span class=o>|</span> <span class=n>msg1</span><span class=o>...</span><span class=n>msgN</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>                     <span class=o>&lt;----</span> <span class=n>cache</span> <span class=n>hit</span> <span class=o>----&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>After</span> <span class=n>compaction</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=n>New</span> <span class=n>messages</span><span class=p>:</span> <span class=p>[</span><span class=n>system_prompt</span> <span class=o>|</span> <span class=n>tools</span> <span class=o>|</span> <span class=n>summary</span> <span class=o>|</span> <span class=n>recent_msgs</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>                <span class=o>&lt;--</span> <span class=n>still</span> <span class=n>hit</span><span class=o>!</span> <span class=o>--&gt;</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=n>system</span> <span class=o>+</span> <span class=n>tools</span> <span class=n>unchanged</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=o>+</span> <span class=n>Notify</span> <span class=n>cache</span> <span class=n>monitor</span><span class=p>:</span> <span class=s2>&#34;compaction just happened,</span>
+</span></span><span class=line><span class=cl>    <span class=n>cache</span> <span class=n>hit</span><span class=o>-</span><span class=n>rate</span> <span class=n>drop</span> <span class=n>is</span> <span class=n>expected</span><span class=p>,</span> <span class=n>suppress</span> <span class=n>alerts</span><span class=s2>&#34;</span></span></span></code></pre></td></tr></table></div></div><p>The Fork Agent design also maximizes cache reuse — the compaction agent sends requests with a prefix identical to the main conversation (system prompt + tools + message prefix), thereby hitting the same cache.</p><h3 id=image-and-media-handling>Image and Media Handling
+<a class=header-anchor href=#image-and-media-handling></a></h3><p>Before compaction, images and document attachments are stripped (they&rsquo;re useless for generating text summaries but consume significant tokens):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-27-1><a class=lnlinks href=#hl-27-1>1</a>
+</span><span class=lnt id=hl-27-2><a class=lnlinks href=#hl-27-2>2</a>
+</span><span class=lnt id=hl-27-3><a class=lnlinks href=#hl-27-3>3</a>
+</span><span class=lnt id=hl-27-4><a class=lnlinks href=#hl-27-4>4</a>
+</span><span class=lnt id=hl-27-5><a class=lnlinks href=#hl-27-5>5</a>
+</span><span class=lnt id=hl-27-6><a class=lnlinks href=#hl-27-6>6</a>
+</span><span class=lnt id=hl-27-7><a class=lnlinks href=#hl-27-7>7</a>
+</span><span class=lnt id=hl-27-8><a class=lnlinks href=#hl-27-8>8</a>
+</span><span class=lnt id=hl-27-9><a class=lnlinks href=#hl-27-9>9</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>strip_images</span><span class=p>(</span><span class=n>messages</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Images and documents → text placeholders&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>messages</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>block</span> <span class=ow>in</span> <span class=n>msg</span><span class=o>.</span><span class=n>content</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=n>block</span><span class=o>.</span><span class=n>type</span> <span class=o>==</span> <span class=s2>&#34;image&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>replace_with</span><span class=p>(</span><span class=s2>&#34;[image]&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>elif</span> <span class=n>block</span><span class=o>.</span><span class=n>type</span> <span class=o>==</span> <span class=s2>&#34;document&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>replace_with</span><span class=p>(</span><span class=s2>&#34;[document]&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>messages</span></span></span></code></pre></td></tr></table></div></div><h3 id=session-metadata-persistence>Session Metadata Persistence
+<a class=header-anchor href=#session-metadata-persistence></a></h3><p>An easily overlooked detail: session metadata (custom titles, tags) must be re-appended after compaction. Because the <code>--resume</code> feature reads the <strong>last 16KB of the log file</strong> to retrieve session info, if compaction generates a large number of new messages, the metadata gets pushed out of this window, causing auto-generated titles to display instead of user-set names.</p><hr><h2 id=summary>Summary
+<a class=header-anchor href=#summary></a></h2><p>Claude Code&rsquo;s memory management system is a carefully designed three-layer architecture:</p><table><thead><tr><th>Layer</th><th>Mechanism</th><th>Lifecycle</th><th>Cost</th></tr></thead><tbody><tr><td>Context Window</td><td>Three-level compaction (SM → Full → PTL)</td><td>Single conversation</td><td>SM: zero, Full: 1 API call</td></tr><tr><td>Session Memory</td><td>Background Fork Agent continuous summary</td><td>Single session</td><td>~1 lightweight API call per ~5K tokens</td></tr><tr><td>Persistent Memory</td><td>File system + Sonnet intelligent retrieval</td><td>Permanent</td><td>Retrieval: 1 Sonnet call</td></tr></tbody></table><p><strong>The core design philosophy</strong>: Rather than pursuing larger context windows, achieve &ldquo;remembers well, forgets right, retrieves accurately&rdquo; within a limited window.</p><ul><li><strong>Remembers well</strong>: Session Memory continuously distills, never missing key information</li><li><strong>Forgets right</strong>: Three-level compaction retains the most important content, discards redundant tool call details</li><li><strong>Retrieves accurately</strong>: memdir organized by type + Sonnet intelligent retrieval for precise recall</li></ul><p>This system enables Claude Code to achieve an &ldquo;effective memory capacity&rdquo; far exceeding 200K within its 200K context window.</p><hr><p><em>All code blocks in this article are Python pseudocode or diagrams inferred from actual behavior and publicly available information, intended to aid understanding of Claude Code&rsquo;s internal mechanisms.</em></p></div><footer class=post-footer><div class=post-tags><a href=/en/tags/nlp/>NLP
+</a><a href=/en/tags/llm-agent/>LLM Agent
+</a><a href=/en/tags/llm/>LLM
+</a><a href=/en/tags/product/>Product</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/llm-infinite-monkeys/ rel=next title="LLMs Are the Monkeys That Finally Typed Shakespeare"><i class="fa fa-chevron-left"></i> LLMs Are the Monkeys That Finally Typed Shakespeare</a></div><div class="post-nav-prev post-nav-item"><a href=/en/why-agents-make-us-more-tired/ rel=prev title="Agents Are Supposed to Help, So Why Are We More Exhausted?">Agents Are Supposed to Help, So Why Are We More Exhausted?
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/claude-code-memory-management/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"claude-code-memory-management","permalink":"https://finisky.github.io/en/claude-code-memory-management/","title":"A Deep Dive into Claude Code's Memory Management","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

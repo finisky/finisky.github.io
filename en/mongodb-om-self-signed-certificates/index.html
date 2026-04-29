@@ -1,0 +1,407 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS"><meta property="og:type" content="article"><meta property="og:title" content="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/mongodb-om-self-signed-certificates/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-19 23:45:30 +0800 CST"><meta property="article:modified_time" content="2020-12-19 23:45:30 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-self-signed-certificates/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-self-signed-certificates/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#get-internal-server-endpoints>Get Internal Server Endpoints</a></li><li><a href=#generate-self-signed-ca-certificate>Generate Self-signed CA Certificate</a><ul><li><a href=#generate-ca-key>Generate CA key</a></li><li><a href=#configure-rootcacnf>Configure <code>rootca.cnf</code></a></li><li><a href=#generate-ca-certificate>Generate CA Certificate</a></li></ul></li><li><a href=#generate-intermediate-certificate>Generate Intermediate Certificate</a></li><li><a href=#generate-server-certificates>Generate Server Certificates</a><ul><li><a href=#configure-userdb0cnf>Configure <code>userdb0.cnf</code></a></li><li><a href=#generate-server-private-key-and-certificate>Generate Server Private Key and Certificate</a></li></ul></li><li><a href=#verify-certifcates>Verify Certifcates</a><ul><li><a href=#verify-server-certificate>Verify Server Certificate</a></li><li><a href=#view-certificate-detail>View Certificate Detail</a></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-create-sharded-cluster/>Deploy MongoDB Sharded Cluster by Ops Manager</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-tls-auth/>MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-expose-services/>MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-create-user-db/>MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-ops-manager/>MongoDB Cluster In Kubernetes(1): Install MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/mongodb-om-self-signed-certificates/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates"><meta itemprop=description content="This is part4, we will create a self-signed CA certificate and three server certificates.
+MongoDB Ops Manager Series:
+
+
+
+    Install MongoDB Ops Manager
+    
+
+
+
+    Create a UserDB ReplicaSet
+    
+
+
+
+    Expose UserDB to Public
+    
+
+
+
+    Openssl Generates Self-signed Certificates
+    
+
+
+
+    Enable UserDB TLS and Auth
+    
+
+
+Self-signed certificates is not recommended for production. It cannot prevent man-in-the-middle attack. Since our main purpose is to encrypt the communication messages instead of authentication. Self-signed certificates is acceptable."></span><header class=post-header><h1 class=post-title itemprop="name headline">MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-12-19 23:45:30 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-19 23:45:30 +0800 CST">2020-12-19
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>7min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/mongodb-om-self-signed-certificates/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/mongodb-om-self-signed-certificates/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>This is part4, we will create a self-signed CA certificate and three server certificates.</p><p>MongoDB Ops Manager Series:</p><ol><li><a href=/en/mongodb-ops-manager/ title="Install MongoDB Ops Manager">Install MongoDB Ops Manager</a></li><li><a href=/en/mongodb-om-create-user-db/ title="Create a UserDB ReplicaSet">Create a UserDB ReplicaSet</a></li><li><a href=/en/mongodb-om-expose-services/ title="Expose UserDB to Public">Expose UserDB to Public</a></li><li><a href=/en/mongodb-om-self-signed-certificates/ title="Openssl Generates Self-signed Certificates">Openssl Generates Self-signed Certificates</a></li><li><a href=/en/mongodb-om-tls-auth/ title="Enable UserDB TLS and Auth">Enable UserDB TLS and Auth</a></li></ol><p>Self-signed certificates is <strong>not recommended</strong> for production. It cannot prevent man-in-the-middle attack. Since our main purpose is to encrypt the communication messages instead of authentication. Self-signed certificates is acceptable.</p><a id=more></a><h1 id=get-internal-server-endpoints>Get Internal Server Endpoints
+<a class=header-anchor href=#get-internal-server-endpoints></a></h1><p>Look at the <code>userdb</code> servers:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbservers.png alt="UserDB Servers"></p><p>The <code>userdb</code> ReplicaSet has 3 servers, they communicates with each other by <code>internal endpoints</code>:</p><ul><li>userdb-0.userdb-svc.mongodb.svc.cluster.local</li><li>userdb-1.userdb-svc.mongodb.svc.cluster.local</li><li>userdb-2.userdb-svc.mongodb.svc.cluster.local</li></ul><p>In
+<a href=/en/mongodb-om-expose-services/ title="Part 3">Part 3
+</a>we have configured the <code>external endpoints</code>: <code>userdb0.com</code>, <code>userdb1.com</code>, <code>userdb2.com</code> for servers. Therefore, we can access the <code>userdb</code> by internal endpoints
+<code>xxx.svc.cluster.local</code> inside kubernetes cluster, and access the <code>userdb</code> by external endpoints <code>userdb&lt;X>.com</code> from public internet.</p><p>Consider that MongoDB cluster nodes need to communication with each other inside the kubernetes cluster, the generated certifcates must <strong>include both <code>internal endpoints</code> and <code>external endpoints</code></strong>.</p><p>How does one server trust that the certifcate is valid? The certificate must be signed by a certificate authority (CA). In our case, we need to generate 4 certficates:</p><ul><li><code>rootca.crt</code></li><li><code>userdb&lt;X>.pem</code>，X=0,1,2</li></ul><h1 id=generate-self-signed-ca-certificate>Generate Self-signed CA Certificate
+<a class=header-anchor href=#generate-self-signed-ca-certificate></a></h1><p>Refer to:
+<a href=https://docs.mongodb.com/manual/appendix/security/appendixA-openssl-ca/ title="# Appendix A - OpenSSL CA Certificate for Testing" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Appendix A - OpenSSL CA Certificate for Testing
+<i class="fa fa-external-link-alt"></i></a></p><h2 id=generate-ca-key>Generate CA key
+<a class=header-anchor href=#generate-ca-key></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out rootca.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>Generating RSA private key, <span class=m>4096</span> bit long modulus <span class=o>(</span><span class=m>2</span> primes<span class=o>)</span>
+</span></span><span class=line><span class=cl>..................................................................................................................................................................................................................................................++++
+</span></span><span class=line><span class=cl>................++++
+</span></span><span class=line><span class=cl>e is <span class=m>65537</span> <span class=o>(</span>0x010001<span class=o>)</span></span></span></code></pre></td></tr></table></div></div><p><code>rootca.key</code> is the private key, keep it safe.</p><h2 id=configure-rootcacnf>Configure <code>rootca.cnf</code>
+<a class=header-anchor href=#configure-rootcacnf></a></h2><p><code>rootca.cnf</code> is the config file for the CA certficate. No need to change.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span><span class=lnt id=hl-1-35><a class=lnlinks href=#hl-1-35>35</a>
+</span><span class=lnt id=hl-1-36><a class=lnlinks href=#hl-1-36>36</a>
+</span><span class=lnt id=hl-1-37><a class=lnlinks href=#hl-1-37>37</a>
+</span><span class=lnt id=hl-1-38><a class=lnlinks href=#hl-1-38>38</a>
+</span><span class=lnt id=hl-1-39><a class=lnlinks href=#hl-1-39>39</a>
+</span><span class=lnt id=hl-1-40><a class=lnlinks href=#hl-1-40>40</a>
+</span><span class=lnt id=hl-1-41><a class=lnlinks href=#hl-1-41>41</a>
+</span><span class=lnt id=hl-1-42><a class=lnlinks href=#hl-1-42>42</a>
+</span><span class=lnt id=hl-1-43><a class=lnlinks href=#hl-1-43>43</a>
+</span><span class=lnt id=hl-1-44><a class=lnlinks href=#hl-1-44>44</a>
+</span><span class=lnt id=hl-1-45><a class=lnlinks href=#hl-1-45>45</a>
+</span><span class=lnt id=hl-1-46><a class=lnlinks href=#hl-1-46>46</a>
+</span><span class=lnt id=hl-1-47><a class=lnlinks href=#hl-1-47>47</a>
+</span><span class=lnt id=hl-1-48><a class=lnlinks href=#hl-1-48>48</a>
+</span><span class=lnt id=hl-1-49><a class=lnlinks href=#hl-1-49>49</a>
+</span><span class=lnt id=hl-1-50><a class=lnlinks href=#hl-1-50>50</a>
+</span><span class=lnt id=hl-1-51><a class=lnlinks href=#hl-1-51>51</a>
+</span><span class=lnt id=hl-1-52><a class=lnlinks href=#hl-1-52>52</a>
+</span><span class=lnt id=hl-1-53><a class=lnlinks href=#hl-1-53>53</a>
+</span><span class=lnt id=hl-1-54><a class=lnlinks href=#hl-1-54>54</a>
+</span><span class=lnt id=hl-1-55><a class=lnlinks href=#hl-1-55>55</a>
+</span><span class=lnt id=hl-1-56><a class=lnlinks href=#hl-1-56>56</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># For the CA policy
+</span></span><span class=line><span class=cl>[ policy_match ]
+</span></span><span class=line><span class=cl>countryName = match
+</span></span><span class=line><span class=cl>stateOrProvinceName = match
+</span></span><span class=line><span class=cl>organizationName = match
+</span></span><span class=line><span class=cl>organizationalUnitName = optional
+</span></span><span class=line><span class=cl>commonName = supplied
+</span></span><span class=line><span class=cl>emailAddress = optional
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req ]
+</span></span><span class=line><span class=cl>default_bits = 4096
+</span></span><span class=line><span class=cl>default_keyfile = rootca.pem    ## The default private key file name.
+</span></span><span class=line><span class=cl>default_md = sha256                           ## Use SHA-256 for Signatures
+</span></span><span class=line><span class=cl>distinguished_name = req_dn
+</span></span><span class=line><span class=cl>req_extensions = v3_req
+</span></span><span class=line><span class=cl>x509_extensions = v3_ca # The extentions to add to the self signed cert
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_req ]
+</span></span><span class=line><span class=cl>subjectKeyIdentifier  = hash
+</span></span><span class=line><span class=cl>basicConstraints = CA:FALSE
+</span></span><span class=line><span class=cl>keyUsage = critical, digitalSignature, keyEncipherment
+</span></span><span class=line><span class=cl>nsComment = &#34;OpenSSL Generated Certificate for TESTING only.  NOT FOR PRODUCTION USE.&#34;
+</span></span><span class=line><span class=cl>extendedKeyUsage  = serverAuth, clientAuth
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req_dn ]
+</span></span><span class=line><span class=cl>countryName = Country Name (2 letter code)
+</span></span><span class=line><span class=cl>countryName_default = CN
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>countryName_min = 2
+</span></span><span class=line><span class=cl>countryName_max = 2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>stateOrProvinceName = State or Province Name (full name)
+</span></span><span class=line><span class=cl>stateOrProvinceName_default = Beijing
+</span></span><span class=line><span class=cl>stateOrProvinceName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>localityName = Locality Name (eg, city)
+</span></span><span class=line><span class=cl>localityName_default = Beijing
+</span></span><span class=line><span class=cl>localityName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationName = Organization Name (eg, company)
+</span></span><span class=line><span class=cl>organizationName_default = TestComp
+</span></span><span class=line><span class=cl>organizationName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationalUnitName = Organizational Unit Name (eg, section)
+</span></span><span class=line><span class=cl>organizationalUnitName_default = TestComp
+</span></span><span class=line><span class=cl>organizationalUnitName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commonName = Common Name (eg, YOUR name)
+</span></span><span class=line><span class=cl>commonName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_ca ]
+</span></span><span class=line><span class=cl># Extensions for a typical CA
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>subjectKeyIdentifier=hash
+</span></span><span class=line><span class=cl>basicConstraints = critical,CA:true
+</span></span><span class=line><span class=cl>authorityKeyIdentifier=keyid:always,issuer:always</span></span></code></pre></td></tr></table></div></div><h2 id=generate-ca-certificate>Generate CA Certificate
+<a class=header-anchor href=#generate-ca-certificate></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ openssl req -new -x509 -days 36500 -key rootca.key -out rootca.crt -config rootca.cnf
+</span></span><span class=line><span class=cl>You are about to be asked to enter information that will be incorporated
+</span></span><span class=line><span class=cl>into your certificate request.
+</span></span><span class=line><span class=cl>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span class=line><span class=cl>There are quite a few fields but you can leave some blank
+</span></span><span class=line><span class=cl>For some fields there will be a default value,
+</span></span><span class=line><span class=cl>If you enter &#39;.&#39;, the field will be left blank.
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>Country Name (2 letter code) [CN]:
+</span></span><span class=line><span class=cl>State or Province Name (full name) [Beijing]:
+</span></span><span class=line><span class=cl>Locality Name (eg, city) [Beijing]:
+</span></span><span class=line><span class=cl>Organization Name (eg, company) [TestComp]:
+</span></span><span class=line><span class=cl>Organizational Unit Name (eg, section) [TestComp]:
+</span></span><span class=line><span class=cl>Common Name (eg, YOUR name) []:</span></span></code></pre></td></tr></table></div></div><p>Enter information for each field. After that, you will get a CA certificate <code>rootca.crt</code> with a valid period of 100 years (not recommended).</p><h1 id=generate-intermediate-certificate>Generate Intermediate Certificate
+<a class=header-anchor href=#generate-intermediate-certificate></a></h1><p><a href=https://www.thesslstore.com/blog/root-certificates-intermediate/ title="# The Difference Between Root Certificates and Intermediate Certificates" rel="noopener external nofollow noreferrer" target=_blank class=exturl># The Difference Between Root Certificates and Intermediate Certificates
+<i class="fa fa-external-link-alt"></i></a></p><p>A typical certficate chain:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CA -&gt; IA -&gt; Server Certificate</span></span></code></pre></td></tr></table></div></div><p>Personally, I don&rsquo;t recommend to create such a IA certficate to construct a certificate chain. Because we only have limited number of servers, creating an IA only introduces extra complexity and is an overkill. I think the following chain is enough:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>CA -&gt; Server Certificate</span></span></code></pre></td></tr></table></div></div><h1 id=generate-server-certificates>Generate Server Certificates
+<a class=header-anchor href=#generate-server-certificates></a></h1><p>Refer to:
+<a href=https://docs.mongodb.com/manual/appendix/security/appendixB-openssl-server/ title="# Appendix B - OpenSSL Server Certificates for Testing" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Appendix B - OpenSSL Server Certificates for Testing
+<i class="fa fa-external-link-alt"></i></a></p><h2 id=configure-userdb0cnf>Configure <code>userdb0.cnf</code>
+<a class=header-anchor href=#configure-userdb0cnf></a></h2><p>The most important part is <code>[ alt_names ]</code>. As explained before, the DNS must include include both <code>internal endpoints</code> and <code>external endpoints</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = userdb0.com
+</span></span><span class=line><span class=cl>DNS.2 = userdb-0.userdb-svc.mongodb.svc.cluster.local</span></span></code></pre></td></tr></table></div></div><p>You can add IPs to it as well: <code>IP.1 = x.x.x.x</code>.</p><p><code>userdb0.cnf</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span><span class=lnt id=hl-6-24><a class=lnlinks href=#hl-6-24>24</a>
+</span><span class=lnt id=hl-6-25><a class=lnlinks href=#hl-6-25>25</a>
+</span><span class=lnt id=hl-6-26><a class=lnlinks href=#hl-6-26>26</a>
+</span><span class=lnt id=hl-6-27><a class=lnlinks href=#hl-6-27>27</a>
+</span><span class=lnt id=hl-6-28><a class=lnlinks href=#hl-6-28>28</a>
+</span><span class=lnt id=hl-6-29><a class=lnlinks href=#hl-6-29>29</a>
+</span><span class=lnt id=hl-6-30><a class=lnlinks href=#hl-6-30>30</a>
+</span><span class=lnt id=hl-6-31><a class=lnlinks href=#hl-6-31>31</a>
+</span><span class=lnt id=hl-6-32><a class=lnlinks href=#hl-6-32>32</a>
+</span><span class=lnt id=hl-6-33><a class=lnlinks href=#hl-6-33>33</a>
+</span><span class=lnt id=hl-6-34><a class=lnlinks href=#hl-6-34>34</a>
+</span><span class=lnt id=hl-6-35><a class=lnlinks href=#hl-6-35>35</a>
+</span><span class=lnt id=hl-6-36><a class=lnlinks href=#hl-6-36>36</a>
+</span><span class=lnt id=hl-6-37><a class=lnlinks href=#hl-6-37>37</a>
+</span><span class=lnt id=hl-6-38><a class=lnlinks href=#hl-6-38>38</a>
+</span><span class=lnt id=hl-6-39><a class=lnlinks href=#hl-6-39>39</a>
+</span><span class=lnt id=hl-6-40><a class=lnlinks href=#hl-6-40>40</a>
+</span><span class=lnt id=hl-6-41><a class=lnlinks href=#hl-6-41>41</a>
+</span><span class=lnt id=hl-6-42><a class=lnlinks href=#hl-6-42>42</a>
+</span><span class=lnt id=hl-6-43><a class=lnlinks href=#hl-6-43>43</a>
+</span><span class=lnt id=hl-6-44><a class=lnlinks href=#hl-6-44>44</a>
+</span><span class=lnt id=hl-6-45><a class=lnlinks href=#hl-6-45>45</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[ req ]
+</span></span><span class=line><span class=cl>default_bits = 4096
+</span></span><span class=line><span class=cl>default_md = sha256
+</span></span><span class=line><span class=cl>distinguished_name = req_dn
+</span></span><span class=line><span class=cl>req_extensions = v3_req
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ v3_req ]
+</span></span><span class=line><span class=cl>subjectKeyIdentifier  = hash
+</span></span><span class=line><span class=cl>basicConstraints = CA:FALSE
+</span></span><span class=line><span class=cl>keyUsage = critical, digitalSignature, keyEncipherment
+</span></span><span class=line><span class=cl>nsComment = &#34;OpenSSL Generated Certificate for TESTING only.  NOT FOR PRODUCTION USE.&#34;
+</span></span><span class=line><span class=cl>extendedKeyUsage  = serverAuth, clientAuth
+</span></span><span class=line><span class=cl>subjectAltName = @alt_names
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ alt_names ]
+</span></span><span class=line><span class=cl>DNS.1 = userdb0.com        ##TODO: Enter the DNS names. The DNS names should match the server names.
+</span></span><span class=line><span class=cl>DNS.2 = userdb-0.userdb-svc.mongodb.svc.cluster.local        ##TODO: Enter the DNS names. The DNS names should match the server names.
+</span></span><span class=line><span class=cl>IP.1 =          ##TODO: Enter the IP address. SAN matching by IP address is available starting in MongoDB 4.2
+</span></span><span class=line><span class=cl>IP.2 =          ##TODO: Enter the IP address. SAN matching by IP address is available starting in MongoDB 4.2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[ req_dn ]
+</span></span><span class=line><span class=cl>countryName = Country Name (2 letter code)
+</span></span><span class=line><span class=cl>countryName_default = CN
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>countryName_min = 2
+</span></span><span class=line><span class=cl>countryName_max = 2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>stateOrProvinceName = State or Province Name (full name)
+</span></span><span class=line><span class=cl>stateOrProvinceName_default = Beijing
+</span></span><span class=line><span class=cl>stateOrProvinceName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>localityName = Locality Name (eg, city)
+</span></span><span class=line><span class=cl>localityName_default = Beijing
+</span></span><span class=line><span class=cl>localityName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationName = Organization Name (eg, company)
+</span></span><span class=line><span class=cl>organizationName_default = TestComp
+</span></span><span class=line><span class=cl>organizationName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>organizationalUnitName = Organizational Unit Name (eg, section)
+</span></span><span class=line><span class=cl>organizationalUnitName_default = TestComp
+</span></span><span class=line><span class=cl>organizationalUnitName_max = 64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>commonName = Common Name (eg, YOUR name)
+</span></span><span class=line><span class=cl>commonName_max = 64</span></span></code></pre></td></tr></table></div></div><h2 id=generate-server-private-key-and-certificate>Generate Server Private Key and Certificate
+<a class=header-anchor href=#generate-server-private-key-and-certificate></a></h2><p>Take <code>userdb0</code> as an example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span><span class=lnt id=hl-7-3><a class=lnlinks href=#hl-7-3>3</a>
+</span><span class=lnt id=hl-7-4><a class=lnlinks href=#hl-7-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out userdb0.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>$ openssl req -new -key userdb0.key -out userdb0.csr -config userdb0.cnf
+</span></span><span class=line><span class=cl>$ openssl x509 -sha256 -req -days <span class=m>3650</span> -in userdb0.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out userdb0.crt -extfile userdb0.cnf -extensions v3_req
+</span></span><span class=line><span class=cl>$ cat userdb0.crt userdb0.key &gt; userdb0.pem</span></span></code></pre></td></tr></table></div></div><p>Sample output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1> 1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2> 2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3> 3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4> 4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5> 5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6> 6</a>
+</span><span class=lnt id=hl-8-7><a class=lnlinks href=#hl-8-7> 7</a>
+</span><span class=lnt id=hl-8-8><a class=lnlinks href=#hl-8-8> 8</a>
+</span><span class=lnt id=hl-8-9><a class=lnlinks href=#hl-8-9> 9</a>
+</span><span class=lnt id=hl-8-10><a class=lnlinks href=#hl-8-10>10</a>
+</span><span class=lnt id=hl-8-11><a class=lnlinks href=#hl-8-11>11</a>
+</span><span class=lnt id=hl-8-12><a class=lnlinks href=#hl-8-12>12</a>
+</span><span class=lnt id=hl-8-13><a class=lnlinks href=#hl-8-13>13</a>
+</span><span class=lnt id=hl-8-14><a class=lnlinks href=#hl-8-14>14</a>
+</span><span class=lnt id=hl-8-15><a class=lnlinks href=#hl-8-15>15</a>
+</span><span class=lnt id=hl-8-16><a class=lnlinks href=#hl-8-16>16</a>
+</span><span class=lnt id=hl-8-17><a class=lnlinks href=#hl-8-17>17</a>
+</span><span class=lnt id=hl-8-18><a class=lnlinks href=#hl-8-18>18</a>
+</span><span class=lnt id=hl-8-19><a class=lnlinks href=#hl-8-19>19</a>
+</span><span class=lnt id=hl-8-20><a class=lnlinks href=#hl-8-20>20</a>
+</span><span class=lnt id=hl-8-21><a class=lnlinks href=#hl-8-21>21</a>
+</span><span class=lnt id=hl-8-22><a class=lnlinks href=#hl-8-22>22</a>
+</span><span class=lnt id=hl-8-23><a class=lnlinks href=#hl-8-23>23</a>
+</span><span class=lnt id=hl-8-24><a class=lnlinks href=#hl-8-24>24</a>
+</span><span class=lnt id=hl-8-25><a class=lnlinks href=#hl-8-25>25</a>
+</span><span class=lnt id=hl-8-26><a class=lnlinks href=#hl-8-26>26</a>
+</span><span class=lnt id=hl-8-27><a class=lnlinks href=#hl-8-27>27</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl genrsa -out userdb0.key <span class=m>4096</span>
+</span></span><span class=line><span class=cl>Generating RSA private key, <span class=m>4096</span> bit long modulus <span class=o>(</span><span class=m>2</span> primes<span class=o>)</span>
+</span></span><span class=line><span class=cl>.............................................................++++
+</span></span><span class=line><span class=cl>.....++++
+</span></span><span class=line><span class=cl>e is <span class=m>65537</span> <span class=o>(</span>0x010001<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ openssl req -new -key userdb0.key -out userdb0.csr -config userdb0.cnf
+</span></span><span class=line><span class=cl>You are about to be asked to enter information that will be incorporated
+</span></span><span class=line><span class=cl>into your certificate request.
+</span></span><span class=line><span class=cl>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span class=line><span class=cl>There are quite a few fields but you can leave some blank
+</span></span><span class=line><span class=cl>For some fields there will be a default value,
+</span></span><span class=line><span class=cl>If you enter <span class=s1>&#39;.&#39;</span>, the field will be left blank.
+</span></span><span class=line><span class=cl>-----
+</span></span><span class=line><span class=cl>Country Name <span class=o>(</span><span class=m>2</span> letter code<span class=o>)</span> <span class=o>[</span>CN<span class=o>]</span>:
+</span></span><span class=line><span class=cl>State or Province Name <span class=o>(</span>full name<span class=o>)</span> <span class=o>[</span>Beijing<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Locality Name <span class=o>(</span>eg, city<span class=o>)</span> <span class=o>[</span>Beijing<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Organization Name <span class=o>(</span>eg, company<span class=o>)</span> <span class=o>[</span>TestComp<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Organizational Unit Name <span class=o>(</span>eg, section<span class=o>)</span> <span class=o>[</span>TestComp<span class=o>]</span>:
+</span></span><span class=line><span class=cl>Common Name <span class=o>(</span>eg, YOUR name<span class=o>)</span> <span class=o>[]</span>:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ openssl x509 -sha256 -req -days <span class=m>3650</span> -in userdb0.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -out userdb0.crt -extfile userdb0.cnf -extensions v3_req
+</span></span><span class=line><span class=cl>Signature ok
+</span></span><span class=line><span class=cl><span class=nv>subject</span><span class=o>=</span><span class=nv>C</span> <span class=o>=</span> CN, <span class=nv>ST</span> <span class=o>=</span> Beijing, <span class=nv>L</span> <span class=o>=</span> Beijing, <span class=nv>O</span> <span class=o>=</span> TestComp, <span class=nv>OU</span> <span class=o>=</span> TestComp
+</span></span><span class=line><span class=cl>Getting CA Private Key
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>$ cat userdb0.crt userdb0.key &gt; userdb0.pem</span></span></code></pre></td></tr></table></div></div><p>Repeat the above process and replace <code>userdb0</code> to <code>userdb1</code> and <code>userdb2</code>. Finally you will get three server certificates: <code>userdb0.pem</code>, <code>userdb1.pem</code> and <code>userdb2.pem</code>.</p><h1 id=verify-certifcates>Verify Certifcates
+<a class=header-anchor href=#verify-certifcates></a></h1><h2 id=verify-server-certificate>Verify Server Certificate
+<a class=header-anchor href=#verify-server-certificate></a></h2><p>Specify the CAfile is <code>rootca.crt</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl verify -CAfile rootca.crt userdb0.pem
+</span></span><span class=line><span class=cl>userdb0.pem: OK</span></span></code></pre></td></tr></table></div></div><p>Verify CA itself:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1>1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>openssl verify -CAfile rootca.crt rootca.crt
+</span></span><span class=line><span class=cl>rootca.crt: OK</span></span></code></pre></td></tr></table></div></div><h2 id=view-certificate-detail>View Certificate Detail
+<a class=header-anchor href=#view-certificate-detail></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1>1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2>2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3>3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4>4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ openssl x509 -text -noout -in userdb0.pem
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>            X509v3 Subject Alternative Name:
+</span></span><span class=line><span class=cl>                DNS:userdb0.com, DNS:userdb-0.userdb-svc.mongodb.svc.cluster.local, IP Address:xxx.xxx.xxx.xxx
+</span></span><span class=line><span class=cl>...</span></span></code></pre></td></tr></table></div></div><p>Now we have a CA certificate <code>root.crt</code> and three server certificates <code>userdb&lt;X>.pem</code>.</p><p>Lets go to the final step:
+<a href=/en/mongodb-om-tls-auth/ title="Enable UserDB TLS and Auth">Enable UserDB TLS and Auth</a></p></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/kubernetes/>Kubernetes
+</a><a href=/en/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/en/tags/tls/>TLS</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/mongodb-om-tls-auth/ rel=next title="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth"><i class="fa fa-chevron-left"></i> MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth</a></div><div class="post-nav-prev post-nav-item"><a href=/en/mongodb-om-expose-services/ rel=prev title="MongoDB Cluster In Kubernetes(3): Expose UserDB to Public">MongoDB Cluster In Kubernetes(3): Expose UserDB to Public
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/mongodb-om-self-signed-certificates/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-self-signed-certificates","permalink":"https://finisky.github.io/en/mongodb-om-self-signed-certificates/","title":"MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

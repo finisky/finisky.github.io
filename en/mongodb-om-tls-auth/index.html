@@ -1,0 +1,353 @@
+<!doctype html><html lang=en-US data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"><meta name=description content="Tech insights: NLP, Software Engineering, Product Design"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="MongoDB,Kubernetes,MongoDB Ops Manager,TLS"><meta property="og:type" content="article"><meta property="og:title" content="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth"><meta property="og:description" content="Tech insights: NLP, Software Engineering, Product Design"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/en/mongodb-om-tls-auth/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="en-US"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-12-19 23:45:32 +0800 CST"><meta property="article:modified_time" content="2020-12-19 23:45:32 +0800 CST"><link rel=alternate hreflang=zh-CN href=https://finisky.github.io/mongodb-om-tls-auth/><link rel=alternate hreflang=en-US href=https://finisky.github.io/en/mongodb-om-tls-auth/><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480356"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480356"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/en/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, Software Engineering, Product Design</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/en/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>Home</a></li><li class="menu-item menu-item-nlp"><a href=/en/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/en/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/en/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href=/en/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href=/en/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>Archives</a></li><li class="menu-item menu-item-flinks"><a href=/en/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>Links</a></li><li class="menu-item menu-item-about"><a href=/en/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>About</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>TOC</li><li class=sidebar-nav-overview>Overview</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#understanding-different-secure-connections>Understanding Different Secure Connections</a></li><li><a href=#upload-certificates-to-kubernetes-cluster>Upload Certificates to Kubernetes Cluster</a><ul><li><a href=#create-server-secret>Create Server Secret</a></li><li><a href=#create-ca-configmap>Create CA ConfigMap</a></li></ul></li><li><a href=#update-user-database-replicasethorizons>Update User Database <code>replicaSetHorizons</code></a><ul><li><a href=#error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up-error><code>Error calling ComputeState</code>, <code>Error dialing to connParams</code>, <code>Error checking if rs member is up</code> Error</a></li></ul></li><li><a href=#conect-to-userdb>Conect to UserDB</a></li><li><a href=#enable-auth>Enable AUTH</a></li><li><a href=#summary>Summary</a></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>Scan to follow WeChat</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>Scan to follow WeChat</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/en/archives/><span class=site-state-item-count>116</span>
+<span class=site-state-item-name>Posts</span></a></div><div class="site-state-item site-state-categories"><a href=/en/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=/en/tags/><span class=site-state-item-count>47</span>
+<span class=site-state-item-name>Tags</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>Related Posts</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-create-sharded-cluster/>Deploy MongoDB Sharded Cluster by Ops Manager</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-self-signed-certificates/>MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-expose-services/>MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-om-create-user-db/>MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/en/mongodb-ops-manager/>MongoDB Cluster In Kubernetes(1): Install MongoDB Ops Manager</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title="Go to Comment"><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title="Multilingual translation"><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title="Change Theme"><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title="Back to Top"><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/en/mongodb-om-tls-auth/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="Tech insights: NLP, Software Engineering, Product Design"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth"><meta itemprop=description content="This is part5, we will use the generated certficates to enable user database TLS and AUTH.
+MongoDB Ops Manager Series:
+
+
+
+    Install MongoDB Ops Manager
+    
+
+
+
+    Create a UserDB ReplicaSet
+    
+
+
+
+    Expose UserDB to Public
+    
+
+
+
+    Openssl Generates Self-signed Certificates
+    
+
+
+
+    Enable UserDB TLS and Auth
+    
+
+
+
+Understanding Different Secure Connections
+
+Before we start, look at the following three TLS:"></span><header class=post-header><h1 class=post-title itemprop="name headline">MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title="Publish on">Publish on:
+</span><time title="Create Time:2020-12-19 23:45:32 +08:00" itemprop="dateCreated datePublished" datetime="2020-12-19 23:45:32 +0800 CST">2020-12-19
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title="Classify at">Classify at:
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/en/categories/mongodb/ itemprop=url rel=index><span itemprop=name>MongoDB</span>
+</a></span></span><span class=post-meta-item title=Read><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>Read:&ap;</span>
+<span>7min</span>
+</span><span class=post-meta-item title=Views><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>Views:
+</span><span id=pageview-count data-path=/en/mongodb-om-tls-auth/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=Comments>Comments:
+</span><span id=comments-count data-path=/en/mongodb-om-tls-auth/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p>This is part5, we will use the generated certficates to enable user database TLS and AUTH.</p><p>MongoDB Ops Manager Series:</p><ol><li><a href=/en/mongodb-ops-manager/ title="Install MongoDB Ops Manager">Install MongoDB Ops Manager</a></li><li><a href=/en/mongodb-om-create-user-db/ title="Create a UserDB ReplicaSet">Create a UserDB ReplicaSet</a></li><li><a href=/en/mongodb-om-expose-services/ title="Expose UserDB to Public">Expose UserDB to Public</a></li><li><a href=/en/mongodb-om-self-signed-certificates/ title="Openssl Generates Self-signed Certificates">Openssl Generates Self-signed Certificates</a></li><li><a href=/en/mongodb-om-tls-auth/ title="Enable UserDB TLS and Auth">Enable UserDB TLS and Auth</a></li></ol><h1 id=understanding-different-secure-connections>Understanding Different Secure Connections
+<a class=header-anchor href=#understanding-different-secure-connections></a></h1><p>Before we start, look at the following three TLS:</p><a id=more></a><ul><li>Secure Connections to Ops Manager</li><li>Secure Connections to Application Database</li><li>Secure Connections to MongoDB Deployments</li></ul><p>A picture is worth a thousand words:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/securedifferentconnections.png alt="Different Level of Security"></p><p>What we want is the last one: <code>Enable TLS to MongoDB Deployments</code>. Unfortunately, this configuration cannot be performed through Ops Manger web UI as well. Because we need to &ldquo;upload&rdquo; certificate to each server but the UI does not has such capability.</p><p>If you read the Ops Manager document
+<a href=https://docs.opsmanager.mongodb.com/current/tutorial/enable-ssl-for-a-deployment/#get-and-install-the-tls-certificate-on-each-mongodb-host title="# Enable TLS for a Deployment" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Enable TLS for a Deployment
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><blockquote><p>Get and Install the TLS Certificate on Each MongoDB Host</p><p>Acquire a TLS certificate for each host serving a MongoDB process. This certificate must include the FQDN for the hostname of this MongoDB host. The FQDN can be the Common Name or the Subject Alternative Name of this host. You must install this TLS certificate on the MongoDB host.</p></blockquote><p>It&rsquo;s likely that you still don&rsquo;t know how to install the certificate. Actually, what we want is <code>MongoDB Kubernetes Operator</code>&rsquo;s documentation:
+<a href=https://docs.mongodb.com/kubernetes-operator/master/tutorial/secure-tls/ title="# Secure Deployments using TLS" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Secure Deployments using TLS
+<i class="fa fa-external-link-alt"></i>
+</a>.</p><p>By the way, when I first come to this step, I tried to copy the certificate to the statefulset pod by <code>kubectl cp</code>. However, when I <code>kubectl exec</code> to the pod I know it&rsquo;s not feasible:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span><span class=lnt id=hl-0-2><a class=lnlinks href=#hl-0-2>2</a>
+</span><span class=lnt id=hl-0-3><a class=lnlinks href=#hl-0-3>3</a>
+</span><span class=lnt id=hl-0-4><a class=lnlinks href=#hl-0-4>4</a>
+</span><span class=lnt id=hl-0-5><a class=lnlinks href=#hl-0-5>5</a>
+</span><span class=lnt id=hl-0-6><a class=lnlinks href=#hl-0-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>groups: cannot find name <span class=k>for</span> group ID <span class=m>2000</span>
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$ cat &gt; ca.crt
+</span></span><span class=line><span class=cl>bash: ca.crt: Permission denied
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$ whoami
+</span></span><span class=line><span class=cl>whoami: cannot find name <span class=k>for</span> user ID <span class=m>2000</span>
+</span></span><span class=line><span class=cl>I have no name!@mongo-1:/$</span></span></code></pre></td></tr></table></div></div><p>The pod is really weird, login with a username/group <code>2000</code>. I also consider using <code>mount volume</code> to mount the certificate but not have a try because I found the right way.</p><p>Another article for your reference:
+<a href=https://developer.ibm.com/technologies/databases/tutorials/secure-mongo-db-enterprise-on-red-hat-openshift/ title="# Secure MongoDB Enterprise on Red Hat OpenShift" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Secure MongoDB Enterprise on Red Hat OpenShift
+<i class="fa fa-external-link-alt"></i></a></p><h1 id=upload-certificates-to-kubernetes-cluster>Upload Certificates to Kubernetes Cluster
+<a class=header-anchor href=#upload-certificates-to-kubernetes-cluster></a></h1><h2 id=create-server-secret>Create Server Secret
+<a class=header-anchor href=#create-server-secret></a></h2><p>First, rename the four certficates like this:</p><table><thead><tr><th></th><th>Save As</th></tr></thead><tbody><tr><td>rootca.crt</td><td>ca-pem</td></tr><tr><td>userdbX.pem</td><td>userdb-X-pem</td></tr></tbody></table><p>Tips: End the PEM files with <code>-pem</code> and not <code>.pem</code>. These files shouldn’t have a file extension.</p><p>Three server certificate format:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-----BEGIN CERTIFICATE-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your TLS certificate
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END CERTIFICATE-----
+</span></span><span class=line><span class=cl>-----BEGIN RSA PRIVATE KEY-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your private key
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END RSA PRIVATE KEY----</span></span></code></pre></td></tr></table></div></div><p>Comparatively, the <code>rootca.crt</code> only have certficate without private key:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1>1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2>2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3>3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4>4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>-----BEGIN CERTIFICATE-----
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>... your TLS certificate
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>-----END CERTIFICATE-----</span></span></code></pre></td></tr></table></div></div><p>Create a secret to store three server certficates:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1>1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create secret generic userdb-cert --from-file=userdb-0-pem --from-file=userdb-1-pem  --from-file=userdb-2-pem -n mongodb
+</span></span><span class=line><span class=cl>secret/userdb-cert created</span></span></code></pre></td></tr></table></div></div><h2 id=create-ca-configmap>Create CA ConfigMap
+<a class=header-anchor href=#create-ca-configmap></a></h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl create configmap custom-ca --from-file=ca-pem -n mongodb
+</span></span><span class=line><span class=cl>configmap/custom-ca created</span></span></code></pre></td></tr></table></div></div><h1 id=update-user-database-replicasethorizons>Update User Database <code>replicaSetHorizons</code>
+<a class=header-anchor href=#update-user-database-replicasethorizons></a></h1><p>Remember at
+<a href=/en/mongodb-om-expose-services/ title="Part 3">Part 3
+</a>:</p><hr><p>To solve the problem, we need to use
+<a href=https://docs.mongodb.com/kubernetes-operator/master/reference/k8s-operator-specification/#spec.connectivity.replicaSetHorizons title=spec.connectivity.replicaSetHorizons rel="noopener external nofollow noreferrer" target=_blank class=exturl><code>spec.connectivity.replicaSetHorizons</code>
+<i class="fa fa-external-link-alt"></i>
+</a>to specify the public address. However, to use this setting, <code>spec.security.tls</code> must be enabled first:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span><span class=lnt id=hl-5-2><a class=lnlinks href=#hl-5-2>2</a>
+</span><span class=lnt id=hl-5-3><a class=lnlinks href=#hl-5-3>3</a>
+</span><span class=lnt id=hl-5-4><a class=lnlinks href=#hl-5-4>4</a>
+</span><span class=lnt id=hl-5-5><a class=lnlinks href=#hl-5-5>5</a>
+</span><span class=lnt id=hl-5-6><a class=lnlinks href=#hl-5-6>6</a>
+</span><span class=lnt id=hl-5-7><a class=lnlinks href=#hl-5-7>7</a>
+</span><span class=lnt id=hl-5-8><a class=lnlinks href=#hl-5-8>8</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>connectivity</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>replicaSetHorizons</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb0.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb1.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb2.com:27017&#34;</span></span></span></code></pre></td></tr></table></div></div><p>The bad news is that enable TLS is more complicated than I thought before. Here we use self-signed certificates to encrypt the transport layer communication. Four certificates are required: 1 CA certificate and 3 server certificates.</p><hr><p>Now comes to the <code>userdb.yaml</code> and add the <code>security</code> section:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span><span class=lnt id=hl-6-12><a class=lnlinks href=#hl-6-12>12</a>
+</span><span class=lnt id=hl-6-13><a class=lnlinks href=#hl-6-13>13</a>
+</span><span class=lnt id=hl-6-14><a class=lnlinks href=#hl-6-14>14</a>
+</span><span class=lnt id=hl-6-15><a class=lnlinks href=#hl-6-15>15</a>
+</span><span class=lnt id=hl-6-16><a class=lnlinks href=#hl-6-16>16</a>
+</span><span class=lnt id=hl-6-17><a class=lnlinks href=#hl-6-17>17</a>
+</span><span class=lnt id=hl-6-18><a class=lnlinks href=#hl-6-18>18</a>
+</span><span class=lnt id=hl-6-19><a class=lnlinks href=#hl-6-19>19</a>
+</span><span class=lnt id=hl-6-20><a class=lnlinks href=#hl-6-20>20</a>
+</span><span class=lnt id=hl-6-21><a class=lnlinks href=#hl-6-21>21</a>
+</span><span class=lnt id=hl-6-22><a class=lnlinks href=#hl-6-22>22</a>
+</span><span class=lnt id=hl-6-23><a class=lnlinks href=#hl-6-23>23</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>mongodb.com/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>MongoDB</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>userdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>mongodb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>members</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>4.2.2</span>-<span class=l>ent</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>ReplicaSet</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>opsManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>configMapRef</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-connection</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>credentials</span><span class=p>:</span><span class=w> </span><span class=l>ops-manager-admin-key</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>security</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ca</span><span class=p>:</span><span class=w> </span><span class=l>custom-ca</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>connectivity</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>replicaSetHorizons</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb0.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb1.com:27017&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>&#34;userdb&#34;: </span><span class=s2>&#34;userdb2.com:27017&#34;</span></span></span></code></pre></td></tr></table></div></div><p><strong>Tips</strong>: the key of <code>replicaSetHorizons</code> (&ldquo;userdb&rdquo;) is not that important, just keep all the entries have the same key string.</p><p>Apply <code>userdb.yaml</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span><span class=lnt id=hl-7-2><a class=lnlinks href=#hl-7-2>2</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kubectl apply -f userdb.yaml -n mongodb
+</span></span><span class=line><span class=cl>mongodb.mongodb.com/userdb configured</span></span></code></pre></td></tr></table></div></div><p><img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttls.png alt="Updating UserDB Deployment"></p><p>Updating details:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/updatingdeploymenttlsdetails.png alt="Updating Deployment Details"></p><p>The update needs to be excuted via this path: <code>disabled -> sslAllowed -> sslPreferred -> sslRequired</code>.</p><p>The update process takes a long time (~15mins) and pods restart many times. When update success, <code>TLS</code> option in the <code>userdb</code> deployment process UI will become <code>Enabled</code>.</p><p>If you <code>kubectl exec</code> to the pod, the certificate is stored at <code>/mongodb-automation/</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1>1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2>2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3>3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4>4</a>
+</span><span class=lnt id=hl-8-5><a class=lnlinks href=#hl-8-5>5</a>
+</span><span class=lnt id=hl-8-6><a class=lnlinks href=#hl-8-6>6</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>I have no name!@userdb-0:/$ ls -l /mongodb-automation/
+</span></span><span class=line><span class=cl>total <span class=m>8</span>
+</span></span><span class=line><span class=cl>lrwxrwxrwx <span class=m>1</span> <span class=m>2000</span> root   <span class=m>45</span> Dec <span class=m>11</span> 06:25 ca.pem -&gt; /var/lib/mongodb-automation/secrets/ca/ca-pem
+</span></span><span class=line><span class=cl>drwxr-xr-x <span class=m>2</span> <span class=m>2000</span> root <span class=m>4096</span> Dec <span class=m>11</span> 06:25 files
+</span></span><span class=line><span class=cl>-rw-r--r-- <span class=m>1</span> <span class=m>2000</span> root    <span class=m>3</span> Dec <span class=m>11</span> 06:25 mongodb-mms-automation-agent.pid
+</span></span><span class=line><span class=cl>lrwxrwxrwx <span class=m>1</span> <span class=m>2000</span> root   <span class=m>54</span> Dec <span class=m>11</span> 06:25 server.pem -&gt; /var/lib/mongodb-automation/secrets/certs/userdb-0-pem</span></span></code></pre></td></tr></table></div></div><h2 id=error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up-error><code>Error calling ComputeState</code>, <code>Error dialing to connParams</code>, <code>Error checking if rs member is up</code> Error
+<a class=header-anchor href=#error-calling-computestate-error-dialing-to-connparams-error-checking-if-rs-member-is-up-error></a></h2><p>If update failed and the Agent Log shows error:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-9-1><a class=lnlinks href=#hl-9-1>1</a>
+</span><span class=lnt id=hl-9-2><a class=lnlinks href=#hl-9-2>2</a>
+</span><span class=lnt id=hl-9-3><a class=lnlinks href=#hl-9-3>3</a>
+</span><span class=lnt id=hl-9-4><a class=lnlinks href=#hl-9-4>4</a>
+</span><span class=lnt id=hl-9-5><a class=lnlinks href=#hl-9-5>5</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;userdb-1&gt; [03:29:59.660] Failed to compute states : &lt;userdb-1&gt; [03:29:59.660] Error calling ComputeState : &lt;userdb-1&gt; [03:29:59.660] Error getting fickle state for current state : &lt;userdb-1&gt; [03:29:59.660] Error checking if rs member = userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 is up : &lt;userdb-1&gt; [03:29:59.660] Error executing WithClientFor() for cp=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connec tMode=SingleConnect : &lt;userdb-1&gt; [03:29:59.660] Error checking out client (0x0) for connParam=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [03:29:59.659] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Error checking out client (0x0) for connParam=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false) connectMode=SingleConnect : [03:32:57.470] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Error getting client ready for conn params = userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false). Informing all requests and disposing of client (0x0). requests=[ 0xc001e58780 ] : [03:32:57.470] Error dialing to connParams=userdb-0.userdb-svc.mongodb.svc.cluster.local:27017 (local=false): tried 4 identities, but none of them worked. They were (__system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], __system@local[[MONGODB-CR/SCRAM-SHA-1 SCRAM-SHA-256]][1024], mms-automation@admin[[MONGODB-CR/SCRAM-SHA-1]][24], )</span></span></code></pre></td></tr></table></div></div><p>It&rsquo;s high likely that the certficate is not correct, though the error message has none of certficate&rsquo;s business. Double check that the certificate contains <code>internal endpoints</code>: userdb-0.userdb-svc.mongodb.svc.cluster.local. Get back to the previous step
+<a href=/en/mongodb-om-self-signed-certificates/ title="Openssl Generates Self-signed Certificates">Openssl Generates Self-signed Certificates
+</a>, modify <code>[ alt_names ]</code> in <code>userdb&lt;X>.cnf</code> and recreate the server certificates.</p><h1 id=conect-to-userdb>Conect to UserDB
+<a class=header-anchor href=#conect-to-userdb></a></h1><p>Now connect to user database via mongo shell, here is a trick that <code>tlsCAFile</code> is not supported in the connection string, you must specify it by the
+<a href=https://docs.mongodb.com/manual/reference/connection-string/ title="command-line option" rel="noopener external nofollow noreferrer" target=_blank class=exturl>command-line option
+<i class="fa fa-external-link-alt"></i>
+</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-10-1><a class=lnlinks href=#hl-10-1> 1</a>
+</span><span class=lnt id=hl-10-2><a class=lnlinks href=#hl-10-2> 2</a>
+</span><span class=lnt id=hl-10-3><a class=lnlinks href=#hl-10-3> 3</a>
+</span><span class=lnt id=hl-10-4><a class=lnlinks href=#hl-10-4> 4</a>
+</span><span class=lnt id=hl-10-5><a class=lnlinks href=#hl-10-5> 5</a>
+</span><span class=lnt id=hl-10-6><a class=lnlinks href=#hl-10-6> 6</a>
+</span><span class=lnt id=hl-10-7><a class=lnlinks href=#hl-10-7> 7</a>
+</span><span class=lnt id=hl-10-8><a class=lnlinks href=#hl-10-8> 8</a>
+</span><span class=lnt id=hl-10-9><a class=lnlinks href=#hl-10-9> 9</a>
+</span><span class=lnt id=hl-10-10><a class=lnlinks href=#hl-10-10>10</a>
+</span><span class=lnt id=hl-10-11><a class=lnlinks href=#hl-10-11>11</a>
+</span><span class=lnt id=hl-10-12><a class=lnlinks href=#hl-10-12>12</a>
+</span><span class=lnt id=hl-10-13><a class=lnlinks href=#hl-10-13>13</a>
+</span><span class=lnt id=hl-10-14><a class=lnlinks href=#hl-10-14>14</a>
+</span><span class=lnt id=hl-10-15><a class=lnlinks href=#hl-10-15>15</a>
+</span><span class=lnt id=hl-10-16><a class=lnlinks href=#hl-10-16>16</a>
+</span><span class=lnt id=hl-10-17><a class=lnlinks href=#hl-10-17>17</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
+</span></span><span class=line><span class=cl>MongoDB shell version v4.4.2
+</span></span><span class=line><span class=cl>connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class=o>=</span>disabled<span class=p>&amp;</span><span class=nv>gssapiServiceName</span><span class=o>=</span>mongodb
+</span></span><span class=line><span class=cl>Implicit session: session <span class=o>{</span> <span class=s2>&#34;id&#34;</span> : UUID<span class=o>(</span><span class=s2>&#34;fcbaa78a-21dd-472f-a84f-bf3435bf9088&#34;</span><span class=o>)</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>MongoDB server version: 4.2.2
+</span></span><span class=line><span class=cl>WARNING: shell and server versions <span class=k>do</span> not match
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>The server generated these startup warnings when booting:
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span> ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+</span></span><span class=line><span class=cl>2020-12-11T06:25:58.940+0000 I  STORAGE  <span class=o>[</span>initandlisten<span class=o>]</span> **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span> ** WARNING: Access control is not enabled <span class=k>for</span> the database.
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span> **          Read and write access to data and configuration is unrestricted.
+</span></span><span class=line><span class=cl>2020-12-11T06:26:00.201+0000 I  CONTROL  <span class=o>[</span>initandlisten<span class=o>]</span>
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt;</span></span></code></pre></td></tr></table></div></div><p>The prompt&rsquo;s <code>PRIMARY</code> indicates that the cluster works fine! Run <code>rs.conf()</code> and check the <code>horizons</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-11-1><a class=lnlinks href=#hl-11-1> 1</a>
+</span><span class=lnt id=hl-11-2><a class=lnlinks href=#hl-11-2> 2</a>
+</span><span class=lnt id=hl-11-3><a class=lnlinks href=#hl-11-3> 3</a>
+</span><span class=lnt id=hl-11-4><a class=lnlinks href=#hl-11-4> 4</a>
+</span><span class=lnt id=hl-11-5><a class=lnlinks href=#hl-11-5> 5</a>
+</span><span class=lnt id=hl-11-6><a class=lnlinks href=#hl-11-6> 6</a>
+</span><span class=lnt id=hl-11-7><a class=lnlinks href=#hl-11-7> 7</a>
+</span><span class=lnt id=hl-11-8><a class=lnlinks href=#hl-11-8> 8</a>
+</span><span class=lnt id=hl-11-9><a class=lnlinks href=#hl-11-9> 9</a>
+</span><span class=lnt id=hl-11-10><a class=lnlinks href=#hl-11-10>10</a>
+</span><span class=lnt id=hl-11-11><a class=lnlinks href=#hl-11-11>11</a>
+</span><span class=lnt id=hl-11-12><a class=lnlinks href=#hl-11-12>12</a>
+</span><span class=lnt id=hl-11-13><a class=lnlinks href=#hl-11-13>13</a>
+</span><span class=lnt id=hl-11-14><a class=lnlinks href=#hl-11-14>14</a>
+</span><span class=lnt id=hl-11-15><a class=lnlinks href=#hl-11-15>15</a>
+</span><span class=lnt id=hl-11-16><a class=lnlinks href=#hl-11-16>16</a>
+</span><span class=lnt id=hl-11-17><a class=lnlinks href=#hl-11-17>17</a>
+</span><span class=lnt id=hl-11-18><a class=lnlinks href=#hl-11-18>18</a>
+</span><span class=lnt id=hl-11-19><a class=lnlinks href=#hl-11-19>19</a>
+</span><span class=lnt id=hl-11-20><a class=lnlinks href=#hl-11-20>20</a>
+</span><span class=lnt id=hl-11-21><a class=lnlinks href=#hl-11-21>21</a>
+</span><span class=lnt id=hl-11-22><a class=lnlinks href=#hl-11-22>22</a>
+</span><span class=lnt id=hl-11-23><a class=lnlinks href=#hl-11-23>23</a>
+</span><span class=lnt id=hl-11-24><a class=lnlinks href=#hl-11-24>24</a>
+</span><span class=lnt id=hl-11-25><a class=lnlinks href=#hl-11-25>25</a>
+</span><span class=lnt id=hl-11-26><a class=lnlinks href=#hl-11-26>26</a>
+</span><span class=lnt id=hl-11-27><a class=lnlinks href=#hl-11-27>27</a>
+</span><span class=lnt id=hl-11-28><a class=lnlinks href=#hl-11-28>28</a>
+</span><span class=lnt id=hl-11-29><a class=lnlinks href=#hl-11-29>29</a>
+</span><span class=lnt id=hl-11-30><a class=lnlinks href=#hl-11-30>30</a>
+</span><span class=lnt id=hl-11-31><a class=lnlinks href=#hl-11-31>31</a>
+</span><span class=lnt id=hl-11-32><a class=lnlinks href=#hl-11-32>32</a>
+</span><span class=lnt id=hl-11-33><a class=lnlinks href=#hl-11-33>33</a>
+</span><span class=lnt id=hl-11-34><a class=lnlinks href=#hl-11-34>34</a>
+</span><span class=lnt id=hl-11-35><a class=lnlinks href=#hl-11-35>35</a>
+</span><span class=lnt id=hl-11-36><a class=lnlinks href=#hl-11-36>36</a>
+</span><span class=lnt id=hl-11-37><a class=lnlinks href=#hl-11-37>37</a>
+</span><span class=lnt id=hl-11-38><a class=lnlinks href=#hl-11-38>38</a>
+</span><span class=lnt id=hl-11-39><a class=lnlinks href=#hl-11-39>39</a>
+</span><span class=lnt id=hl-11-40><a class=lnlinks href=#hl-11-40>40</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt; rs.conf()
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>        &#34;_id&#34; : &#34;userdb&#34;,
+</span></span><span class=line><span class=cl>        &#34;version&#34; : 2,
+</span></span><span class=line><span class=cl>        &#34;protocolVersion&#34; : NumberLong(1),
+</span></span><span class=line><span class=cl>        &#34;writeConcernMajorityJournalDefault&#34; : true,
+</span></span><span class=line><span class=cl>        &#34;members&#34; : [
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 0,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-0.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb0.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 1,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-1.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb1.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                },
+</span></span><span class=line><span class=cl>                {
+</span></span><span class=line><span class=cl>                        &#34;_id&#34; : 2,
+</span></span><span class=line><span class=cl>                        &#34;host&#34; : &#34;userdb-2.userdb-svc.mongodb.svc.cluster.local:27017&#34;,
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>                        &#34;horizons&#34; : {
+</span></span><span class=line><span class=cl>                                &#34;userdb&#34; : &#34;userdb2.com:27017&#34;
+</span></span><span class=line><span class=cl>                        },
+</span></span><span class=line><span class=cl>                        &#34;slaveDelay&#34; : NumberLong(0),
+</span></span><span class=line><span class=cl>                        &#34;votes&#34; : 1
+</span></span><span class=line><span class=cl>                }
+</span></span><span class=line><span class=cl>        ],
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>}</span></span></code></pre></td></tr></table></div></div><h1 id=enable-auth>Enable AUTH
+<a class=header-anchor href=#enable-auth></a></h1><p>Enable AUTH after TLS is pretty easy. Just click the <code>Disabled</code> in the Processes UI and follow the guide. Finally, click the top <code>review & deploy</code> button.</p><p>The final Processes UI:
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/mongodb/userdbreplicasetdone.png alt="UserDB Deployment Completed"></p><p>The startup warnings disappear:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-12-1><a class=lnlinks href=#hl-12-1>1</a>
+</span><span class=lnt id=hl-12-2><a class=lnlinks href=#hl-12-2>2</a>
+</span><span class=lnt id=hl-12-3><a class=lnlinks href=#hl-12-3>3</a>
+</span><span class=lnt id=hl-12-4><a class=lnlinks href=#hl-12-4>4</a>
+</span><span class=lnt id=hl-12-5><a class=lnlinks href=#hl-12-5>5</a>
+</span><span class=lnt id=hl-12-6><a class=lnlinks href=#hl-12-6>6</a>
+</span><span class=lnt id=hl-12-7><a class=lnlinks href=#hl-12-7>7</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ mongo mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/ --tls --tlsCAFile rootca.crt
+</span></span><span class=line><span class=cl>MongoDB shell version v4.4.2
+</span></span><span class=line><span class=cl>connecting to: mongodb://userdb0.com:27017,userdb1.com:27017,userdb2.com:27017/?compressors<span class=o>=</span>disabled<span class=p>&amp;</span><span class=nv>gssapiServiceName</span><span class=o>=</span>mongodb
+</span></span><span class=line><span class=cl>Implicit session: session <span class=o>{</span> <span class=s2>&#34;id&#34;</span> : UUID<span class=o>(</span><span class=s2>&#34;5063023a-b76d-4d03-923f-18332e2e7cc9&#34;</span><span class=o>)</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>MongoDB server version: 4.2.2
+</span></span><span class=line><span class=cl>WARNING: shell and server versions <span class=k>do</span> not match
+</span></span><span class=line><span class=cl>MongoDB Enterprise userdb:PRIMARY&gt;</span></span></code></pre></td></tr></table></div></div><h1 id=summary>Summary
+<a class=header-anchor href=#summary></a></h1><p>This series describe how to deploy MongoDB Ops Manager, and use MongoDB Kubernetes Operator to build a MongoDB ReplicaSet. If you found errors please feel free to leave comments below.</p><p>Thanks for your time!</p></div><footer class=post-footer><div class=post-tags><a href=/en/tags/mongodb/>MongoDB
+</a><a href=/en/tags/kubernetes/>Kubernetes
+</a><a href=/en/tags/mongodb-ops-manager/>MongoDB Ops Manager
+</a><a href=/en/tags/tls/>TLS</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/en/mongodb-om-create-sharded-cluster/ rel=next title="Deploy MongoDB Sharded Cluster by Ops Manager"><i class="fa fa-chevron-left"></i> Deploy MongoDB Sharded Cluster by Ops Manager</a></div><div class="post-nav-prev post-nav-item"><a href=/en/mongodb-om-self-signed-certificates/ rel=prev title="MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates">MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>Comments</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title="Change Theme"><i class="fas fa-lightbulb"></i>
+</span><span class=btn-divider></span>
+<a href=/mongodb-om-tls-auth/ title=简体中文><i class="fas fa-globe"></i> 简体中文</a></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>Total Views: <span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"mongodb-om-tls-auth","permalink":"https://finisky.github.io/en/mongodb-om-tls-auth/","title":"MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" Day Ago","ds_days":" Day ","ds_hour":" Hour Ago","ds_hours":" Hour ","ds_just":"Just","ds_min":" Min Ago","ds_mins":" Min","ds_month":" Month Ago","ds_years":" Year ","empty":"We didn't find any results for the search: ${query}","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms","placeholder":"Searching..."},"isMultiLang":true,"lang":"en-US","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480355" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480356" defer></script></body></html>

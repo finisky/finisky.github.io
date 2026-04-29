@@ -1,0 +1,319 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=theme-color content="#222" media="(prefers-color-scheme: light)"><meta name=generator content="Hugo 0.160.1"><link rel="shortcut icon" type=image/x-icon href=/images/avatar.png><link rel=icon type=image/x-icon href=/images/avatar.png><link rel=icon type=image/png sizes=16x16 href=/images/avatar.png><link rel=icon type=image/png sizes=32x32 href=/images/avatar.png><link rel=apple-touch-icon sizes=180x180 href=/images/avatar.png><meta itemprop=name content="TextCNN pytorch实现"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta name=description content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta itemprop=datePublished zgotmplz><meta itemprop=dateModified zgotmplz><meta itemprop=image content="https://finisky.github.io/images/qrcode.webp"><meta itemprop=keywords content="Machine Learning,NLP,pytorch,python,NLU"><meta property="og:type" content="article"><meta property="og:title" content="TextCNN pytorch实现"><meta property="og:description" content="互联网那些事儿：NLP, 软件工程, 产品设计"><meta property="og:image" content="/images/qrcode.webp"><meta property="og:image:width" content="312"><meta property="og:image:height" content="312"><meta property="og:image:type" content="image/jpeg/png/svg/jpg"><meta property="og:url" content="https://finisky.github.io/text-cnn-mvp/"><meta property="og:site_name" content="Finisky Garden"><meta property="og:locale" content="zh-CN"><meta property="article:author" content="finisky"><meta property="article:published_time" content="2020-07-03 19:49:43 +0800 CST"><meta property="article:modified_time" content="2020-07-03 19:49:43 +0800 CST"><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/font-awesome/6.7.2/css/all.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/animate.css/3.1.1/animate.min.css><link type=text/css rel=stylesheet href=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.css><link rel=stylesheet href="/css/main.min.css?=1777480353"><style type=text/css>.post-footer hr:after{content:""}.flinks-list-footer hr:after{content:""}</style><link rel=stylesheet type=text/css href="/css/custom_style.css?=1777480353"><script type=text/javascript>(function(){localDB={set:function(e,t,n){if(n===0)return;const s=new Date,o=n*864e5,i={value:t,expiry:s.getTime()+o};localStorage.setItem(e,JSON.stringify(i))},get:function(e){const t=localStorage.getItem(e);if(!t)return 0[0];const n=JSON.parse(t),s=new Date;return s.getTime()>n.expiry?(localStorage.removeItem(e),0[0]):n.value}},theme={active:function(){const e=localDB.get("theme");if(e==null)return;theme.toggle(e),window.matchMedia("(prefers-color-scheme: dark)").addListener(function(e){theme.toggle(e.matches?"dark":"light")})},toggle:function(e){document.documentElement.setAttribute("data-theme",e),localDB.set("theme",e,2);const t=document.querySelector("iframe.giscus-frame");if(t){const n={setConfig:{theme:e}};t.contentWindow.postMessage({giscus:n},"https://giscus.app")}}},theme.active()})(window)</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://www.googletagmanager.com/gtag/js?id=G-K4DEGPDYSW",e.async="true",e.onload=function(){window.dataLayer=window.dataLayer||[];function e(){dataLayer.push(arguments)}e("js",new Date),e("config","G-K4DEGPDYSW ")},document.head.appendChild(e)})</script><script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{var e=document.createElement("script");e.charset="UTF-8",e.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",e.async=!1,e.defer=!0,document.head.appendChild(e),e.onload=function(){NexT.utils.fmtBusuanzi()}})</script><title>TextCNN pytorch实现 - Finisky Garden</title><noscript><link rel=stylesheet href=/css/noscript.css></noscript></head><body itemscope itemtype=http://schema.org/WebPage><div class=headband></div><main class=main><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle aria-label role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><a href=/ class=brand rel=start><i class=logo-line></i><h1 class=site-title>Finisky Garden</h1><i class=logo-line></i></a><p class=site-subtitle itemprop=description>NLP, 软件工程, 产品设计</p></div><div class=site-nav-right><div class="toggle popup-trigger"></div></div></div><nav class=site-nav><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href=/ class=hvr-icon-pulse rel=section><i class="fa fa-home hvr-icon"></i>首页</a></li><li class="menu-item menu-item-nlp"><a href=/tags/nlp/ class=hvr-icon-pulse rel=section><i class="fa fa-wand-magic-sparkles hvr-icon"></i>NLP/AI</a></li><li class="menu-item menu-item-mongodb"><a href=/categories/mongodb/ class=hvr-icon-pulse rel=section><i class="fa fa-database hvr-icon"></i>MongoDB</a></li><li class="menu-item menu-item-tags"><a href=/tags/ class=hvr-icon-pulse rel=section><i class="fa fa-tags hvr-icon"></i>标签</a></li><li class="menu-item menu-item-categories"><a href=/categories/ class=hvr-icon-pulse rel=section><i class="fa fa-th hvr-icon"></i>分类</a></li><li class="menu-item menu-item-archives"><a href=/archives/ class=hvr-icon-pulse rel=section><i class="fa fa-archive hvr-icon"></i>归档</a></li><li class="menu-item menu-item-flinks"><a href=/flinks/ class=hvr-icon-pulse rel=section><i class="fa fa-link hvr-icon"></i>友链</a></li><li class="menu-item menu-item-about"><a href=/about/ class=hvr-icon-pulse rel=section><i class="fa fa-user hvr-icon"></i>关于</a></li></ul></nav></div><div class="toggle sidebar-toggle" role=button><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div><aside class=sidebar><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class=sidebar-nav><li class=sidebar-nav-toc>文章目录</li><li class=sidebar-nav-overview>站点概览</li></ul><div class=sidebar-panel-container><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><nav id=TableOfContents><ul><li><a href=#nlp中cnn的channel与filter>NLP中CNN的Channel与Filter</a></li><li><a href=#textcnn模型>TextCNN模型</a></li><li><a href=#nnconv2d详解>nn.Conv2d详解</a><ul><li><a href=#参数含义>参数含义</a></li><li><a href=#输入与输出>输入与输出</a></li><li><a href=#例子>例子</a></li></ul></li><li><a href=#代码实现>代码实现</a><ul><li><a href=#modelpy>model.py</a></li><li><a href=#operationpy>operation.py</a></li><li><a href=#mainpy>main.py</a></li><li><a href=#运行方法>运行方法</a><ul><li><a href=#train>Train</a></li><li><a href=#test>Test</a></li><li><a href=#predict>Predict</a></li></ul></li></ul></li></ul></nav></div><div class="sidebar-qrcode animated" style="text-align:center;margin-top:8px;padding:4px 0"><img src=/images/qrcode.webp alt="QR Code" style=width:90px;height:90px;border-radius:4px><p style=margin-top:4px;font-size:.75em;color:#999>扫码关注公众号</p></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image alt=finisky src=/imgs/img-lazy-loading.gif data-src=/images/qrcode.webp><div class=site-description>扫码关注公众号</div></div><div class="site-state-wrap site-overview-item animated"><nav class=site-state><div class="site-state-item site-state-posts"><a href=/archives/><span class=site-state-item-count>199</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>16</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>标签</span></a></div></nav></div><div class="links-of-social site-overview-item animated"></div></div></div></div><div class=sidebar-card-widget><div class=related-posts-header>相关文章</div><div class=related-posts-list><ul><li><i class="fa fa-chevron-right"></i>
+<a href=/cross-entropy-loss/>熵，交叉熵，KL散度公式与计算实例</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/multi-head-attention/>MultiHeadAttention实现详解</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/brief-intro-to-prompt/>NLP Prompt技术简介</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/finetune-lm-line-by-line/>使用LineByLine数据集训练GPT</a></li><li><i class="fa fa-chevron-right"></i>
+<a href=/autoencodervsautoregressive/>Autoencoding和Autoregressive的区别</a></li></ul></div></div></aside><div class=sidebar-dimmer></div></header><div class=tool-buttons><div id=goto-comments class="button goto-comments" title=直达评论><i class="fas fa-comments"></i></div><div id=goto-i18n-translate class=button title=多语言翻译><i class="fas fa-globe"></i></div><div id=toggle-theme class=button title=深浅模式切换><i class="fas fa-adjust"></i></div><div class=back-to-top role=button title=返回顶部><i class="fa fa-arrow-up"></i>
+<span>0%</span></div></div><div class=reading-progress-bar></div><noscript><div class=noscript-warning>Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class=post-block><article itemscope itemtype=http://schema.org/Article class=post-content lang><link itemprop=mainEntityOfPage href=https://finisky.github.io/text-cnn-mvp/><span hidden itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=image content="/images/qrcode.webp"><meta itemprop=name content="finisky"></span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="finisky"><meta itemprop=description content="互联网那些事儿：NLP, 软件工程, 产品设计"></span><span hidden itemprop=post itemscope itemtype=http://schema.org/CreativeWork><meta itemprop=name content="TextCNN pytorch实现"><meta itemprop=description content="
+
+    TextCNN
+    
+    
+    
+ 是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。"></span><header class=post-header><h1 class=post-title itemprop="name headline">TextCNN pytorch实现</h1><div class=post-meta-container><div class=post-meta-items><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-calendar"></i>
+</span><span class=post-meta-item-text title=发表于>发表于：
+</span><time title="创建时间：2020-07-03 19:49:43 +08:00" itemprop="dateCreated datePublished" datetime="2020-07-03 19:49:43 +0800 CST">2020-07-03
+</time></span><span class=post-meta-item><span class=post-meta-item-icon><i class="fas fa-solid fa-folder-open"></i>
+</span><span class=post-meta-item-text title=分类于>分类于：
+</span><span itemprop=about itemscope itemtype=http://schema.org/Thing><a href=/categories/machine-learning/ itemprop=url rel=index><span itemprop=name>Machine Learning</span>
+</a></span></span><span class=post-meta-item title=阅读><span class=post-meta-item-icon><i class="fas fa-solid fa-clock"></i>
+</span><span class=post-meta-item-text>阅读：&ap;</span>
+<span>6分钟</span>
+</span><span class=post-meta-item title=浏览><span class=post-meta-item-icon><i class="fas fa-solid fa-eye"></i>
+</span><span class=post-meta-item-text>浏览：
+</span><span id=pageview-count data-path=/text-cnn-mvp/><i class="fa fa-sync fa-spin"></i>
+</span></span><span class=post-meta-item title><span class=post-meta-item-icon><i class="fas fa-solid fa-comments"></i>
+</span><span class=post-meta-item-text title=评论>评论：
+</span><span id=comments-count data-path=/text-cnn-mvp/><i class="fa fa-sync fa-spin"></i></span></span></div></div></header><div class=post-body itemprop=articleBody><p><a href=https://arxiv.org/abs/1408.5882 title=TextCNN rel="noopener external nofollow noreferrer" target=_blank class=exturl>TextCNN
+<i class="fa fa-external-link-alt"></i>
+</a>是一种经典的DNN文本分类方法，自己实现一遍可以更好理解其原理，深入模型细节。本文并非关于TextCNN的完整介绍，假设读者比较熟悉CNN模型本身，仅对实现中比较费解的问题进行剖析。</p><a id=more></a><p>项目地址：
+<a href=https://github.com/finisky/TextCNN title=https://github.com/finisky/TextCNN rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/TextCNN
+<i class="fa fa-external-link-alt"></i></a></p><p>这里的实现基于：
+<a href=https://github.com/Shawn1993/cnn-text-classification-pytorch title=https://github.com/Shawn1993/cnn-text-classification-pytorch rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/Shawn1993/cnn-text-classification-pytorch
+<i class="fa fa-external-link-alt"></i></a></p><p>主要改动：</p><ul><li>简化了参数配置，希望呈现一个最简版本</li><li>Fix一些由于pytorch版本升级接口变动所致语法错误</li><li>Fix模型padding导致的runtime error</li><li>解耦模型model.py与training/test/prediction逻辑</li><li>定制tokenizer，默认中文jieba分词</li><li>使用torchtext的TabularDataset读取数据集：text \t label</li></ul><h1 id=nlp中cnn的channel与filter>NLP中CNN的Channel与Filter
+<a class=header-anchor href=#nlp%e4%b8%adcnn%e7%9a%84channel%e4%b8%8efilter></a></h1><p>注：此处的Filter与Kernel的意义相同。</p><p><a href=http://www.wildml.com/2015/11/understanding-convolutional-neural-networks-for-nlp/ title="# Understanding Convolutional Neural Networks for NLP" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Understanding Convolutional Neural Networks for NLP
+<i class="fa fa-external-link-alt"></i>
+</a>对Channel和Filter的解释比较清楚。CNN是源于CV领域的一个概念，对于一张图来讲，RGB天然就是3个不同的Channel输入，而迁移到NLP中之后，文本其实只有一个Channel，但也可以通过使用不同的embedding(word2vec, glove, BERT等)或rephrase等方法将输入变成多个Channel。而Filter的目的是对于同一个输入用不同的kernel做卷积，从而提取出不同的Feature。用一个不是非常严谨的表述，Channel像是输入本身的一个天然存在的性质，而Filter是人为增加不同维度来提取Feature。</p><h1 id=textcnn模型>TextCNN模型
+<a class=header-anchor href=#textcnn%e6%a8%a1%e5%9e%8b></a></h1><p>模型的细节参考下图（wildml盗图），无须赘述：
+<img src=/imgs/img-lazy-loading.gif data-src=https://cdn.jsdelivr.net/gh/finisky/finiskyimages/nlp/textcnn.jpg alt="TextCNN Model Illustration"></p><p>值得一提的是NLP的卷积操作和CV中有所不同，CV中的图像为二维输入，卷积会在横纵两个方向上进行，而NLP中的输入虽然看起来是二维的(token_num, embedding_dim)，但卷积只在第一维方向进行，即每个滑动窗口都包括了整个embedding vector。道理很容易理解，每个token的语义由整个embedding vector表示，在局部的embedding vector上做卷积不太说得通。</p><h1 id=nnconv2d详解>nn.Conv2d详解
+<a class=header-anchor href=#nnconv2d%e8%af%a6%e8%a7%a3></a></h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-0-1><a class=lnlinks href=#hl-0-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>torch</span><span class=o>.</span><span class=n>nn</span><span class=o>.</span><span class=n>Conv2d</span><span class=p>(</span><span class=n>in_channels</span><span class=p>,</span> <span class=n>out_channels</span><span class=p>,</span> <span class=n>kernel_size</span><span class=p>,</span> <span class=n>stride</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>padding</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span> <span class=n>dilation</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>groups</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>bias</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>padding_mode</span><span class=o>=</span><span class=s1>&#39;zeros&#39;</span><span class=p>)</span></span></span></code></pre></td></tr></table></div></div><h2 id=参数含义>参数含义
+<a class=header-anchor href=#%e5%8f%82%e6%95%b0%e5%90%ab%e4%b9%89></a></h2><p>stride, padding, dilation这些参数的意义，<code>a picture is worth a thousand words</code>, 直接看动画即可：
+<a href=https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md title="# Convolution animations" rel="noopener external nofollow noreferrer" target=_blank class=exturl># Convolution animations
+<i class="fa fa-external-link-alt"></i></a></p><p><code>kernel_size</code>, <code>stride</code>, <code>padding</code>, <code>dilation</code>参数类型可以是int也可以是tuple of two ints，若为tuple，分别用在H维度与W维度。</p><h2 id=输入与输出>输入与输出
+<a class=header-anchor href=#%e8%be%93%e5%85%a5%e4%b8%8e%e8%be%93%e5%87%ba></a></h2><p>输入：(N,C_{in}​,H,W)</p><p>输出：(N,C_{out}​,H,W)</p><p>就TextCNN而言，N为batchsize，C_{in} = 1, C_{out}为指定的kernel_num，H为一个句子中的token_num，W为embedding_dim。</p><h2 id=例子>例子
+<a class=header-anchor href=#%e4%be%8b%e5%ad%90></a></h2><p>假设有个句子 token_num=4, embed_dim=5，使用一个3*embed_dim的kernel进行卷积，kernel_num = Co = 2。</p><p>既然是在H维度上卷积，每个卷积操作滑过整个embedding vector，所以kernel_size的第二个维度必定是embed_dim。此外，必须满足kernel_size[0] &lt;= token_num，否则会有如下错误：</p><blockquote><p>RuntimeError: Calculated padded input size per channel: (? x 5). Kernel size: (? x 5). Kernel size can&rsquo;t be greater than actual input size</p></blockquote><p>特别地，在kernel_size[0]=3, token_num >= 1的情景下，需要在H维度上进行padding，且一定不能在W维度上padding，以保证卷积操作有效，每次都滑过整个embedding vector。因此，padding = (1, 0)。本文参考的原始实现没有对文本进行padding，如果数据集中存在过短的文本，训练时会出现runtime error。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-1-1><a class=lnlinks href=#hl-1-1> 1</a>
+</span><span class=lnt id=hl-1-2><a class=lnlinks href=#hl-1-2> 2</a>
+</span><span class=lnt id=hl-1-3><a class=lnlinks href=#hl-1-3> 3</a>
+</span><span class=lnt id=hl-1-4><a class=lnlinks href=#hl-1-4> 4</a>
+</span><span class=lnt id=hl-1-5><a class=lnlinks href=#hl-1-5> 5</a>
+</span><span class=lnt id=hl-1-6><a class=lnlinks href=#hl-1-6> 6</a>
+</span><span class=lnt id=hl-1-7><a class=lnlinks href=#hl-1-7> 7</a>
+</span><span class=lnt id=hl-1-8><a class=lnlinks href=#hl-1-8> 8</a>
+</span><span class=lnt id=hl-1-9><a class=lnlinks href=#hl-1-9> 9</a>
+</span><span class=lnt id=hl-1-10><a class=lnlinks href=#hl-1-10>10</a>
+</span><span class=lnt id=hl-1-11><a class=lnlinks href=#hl-1-11>11</a>
+</span><span class=lnt id=hl-1-12><a class=lnlinks href=#hl-1-12>12</a>
+</span><span class=lnt id=hl-1-13><a class=lnlinks href=#hl-1-13>13</a>
+</span><span class=lnt id=hl-1-14><a class=lnlinks href=#hl-1-14>14</a>
+</span><span class=lnt id=hl-1-15><a class=lnlinks href=#hl-1-15>15</a>
+</span><span class=lnt id=hl-1-16><a class=lnlinks href=#hl-1-16>16</a>
+</span><span class=lnt id=hl-1-17><a class=lnlinks href=#hl-1-17>17</a>
+</span><span class=lnt id=hl-1-18><a class=lnlinks href=#hl-1-18>18</a>
+</span><span class=lnt id=hl-1-19><a class=lnlinks href=#hl-1-19>19</a>
+</span><span class=lnt id=hl-1-20><a class=lnlinks href=#hl-1-20>20</a>
+</span><span class=lnt id=hl-1-21><a class=lnlinks href=#hl-1-21>21</a>
+</span><span class=lnt id=hl-1-22><a class=lnlinks href=#hl-1-22>22</a>
+</span><span class=lnt id=hl-1-23><a class=lnlinks href=#hl-1-23>23</a>
+</span><span class=lnt id=hl-1-24><a class=lnlinks href=#hl-1-24>24</a>
+</span><span class=lnt id=hl-1-25><a class=lnlinks href=#hl-1-25>25</a>
+</span><span class=lnt id=hl-1-26><a class=lnlinks href=#hl-1-26>26</a>
+</span><span class=lnt id=hl-1-27><a class=lnlinks href=#hl-1-27>27</a>
+</span><span class=lnt id=hl-1-28><a class=lnlinks href=#hl-1-28>28</a>
+</span><span class=lnt id=hl-1-29><a class=lnlinks href=#hl-1-29>29</a>
+</span><span class=lnt id=hl-1-30><a class=lnlinks href=#hl-1-30>30</a>
+</span><span class=lnt id=hl-1-31><a class=lnlinks href=#hl-1-31>31</a>
+</span><span class=lnt id=hl-1-32><a class=lnlinks href=#hl-1-32>32</a>
+</span><span class=lnt id=hl-1-33><a class=lnlinks href=#hl-1-33>33</a>
+</span><span class=lnt id=hl-1-34><a class=lnlinks href=#hl-1-34>34</a>
+</span><span class=lnt id=hl-1-35><a class=lnlinks href=#hl-1-35>35</a>
+</span><span class=lnt id=hl-1-36><a class=lnlinks href=#hl-1-36>36</a>
+</span><span class=lnt id=hl-1-37><a class=lnlinks href=#hl-1-37>37</a>
+</span><span class=lnt id=hl-1-38><a class=lnlinks href=#hl-1-38>38</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch.nn</span> <span class=k>as</span> <span class=nn>nn</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>torch</span><span class=o>.</span><span class=n>manual_seed</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>token_num</span> <span class=o>=</span> <span class=mi>4</span>
+</span></span><span class=line><span class=cl><span class=n>embed_dim</span> <span class=o>=</span> <span class=mi>5</span>
+</span></span><span class=line><span class=cl><span class=n>kernel_size</span> <span class=o>=</span> <span class=mi>3</span>
+</span></span><span class=line><span class=cl><span class=n>Ci</span> <span class=o>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=n>Co</span> <span class=o>=</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>m</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Conv2d</span><span class=p>(</span><span class=n>Ci</span><span class=p>,</span> <span class=n>Co</span><span class=p>,</span> <span class=p>(</span><span class=n>kernel_size</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=n>fixed_weight</span> <span class=o>=</span> <span class=p>(</span><span class=n>m</span><span class=o>.</span><span class=n>weight</span><span class=p>,</span> <span class=n>m</span><span class=o>.</span><span class=n>bias</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>conv_padding</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>padding</span><span class=p>,</span> <span class=n>fixed_weight</span> <span class=o>=</span> <span class=kc>None</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>conv</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Conv2d</span><span class=p>(</span><span class=n>Ci</span><span class=p>,</span> <span class=n>Co</span><span class=p>,</span> <span class=p>(</span><span class=n>kernel_size</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>),</span> <span class=n>padding</span> <span class=o>=</span> <span class=n>padding</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>fixed_weight</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>conv</span><span class=o>.</span><span class=n>weight</span> <span class=o>=</span> <span class=n>fixed_weight</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>conv</span><span class=o>.</span><span class=n>bias</span> <span class=o>=</span> <span class=n>fixed_weight</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>x</span> <span class=o>=</span> <span class=n>conv</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>raw_x</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>randn</span><span class=p>(</span><span class=n>token_num</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>)</span> <span class=c1># (token_num, embed_dim)</span>
+</span></span><span class=line><span class=cl><span class=n>x</span> <span class=o>=</span> <span class=n>raw_x</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span> <span class=c1># (1, 1, token_num, embed_dim)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=s2>&#34;x size: &#34;</span> <span class=o>+</span> <span class=nb>str</span><span class=p>(</span><span class=n>x</span><span class=o>.</span><span class=n>size</span><span class=p>()))</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>No padding:&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>conv_padding</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span><span class=o>.</span><span class=n>size</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>conv_padding</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=mi>0</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Padding in the height axis:&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>conv_padding</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span> <span class=n>fixed_weight</span><span class=p>)</span><span class=o>.</span><span class=n>size</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>conv_padding</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span> <span class=n>fixed_weight</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Verify padding vectors:&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>pad_x</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>((</span><span class=n>torch</span><span class=o>.</span><span class=n>zeros</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>),</span> <span class=n>raw_x</span><span class=p>,</span> <span class=n>torch</span><span class=o>.</span><span class=n>zeros</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>)))</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>pad_x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=p>(</span><span class=n>conv_padding</span><span class=p>(</span><span class=n>pad_x</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=n>fixed_weight</span><span class=p>))</span></span></span></code></pre></td></tr></table></div></div><p>执行结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-2-1><a class=lnlinks href=#hl-2-1> 1</a>
+</span><span class=lnt id=hl-2-2><a class=lnlinks href=#hl-2-2> 2</a>
+</span><span class=lnt id=hl-2-3><a class=lnlinks href=#hl-2-3> 3</a>
+</span><span class=lnt id=hl-2-4><a class=lnlinks href=#hl-2-4> 4</a>
+</span><span class=lnt id=hl-2-5><a class=lnlinks href=#hl-2-5> 5</a>
+</span><span class=lnt id=hl-2-6><a class=lnlinks href=#hl-2-6> 6</a>
+</span><span class=lnt id=hl-2-7><a class=lnlinks href=#hl-2-7> 7</a>
+</span><span class=lnt id=hl-2-8><a class=lnlinks href=#hl-2-8> 8</a>
+</span><span class=lnt id=hl-2-9><a class=lnlinks href=#hl-2-9> 9</a>
+</span><span class=lnt id=hl-2-10><a class=lnlinks href=#hl-2-10>10</a>
+</span><span class=lnt id=hl-2-11><a class=lnlinks href=#hl-2-11>11</a>
+</span><span class=lnt id=hl-2-12><a class=lnlinks href=#hl-2-12>12</a>
+</span><span class=lnt id=hl-2-13><a class=lnlinks href=#hl-2-13>13</a>
+</span><span class=lnt id=hl-2-14><a class=lnlinks href=#hl-2-14>14</a>
+</span><span class=lnt id=hl-2-15><a class=lnlinks href=#hl-2-15>15</a>
+</span><span class=lnt id=hl-2-16><a class=lnlinks href=#hl-2-16>16</a>
+</span><span class=lnt id=hl-2-17><a class=lnlinks href=#hl-2-17>17</a>
+</span><span class=lnt id=hl-2-18><a class=lnlinks href=#hl-2-18>18</a>
+</span><span class=lnt id=hl-2-19><a class=lnlinks href=#hl-2-19>19</a>
+</span><span class=lnt id=hl-2-20><a class=lnlinks href=#hl-2-20>20</a>
+</span><span class=lnt id=hl-2-21><a class=lnlinks href=#hl-2-21>21</a>
+</span><span class=lnt id=hl-2-22><a class=lnlinks href=#hl-2-22>22</a>
+</span><span class=lnt id=hl-2-23><a class=lnlinks href=#hl-2-23>23</a>
+</span><span class=lnt id=hl-2-24><a class=lnlinks href=#hl-2-24>24</a>
+</span><span class=lnt id=hl-2-25><a class=lnlinks href=#hl-2-25>25</a>
+</span><span class=lnt id=hl-2-26><a class=lnlinks href=#hl-2-26>26</a>
+</span><span class=lnt id=hl-2-27><a class=lnlinks href=#hl-2-27>27</a>
+</span><span class=lnt id=hl-2-28><a class=lnlinks href=#hl-2-28>28</a>
+</span><span class=lnt id=hl-2-29><a class=lnlinks href=#hl-2-29>29</a>
+</span><span class=lnt id=hl-2-30><a class=lnlinks href=#hl-2-30>30</a>
+</span><span class=lnt id=hl-2-31><a class=lnlinks href=#hl-2-31>31</a>
+</span><span class=lnt id=hl-2-32><a class=lnlinks href=#hl-2-32>32</a>
+</span><span class=lnt id=hl-2-33><a class=lnlinks href=#hl-2-33>33</a>
+</span><span class=lnt id=hl-2-34><a class=lnlinks href=#hl-2-34>34</a>
+</span><span class=lnt id=hl-2-35><a class=lnlinks href=#hl-2-35>35</a>
+</span><span class=lnt id=hl-2-36><a class=lnlinks href=#hl-2-36>36</a>
+</span><span class=lnt id=hl-2-37><a class=lnlinks href=#hl-2-37>37</a>
+</span><span class=lnt id=hl-2-38><a class=lnlinks href=#hl-2-38>38</a>
+</span><span class=lnt id=hl-2-39><a class=lnlinks href=#hl-2-39>39</a>
+</span><span class=lnt id=hl-2-40><a class=lnlinks href=#hl-2-40>40</a>
+</span><span class=lnt id=hl-2-41><a class=lnlinks href=#hl-2-41>41</a>
+</span><span class=lnt id=hl-2-42><a class=lnlinks href=#hl-2-42>42</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>x size: torch.Size([1, 1, 4, 5])
+</span></span><span class=line><span class=cl>tensor([[[[-0.6136,  0.0316, -0.4927,  0.2484, -0.2303],
+</span></span><span class=line><span class=cl>          [-0.3918,  0.5433, -0.3952,  0.2055, -0.4503],
+</span></span><span class=line><span class=cl>          [-0.5731, -0.5554, -1.5312, -1.2341,  1.8197],
+</span></span><span class=line><span class=cl>          [-0.5515, -1.3253,  0.1886, -0.0691, -0.4949]]]])
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>No padding:
+</span></span><span class=line><span class=cl>torch.Size([1, 2, 2, 1])
+</span></span><span class=line><span class=cl>tensor([[[[ 0.1010],
+</span></span><span class=line><span class=cl>          [ 0.3119]],
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>         [[ 0.3740],
+</span></span><span class=line><span class=cl>          [-0.1368]]]], grad_fn=&lt;MkldnnConvolutionBackward&gt;)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Padding in the height axis:
+</span></span><span class=line><span class=cl>torch.Size([1, 2, 4, 1])
+</span></span><span class=line><span class=cl>tensor([[[[-0.1523],
+</span></span><span class=line><span class=cl>          [ 0.3070],
+</span></span><span class=line><span class=cl>          [-0.0044],
+</span></span><span class=line><span class=cl>          [ 0.1774]],
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>         [[ 0.4631],
+</span></span><span class=line><span class=cl>          [ 0.5886],
+</span></span><span class=line><span class=cl>          [-0.5039],
+</span></span><span class=line><span class=cl>          [-0.4035]]]], grad_fn=&lt;MkldnnConvolutionBackward&gt;)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Verify padding vectors:
+</span></span><span class=line><span class=cl>tensor([[[[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000],
+</span></span><span class=line><span class=cl>          [-0.6136,  0.0316, -0.4927,  0.2484, -0.2303],
+</span></span><span class=line><span class=cl>          [-0.3918,  0.5433, -0.3952,  0.2055, -0.4503],
+</span></span><span class=line><span class=cl>          [-0.5731, -0.5554, -1.5312, -1.2341,  1.8197],
+</span></span><span class=line><span class=cl>          [-0.5515, -1.3253,  0.1886, -0.0691, -0.4949],
+</span></span><span class=line><span class=cl>          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000]]]])
+</span></span><span class=line><span class=cl>tensor([[[[-0.1523],
+</span></span><span class=line><span class=cl>          [ 0.3070],
+</span></span><span class=line><span class=cl>          [-0.0044],
+</span></span><span class=line><span class=cl>          [ 0.1774]],
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>         [[ 0.4631],
+</span></span><span class=line><span class=cl>          [ 0.5886],
+</span></span><span class=line><span class=cl>          [-0.5039],
+</span></span><span class=line><span class=cl>          [-0.4035]]]], grad_fn=&lt;MkldnnConvolutionBackward&gt;)</span></span></code></pre></td></tr></table></div></div><p>易得，原始的句子输入为 4<em>5，如果是未padding的输入经过3</em>5卷积核后结果为2<em>1，在H维度padding之后卷积的结果为4</em>1。</p><p>从nn.Conv2d中很难拿到padding之后的输入vector，为了验证padding与我们预期的结果一致，将nn.Conv2d中的weight和bias都固定下来，分别计算no padding input + model padding = (1,0) 与padding input + model padding = 0的结果，二者输出一致，证明padding正确。</p><h1 id=代码实现>代码实现
+<a class=header-anchor href=#%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0></a></h1><p><a href=https://github.com/finisky/TextCNN title=https://github.com/finisky/TextCNN rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/TextCNN
+<i class="fa fa-external-link-alt"></i></a></p><h2 id=modelpy>model.py
+<a class=header-anchor href=#modelpy></a></h2><p><a href=https://github.com/finisky/TextCNN/blob/master/model.py title=https://github.com/finisky/TextCNN/blob/master/model.py rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/TextCNN/blob/master/model.py
+<i class="fa fa-external-link-alt"></i></a></p><p>核心模型代码，比较简洁，与args解耦：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-3-1><a class=lnlinks href=#hl-3-1> 1</a>
+</span><span class=lnt id=hl-3-2><a class=lnlinks href=#hl-3-2> 2</a>
+</span><span class=lnt id=hl-3-3><a class=lnlinks href=#hl-3-3> 3</a>
+</span><span class=lnt id=hl-3-4><a class=lnlinks href=#hl-3-4> 4</a>
+</span><span class=lnt id=hl-3-5><a class=lnlinks href=#hl-3-5> 5</a>
+</span><span class=lnt id=hl-3-6><a class=lnlinks href=#hl-3-6> 6</a>
+</span><span class=lnt id=hl-3-7><a class=lnlinks href=#hl-3-7> 7</a>
+</span><span class=lnt id=hl-3-8><a class=lnlinks href=#hl-3-8> 8</a>
+</span><span class=lnt id=hl-3-9><a class=lnlinks href=#hl-3-9> 9</a>
+</span><span class=lnt id=hl-3-10><a class=lnlinks href=#hl-3-10>10</a>
+</span><span class=lnt id=hl-3-11><a class=lnlinks href=#hl-3-11>11</a>
+</span><span class=lnt id=hl-3-12><a class=lnlinks href=#hl-3-12>12</a>
+</span><span class=lnt id=hl-3-13><a class=lnlinks href=#hl-3-13>13</a>
+</span><span class=lnt id=hl-3-14><a class=lnlinks href=#hl-3-14>14</a>
+</span><span class=lnt id=hl-3-15><a class=lnlinks href=#hl-3-15>15</a>
+</span><span class=lnt id=hl-3-16><a class=lnlinks href=#hl-3-16>16</a>
+</span><span class=lnt id=hl-3-17><a class=lnlinks href=#hl-3-17>17</a>
+</span><span class=lnt id=hl-3-18><a class=lnlinks href=#hl-3-18>18</a>
+</span><span class=lnt id=hl-3-19><a class=lnlinks href=#hl-3-19>19</a>
+</span><span class=lnt id=hl-3-20><a class=lnlinks href=#hl-3-20>20</a>
+</span><span class=lnt id=hl-3-21><a class=lnlinks href=#hl-3-21>21</a>
+</span><span class=lnt id=hl-3-22><a class=lnlinks href=#hl-3-22>22</a>
+</span><span class=lnt id=hl-3-23><a class=lnlinks href=#hl-3-23>23</a>
+</span><span class=lnt id=hl-3-24><a class=lnlinks href=#hl-3-24>24</a>
+</span><span class=lnt id=hl-3-25><a class=lnlinks href=#hl-3-25>25</a>
+</span><span class=lnt id=hl-3-26><a class=lnlinks href=#hl-3-26>26</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch.nn</span> <span class=k>as</span> <span class=nn>nn</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch.nn.functional</span> <span class=k>as</span> <span class=nn>F</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>TextCnn</span><span class=p>(</span><span class=n>nn</span><span class=o>.</span><span class=n>Module</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>embed_num</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>,</span> <span class=n>class_num</span><span class=p>,</span> <span class=n>kernel_num</span><span class=p>,</span> <span class=n>kernel_sizes</span><span class=p>,</span> <span class=n>dropout</span> <span class=o>=</span> <span class=mf>0.5</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=nb>super</span><span class=p>(</span><span class=n>TextCnn</span><span class=p>,</span> <span class=bp>self</span><span class=p>)</span><span class=o>.</span><span class=fm>__init__</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>Ci</span> <span class=o>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>        <span class=n>Co</span> <span class=o>=</span> <span class=n>kernel_num</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>embed</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Embedding</span><span class=p>(</span><span class=n>embed_num</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>convs1</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>ModuleList</span><span class=p>([</span><span class=n>nn</span><span class=o>.</span><span class=n>Conv2d</span><span class=p>(</span><span class=n>Ci</span><span class=p>,</span> <span class=n>Co</span><span class=p>,</span> <span class=p>(</span><span class=n>f</span><span class=p>,</span> <span class=n>embed_dim</span><span class=p>),</span> <span class=n>padding</span> <span class=o>=</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>0</span><span class=p>))</span> <span class=k>for</span> <span class=n>f</span> <span class=ow>in</span> <span class=n>kernel_sizes</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>dropout</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Dropout</span><span class=p>(</span><span class=n>dropout</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>fc</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Linear</span><span class=p>(</span><span class=n>Co</span> <span class=o>*</span> <span class=nb>len</span><span class=p>(</span><span class=n>kernel_sizes</span><span class=p>),</span> <span class=n>class_num</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>forward</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>embed</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>  <span class=c1># (N, token_num, embed_dim)</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=n>x</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>  <span class=c1># (N, Ci, token_num, embed_dim)</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=p>[</span><span class=n>F</span><span class=o>.</span><span class=n>relu</span><span class=p>(</span><span class=n>conv</span><span class=p>(</span><span class=n>x</span><span class=p>))</span><span class=o>.</span><span class=n>squeeze</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span> <span class=k>for</span> <span class=n>conv</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>convs1</span><span class=p>]</span>  <span class=c1># [(N, Co, token_num) * len(kernel_sizes)]</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=p>[</span><span class=n>F</span><span class=o>.</span><span class=n>max_pool1d</span><span class=p>(</span><span class=n>i</span><span class=p>,</span> <span class=n>i</span><span class=o>.</span><span class=n>size</span><span class=p>(</span><span class=mi>2</span><span class=p>))</span><span class=o>.</span><span class=n>squeeze</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span> <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=n>x</span><span class=p>]</span>  <span class=c1># [(N, Co) * len(kernel_sizes)]</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span> <span class=c1># (N, Co * len(kernel_sizes))</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>dropout</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>  <span class=c1># (N, Co * len(kernel_sizes))</span>
+</span></span><span class=line><span class=cl>        <span class=n>logit</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>fc</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>  <span class=c1># (N, class_num)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>logit</span></span></span></code></pre></td></tr></table></div></div><p>因为最大kernel_size是5，所以padding=(2,0)，保证卷积操作有效。</p><p>还有个比较费解的地方，kernel_num和len(kernel_sizes)有什么区别？kernel_sizes是一组不同size的kernel，而kernel_num指的是有多少组这样的kernel。所以，实际上整个网络中kernel的总数是kernel_num * len(kernel_sizes)。这点从TextCNN模型图中也可看出，共有kernel_num=2组kernels，每个组中有3/4/5三个不同size的kernel，共6个kernel。</p><h2 id=operationpy>operation.py
+<a class=header-anchor href=#operationpy></a></h2><p><a href=https://github.com/finisky/TextCNN/blob/master/operation.py title=https://github.com/finisky/TextCNN/blob/master/operation.py rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/TextCNN/blob/master/operation.py
+<i class="fa fa-external-link-alt"></i></a></p><p>完成模型的外围操作，包括train(), test(), predict()和save()。
+不贴完整代码了，只有一处需要解释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-4-1><a class=lnlinks href=#hl-4-1>1</a>
+</span><span class=lnt id=hl-4-2><a class=lnlinks href=#hl-4-2>2</a>
+</span><span class=lnt id=hl-4-3><a class=lnlinks href=#hl-4-3>3</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>batch</span> <span class=ow>in</span> <span class=n>train_iter</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>feature</span><span class=p>,</span> <span class=n>target</span> <span class=o>=</span> <span class=n>batch</span><span class=o>.</span><span class=n>text</span><span class=p>,</span> <span class=n>batch</span><span class=o>.</span><span class=n>label</span>
+</span></span><span class=line><span class=cl>    <span class=n>feature</span><span class=o>.</span><span class=n>t_</span><span class=p>(),</span> <span class=n>target</span><span class=o>.</span><span class=n>sub_</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>  <span class=c1># batch first, index align</span></span></span></code></pre></td></tr></table></div></div><p>target为什么需要减1？原因在于label_field.vocab里包括一个<code>&lt;unk></code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-5-1><a class=lnlinks href=#hl-5-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{&#39;&lt;unk&gt;&#39;: 0, &#39;1&#39;: 1, &#39;0&#39;: 2}</span></span></code></pre></td></tr></table></div></div><h2 id=mainpy>main.py
+<a class=header-anchor href=#mainpy></a></h2><p><a href=https://github.com/finisky/TextCNN/blob/master/main.py title=https://github.com/finisky/TextCNN/blob/master/main.py rel="noopener external nofollow noreferrer" target=_blank class=exturl>https://github.com/finisky/TextCNN/blob/master/main.py
+<i class="fa fa-external-link-alt"></i></a></p><p>程序入口，parse参数，读取数据，分词。
+也不贴完整代码了，只贴读取数据和建词表(data format: text \t label)：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-6-1><a class=lnlinks href=#hl-6-1> 1</a>
+</span><span class=lnt id=hl-6-2><a class=lnlinks href=#hl-6-2> 2</a>
+</span><span class=lnt id=hl-6-3><a class=lnlinks href=#hl-6-3> 3</a>
+</span><span class=lnt id=hl-6-4><a class=lnlinks href=#hl-6-4> 4</a>
+</span><span class=lnt id=hl-6-5><a class=lnlinks href=#hl-6-5> 5</a>
+</span><span class=lnt id=hl-6-6><a class=lnlinks href=#hl-6-6> 6</a>
+</span><span class=lnt id=hl-6-7><a class=lnlinks href=#hl-6-7> 7</a>
+</span><span class=lnt id=hl-6-8><a class=lnlinks href=#hl-6-8> 8</a>
+</span><span class=lnt id=hl-6-9><a class=lnlinks href=#hl-6-9> 9</a>
+</span><span class=lnt id=hl-6-10><a class=lnlinks href=#hl-6-10>10</a>
+</span><span class=lnt id=hl-6-11><a class=lnlinks href=#hl-6-11>11</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>text_field</span> <span class=o>=</span> <span class=n>data</span><span class=o>.</span><span class=n>Field</span><span class=p>(</span><span class=n>lower</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>tokenize</span> <span class=o>=</span> <span class=n>tokenize</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>label_field</span> <span class=o>=</span> <span class=n>data</span><span class=o>.</span><span class=n>Field</span><span class=p>(</span><span class=n>sequential</span><span class=o>=</span><span class=kc>False</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>fields</span> <span class=o>=</span> <span class=p>[(</span><span class=s1>&#39;text&#39;</span><span class=p>,</span> <span class=n>text_field</span><span class=p>),</span> <span class=p>(</span><span class=s1>&#39;label&#39;</span><span class=p>,</span> <span class=n>label_field</span><span class=p>)]</span>
+</span></span><span class=line><span class=cl><span class=n>train_dataset</span><span class=p>,</span> <span class=n>test_dataset</span> <span class=o>=</span> <span class=n>data</span><span class=o>.</span><span class=n>TabularDataset</span><span class=o>.</span><span class=n>splits</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>path</span> <span class=o>=</span> <span class=s1>&#39;./data/&#39;</span><span class=p>,</span> <span class=nb>format</span> <span class=o>=</span> <span class=s1>&#39;tsv&#39;</span><span class=p>,</span> <span class=n>skip_header</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>train</span> <span class=o>=</span> <span class=s1>&#39;train.tsv&#39;</span><span class=p>,</span> <span class=n>test</span> <span class=o>=</span> <span class=s1>&#39;test.tsv&#39;</span><span class=p>,</span> <span class=n>fields</span> <span class=o>=</span> <span class=n>fields</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>text_field</span><span class=o>.</span><span class=n>build_vocab</span><span class=p>(</span><span class=n>train_dataset</span><span class=p>,</span> <span class=n>test_dataset</span><span class=p>,</span> <span class=n>min_freq</span> <span class=o>=</span> <span class=mi>5</span><span class=p>,</span> <span class=n>max_size</span> <span class=o>=</span> <span class=mi>50000</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>label_field</span><span class=o>.</span><span class=n>build_vocab</span><span class=p>(</span><span class=n>train_dataset</span><span class=p>,</span> <span class=n>test_dataset</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>train_iter</span><span class=p>,</span> <span class=n>test_iter</span> <span class=o>=</span> <span class=n>data</span><span class=o>.</span><span class=n>Iterator</span><span class=o>.</span><span class=n>splits</span><span class=p>((</span><span class=n>train_dataset</span><span class=p>,</span> <span class=n>test_dataset</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                                             <span class=n>batch_sizes</span> <span class=o>=</span> <span class=p>(</span><span class=n>args</span><span class=o>.</span><span class=n>batch_size</span><span class=p>,</span> <span class=n>args</span><span class=o>.</span><span class=n>batch_size</span><span class=p>),</span> <span class=n>sort_key</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>:</span> <span class=nb>len</span><span class=p>(</span><span class=n>x</span><span class=o>.</span><span class=n>text</span><span class=p>))</span></span></span></code></pre></td></tr></table></div></div><p>替换原始实现的mydataset.py，同时建词表时设置了min_freq和max_size。</p><h2 id=运行方法>运行方法
+<a class=header-anchor href=#%e8%bf%90%e8%a1%8c%e6%96%b9%e6%b3%95></a></h2><p>随机选了23000条 weibo_senti_100k 数据，其中train/test分别有20000和3000条。</p><h3 id=train>Train
+<a class=header-anchor href=#train></a></h3><p><code>python main.py -train</code></p><h3 id=test>Test
+<a class=header-anchor href=#test></a></h3><p><code>python main.py -test -snapshot snapshot/best_steps_400.pt</code></p><p>运行结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-7-1><a class=lnlinks href=#hl-7-1>1</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Evaluation - loss: 0.061201  acc: 98.053% (2518/2568)</span></span></code></pre></td></tr></table></div></div><h3 id=predict>Predict
+<a class=header-anchor href=#predict></a></h3><p><code>python main.py -predict -snapshot snapshot/best_steps_400.pt</code></p><p>运行结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt id=hl-8-1><a class=lnlinks href=#hl-8-1>1</a>
+</span><span class=lnt id=hl-8-2><a class=lnlinks href=#hl-8-2>2</a>
+</span><span class=lnt id=hl-8-3><a class=lnlinks href=#hl-8-3>3</a>
+</span><span class=lnt id=hl-8-4><a class=lnlinks href=#hl-8-4>4</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&gt;&gt;内牛满面~[泪]
+</span></span><span class=line><span class=cl>0 | 内牛满面~[泪]
+</span></span><span class=line><span class=cl>&gt;&gt;啧啧啧，好幸福好幸福
+</span></span><span class=line><span class=cl>1 | 啧啧啧，好幸福好幸福</span></span></code></pre></td></tr></table></div></div><p>虽然测试的准确率很高，但实际测试的效果一般，原因在于weibo_senti_100k的文本分类任务比较简单，这个数据集比较脏，大概率是按文本中的emoji写规则进行的正负向标注。</p></div><footer class=post-footer><div class=post-tags><a href=/tags/machine-learning/>Machine Learning
+</a><a href=/tags/nlp/>NLP
+</a><a href=/tags/pytorch/>pytorch
+</a><a href=/tags/python/>python
+</a><a href=/tags/nlu/>NLU</a></div><hr><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/cross-entropy-loss/ rel=next title=熵，交叉熵，KL散度公式与计算实例><i class="fa fa-chevron-left"></i> 熵，交叉熵，KL散度公式与计算实例</a></div><div class="post-nav-prev post-nav-item"><a href=/multi-head-attention/ rel=prev title=MultiHeadAttention实现详解>MultiHeadAttention实现详解
+<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div id=comments class=post-comments><div class=comment-head><div class=comment-headline><i class="fas fa-comments fa-fw"></i>
+<span>评论交流</span></div></div><div class=comment-wrap><div><div class=comment-loading><i class="fa fa-sync fa-spin"></i></div><div class=waline3-container></div></div></div></div></div></main><footer class=footer><div class=footer-inner><div class=top-right-buttons><span id=toggle-theme-topbar title=深浅模式切换><i class="fas fa-lightbulb"></i></span></div><script>document.addEventListener("DOMContentLoaded",function(){var e=document.getElementById("toggle-theme-topbar");e&&e.addEventListener("click",function(){var e=document.getElementById("toggle-theme");e&&e.click()})})</script><div class=copyright>&copy;
+<span itemprop=copyrightYear>2026
+</span>&nbsp;|&nbsp;
+<i class="fa fa-eye"></i>&nbsp;<a href=https://finicounter.eu.org/ target=_blank rel=noopener title=FiniCounter>总访问量：<span id=finicount_views>...</span></a></div><script>(function(){fetch("https://finicounter.eu.org/counter?host="+window.location.hostname).then(function(e){return e.json()}).then(function(e){var t=document.getElementById("finicount_views");t&&e.views&&(t.innerText=e.views)}).catch(function(e){console.log(e)})})()</script><script type=text/javascript>function downloadJsAtOnload(){setTimeout(function(){var e=document.createElement("script");e.setAttribute("data-ad-client","ca-pub-2660281922577700"),e.async=!0,e.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",document.body.appendChild(e)},5e3)}window.addEventListener?window.addEventListener("load",downloadJsAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJsAtOnload):window.onload=downloadJsAtOnload</script></div></footer><script class=next-config data-name=page type=application/json>{"clipboard":{"js":{"alias":"clipboard","file":"dist/clipboard.min.js","name":"clipboard.js","version":"2.0.11"}},"comments":true,"expired":false,"isHome":false,"isPage":true,"path":"text-cnn-mvp","permalink":"https://finisky.github.io/text-cnn-mvp/","title":"TextCNN pytorch实现","toc":true,"waline3":{"commentcnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/comment.js","name":"comment","version":"3.5.7"},"pagecnt":{"alias":"@waline/client","alias_name":"waline","file":"dist/pageview.js","name":"pageview","version":"3.5.7"}}}</script><script type=text/javascript src=https://finisky.github.io/js/3rd/animejs/3.2.2/anime.min.js crossorigin=anonymous defer></script><script type=text/javascript src=https://finisky.github.io/js/3rd/viewerjs/1.11.6/viewer.min.js crossorigin=anonymous defer></script><script class=next-config data-name=main type=application/json>{"bookmark":{"color":"#222","enable":false,"save":"manual"},"copybtn":true,"darkmode":false,"hostname":"https://finisky.github.io/","i18n":{"ds_day":" 天前","ds_days":" 天 ","ds_hour":" 小时前","ds_hours":" 小时 ","ds_just":"刚刚","ds_min":" 分钟前","ds_mins":" 分钟","ds_month":" 个月前","ds_years":" 年 ","empty":"没有找到任何搜索结果：${query}","hits":"找到 ${hits} 个搜索结果","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","placeholder":"搜索..."},"isMultiLang":true,"lang":"zh-CN","lazyload":false,"motion":{"async":true,"enable":false,"transition":{"collheader":"slideInRight","postblock":"fadeIn","postbody":"fadeInDown","postheader":"fadeInDown","sidebar":"fadeInUp"}},"postmeta":{"comments":{"enable":true,"plugin":"waline3"},"views":{"enable":true,"plugin":"waline3"}},"root":"/","scheme":"Gemini","share":{"enable":false},"sidebar":{"display":"post","offset":12,"padding":18,"position":"left","width":256},"vendor":{"plugins":"local","router":{"name":"local","type":"modern","url":"https://finisky.github.io/js/3rd"}},"version":"4.8.3","waline3":{"cfg":{"emoji":false,"imguploader":false,"placeholder":"","reaction":false,"reactiontext":["点赞","踩一下","得意","不屑","尴尬","睡觉"],"reactiontitle":"你认为这篇文章怎么样？","requiredmeta":[],"search":true,"serverurl":"https://comments.finisky.eu.org","sofa":"","wordlimit":200},"css":{"alias":"@waline/client","file":"dist/waline.css","name":"waline","version":"3.5.7"},"js":{"alias":"@waline/client","file":"dist/waline.js","name":"waline","version":"3.5.7"}}}</script><script type=text/javascript src="/js/main.min.js?=1777480352" defer></script><script type=text/javascript src="/js/clipboard.min.js?=1777480353" defer></script></body></html>
