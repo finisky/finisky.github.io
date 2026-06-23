@@ -1,0 +1,160 @@
+.post-footer hr {
+  display: none;
+}
+
+/* Limit image width in post body, don't override inline styles */
+.post-body img:not([style*="width"]):not([style*="height"]) {
+  max-width: 70%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Inline code style */
+p > code, li > code, td > code, h1 > code, h2 > code, h3 > code, h4 > code {
+  background: #e8eaed !important;
+  color: #333 !important;
+  padding: 2px 6px !important;
+  border-radius: 3px;
+}
+
+/* Remove vertical scrollbar in code blocks */
+.highlight > .chroma {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* Hide code block header (language label + collapse button) */
+.highlight > .code-header {
+  display: none !important;
+}
+
+/* Hide right-bottom tool buttons (comments, translate, theme toggle) */
+.tool-buttons .goto-comments,
+.tool-buttons #goto-i18n-translate {
+  display: none !important;
+}
+.tool-buttons #toggle-theme {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Top-right corner buttons */
+.top-right-buttons {
+  position: fixed;
+  top: 12px;
+  right: 18px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--content-bg-color, #fff);
+  padding: 5px 14px;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.top-right-buttons a,
+.top-right-buttons span {
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+.top-right-buttons a:hover,
+.top-right-buttons span:hover {
+  transform: scale(1.1);
+}
+.top-right-buttons #toggle-theme-topbar {
+  font-size: 1.1em;
+  color: #666;
+}
+.top-right-buttons #toggle-theme-topbar:hover {
+  color: #333;
+}
+.top-right-buttons a {
+  font-size: 0.82em;
+  color: #555;
+}
+.top-right-buttons a:hover {
+  color: var(--link-color, #222);
+}
+.top-right-buttons .btn-divider {
+  width: 1px;
+  height: 14px;
+  background: #ddd;
+}
+
+/* Dark mode adaptation for top-right buttons */
+[data-theme="dark"] .top-right-buttons {
+  background: var(--content-bg-color, #282828);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+[data-theme="dark"] .top-right-buttons #toggle-theme-topbar {
+  color: #ccc;
+}
+[data-theme="dark"] .top-right-buttons #toggle-theme-topbar:hover {
+  color: #fff;
+}
+[data-theme="dark"] .top-right-buttons a {
+  color: #bbb;
+}
+[data-theme="dark"] .top-right-buttons a:hover {
+  color: #fff;
+}
+[data-theme="dark"] .top-right-buttons .btn-divider {
+  background: #555;
+}
+
+/* Hide bottom language selector (moved to top-right) */
+.i18n-translate {
+  display: none !important;
+}
+
+/* Adjust copy button position after hiding header */
+.highlight > .chroma .copy-btn {
+  top: 6px !important;
+}
+
+/* Related posts: match TOC style */
+.related-posts-header {
+  font-size: 0.875em;
+  font-weight: normal;
+  color: var(--text-color);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  margin: 0 8px 10px;
+}
+[data-theme="dark"] .related-posts-header {
+  border-bottom-color: #444;
+}
+.related-posts-list {
+  font-size: 0.8125em;
+  padding: 0 8px;
+}
+.related-posts-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 2px 5px 10px;
+  text-align: left;
+}
+.related-posts-list li {
+  line-height: 1.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.related-posts-list li i {
+  font-size: 0.6em;
+  margin-right: 4px;
+  color: #999;
+}
+.related-posts-list a {
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+.related-posts-list a:hover {
+  text-decoration: underline;
+  color: var(--orange, #fc6423);
+}

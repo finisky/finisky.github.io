@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MongoDB Ops Manager on Finisky Garden</title><link>https://finisky.github.io/en/tags/mongodb-ops-manager/</link><description>Recent content in MongoDB Ops Manager on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Fri, 01 Oct 2021 12:00:01 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/mongodb-ops-manager/rss.xml" rel="self" type="application/rss+xml"/><item><title>MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</title><link>https://finisky.github.io/en/mongodb-chunk-migration-failed/</link><pubDate>Fri, 01 Oct 2021 12:00:01 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-chunk-migration-failed/</guid><description>&lt;p&gt;After adding new shards to our production MongoDB cluster (v4.4.6-ent with 5 shards, 3 replicas for each shard), we found that the balancer is not working. &lt;code&gt;sh.status()&lt;/code&gt; displays many chunk migration errors:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-14"&gt;&lt;a class="lnlinks" href="#hl-0-14"&gt;14&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-15"&gt;&lt;a class="lnlinks" href="#hl-0-15"&gt;15&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-16"&gt;&lt;a class="lnlinks" href="#hl-0-16"&gt;16&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-17"&gt;&lt;a class="lnlinks" href="#hl-0-17"&gt;17&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-18"&gt;&lt;a class="lnlinks" href="#hl-0-18"&gt;18&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-19"&gt;&lt;a class="lnlinks" href="#hl-0-19"&gt;19&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-20"&gt;&lt;a class="lnlinks" href="#hl-0-20"&gt;20&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; balancer:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Currently enabled: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Currently running: no
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Failed balancer rounds in last 5 attempts: 0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Migration Results for the last 24 hours:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 7 : Failed with error &amp;#39;aborted&amp;#39;, from mongo-1 to mongo-3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 7208 : Failed with error &amp;#39;aborted&amp;#39;, from mongo-1 to mongo-4
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; databases:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; { &amp;#34;_id&amp;#34; : &amp;#34;X&amp;#34;, &amp;#34;primary&amp;#34; : &amp;#34;mongo-1&amp;#34;, &amp;#34;partitioned&amp;#34; : true, &amp;#34;version&amp;#34; : { &amp;#34;uuid&amp;#34; : UUID(&amp;#34;xxx&amp;#34;), &amp;#34;lastMod&amp;#34; : 1 } }
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; X.A
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; shard key: { &amp;#34;Uuid&amp;#34; : 1 }
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; unique: false
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; balancing: true
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; chunks:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-0 231
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-1 327
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-2 230
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-3 208
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- more --&gt;
+&lt;p&gt;Obviously, the chunks is unbalanced accross shards (327 vs 208). Since the balancer is enabled, we try to debug the issue through &lt;code&gt;mongodb.log&lt;/code&gt; on the config server. There are many migration failed logs (sensitive infomation masked):&lt;/p&gt;</description></item><item><title>How to Use Multiple Backup Daemons in MongoDB Kubernetes Operator</title><link>https://finisky.github.io/en/mongodb-ops-mgr-multiple-backup-daemons/</link><pubDate>Sat, 04 Sep 2021 18:50:52 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-ops-mgr-multiple-backup-daemons/</guid><description>&lt;p&gt;
+&lt;a href="https://docs.opsmanager.mongodb.com/v4.4/tutorial/configure-backup-high-availability/#multiple-backup-daemons" title="Multiple Backup Daemons" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Multiple Backup Daemons
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; are typically run when the storage requirements or the load generated by the deployment is too much for a single daemon.&lt;/p&gt;
+&lt;p&gt;Directly scale the statefulset &lt;code&gt;ops-manager-backup-daemon&lt;/code&gt; to multiple instances (e.g. 3) doesn&amp;rsquo;t work. Because the &lt;code&gt;mongodb-enterprise-operator&lt;/code&gt; is watching the statefulset, the instance number will be scaled down to 1 by the MongoDB operator several miniutes later.&lt;/p&gt;
+&lt;p&gt;So how to scale up the backup dameons by the MongoDB kubernetes operator?&lt;/p&gt;</description></item><item><title>MongoDB Master-Slave Replication by Change Stream</title><link>https://finisky.github.io/en/mongodb-slave-sync/</link><pubDate>Thu, 22 Jul 2021 20:27:32 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-slave-sync/</guid><description>&lt;p&gt;By the 
+&lt;a href="https://docs.mongodb.com/v4.4/changeStreams/" title="official manual" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ official manual
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.&lt;/p&gt;</description></item><item><title>MongoDB Change Stream Makes the Cluster Down</title><link>https://finisky.github.io/en/change-stream-cause-server-restart/</link><pubDate>Thu, 22 Jul 2021 00:56:38 +0800</pubDate><guid>https://finisky.github.io/en/change-stream-cause-server-restart/</guid><description>&lt;p&gt;MongoDB change stream is a nice feature. It allows applications to access real-time data changes without the complexity and risk of tailing the oplog.&lt;/p&gt;
+&lt;p&gt;Recently, when we use change stream to replicate data from one sharded cluster to another, it immediately made the cluster unstable (broke down several nodes and triggered the primary change). Then the read/write operations latency significantly increased.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="observations"&gt;Observations
+&lt;a class="header-anchor" href="#observations"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Observations on our production envrionment:&lt;/p&gt;</description></item><item><title>Migrate Ops Manager to a new Kubernetes Cluster</title><link>https://finisky.github.io/en/migrate-ops-manager/</link><pubDate>Sun, 21 Mar 2021 13:03:50 +0800</pubDate><guid>https://finisky.github.io/en/migrate-ops-manager/</guid><description>&lt;p&gt;Recently we want to deploy MongoDB Ops Manager and MongoDB deployments in different data centers to improve disaster recovery. If they are deploymented in the same data center and unfortunately it fails, you cannot restore the backup data to a new cluster as both Ops Manager and deployments are unavailable.&lt;/p&gt;
+&lt;p&gt;Of course, we don&amp;rsquo;t want to re-deploy the existing MongoDB deployments in Kubernetes. But how to make the deployments sending data to the new ops manager URL?&lt;/p&gt;</description></item><item><title>MongoDB Agent Monitoring and Backup not Working</title><link>https://finisky.github.io/en/mongodb-agent-monitoring-not-work/</link><pubDate>Wed, 20 Jan 2021 20:31:12 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-agent-monitoring-not-work/</guid><description>&lt;p&gt;Today I try to import an existing MongoDB deployment (out of the kubernetes cluster) into MongoDB Ops Manager which is running in kubernetes. After installing MongoDB Agent to the deployment, only automation functionality works while monitoring and backup not work. The root cause is that the agent still try to post data into Ops Manager&amp;rsquo;s internal endpoint.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;The latest MongoDB Agent consists of a single binary that contains all three functions: Automation, Monitoring, and Backup. So theoretically install and configure the all-in-one automation agent in the deployment VM is enough.&lt;/p&gt;</description></item><item><title>MongoDB Agent Host Discovery Issue</title><link>https://finisky.github.io/en/mongodb-host-discovery-issue/</link><pubDate>Tue, 19 Jan 2021 22:25:25 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-host-discovery-issue/</guid><description>&lt;p&gt;I have a sharded cluster (2 shards, each 3 mongods; 3 config server, 2 mongoses) which is deployed by MongoDB Ops Manager.&lt;/p&gt;
+&lt;p&gt;Last week, one of the shard host status was shown as a grey diamond (Hover: &amp;ldquo;Last Ping: Never&amp;rdquo;). Besides, in the Ops Manager&amp;rsquo;s server page, a server had two processes (e.g. &lt;code&gt;sharddb-0&lt;/code&gt; and &lt;code&gt;sharddb-config&lt;/code&gt;). However, the cluster still works well and we can list the host &lt;code&gt;sharddb-0-0&lt;/code&gt;(shard 0, replica 0) in the mongo shell by &lt;code&gt;sh.status()&lt;/code&gt; and &lt;code&gt;rs.status()&lt;/code&gt;. What&amp;rsquo;s wrong with the cluster?&lt;/p&gt;</description></item><item><title>Don't Use Load Balancer In front of Mongos</title><link>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</link><pubDate>Wed, 13 Jan 2021 23:38:36 +0800</pubDate><guid>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</guid><description>&lt;p&gt;When I execute MongoDB transactions in parallel, I encounter lots of &lt;code&gt;MongoCommandException&lt;/code&gt;: code 251, codename &lt;code&gt;NoSuchTransaction&lt;/code&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="problem-analysis"&gt;Problem Analysis
+&lt;a class="header-anchor" href="#problem-analysis"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;I performed some tests to pinpoint the issue:&lt;/p&gt;</description></item><item><title>Deploy MongoDB Sharded Cluster by Ops Manager</title><link>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</link><pubDate>Sat, 26 Dec 2020 22:18:10 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</guid><description>&lt;p&gt;MongoDB sharded cluster is the most complicated architecture. The deployment of sharded cluster in Kubernetes is relatively hard. We will go through the deployment process by MongoDB Ops Manager in this post.&lt;/p&gt;
+&lt;p&gt;Before start, please go through the 
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt; first.&lt;/p&gt;
+&lt;p&gt;A MongoDB 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-sharded-cluster" title="sharded cluster" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ sharded cluster
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; consists of the following components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-shards/" title="shard" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ shard
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Each shard contains a subset of the sharded data. Each shard can be deployed as a 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set" title="replica set" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ replica set
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-query-router/" title="mongos" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ mongos
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: The &lt;code&gt;mongos&lt;/code&gt; acts as a query router, providing an interface between client applications and the sharded cluster.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-config-servers/" title="config servers" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ config servers
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Config servers store metadata and configuration settings for the cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this post, we are going to create a sharded cluster with 2 shards (3 instances replica set), 2 mongos and 3 config servers.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth</title><link>https://finisky.github.io/en/mongodb-om-tls-auth/</link><pubDate>Sat, 19 Dec 2020 23:45:32 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-tls-auth/</guid><description>&lt;p&gt;This is part5, we will use the generated certficates to enable user database TLS and AUTH.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="understanding-different-secure-connections"&gt;Understanding Different Secure Connections
+&lt;a class="header-anchor" href="#understanding-different-secure-connections"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Before we start, look at the following three TLS:&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates</title><link>https://finisky.github.io/en/mongodb-om-self-signed-certificates/</link><pubDate>Sat, 19 Dec 2020 23:45:30 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-self-signed-certificates/</guid><description>&lt;p&gt;This is part4, we will create a self-signed CA certificate and three server certificates.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Self-signed certificates is &lt;strong&gt;not recommended&lt;/strong&gt; for production. It cannot prevent man-in-the-middle attack. Since our main purpose is to encrypt the communication messages instead of authentication. Self-signed certificates is acceptable.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</title><link>https://finisky.github.io/en/mongodb-om-expose-services/</link><pubDate>Sat, 19 Dec 2020 23:45:28 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-expose-services/</guid><description>&lt;p&gt;This is part3, we will expose the user database pods to the public so that Mongo client is able to access it.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;So far, the user database can be accessed only inside the kubernetes cluster. The official blog&amp;rsquo;s approach is to expose the pods by NodePort:
+
+&lt;a href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/" title="# Connect to a MongoDB Database Resource from Outside Kubernetes" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Connect to a MongoDB Database Resource from Outside Kubernetes
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</title><link>https://finisky.github.io/en/mongodb-om-create-user-db/</link><pubDate>Sat, 19 Dec 2020 12:30:01 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-create-user-db/</guid><description>&lt;p&gt;This is part2, we will create a user database that is a 3 instances ReplicaSet.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The so called &lt;code&gt;Application Database&lt;/code&gt; is the backend DB of Ops Manager. It cannot be used to store user data. The user database is called &lt;code&gt;MongoDB Deployment&lt;/code&gt;. Note that the &lt;code&gt;deployment&lt;/code&gt; is different with Kubernetes &lt;code&gt;deployment&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(1): Install MongoDB Ops Manager</title><link>https://finisky.github.io/en/mongodb-ops-manager/</link><pubDate>Sat, 19 Dec 2020 12:30:00 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-ops-manager/</guid><description>&lt;p&gt;It&amp;rsquo;s pretty easy to configure a MongoDB standalone instance (almost zero configuration). However, if you want to run a production-level MongoDB cluster, the configuration process is non-trivial. For a production cluster, replication/sharding/dyanmic scaling/backup/transport encryption/monitoring are required. Is there a nice tool to help us?&lt;/p&gt;
+&lt;p&gt;MongoDB cluster is a distributed system, which is well suited to run in Kubernetes. However, the collaboration of MongoDB instances usually need to manually run commands on each instance which is independent of Kubernetes. Therefore, &lt;code&gt;MongoDB Enterprise Kubernetes Operator&lt;/code&gt; is developed to mitigate the gap. Morever, &lt;code&gt;MongoDB Ops Manager&lt;/code&gt; is a great web portal to help these automation tasks.&lt;/p&gt;</description></item></channel></rss>

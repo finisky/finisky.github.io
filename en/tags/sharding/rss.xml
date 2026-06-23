@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sharding on Finisky Garden</title><link>https://finisky.github.io/en/tags/sharding/</link><description>Recent content in Sharding on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Fri, 22 Oct 2021 20:05:26 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/sharding/rss.xml" rel="self" type="application/rss+xml"/><item><title>How to Get the MongoDB Chunk Size</title><link>https://finisky.github.io/en/mongodb-get-chunk-size/</link><pubDate>Fri, 22 Oct 2021 20:05:26 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-get-chunk-size/</guid><description>&lt;p&gt;Recently we found the traffic is not balanced across the MongoDB cluster shards. After investigation, the root cause is that data on each shard is not evenly distributed (
+&lt;a href="https://www.mongodb.com/blog/post/sharding-pitfalls-part-iii-chunk-balancing-and" title="Chunk balancing != data balancing != traffic balancing" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Chunk balancing != data balancing != traffic balancing
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;). The data distribution looks like this:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Shard&lt;/th&gt;
+ &lt;th&gt;Data Size&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;mongo-0&lt;/td&gt;
+ &lt;td&gt;10.55 GB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;mongo-1&lt;/td&gt;
+ &lt;td&gt;25.76 GB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;mongo-2&lt;/td&gt;
+ &lt;td&gt;10.04 GB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Why the data size of &lt;code&gt;mongo-1&lt;/code&gt; is significantly large than others while the chunk number among 3 shards is almost the same? Then we need to analysis the chunk size distribution across these shards.&lt;/p&gt;</description></item><item><title>MongoDB Chunk Migration Failed Solution: Unable to acquire X lock</title><link>https://finisky.github.io/en/mongodb-chunk-migration-failed/</link><pubDate>Fri, 01 Oct 2021 12:00:01 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-chunk-migration-failed/</guid><description>&lt;p&gt;After adding new shards to our production MongoDB cluster (v4.4.6-ent with 5 shards, 3 replicas for each shard), we found that the balancer is not working. &lt;code&gt;sh.status()&lt;/code&gt; displays many chunk migration errors:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-14"&gt;&lt;a class="lnlinks" href="#hl-0-14"&gt;14&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-15"&gt;&lt;a class="lnlinks" href="#hl-0-15"&gt;15&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-16"&gt;&lt;a class="lnlinks" href="#hl-0-16"&gt;16&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-17"&gt;&lt;a class="lnlinks" href="#hl-0-17"&gt;17&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-18"&gt;&lt;a class="lnlinks" href="#hl-0-18"&gt;18&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-19"&gt;&lt;a class="lnlinks" href="#hl-0-19"&gt;19&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-20"&gt;&lt;a class="lnlinks" href="#hl-0-20"&gt;20&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; balancer:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Currently enabled: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Currently running: no
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Failed balancer rounds in last 5 attempts: 0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Migration Results for the last 24 hours:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 7 : Failed with error &amp;#39;aborted&amp;#39;, from mongo-1 to mongo-3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 7208 : Failed with error &amp;#39;aborted&amp;#39;, from mongo-1 to mongo-4
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; databases:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; { &amp;#34;_id&amp;#34; : &amp;#34;X&amp;#34;, &amp;#34;primary&amp;#34; : &amp;#34;mongo-1&amp;#34;, &amp;#34;partitioned&amp;#34; : true, &amp;#34;version&amp;#34; : { &amp;#34;uuid&amp;#34; : UUID(&amp;#34;xxx&amp;#34;), &amp;#34;lastMod&amp;#34; : 1 } }
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; X.A
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; shard key: { &amp;#34;Uuid&amp;#34; : 1 }
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; unique: false
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; balancing: true
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; chunks:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-0 231
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-1 327
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-2 230
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; mongo-3 208
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- more --&gt;
+&lt;p&gt;Obviously, the chunks is unbalanced accross shards (327 vs 208). Since the balancer is enabled, we try to debug the issue through &lt;code&gt;mongodb.log&lt;/code&gt; on the config server. There are many migration failed logs (sensitive infomation masked):&lt;/p&gt;</description></item><item><title>Don't Use Load Balancer In front of Mongos</title><link>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</link><pubDate>Wed, 13 Jan 2021 23:38:36 +0800</pubDate><guid>https://finisky.github.io/en/dont-use-load-balancer-in-front-of-mongos/</guid><description>&lt;p&gt;When I execute MongoDB transactions in parallel, I encounter lots of &lt;code&gt;MongoCommandException&lt;/code&gt;: code 251, codename &lt;code&gt;NoSuchTransaction&lt;/code&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="problem-analysis"&gt;Problem Analysis
+&lt;a class="header-anchor" href="#problem-analysis"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;I performed some tests to pinpoint the issue:&lt;/p&gt;</description></item><item><title>Deploy MongoDB Sharded Cluster by Ops Manager</title><link>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</link><pubDate>Sat, 26 Dec 2020 22:18:10 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</guid><description>&lt;p&gt;MongoDB sharded cluster is the most complicated architecture. The deployment of sharded cluster in Kubernetes is relatively hard. We will go through the deployment process by MongoDB Ops Manager in this post.&lt;/p&gt;
+&lt;p&gt;Before start, please go through the 
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt; first.&lt;/p&gt;
+&lt;p&gt;A MongoDB 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-sharded-cluster" title="sharded cluster" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ sharded cluster
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; consists of the following components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-shards/" title="shard" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ shard
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Each shard contains a subset of the sharded data. Each shard can be deployed as a 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set" title="replica set" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ replica set
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-query-router/" title="mongos" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ mongos
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: The &lt;code&gt;mongos&lt;/code&gt; acts as a query router, providing an interface between client applications and the sharded cluster.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-config-servers/" title="config servers" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ config servers
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Config servers store metadata and configuration settings for the cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this post, we are going to create a sharded cluster with 2 shards (3 instances replica set), 2 mongos and 3 config servers.&lt;/p&gt;</description></item></channel></rss>

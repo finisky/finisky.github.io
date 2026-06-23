@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on Finisky Garden</title><link>https://finisky.github.io/categories/linux/</link><description>Recent content in Linux on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Sun, 17 Nov 2024 12:56:40 +0800</lastBuildDate><atom:link href="https://finisky.github.io/categories/linux/rss.xml" rel="self" type="application/rss+xml"/><item><title>Cerbot自动化管理Nginx网站证书</title><link>https://finisky.github.io/certbot-automating-nginx-ssl-renewal/</link><pubDate>Sun, 17 Nov 2024 12:56:40 +0800</pubDate><guid>https://finisky.github.io/certbot-automating-nginx-ssl-renewal/</guid><description>&lt;p&gt;收到腾讯云的证书续期通知，结果在申请新证书时发现，腾讯云不再支持一年的免费证书：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;2024年4月25日起，腾讯云新签发的免费证书有效期调整为 90 天&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;考虑到一直是手动更新证书，如果三个月手动操作一次还是挺费劲的。于是研究Let&amp;rsquo;s Encrypt的certbot，唯一的顾虑是如何证明自己对二级域名的所有权问题。实践之后发现此问题并不存在，因为certbot仅是签发一个证书而已，并不存在对网站本身的威胁。&lt;/p&gt;
+&lt;p&gt;下面是certbot的配置步骤，其实仅需要执行几个命令，非常简单。&lt;/p&gt;</description></item><item><title>TypeError: Argument has incorrect type (expected numpy.ndarray, got DataFrame) 解决方案</title><link>https://finisky.github.io/argument-incorrect-type-expected-ndarray/</link><pubDate>Sat, 02 Nov 2024 12:20:29 +0800</pubDate><guid>https://finisky.github.io/argument-incorrect-type-expected-ndarray/</guid><description>&lt;p&gt;在conda环境中升级软件包后，talib无法接受DataFrame作为输入，错误信息如下所示：&lt;code&gt;TypeError: Argument 'xxx' has incorrect type (expected numpy.ndarray, got DataFrame)&lt;/code&gt;：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt;6&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Traceback (most recent call last):
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; File &amp;#34;/data/1.py&amp;#34;, line 7, in &amp;lt;module&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; df[&amp;#39;SMA_5&amp;#39;] = ta.SMA(df[&amp;#39;Close&amp;#39;], timeperiod=5)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; File &amp;#34;/data/miniconda3/envs/a/lib/python3.10/site-packages/talib/__init__.py&amp;#34;, line 64, in wrapper
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; result = func(*_args, **_kwds)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;TypeError: Argument &amp;#39;real&amp;#39; has incorrect type (expected numpy.ndarray, got DataFrame)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;大多数网络搜索结果都具有误导性，比如将df转换为np数组。由于在更新软件包之前代码能够正常运行，因此问题应为软件包不兼容的问题。&lt;/p&gt;</description></item><item><title>升级gcc解决编译llama-cpp-python错误</title><link>https://finisky.github.io/build-llama-cpp-python-error-solution/</link><pubDate>Thu, 11 May 2023 17:18:39 +0800</pubDate><guid>https://finisky.github.io/build-llama-cpp-python-error-solution/</guid><description>&lt;p&gt;安装 
+&lt;a href="https://github.com/oobabooga/text-generation-webui" title="text-generation-webui" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ text-generation-webui
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;~/text-generation-webui$ pip install -r requirements.txt&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;遇到错误：&lt;/p&gt;</description></item><item><title>Windows大小写不敏感导致的git冲突</title><link>https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/</link><pubDate>Tue, 15 Nov 2022 19:01:30 +0800</pubDate><guid>https://finisky.github.io/git-is-case-sensitive-while-file-system-is-not/</guid><description>&lt;p&gt;来个好玩的，遇到过 &lt;code&gt;git reset --hard&lt;/code&gt; 来回翻烧饼的事儿么？每reset一次，文件内容就更改一次，像鬼打墙一样。不信可以在Windows机器上clone下这个repo:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;D:&lt;span class="se"&gt;\$&lt;/span&gt; git clone https://github.com/finisky/git-case-demo.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Cloning into &lt;span class="s1"&gt;&amp;#39;git-case-demo&amp;#39;&lt;/span&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Enumerating objects: 11, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Counting objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;11/11&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Compressing objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;6/6&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;remote: Total &lt;span class="m"&gt;11&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Unpacking objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;11/11&lt;span class="o"&gt;)&lt;/span&gt;, 1.85 KiB &lt;span class="p"&gt;|&lt;/span&gt; 126.00 KiB/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;warning: the following paths have collided &lt;span class="o"&gt;(&lt;/span&gt;e.g. &lt;span class="k"&gt;case&lt;/span&gt;-sensitive paths
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;on a &lt;span class="k"&gt;case&lt;/span&gt;-insensitive filesystem&lt;span class="o"&gt;)&lt;/span&gt; and only one from the same
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;colliding group is in the working tree:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;File.txt&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;file.txt&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;然后就会发现刚拉的&lt;code&gt;main&lt;/code&gt;分支都不干净(橙色)，而且&lt;code&gt;git reset --hard&lt;/code&gt;也失效了，仔细看才发现，每reset一次，会在大写 &lt;code&gt;File.txt&lt;/code&gt; 和小写 &lt;code&gt;file.txt&lt;/code&gt; 之间切换，神奇不？&lt;/p&gt;</description></item><item><title>同一机器配置多个GitHub账号</title><link>https://finisky.github.io/multiple-github-accounts-on-one-machine/</link><pubDate>Wed, 03 Nov 2021 01:15:40 +0800</pubDate><guid>https://finisky.github.io/multiple-github-accounts-on-one-machine/</guid><description>&lt;p&gt;在同一机器上对不同repo使用不同的github账号是个常见需求。举个例子，&lt;code&gt;repo1&lt;/code&gt;托管在github账号&lt;code&gt;x1&lt;/code&gt;下，而&lt;code&gt;repo2&lt;/code&gt;托管在账号&lt;code&gt;x2&lt;/code&gt;下，如何方便地在同一机器上使用不同账号自动&lt;code&gt;git push&lt;/code&gt;到对应的远端？比较直接的做法是在不同repo目录下使用&lt;code&gt;git config&lt;/code&gt;配置用户名，但这样有两个问题：&lt;/p&gt;</description></item><item><title>mysql表中是否需要自增主键？</title><link>https://finisky.github.io/mysql-primary-key-uuid/</link><pubDate>Sun, 22 Nov 2020 00:46:51 +0800</pubDate><guid>https://finisky.github.io/mysql-primary-key-uuid/</guid><description>&lt;p&gt;最近遇到个数据库表设计的问题，一张账号表，业务逻辑存在一列唯一accountId，是否还要在数据库表中加一列自增int作为主键？这应该是实践中普遍存在的问题，于是研究了下推荐做法。&lt;/p&gt;</description></item><item><title>Mysqlbench服务器性能指标含义</title><link>https://finisky.github.io/mysql-server-status-metrics/</link><pubDate>Sun, 15 Nov 2020 23:41:56 +0800</pubDate><guid>https://finisky.github.io/mysql-server-status-metrics/</guid><description>&lt;p&gt;对一个DBA来说监控mysql服务器的性能指标是非常重要的。我们可以通过mysqlbench中的Server Status来轻松监测服务器最近一段时间的状态。但是这些指标具体代表了什么含义？比如，&lt;code&gt;Selects per second&lt;/code&gt; 和&lt;code&gt;Innodb reads per second&lt;/code&gt;的区别是什么？如何评估服务器当前写入的性能？&lt;/p&gt;</description></item><item><title>清理Linux的磁盘使用空间</title><link>https://finisky.github.io/cleanup-linux-disk/</link><pubDate>Wed, 22 Jul 2020 18:35:26 +0800</pubDate><guid>https://finisky.github.io/cleanup-linux-disk/</guid><description>&lt;p&gt;硬盘虽然并不值钱，但对于一个强迫症来说，看到莫名其妙地内容占据了好些空间也非常不爽。记录下在Linux中如何发现空间占用大户，以及可以删除什么以缩减使用空间。&lt;/p&gt;</description></item><item><title>.bashrc不起作用与bash初始化文件执行顺序</title><link>https://finisky.github.io/bash-startup-files/</link><pubDate>Sun, 29 Mar 2020 11:55:50 +0800</pubDate><guid>https://finisky.github.io/bash-startup-files/</guid><description>&lt;h1 id="bashrc不起作用"&gt;.bashrc不起作用
+&lt;a class="header-anchor" href="#bashrc%e4%b8%8d%e8%b5%b7%e4%bd%9c%e7%94%a8"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;按习惯在HOME中添加了.bashrc文件，定义一些alias和PS1，结果发现putty登录之后并未生效，还须手动&lt;code&gt;source .bashrc&lt;/code&gt;，在&lt;code&gt;~/&lt;/code&gt;目录增加.bash_profile或.profile解决：&lt;/p&gt;</description></item></channel></rss>
