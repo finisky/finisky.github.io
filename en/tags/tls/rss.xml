@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>TLS on Finisky Garden</title><link>https://finisky.github.io/en/tags/tls/</link><description>Recent content in TLS on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sat, 26 Dec 2020 22:18:10 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/tls/rss.xml" rel="self" type="application/rss+xml"/><item><title>Deploy MongoDB Sharded Cluster by Ops Manager</title><link>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</link><pubDate>Sat, 26 Dec 2020 22:18:10 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-create-sharded-cluster/</guid><description>&lt;p&gt;MongoDB sharded cluster is the most complicated architecture. The deployment of sharded cluster in Kubernetes is relatively hard. We will go through the deployment process by MongoDB Ops Manager in this post.&lt;/p&gt;
+&lt;p&gt;Before start, please go through the 
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt; first.&lt;/p&gt;
+&lt;p&gt;A MongoDB 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-sharded-cluster" title="sharded cluster" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ sharded cluster
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; consists of the following components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-shards/" title="shard" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ shard
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Each shard contains a subset of the sharded data. Each shard can be deployed as a 
+&lt;a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set" title="replica set" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ replica set
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-query-router/" title="mongos" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ mongos
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: The &lt;code&gt;mongos&lt;/code&gt; acts as a query router, providing an interface between client applications and the sharded cluster.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://docs.mongodb.com/manual/core/sharded-cluster-config-servers/" title="config servers" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ config servers
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;: Config servers store metadata and configuration settings for the cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this post, we are going to create a sharded cluster with 2 shards (3 instances replica set), 2 mongos and 3 config servers.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(5): Enable UserDB TLS and Auth</title><link>https://finisky.github.io/en/mongodb-om-tls-auth/</link><pubDate>Sat, 19 Dec 2020 23:45:32 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-tls-auth/</guid><description>&lt;p&gt;This is part5, we will use the generated certficates to enable user database TLS and AUTH.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="understanding-different-secure-connections"&gt;Understanding Different Secure Connections
+&lt;a class="header-anchor" href="#understanding-different-secure-connections"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Before we start, look at the following three TLS:&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(4): Openssl Generates Self-signed Certificates</title><link>https://finisky.github.io/en/mongodb-om-self-signed-certificates/</link><pubDate>Sat, 19 Dec 2020 23:45:30 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-self-signed-certificates/</guid><description>&lt;p&gt;This is part4, we will create a self-signed CA certificate and three server certificates.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Self-signed certificates is &lt;strong&gt;not recommended&lt;/strong&gt; for production. It cannot prevent man-in-the-middle attack. Since our main purpose is to encrypt the communication messages instead of authentication. Self-signed certificates is acceptable.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(3): Expose UserDB to Public</title><link>https://finisky.github.io/en/mongodb-om-expose-services/</link><pubDate>Sat, 19 Dec 2020 23:45:28 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-expose-services/</guid><description>&lt;p&gt;This is part3, we will expose the user database pods to the public so that Mongo client is able to access it.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;So far, the user database can be accessed only inside the kubernetes cluster. The official blog&amp;rsquo;s approach is to expose the pods by NodePort:
+
+&lt;a href="https://docs.mongodb.com/kubernetes-operator/master/tutorial/connect-from-outside-k8s/" title="# Connect to a MongoDB Database Resource from Outside Kubernetes" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Connect to a MongoDB Database Resource from Outside Kubernetes
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(2): Create a UserDB ReplicaSet</title><link>https://finisky.github.io/en/mongodb-om-create-user-db/</link><pubDate>Sat, 19 Dec 2020 12:30:01 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-om-create-user-db/</guid><description>&lt;p&gt;This is part2, we will create a user database that is a 3 instances ReplicaSet.&lt;/p&gt;
+&lt;p&gt;MongoDB Ops Manager Series:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-ops-manager/" title="Install MongoDB Ops Manager" &gt;
+ Install MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-create-user-db/" title="Create a UserDB ReplicaSet" &gt;
+ Create a UserDB ReplicaSet
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-expose-services/" title="Expose UserDB to Public" &gt;
+ Expose UserDB to Public
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-self-signed-certificates/" title="Openssl Generates Self-signed Certificates" &gt;
+ Openssl Generates Self-signed Certificates
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/en/mongodb-om-tls-auth/" title="Enable UserDB TLS and Auth" &gt;
+ Enable UserDB TLS and Auth
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The so called &lt;code&gt;Application Database&lt;/code&gt; is the backend DB of Ops Manager. It cannot be used to store user data. The user database is called &lt;code&gt;MongoDB Deployment&lt;/code&gt;. Note that the &lt;code&gt;deployment&lt;/code&gt; is different with Kubernetes &lt;code&gt;deployment&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>MongoDB Cluster In Kubernetes(1): Install MongoDB Ops Manager</title><link>https://finisky.github.io/en/mongodb-ops-manager/</link><pubDate>Sat, 19 Dec 2020 12:30:00 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-ops-manager/</guid><description>&lt;p&gt;It&amp;rsquo;s pretty easy to configure a MongoDB standalone instance (almost zero configuration). However, if you want to run a production-level MongoDB cluster, the configuration process is non-trivial. For a production cluster, replication/sharding/dyanmic scaling/backup/transport encryption/monitoring are required. Is there a nice tool to help us?&lt;/p&gt;
+&lt;p&gt;MongoDB cluster is a distributed system, which is well suited to run in Kubernetes. However, the collaboration of MongoDB instances usually need to manually run commands on each instance which is independent of Kubernetes. Therefore, &lt;code&gt;MongoDB Enterprise Kubernetes Operator&lt;/code&gt; is developed to mitigate the gap. Morever, &lt;code&gt;MongoDB Ops Manager&lt;/code&gt; is a great web portal to help these automation tasks.&lt;/p&gt;</description></item><item><title>MongoDB Certificate Key File Ownership And Permission</title><link>https://finisky.github.io/en/mongodb-cert-permission/</link><pubDate>Mon, 30 Nov 2020 23:30:42 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-cert-permission/</guid><description>&lt;p&gt;When you setup TLS/SSL for MongoDB 
+&lt;a href="https://docs.mongodb.com/manual/tutorial/configure-ssl/" title="Configure mongod and mongos for TLS/SSL" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Configure mongod and mongos for TLS/SSL
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;, you might encounter the following errors:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&amp;#34;t&amp;#34;:{&amp;#34;$date&amp;#34;:&amp;#34;2020-11-30T08:02:19.406+00:00&amp;#34;},&amp;#34;s&amp;#34;:&amp;#34;E&amp;#34;, &amp;#34;c&amp;#34;:&amp;#34;NETWORK&amp;#34;, &amp;#34;id&amp;#34;:23248, &amp;#34;ctx&amp;#34;:&amp;#34;main&amp;#34;,&amp;#34;msg&amp;#34;:&amp;#34;Cannot read certificate file&amp;#34;,&amp;#34;attr&amp;#34;:{&amp;#34;keyFile&amp;#34;:&amp;#34;/etc/ssl/testserver1.pem&amp;#34;,&amp;#34;error&amp;#34;:&amp;#34;error:0200100D:system library:fopen:Permission denied&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&amp;#34;t&amp;#34;:{&amp;#34;$date&amp;#34;:&amp;#34;2020-11-30T08:02:19.406+00:00&amp;#34;},&amp;#34;s&amp;#34;:&amp;#34;F&amp;#34;, &amp;#34;c&amp;#34;:&amp;#34;CONTROL&amp;#34;, &amp;#34;id&amp;#34;:20574, &amp;#34;ctx&amp;#34;:&amp;#34;main&amp;#34;,&amp;#34;msg&amp;#34;:&amp;#34;Error during global initialization&amp;#34;,&amp;#34;attr&amp;#34;:{&amp;#34;error&amp;#34;:{&amp;#34;code&amp;#34;:140,&amp;#34;codeName&amp;#34;:&amp;#34;InvalidSSLConfiguration&amp;#34;,&amp;#34;errmsg&amp;#34;:&amp;#34;Can not set up PEM key file.&amp;#34;}}}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;or&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&amp;#34;t&amp;#34;:{&amp;#34;$date&amp;#34;:&amp;#34;2020-11-30T08:01:14.545+00:00&amp;#34;},&amp;#34;s&amp;#34;:&amp;#34;I&amp;#34;, &amp;#34;c&amp;#34;:&amp;#34;ACCESS&amp;#34;, &amp;#34;id&amp;#34;:20254, &amp;#34;ctx&amp;#34;:&amp;#34;main&amp;#34;,&amp;#34;msg&amp;#34;:&amp;#34;Read security file failed&amp;#34;,&amp;#34;attr&amp;#34;:{&amp;#34;error&amp;#34;:{&amp;#34;code&amp;#34;:30,&amp;#34;codeName&amp;#34;:&amp;#34;InvalidPath&amp;#34;,&amp;#34;errmsg&amp;#34;:&amp;#34;permissions on / are too open&amp;#34;}}}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So what&amp;rsquo;s the right ownership and permission for the certificate pem file? The answer is: &lt;strong&gt;the pem file should have read access but no write access for the user &lt;code&gt;mongodb&lt;/code&gt;&lt;/strong&gt;.&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>NexT on Finisky Garden</title><link>https://finisky.github.io/tags/next/</link><description>Recent content in NexT on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Sat, 28 Jan 2023 00:42:27 +0800</lastBuildDate><atom:link href="https://finisky.github.io/tags/next/rss.xml" rel="self" type="application/rss+xml"/><item><title>Hexo环境变量区分生产环境</title><link>https://finisky.github.io/how-to-set-hexo-env/</link><pubDate>Sat, 28 Jan 2023 00:42:27 +0800</pubDate><guid>https://finisky.github.io/how-to-set-hexo-env/</guid><description>&lt;p&gt;最近升级NexT主题到最新版v8.14.1，相关文章功能从v8.10开始由&lt;code&gt;hexo-related-popular-posts&lt;/code&gt;替换成了&lt;code&gt;hexo-related-posts&lt;/code&gt;，后者是用tf-idf算法对文章全文进行相似度计算而得相关文章，比&lt;code&gt;hexo-related-popular-posts&lt;/code&gt;要精准和先进一些，不过副作用是计算量变大，在文章数较多的情况下运行会比较慢，这样在写完文章后用&lt;code&gt;hexo s&lt;/code&gt;进行本地调试效率就变低了，每次文章修改都要重新计算一遍tf-idf。好在 
+&lt;a href="https://github.com/sergeyzwezdin/hexo-related-posts" title="hexo-related-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 考虑到了此问题，可以通过设置&lt;code&gt;enable_env_name&lt;/code&gt;变量，只在特定环境(如生产环境)中才开启此功能。不过文档略有些问题，费了一番周折才设置环境变量成功。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;短答案&lt;/strong&gt;：&lt;code&gt;$ hexo &amp;lt;command&amp;gt; --&amp;lt;env_key&amp;gt; env_value&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;长答案：本文介绍了如何使用环境变量仅在生产环境开启相关文章功能。&lt;/p&gt;</description></item><item><title>'pandoc exited with code null' 解决方案</title><link>https://finisky.github.io/pandoc-exited-with-code-null-solution/</link><pubDate>Mon, 12 Sep 2022 00:10:05 +0800</pubDate><guid>https://finisky.github.io/pandoc-exited-with-code-null-solution/</guid><description>&lt;p&gt;随着博客文章的不断增加，Hexo生成这些文章需要的时间越来越长，最近居然能卡住几分钟，然后报错：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;[ERROR][hexo-renderer-pandoc] pandoc exited with code null.
+at Object._prettifyError (/home/finisky/node_modules/nunjucks/src/lib.js:36:11)&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;花了不少时间研究到底问题在哪，最终发现是VM的配置太低所致…… :-(&lt;/p&gt;</description></item><item><title>Hexo去LeanCloud依赖</title><link>https://finisky.github.io/hexormleancloud/</link><pubDate>Tue, 09 Aug 2022 00:26:09 +0800</pubDate><guid>https://finisky.github.io/hexormleancloud/</guid><description>&lt;p&gt;7.19日，收到了LeanCloud的邮件，大意如下：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;8 月 1 日起，LeanCloud 国际版共享域名不再向中国大陆提供服务&lt;/p&gt;
+&lt;p&gt;为履行合规责任，降低平台风险，LeanCloud 国际版共享域名将于 2022 年 8 月 1 日起不再向中国大陆的最终用户提供服务，国际版共享域名仅服务于海外用户。&lt;/p&gt;</description></item><item><title>FiniCounter: 静态网站访问量统计工具</title><link>https://finisky.github.io/finicounter-impl/</link><pubDate>Sun, 07 Aug 2022 13:20:03 +0800</pubDate><guid>https://finisky.github.io/finicounter-impl/</guid><description>&lt;p&gt;静态博客如Hexo/Hugo/Jekyll近些年很流行，markdown写作，一键生成部署，无需后端，可托管在各种网站平台，非常方便。但正因为无后端，动态信息的存取就成为了痛点：文章阅读数统计，评论系统等等。本站采用的是Hexo+Waline的方式实现文章阅读数统计与评论系统，最近也去掉了LeanCloud的依赖，所有数据使用MongoDB存储。&lt;/p&gt;</description></item><item><title>Hexo生成错误的永久链接日期</title><link>https://finisky.github.io/wrong-permalinks-date/</link><pubDate>Sat, 11 Jun 2022 18:23:51 +0800</pubDate><guid>https://finisky.github.io/wrong-permalinks-date/</guid><description>&lt;p&gt;使用 
+&lt;a href="https://finisky.github.io/deployhexofromprivaterepo/" title="# 从私有代码库自动部署Hexo站到GitHub Pages" &gt;
+ # 从私有代码库自动部署Hexo站到GitHub Pages
+ 
+&lt;/a&gt; 之后，真是幺娥子迭出：先是 
+&lt;a href="https://finisky.github.io/githubactiontorestorefilemtime/" title="文章的最后编辑时间不正确" &gt;
+ 文章的最后编辑时间不正确
+ 
+&lt;/a&gt; ，现在又发现有些页面的永久链接的日期会差一天，比如markdown写的是&lt;code&gt;2020-07-13 00:50:05&lt;/code&gt;，生成的永久链接变成了&lt;code&gt;2020/07/12&lt;/code&gt;。这个错误可能会导致搜索引擎找不到老页面，从而影响搜索展示。&lt;/p&gt;</description></item><item><title>段落和列表中间添加空行的脚本</title><link>https://finisky.github.io/commonmarktostandardmarkdown/</link><pubDate>Sun, 18 Jul 2021 00:13:33 +0800</pubDate><guid>https://finisky.github.io/commonmarktostandardmarkdown/</guid><description>&lt;p&gt;升级Hexo到v8.5.0之后，发现mathjax不能正确显示公式。看了下
+&lt;a href="https://theme-next.js.org/docs/third-party-services/math-equations.html" title="文档" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 文档
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;，发现推荐的hexo renderer是&lt;code&gt;hexo-renderer-pandoc&lt;/code&gt;，而目前使用的是&lt;code&gt;hexo-renderer-kramed&lt;/code&gt;，而且这个包已经不再更新也不推荐使用了。&lt;/p&gt;</description></item><item><title>延迟加载Google Auto Ads加速Hexo</title><link>https://finisky.github.io/delay-auto-ads-loading/</link><pubDate>Sun, 11 Jul 2021 19:21:00 +0800</pubDate><guid>https://finisky.github.io/delay-auto-ads-loading/</guid><description>&lt;p&gt;
+&lt;a href="https://finisky.github.io/responsivehexonext/" title="# 提升Hexo NexT主题加载速度" &gt;
+ # 提升Hexo NexT主题加载速度
+ 
+&lt;/a&gt; 中留了个尾巴，优化到最后发现最影响PageSpeed Insights得分的竟然是Google Auto Ads。 
+&lt;a href="https://support.google.com/adsense/thread/18615134/page-speed-dropping-after-enabling-the-auto-ads?hl=en" title="这里" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 这里
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 有个有意思的讨论，说加上auto ads之后页面加载得分显著变低，采纳答案说“你啥也做不了，也不用care”，下面有人反对这个观点，加载速度评测认为网站慢就会导致搜索排序降低。我赞成后者的观点，风一样的加载速度即我所欲也，本来无一物，何处惹尘埃！&lt;/p&gt;</description></item><item><title>提升Hexo NexT主题加载速度</title><link>https://finisky.github.io/responsivehexonext/</link><pubDate>Sat, 10 Jul 2021 23:52:46 +0800</pubDate><guid>https://finisky.github.io/responsivehexonext/</guid><description>&lt;p&gt;网站加载速度是影响搜索引擎排名的一个重要因素。
+&lt;a href="https://developers.google.com/speed/pagespeed/insights/" title="# Google Page Speed Insight" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ # Google Page Speed Insight
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 是个很好的网页性能分析工具，可以根据它的分析结果有针对性地对网页进行优化。&lt;/p&gt;</description></item><item><title>Hexo使用Waline评论系统</title><link>https://finisky.github.io/hexowaline/</link><pubDate>Tue, 29 Jun 2021 00:22:59 +0800</pubDate><guid>https://finisky.github.io/hexowaline/</guid><description>&lt;p&gt;最近折腾博客比较多，也看了不少使用Hexo博主所用的评论系统，觉得Valine不错，NexT也天然支持（配置也就简单）。正想切换时发现它存在安全性问题，于是就调研了一下可用的评论系统，简单总结：&lt;/p&gt;</description></item><item><title>Hexo添加自定义分类菜单项并定制页面布局(简洁版)</title><link>https://finisky.github.io/customizecategorybyextension/</link><pubDate>Sun, 20 Jun 2021 00:53:43 +0800</pubDate><guid>https://finisky.github.io/customizecategorybyextension/</guid><description>&lt;p&gt;希望在Hexo的NexT主题中增加自定义分类的菜单，即一个指向特定分类的链接，且页面显示的是类似主页的标题+摘要风格。
+&lt;img src="https://finisky.github.io/imgs/img-lazy-loading.gif" data-src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/customizedcategorysample.png" alt="定制Hexo分类页面布局" /&gt;&lt;/p&gt;
+&lt;p&gt;之前有一个比较粗暴的实现：
+&lt;a href="https://finisky.github.io/customized-category/" title="# Hexo添加自定义分类菜单项并定制页面布局" &gt;
+ # Hexo添加自定义分类菜单项并定制页面布局
+ 
+&lt;/a&gt;。由于直接修改了源码，属于侵入式实现，导致以后升级Hexo和主题时需要手动再改代码，不推荐。&lt;/p&gt;</description></item><item><title>最简单的Hexo友情链接页面定制</title><link>https://finisky.github.io/simplest-blogroll/</link><pubDate>Thu, 17 Jun 2021 20:33:39 +0800</pubDate><guid>https://finisky.github.io/simplest-blogroll/</guid><description>&lt;p&gt;Hexo的NexT主题可以天然支持友链，即在NexT主题的配置文件&lt;code&gt;_config.yml&lt;/code&gt;中有一个&lt;code&gt;# Blog rolls&lt;/code&gt;块，可以添加友链，然后在左边栏的底端会显示它们。但这样的问题在于边栏的空间有限，友链比较多的话会影响布局，而且分散主题。于是考虑单独创建一个友链页面，搜索发现已经有成型的方案，大体思路与 
+&lt;a href="https://finisky.github.io/customizecategorybyextension/" title="# Hexo添加自定义分类菜单项并定制页面布局" &gt;
+ # Hexo添加自定义分类菜单项并定制页面布局
+ 
+&lt;/a&gt; 一样，增加菜单项和友链模版，再修改主页模板。这样做可以解决问题，但是不够优雅，属于侵入式的定制（直接修改了主题文件模板），但绝大多数人都采用了这种方案 :-)。&lt;/p&gt;</description></item><item><title>Hexo升级插件版本解决兼容性问题</title><link>https://finisky.github.io/update-hexo-plugin/</link><pubDate>Sat, 18 Jul 2020 19:32:15 +0800</pubDate><guid>https://finisky.github.io/update-hexo-plugin/</guid><description>&lt;p&gt;为了精简hexo安装的npm modules，用&lt;code&gt;rm -rf node_modules/&lt;/code&gt;删除了已安装的包，再&lt;code&gt;npm install&lt;/code&gt;把package.json中定义的包安装一遍。结果hexo自动从4.0.0升级到了4.2.1，&lt;code&gt;hexo g&lt;/code&gt;时失败。node.js除了hexo外基本不用，npm自然不熟，有些配置是直接抄来的并不知其所以然。而hexo的插件都是由npm管理的，稍微研究了下如何查看这些插件的最新版本和升级它们。&lt;/p&gt;</description></item><item><title>Hexo添加Google Auto Ads</title><link>https://finisky.github.io/google-auto-ads/</link><pubDate>Sat, 15 Feb 2020 20:26:20 +0800</pubDate><guid>https://finisky.github.io/google-auto-ads/</guid><description>&lt;p&gt;Google Ads是许多独立博客赢利维持自身运转的方案之一。不过近些年前已经不大流行了，因为转化率低，没有很大的基础流量支持，其实很难赚到钱。独立博客的流量如果不做PR的话，主要还是靠搜索引擎。而提升流量的根本需要有对应的用户群，相较而言，微信公众号、头条号上的平台流量足够大，用户粘度更高，赢利方式也更为多样，对作者来说更易变现。现在这年头还玩独立博客的人，我想都是有一份自己的坚持，一块独立的领地，完全自由掌控的感觉，想靠这个赚钱还是算了。&lt;/p&gt;</description></item><item><title>Hexo NexT主题侧边栏展示相关文章</title><link>https://finisky.github.io/sidebar-related-posts/</link><pubDate>Thu, 05 Dec 2019 22:39:00 +0800</pubDate><guid>https://finisky.github.io/sidebar-related-posts/</guid><description>&lt;p&gt;&lt;strong&gt;2023-01-30 更新&lt;/strong&gt;: NexT主题已经支持相关文章功能 (使用
+&lt;a href="https://github.com/sergeyzwezdin/hexo-related-posts" title="hexo-related-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; )，更新到最新版本即可，可参考
+&lt;a href="https://finisky.github.io/how-to-set-hexo-env/" title="这里" &gt;
+ 这里
+ 
+&lt;/a&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Hexo的NexT主题展示相关文章和热门文章使用 
+&lt;a href="https://github.com/tea3/hexo-related-popular-posts" title="hexo-related-popular-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-popular-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; 插件，但hexo-related-popular-posts 默认展示位置是在页面底部，而页面底部本身内容较多，多数人注意不到相关文章。因此，考虑将相关文章展示在侧边栏。&lt;/p&gt;</description></item><item><title>升级Hexo和NexT主题趟坑小记</title><link>https://finisky.github.io/upgrade-next/</link><pubDate>Wed, 27 Nov 2019 11:48:52 +0800</pubDate><guid>https://finisky.github.io/upgrade-next/</guid><description>&lt;p&gt;事情源起于心血来潮把Hexo从v3.9.0升级到了v4.0.0，Hexo本身的升级倒是不难，它由npm管理，改下package.json，运行npm update即可。但之后发现在archives的分页显示有问题……&lt;/p&gt;</description></item><item><title>Hexo添加自定义分类菜单项并定制页面布局</title><link>https://finisky.github.io/customized-category/</link><pubDate>Sun, 24 Feb 2019 19:17:25 +0800</pubDate><guid>https://finisky.github.io/customized-category/</guid><description>&lt;p&gt;&lt;strong&gt;2021-06-20:&lt;/strong&gt; 使用Hexo扩展的方式可以更简洁地定制页面，避免了本文实现的一些弊端。
+&lt;a href="https://finisky.github.io/customizecategorybyextension/" title="Hexo添加自定义分类菜单项并定制页面布局(简洁版)" &gt;
+ Hexo添加自定义分类菜单项并定制页面布局(简洁版)
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2020-07-22:&lt;/strong&gt; 更新hexo-generator-category到v1.0.0后，对应的generator.js代码进行了修改。
+&lt;strong&gt;2019-11-27:&lt;/strong&gt; 更新NexT v7.5.0的customcategory.swig文件，与老版本v6.6.0不同。&lt;/p&gt;</description></item><item><title>Hexo NexT主题图标显示为方块的可能原因及解决方案</title><link>https://finisky.github.io/font-awesome-issue/</link><pubDate>Sun, 20 Jan 2019 09:58:02 +0800</pubDate><guid>https://finisky.github.io/font-awesome-issue/</guid><description>&lt;h1 id="问题描述"&gt;问题描述
+&lt;a class="header-anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Hexo中的NexT主题在部署到server端后，所有页面图标显示为方块。
+&lt;img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/fontsquare.png" width="40%" height="40%"&gt;&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="分析原因"&gt;分析原因
+&lt;a class="header-anchor" href="#%e5%88%86%e6%9e%90%e5%8e%9f%e5%9b%a0"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;NexT主题使用的页面图标是fontawesome)。本地hexo s启动无此问题，仅在Chrome出现，IE无此问题。&lt;/p&gt;</description></item></channel></rss>

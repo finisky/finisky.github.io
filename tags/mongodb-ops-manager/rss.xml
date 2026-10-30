@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MongoDB Ops Manager on Finisky Garden</title><link>https://finisky.github.io/tags/mongodb-ops-manager/</link><description>Recent content in MongoDB Ops Manager on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Fri, 23 Jul 2021 00:07:15 +0800</lastBuildDate><atom:link href="https://finisky.github.io/tags/mongodb-ops-manager/rss.xml" rel="self" type="application/rss+xml"/><item><title>MongoDB使用Change Stream主从复制</title><link>https://finisky.github.io/mongodb-slave-sync/</link><pubDate>Fri, 23 Jul 2021 00:07:15 +0800</pubDate><guid>https://finisky.github.io/mongodb-slave-sync/</guid><description>&lt;p&gt;Change stream是什么？
+&lt;a href="https://docs.mongodb.com/v4.4/changeStreams/" title="官方文档" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ 官方文档
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a single collection, a database, or an entire deployment, and immediately react to them. Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.&lt;/p&gt;</description></item><item><title>别在mongos前做负载均衡</title><link>https://finisky.github.io/dont-use-load-balancer-in-front-of-mongos/</link><pubDate>Wed, 13 Jan 2021 23:40:08 +0800</pubDate><guid>https://finisky.github.io/dont-use-load-balancer-in-front-of-mongos/</guid><description>&lt;p&gt;在一个分片MongoDB集群上并发执行transaction时遇到许多&lt;code&gt;MongoCommandException&lt;/code&gt;错误: code 251, codename &lt;code&gt;NoSuchTransaction&lt;/code&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 5.
+Command find failed: cannot continue txnId 4 for session 38604515-2584-45a5-a17a-5eb5d34ea6c4 - = with txnId 6.
+Command insert failed: cannot continue txnId 31 for session 3ed7ea61-eae1-440f-8d95-b6e066b35b69 - = with txnId 34.&lt;/p&gt;</description></item><item><title>部署Kubernetes MongoDB Sharded Cluster</title><link>https://finisky.github.io/mongodb-om-create-sharded-cluster/</link><pubDate>Sat, 26 Dec 2020 20:13:42 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-create-sharded-cluster/</guid><description>&lt;p&gt;Sharded cluster是MongoDB部署中最复杂的形式，因为Sharded cluster的组件较多，部署步骤也更为繁琐。在实际部署中还有几个部署ReplicaSet时没遇到的证书和TLS问题。阅读本文前，强烈建议先阅读 
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt; 作为基础。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(五)：打开用户数据库TLS通信加密和Auth授权</title><link>https://finisky.github.io/mongodb-om-tls-auth/</link><pubDate>Sat, 12 Dec 2020 23:30:40 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-tls-auth/</guid><description>&lt;p&gt;本文为系列第五部分，用生成的自签名证书打开userdb的TLS和AUTH，并且完成userdb的公网域名访问。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="理解不同层面的tls加密"&gt;理解不同层面的TLS加密
+&lt;a class="header-anchor" href="#%e7%90%86%e8%a7%a3%e4%b8%8d%e5%90%8c%e5%b1%82%e9%9d%a2%e7%9a%84tls%e5%8a%a0%e5%af%86"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;开始之前，先解释下部署中不同层面的TLS加密：&lt;code&gt;Secure Connections to Ops Manager&lt;/code&gt;, &lt;code&gt;Secure Connections to Application Database&lt;/code&gt;, &lt;code&gt;Secure Connections to MongoDB Deployments&lt;/code&gt;，我们需要的是最后一个，&lt;code&gt;Enable TLS to MongoDB Deployments&lt;/code&gt;。而且这个配置不能直接通过界面完成，因为需要将生成的自签名证书“上传”到&lt;code&gt;userdb&lt;/code&gt;的每个server上，然后才能配置这些证书所在的路径。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(四)：openssl生成自签名CA证书和server证书</title><link>https://finisky.github.io/mongodb-om-self-signed-certificates/</link><pubDate>Sat, 12 Dec 2020 23:30:39 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-self-signed-certificates/</guid><description>&lt;p&gt;本文为系列第四部分，相对独立，先生成一个自签名CA证书，然后生成MongoDB各个server证书。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;自签名证书&lt;strong&gt;不推荐&lt;/strong&gt;在生产环境使用，虽然它可以保证通信过程中的加密，但不能避免中间人攻击。&lt;strong&gt;Public Key Infrastructure&lt;/strong&gt; (PKI)相关的内容也不在本文的讨论范围，这里假设读者对PKI已有基本的认识。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(三)：用户数据库服务配置公网访问</title><link>https://finisky.github.io/mongodb-om-expose-services/</link><pubDate>Sat, 12 Dec 2020 23:30:38 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-expose-services/</guid><description>&lt;p&gt;本文为系列第三部分，使用第二部分创建好的&lt;code&gt;userdb&lt;/code&gt;可以从公网访问，方法是通过Kubernetes Service暴露userdb pod到公网上。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(二)：创建用户数据库(replicaset)</title><link>https://finisky.github.io/mongodb-om-create-user-db/</link><pubDate>Sat, 12 Dec 2020 23:30:37 +0800</pubDate><guid>https://finisky.github.io/mongodb-om-create-user-db/</guid><description>&lt;p&gt;本文为系列第二部分，使用第一部分安装好的MongoDB Ops Manager创建用户数据库。&lt;/p&gt;
+&lt;p&gt;整个系列：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-ops-manager/" title="安装MongoDB Ops Manager" &gt;
+ 安装MongoDB Ops Manager
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-create-user-db/" title="创建用户数据库(replicaset)" &gt;
+ 创建用户数据库(replicaset)
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-expose-services/" title="用户数据库服务配置公网访问" &gt;
+ 用户数据库服务配置公网访问
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-self-signed-certificates/" title="openssl生成自签名CA证书和server证书" &gt;
+ openssl生成自签名CA证书和server证书
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="https://finisky.github.io/mongodb-om-tls-auth/" title="打开用户数据库TLS通信加密和Auth授权" &gt;
+ 打开用户数据库TLS通信加密和Auth授权
+ 
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所谓的&lt;code&gt;Application Database&lt;/code&gt;是MongoDB Ops Manager的后端DB，并不能用来存放用户数据，所以我们需要用Ops Manager创建用户数据库。使用Ops Manager创建的MongoDB叫做&lt;code&gt;Deployment&lt;/code&gt;，注意此&lt;code&gt;Deployment&lt;/code&gt;是&lt;code&gt;MongoDB Deployment&lt;/code&gt;，与kubernetes的&lt;code&gt;Deployment&lt;/code&gt;不是一码事。&lt;/p&gt;</description></item><item><title>Kubernetes部署MongoDB集群(一)：安装MongoDB Ops Manager</title><link>https://finisky.github.io/mongodb-ops-manager/</link><pubDate>Sat, 12 Dec 2020 23:30:36 +0800</pubDate><guid>https://finisky.github.io/mongodb-ops-manager/</guid><description>&lt;p&gt;MongoDB的入门配置门槛（单机）很低，但如果想达到生产环境的要求则有些技术含量。生产环境的配置要求包括Replica Set、Sharding、Scale up/down、数据备份、通信加密TLS和指标实时监控等。配置这些功能比较繁琐，有不少坑要踩。那么有没有好用的工具帮我们配置和管理呢？&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Software Engineering on Finisky Garden</title><link>https://finisky.github.io/en/tags/software-engineering/</link><description>Recent content in Software Engineering on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Mon, 06 Apr 2026 00:16:37 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/software-engineering/rss.xml" rel="self" type="application/rss+xml"/><item><title>How OpenClaw Hit 350K Stars in 4 Months</title><link>https://finisky.github.io/en/openclaw-why-viral/</link><pubDate>Mon, 06 Apr 2026 00:16:37 +0800</pubDate><guid>https://finisky.github.io/en/openclaw-why-viral/</guid><description>&lt;p&gt;In late November 2025, an open-source project called OpenClaw went live on GitHub. Four and a half months later, it had 350K stars, 70K forks, 81 releases, and sponsorships from OpenAI, NVIDIA, and Vercel. For comparison: Open WebUI took two and a half years to reach 130K stars; NextChat took three years to hit 88K. Growth like OpenClaw&amp;rsquo;s is rare in GitHub&amp;rsquo;s history.&lt;/p&gt;
+&lt;p&gt;It isn&amp;rsquo;t a new model, a training framework, or even a &amp;ldquo;technical breakthrough&amp;rdquo; in the traditional sense. It&amp;rsquo;s a personal AI assistant that runs on your own machine and talks to you through the chat apps you already use: WhatsApp, Telegram, Slack, Discord, WeChat, Feishu, iMessage, Matrix, and over 25 platforms in total, all connected to a single backend.&lt;/p&gt;
+&lt;p&gt;Why did it break out of the developer bubble?&lt;/p&gt;</description></item><item><title>Resolve a Collection of Customized Class in UnityConfig</title><link>https://finisky.github.io/en/resolve-class-collection-in-unity-config/</link><pubDate>Mon, 02 Mar 2020 19:45:23 +0800</pubDate><guid>https://finisky.github.io/en/resolve-class-collection-in-unity-config/</guid><description>&lt;p&gt;Unity supports three ways of registering types:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Instance registration&lt;/li&gt;
+&lt;li&gt;Type registration&lt;/li&gt;
+&lt;li&gt;Factory registration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Typically, Instance registration and Type registration resolve dependencies through &lt;code&gt;ResolvedParameter&amp;lt;T&amp;gt;&lt;/code&gt;, while Factory registration resolve dependencies by a factory delegate. In practice, when you want to resolve a &lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt; or &lt;code&gt;Dictionary&amp;lt;T1, T2&amp;gt;&lt;/code&gt;, Factory registration is what you want. Let&amp;rsquo;s go through how to resolve a collection of customized classes.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="animal-example"&gt;Animal Example
+&lt;a class="header-anchor" href="#animal-example"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Start with example, assume we have an IAnimal interface which has two implementations. There is a Zoo class which accept &lt;code&gt;List&amp;lt;IAnimal&amp;gt;&lt;/code&gt; as the parameter:&lt;/p&gt;</description></item><item><title>C# Unity Replace InjectionFactory by RegisterFactory Example</title><link>https://finisky.github.io/en/register-factory-exp/</link><pubDate>Tue, 19 Nov 2019 18:53:10 +0800</pubDate><guid>https://finisky.github.io/en/register-factory-exp/</guid><description>&lt;p&gt;When you use RegisterType or RegisterInstance combined with InjectionFactory in old version of Unity, the following complier warning will be displayed:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;lsquo;InjectionFactory&amp;rsquo; is obsolete: &amp;lsquo;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(&amp;hellip;) method instead.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;The code that triggered the warning:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-9"&gt;&lt;a class="lnlinks" href="#hl-0-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-10"&gt;&lt;a class="lnlinks" href="#hl-0-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-11"&gt;&lt;a class="lnlinks" href="#hl-0-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-12"&gt;&lt;a class="lnlinks" href="#hl-0-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-13"&gt;&lt;a class="lnlinks" href="#hl-0-13"&gt;13&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-14"&gt;&lt;a class="lnlinks" href="#hl-0-14"&gt;14&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;var&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;UnityContainer&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RegisterType&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Cat&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Cat&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;InjectionConstructor&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RegisterType&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Dog&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Dog&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;InjectionConstructor&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RegisterType&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;AnimalList&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;InjectionFactory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Resolve&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Cat&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Resolve&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;IAnimal&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Dog&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The solution is straightforward, follow the instruction and use RegisterFactory instead:&lt;/p&gt;</description></item></channel></rss>
