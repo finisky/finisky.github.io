@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hexo on Finisky Garden</title><link>https://finisky.github.io/en/categories/hexo/</link><description>Recent content in Hexo on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sat, 28 Jan 2023 11:28:52 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/categories/hexo/rss.xml" rel="self" type="application/rss+xml"/><item><title>Hexo Set Environment Variable</title><link>https://finisky.github.io/en/how-to-set-hexo-env/</link><pubDate>Sat, 28 Jan 2023 11:28:52 +0800</pubDate><guid>https://finisky.github.io/en/how-to-set-hexo-env/</guid><description>&lt;p&gt;Recently I upgrade NexT theme to v8.14.1. The related post plugin &lt;code&gt;hexo-related-popular-posts&lt;/code&gt; had been replaced by &lt;code&gt;hexo-related-posts&lt;/code&gt;, which generates related posts by tf-idf algorithm. However, the compute cost is a little bit heavy if you have many posts. A good trade-off is enable this feature only for production environment. The plugin 
+&lt;a href="https://github.com/sergeyzwezdin/hexo-related-posts" title="hexo-related-posts" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ hexo-related-posts
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; already takes this into account and use &lt;code&gt;enable_env_name&lt;/code&gt; to disable its execution. Unfortunately, the document has typo so I takes some time to fix it.&lt;/p&gt;
+&lt;p&gt;So how to set environment variable in Hexo?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Short Answer&lt;/strong&gt;：&lt;code&gt;$ hexo &amp;lt;command&amp;gt; --&amp;lt;env_key&amp;gt; env_value&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;The following secitons will illustrate how to enable related post on production.&lt;/p&gt;</description></item><item><title>Migrate GitHub Pages by 301 Redirects</title><link>https://finisky.github.io/en/migrate-github-pages-by-301-redirects/</link><pubDate>Mon, 14 Nov 2022 23:53:00 +0800</pubDate><guid>https://finisky.github.io/en/migrate-github-pages-by-301-redirects/</guid><description>&lt;p&gt;GitHub Pages cannot perform HTTP 301 redirects as you cannot modify the server config. However, 301 redirects is really crucial for SEO. In order to keep the site ranking, you need to 301 redirects the old GitHub Pages to your new site, and 
+&lt;a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes" title="manually notify Google Search Console" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ manually notify Google Search Console
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Do you lose credit for links when you redirect to new URLs?&lt;/strong&gt;&lt;br&gt;
+No, 301 or 302 redirects do not cause a loss in PageRank&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;So how to migrate GitHub Pages to a new site without losing site ranking?&lt;/p&gt;</description></item><item><title>'pandoc exited with code null' Solution</title><link>https://finisky.github.io/en/pandoc-exited-with-code-null-solution/</link><pubDate>Mon, 12 Sep 2022 00:01:03 +0800</pubDate><guid>https://finisky.github.io/en/pandoc-exited-with-code-null-solution/</guid><description>&lt;p&gt;As the post number increases, Hexo generate posts slower and slower. Recently, it usually generates posts for several minutes and report the following error:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;[ERROR][hexo-renderer-pandoc] pandoc exited with code null.
+at Object._prettifyError (/home/finisky/node_modules/nunjucks/src/lib.js:36:11)&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;I spent several hours to figure out the issue. Finally, I found the root cause is &amp;hellip; VM memory is too small &amp;hellip; :-(&lt;/p&gt;</description></item><item><title>FiniCounter: A Website Vistor Counter</title><link>https://finisky.github.io/en/finicounter-impl/</link><pubDate>Sun, 07 Aug 2022 17:20:59 +0800</pubDate><guid>https://finisky.github.io/en/finicounter-impl/</guid><description>&lt;p&gt;Static website such as Hexo/Hugo/Jekyll is very popular recent years. It is fast, easy to write, deploy and host. However, no free lunch: it is non-trivial to store dynamic information such as pageview counts and comments under the serverless architecture. This site uses Waline to implement article view count and comment system.&lt;/p&gt;
+&lt;p&gt;Accidently I found that we do not have a full site pageview counter. Waline has post-level counter instead of site-level one.&lt;/p&gt;</description></item><item><title>Hexo Generate Wrong Permalinks Date</title><link>https://finisky.github.io/en/wrong-permalinks-date/</link><pubDate>Sat, 11 Jun 2022 18:57:06 +0800</pubDate><guid>https://finisky.github.io/en/wrong-permalinks-date/</guid><description>&lt;p&gt;After 
+&lt;a href="https://finisky.github.io/en/deploy-hexo-from-private-repo/" title="Deploy Hexo From Private Repository to GitHub Pages" &gt;
+ Deploy Hexo From Private Repository to GitHub Pages
+ 
+&lt;/a&gt;, we encounter many issues: 
+&lt;a href="githubactiontorestorefilemtime.en/" title="GitHub Checkout Action Preserve File Modification Time" &gt;
+ GitHub Checkout Action Preserve File Modification Time
+ 
+&lt;/a&gt;, and now some posts&amp;rsquo; permalinks date may shift one day. For instance, assume the original markdown date is &lt;code&gt;2020-07-13 00:50:05&lt;/code&gt;, the generated permalinks date becomes &lt;code&gt;2020/07/12&lt;/code&gt;. Since the permalinks changed, search engines will regard these posts are not found which impact the SEO performance.&lt;/p&gt;</description></item><item><title>GitHub Checkout Action Preserve File Modification Time</title><link>https://finisky.github.io/en/github-action-to-restore-file-mtime/</link><pubDate>Sun, 15 May 2022 20:21:51 +0800</pubDate><guid>https://finisky.github.io/en/github-action-to-restore-file-mtime/</guid><description>&lt;p&gt;By 
+&lt;a href="https://finisky.github.io/en/deploy-hexo-from-private-repo/" title="# Deploy Hexo From Private Repository to GitHub Pages" &gt;
+ # Deploy Hexo From Private Repository to GitHub Pages
+ 
+&lt;/a&gt;, we can leverage GitHub Actions to automatically deploy the Hexo website. However, for each deployment commit, the post&amp;rsquo;s edit time will be changed to the current time instead of actual modification time. It may mislead the search engine to regard the website as a frequently modified site.&lt;/p&gt;
+&lt;p&gt;By default, &lt;strong&gt;Hexo uses the post file modification time as its edit time.&lt;/strong&gt; By design, git doesn&amp;rsquo;t preserve the file modification time (refer to 
+&lt;a href="https://git.wiki.kernel.org/index.php/Git_FAQ#Why_isn.27t_Git_preserving_modification_time_on_files.3F" title="this" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ this
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;). After checkout action, the file modification time will be the current time.&lt;/p&gt;</description></item><item><title>'pandoc exited with code 64' Solution</title><link>https://finisky.github.io/en/pandoc-code64-bug/</link><pubDate>Wed, 04 May 2022 12:39:08 +0800</pubDate><guid>https://finisky.github.io/en/pandoc-code64-bug/</guid><description>&lt;p&gt;After I upgraded pandoc from &lt;code&gt;2.14.0.3&lt;/code&gt; to &lt;code&gt;2.18&lt;/code&gt;, &lt;code&gt;hexo-renderer-pandoc&lt;/code&gt; cannot render one of my post correctly. Everything works fine in &lt;code&gt;2.14.0.3&lt;/code&gt;. The error looks like:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;INFO Start processing
+FATAL {
+err: Error:
+[ERROR][hexo-renderer-pandoc] On /home/finisky/source/_posts/test.md
+[ERROR][hexo-renderer-pandoc] pandoc exited with code 64: YAML parse exception at line 4, column 0,
+while scanning a simple key:
+could not find expected &amp;lsquo;:&amp;rsquo;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; at Hexo.pandocRenderer (/home/finisky/node_modules/hexo-renderer-pandoc/index.js:114:11)
+ at Hexo.tryCatcher (/home/finisky/node_modules/bluebird/js/release/util.js:16:23)
+ at Hexo.&amp;lt;anonymous&amp;gt; (/home/finisky/node_modules/bluebird/js/release/method.js:15:34)
+ at /home/finisky/node_modules/hexo/lib/hexo/render.js:75:22
+ at tryCatcher (/home/finisky/node_modules/bluebird/js/release/util.js:16:23)
+ at Promise._settlePromiseFromHandler (/home/finisky/node_modules/bluebird/js/release/promise.js:547:31)
+ at Promise._settlePromise (/home/finisky/node_modules/bluebird/js/release/promise.js:604:18)
+ at Promise._settlePromiseCtx (/home/finisky/node_modules/bluebird/js/release/promise.js:641:10)
+ at _drainQueueStep (/home/finisky/node_modules/bluebird/js/release/async.js:97:12)
+ at _drainQueue (/home/finisky/node_modules/bluebird/js/release/async.js:86:9)
+ at Async._drainQueues (/home/finisky/node_modules/bluebird/js/release/async.js:102:5)
+ at Immediate.Async.drainQueues [as _onImmediate] (/home/finisky/node_modules/bluebird/js/release/async.js:15:14)
+ at processImmediate (node:internal/timers:464:21)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;} Something&amp;rsquo;s wrong. Maybe you can find the solution here: %s 
+&lt;a href="https://hexo.io/docs/troubleshooting.html" title="https://hexo.io/docs/troubleshooting.html" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://hexo.io/docs/troubleshooting.html
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Deploy Hexo From Private Repository to GitHub Pages</title><link>https://finisky.github.io/en/deploy-hexo-from-private-repo/</link><pubDate>Mon, 02 May 2022 14:02:15 +0800</pubDate><guid>https://finisky.github.io/en/deploy-hexo-from-private-repo/</guid><description>&lt;p&gt;Last time we talked 
+&lt;a href="https://finisky.github.io/en/deploy-hugo-from-private-repo/" title="how to deploy Hugo from private repository to GitHub Pages" &gt;
+ how to deploy Hugo from private repository to GitHub Pages
+ 
+&lt;/a&gt; . I thought it is trivial to modify the workflow yaml to make it works for Hexo. However, it is much more complicated than I ever thought. The reason is that Hexo has to setup more dependencies with compatibility issues while Hugo is relatively self-contained and clean.&lt;/p&gt;</description></item><item><title>Speed Up Github Image Hosting By Jsdelivr CDN</title><link>https://finisky.github.io/en/speedup-github-by-cdn/</link><pubDate>Mon, 20 Dec 2021 19:43:59 +0800</pubDate><guid>https://finisky.github.io/en/speedup-github-by-cdn/</guid><description>&lt;p&gt;This blog uses github as image hosting service after migration. However, sometimes the image loading speed is slow. After some investigation, we found that we can easily improve the image loading speed by jsdelivr CDN.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="jsdelivr-image-url-format"&gt;Jsdelivr Image Url Format
+&lt;a class="header-anchor" href="#jsdelivr-image-url-format"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Assume the original github image url is:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://raw.githubusercontent.com/{user}/{repo}/master/{folderpath}/{filename}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;To leverage jsdelivr CDN, just convert the url to this:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://cdn.jsdelivr.net/gh/{user}/{repo}/{folderpath}/{filename}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Or just do a prefix replacement:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-2-1"&gt;&lt;a class="lnlinks" href="#hl-2-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-2"&gt;&lt;a class="lnlinks" href="#hl-2-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-3"&gt;&lt;a class="lnlinks" href="#hl-2-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-4"&gt;&lt;a class="lnlinks" href="#hl-2-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-2-5"&gt;&lt;a class="lnlinks" href="#hl-2-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://raw.githubusercontent.com/{user}/{repo}/master/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://cdn.jsdelivr.net/gh/{user}/{repo}/&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;For example, for image &lt;code&gt;p.png&lt;/code&gt; in github user &lt;code&gt;user&lt;/code&gt;&amp;rsquo;s repository &lt;code&gt;repo&lt;/code&gt;, folder &lt;code&gt;a/&lt;/code&gt;:&lt;/p&gt;</description></item><item><title>Delay Loading Google Auto Ads</title><link>https://finisky.github.io/en/delay-auto-ads-loading/</link><pubDate>Sun, 11 Jul 2021 19:57:56 +0800</pubDate><guid>https://finisky.github.io/en/delay-auto-ads-loading/</guid><description>&lt;p&gt;Recently I found that the Google auto ads significantly slows down the page loading speed. There are also many discussions about this. As a static website, fast loading speed is crutial. In this post, we will optimize the PageSpeed Insights score by delay loading auto ads.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;First, let&amp;rsquo;s check the current PSI score in mobile:
+&lt;img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/finiskydelayadsbefore.png" alt="PSI Mobile" width="70%" height="70%"&gt;&lt;/p&gt;
+&lt;p&gt;It seems that the &lt;code&gt;Reduce unused JavaScript&lt;/code&gt; section has many items to be improved. Check the official Google auto ads script:&lt;/p&gt;</description></item><item><title>Customize Hexo Blogroll Page</title><link>https://finisky.github.io/en/simplest-blogroll/</link><pubDate>Thu, 17 Jun 2021 23:51:55 +0800</pubDate><guid>https://finisky.github.io/en/simplest-blogroll/</guid><description>&lt;p&gt;Blogroll is natively supported in NexT theme. All links will be shown in the sidebar. However, as your links increases, the sidebar length increases as well. It makes the page lengthy and distracting. Therefore, we consider creating a dedicated blogroll page.&lt;/p&gt;
+&lt;p&gt;After searching, most of the existing approaches need to modify NexT source code (theme swig template files). The implementation is a little bit complicated while breaks the theme&amp;rsquo;s integrity. When you update the theme later, you will need to manually merge or rebase the master to your code.&lt;/p&gt;</description></item><item><title>Hexo Change Permanent Link Format With Backward Compatibility</title><link>https://finisky.github.io/en/change-permalink-format/</link><pubDate>Tue, 15 Jun 2021 01:13:10 +0800</pubDate><guid>https://finisky.github.io/en/change-permalink-format/</guid><description>&lt;p&gt;Recently I would like to simplify permanent link for each post. From:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/2021/03/21/migrateopsmanager.en/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/migrateopsmanager.en/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Shorter URL is more concise and readable, as the date string makes no sense to users. But what&amp;rsquo;s the meaning of URL backward compatibility?&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="change-permanent-link-format-issue"&gt;Change Permanent Link Format Issue
+&lt;a class="header-anchor" href="#change-permanent-link-format-issue"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;According to the 
+&lt;a href="https://hexo.io/docs/permalinks.html" title="official document" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ official document
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;, changing permalink format is pretty easy: just modify &lt;code&gt;:year/:month/:day/:title/&lt;/code&gt; to &lt;code&gt;:title/&lt;/code&gt; would be OK. However, the real problem is that all existing incoming links will be invalid after this modification. Then the ranking of our site will be affected which is unacceptable.&lt;/p&gt;</description></item><item><title>How to Update Hexo?</title><link>https://finisky.github.io/en/update-hexo/</link><pubDate>Sun, 24 Nov 2019 11:13:17 +0800</pubDate><guid>https://finisky.github.io/en/update-hexo/</guid><description>&lt;p&gt;
+&lt;a href="https://hexo.io/news/2019/10/14/hexo-4-released/" title="Hexo 4.0.0 has been released" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Hexo 4.0.0 has been released
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; on 2019-10-14. How to upgrade it?&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="upgrade-hexo"&gt;Upgrade Hexo
+&lt;a class="header-anchor" href="#upgrade-hexo"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Go to the hexo folder&lt;/li&gt;
+&lt;li&gt;Modify package.json file, inside &amp;ldquo;dependencies&amp;rdquo; braces:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &amp;#34;hexo&amp;#34;: &amp;#34;^3.9.0&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+ &amp;#34;hexo&amp;#34;: &amp;#34;^4.0.0&amp;#34;,&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;UNNECESSARY to change&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-2"&gt;&lt;a class="lnlinks" href="#hl-1-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-3"&gt;&lt;a class="lnlinks" href="#hl-1-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;#34;hexo&amp;#34;: {
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;#34;version&amp;#34;: &amp;#34;3.9.0&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;},&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and it will be automatically updated after &amp;ldquo;npm update&amp;rdquo;.&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;Run&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-2-1"&gt;&lt;a class="lnlinks" href="#hl-2-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ npm update&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Done. Then check the hexo version as below.&lt;/p&gt;</description></item><item><title>Fontawesome Icons Show As Blank Squares</title><link>https://finisky.github.io/en/font-awesome-issue/</link><pubDate>Thu, 24 Jan 2019 00:26:02 +0800</pubDate><guid>https://finisky.github.io/en/font-awesome-issue/</guid><description>&lt;h1 id="description"&gt;Description
+&lt;a class="header-anchor" href="#description"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;After deploying the Hexo websites to server, all the NexT icons were shown as blank squares.
+&lt;img src="https://cdn.jsdelivr.net/gh/finisky/finiskyimages/fontsquare.png" width="40%" height="40%"&gt;&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="analysis"&gt;Analysis
+&lt;a class="header-anchor" href="#analysis"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;The NexT theme uses 
+&lt;a href="https://fontawesome.com/" title="Font Awesome" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Font Awesome
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; to display icons. If the website is started locally, everything is fine. Another interesting point is that the issue exists in Chrome but not IE.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Stylish plugin in Chrome. I forced all pages use customized fonts by Stylish. Maybe the font does not contain such icons. However, even I disable the plugin, the issue still exists.&lt;/p&gt;</description></item></channel></rss>

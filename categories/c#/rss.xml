@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>C# on Finisky Garden</title><link>https://finisky.github.io/categories/c%23/</link><description>Recent content in C# on Finisky Garden</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Mon, 30 Mar 2020 12:38:58 +0800</lastBuildDate><atom:link href="https://finisky.github.io/categories/c%23/rss.xml" rel="self" type="application/rss+xml"/><item><title>C# Exception的用法和注意事项</title><link>https://finisky.github.io/csharp-exception-guide/</link><pubDate>Mon, 30 Mar 2020 12:38:58 +0800</pubDate><guid>https://finisky.github.io/csharp-exception-guide/</guid><description>&lt;p&gt;正确使用异常处理可以让代码逻辑变得清晰，使程序的鲁棒性更好，并可以准确捕捉到一些细节的错误。那么问题来了，异常的使用场景是什么，实践中又有哪些常见问题，本文简单讨论一二。&lt;/p&gt;</description></item><item><title>selenium禁止页面加载javascript</title><link>https://finisky.github.io/selenium-page-load-strategy/</link><pubDate>Wed, 18 Dec 2019 23:58:15 +0800</pubDate><guid>https://finisky.github.io/selenium-page-load-strategy/</guid><description>&lt;p&gt;最近爬取几个页面总是失败，遇到如下错误：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# The HTTP request to the remote WebDriver server for URL http://localhost:xxx/ session timed out after 60 seconds.&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;后来发现原因是页面加载缓慢，debug发现页面其实已经在浏览器中成功渲染，只是还在等待一些后台javascript加载完毕，然后超时报错。&lt;/p&gt;</description></item><item><title>谈谈static和util/helper类</title><link>https://finisky.github.io/static-and-util/</link><pubDate>Sat, 30 Nov 2019 12:25:56 +0800</pubDate><guid>https://finisky.github.io/static-and-util/</guid><description>&lt;p&gt;今天先聊聊static方法的那些事儿，然后再引出static使用的“极致” util/helper类，说说它们的问题。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="static方法什么时候用"&gt;static方法什么时候用？
+&lt;a class="header-anchor" href="#static%e6%96%b9%e6%b3%95%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e7%94%a8"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;简单说在面向对象的场景下，绝大多数情况都不应使用static方法。这里有一些关于static使用场景的讨论：
+
+&lt;a href="https://stackoverflow.com/questions/33705976/when-should-i-use-static-methods" title="When should I use static methods?" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ When should I use static methods?
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title>返回null还是空List?</title><link>https://finisky.github.io/null-or-empty-list/</link><pubDate>Sun, 24 Nov 2019 12:52:57 +0800</pubDate><guid>https://finisky.github.io/null-or-empty-list/</guid><description>&lt;p&gt;有这样的一个interface:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="nc"&gt;Filter&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;IList&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;IList&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;responses&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;在实现它时，如果过滤后没有结果，返回null还是new List&lt;string&gt;()?&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h1 id="一段流水线处理代码"&gt;一段流水线处理代码
+&lt;a class="header-anchor" href="#%e4%b8%80%e6%ae%b5%e6%b5%81%e6%b0%b4%e7%ba%bf%e5%a4%84%e7%90%86%e4%bb%a3%e7%a0%81"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;先看下面一段流水线处理的&lt;strong&gt;内部方法&lt;/strong&gt;，即GenerateCandidates(), FilterA()和FilterB()都没有用户输入等边界：&lt;/p&gt;</description></item><item><title>RegisterFactory(InjectionFactory)的应用</title><link>https://finisky.github.io/register-factory-application/</link><pubDate>Wed, 20 Nov 2019 18:35:31 +0800</pubDate><guid>https://finisky.github.io/register-factory-application/</guid><description>&lt;p&gt;Unity是一个.NET Framework用于依赖注入的容器。依赖注入一般分为三个阶段：Register, Resolve和Dispose。Unity支持三种方式的Register：&lt;/p&gt;</description></item><item><title>IUnityContainer.RegisterFactory例子</title><link>https://finisky.github.io/register-factory-exp/</link><pubDate>Tue, 19 Nov 2019 18:53:10 +0800</pubDate><guid>https://finisky.github.io/register-factory-exp/</guid><description>&lt;p&gt;使用Unity的InjectionFactory进行依赖注入遇到如下提示：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;lsquo;InjectionFactory&amp;rsquo; is obsolete: &amp;lsquo;InjectionFactory has been deprecated and will be removed in next release. Please use IUnityContainer.RegisterFactory(&amp;hellip;) method instead.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;提示InjectionFactory将被淘汰的注入代码：&lt;/p&gt;</description></item><item><title>await与Task.ContinueWith()的区别</title><link>https://finisky.github.io/task-continue-with/</link><pubDate>Sun, 17 Nov 2019 16:29:12 +0800</pubDate><guid>https://finisky.github.io/task-continue-with/</guid><description>&lt;p&gt;在代码库里看到不少Task.ContinueWith()的代码，查了下语法，没太理解下面两种写法的区别(借用MSDN的代码)：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-2"&gt;&lt;a class="lnlinks" href="#hl-0-2"&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-3"&gt;&lt;a class="lnlinks" href="#hl-0-3"&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-4"&gt;&lt;a class="lnlinks" href="#hl-0-4"&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-5"&gt;&lt;a class="lnlinks" href="#hl-0-5"&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-6"&gt;&lt;a class="lnlinks" href="#hl-0-6"&gt;6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-7"&gt;&lt;a class="lnlinks" href="#hl-0-7"&gt;7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-0-8"&gt;&lt;a class="lnlinks" href="#hl-0-8"&gt;8&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt; &lt;span class="n"&gt;ContinueWithExample&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Execute the antecedent.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;taskA&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Execute the continuation when the antecedent finishes.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;taskA&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ContinueWith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;antecedent&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Today is {0}.&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;antecedent&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Result&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- more --&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-1-1"&gt;&lt;a class="lnlinks" href="#hl-1-1"&gt; 1&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-2"&gt;&lt;a class="lnlinks" href="#hl-1-2"&gt; 2&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-3"&gt;&lt;a class="lnlinks" href="#hl-1-3"&gt; 3&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-4"&gt;&lt;a class="lnlinks" href="#hl-1-4"&gt; 4&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-5"&gt;&lt;a class="lnlinks" href="#hl-1-5"&gt; 5&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-6"&gt;&lt;a class="lnlinks" href="#hl-1-6"&gt; 6&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-7"&gt;&lt;a class="lnlinks" href="#hl-1-7"&gt; 7&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-8"&gt;&lt;a class="lnlinks" href="#hl-1-8"&gt; 8&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-9"&gt;&lt;a class="lnlinks" href="#hl-1-9"&gt; 9&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-10"&gt;&lt;a class="lnlinks" href="#hl-1-10"&gt;10&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-11"&gt;&lt;a class="lnlinks" href="#hl-1-11"&gt;11&lt;/a&gt;
+&lt;/span&gt;&lt;span class="lnt" id="hl-1-12"&gt;&lt;a class="lnlinks" href="#hl-1-12"&gt;12&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-csharp" data-lang="csharp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt; &lt;span class="n"&gt;AwaitExample&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;DayOfWeek&lt;/span&gt; &lt;span class="n"&gt;dayOfWeek&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Today is {0}.&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dayOfWeek&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;async&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;DayOfWeekAsync&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Enter DayOfWeekAsync()&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;Task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Delay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;500&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;DateTime&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Today&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DayOfWeek&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h1 id="await与continuewith的区别"&gt;await与ContinueWith的区别
+&lt;a class="header-anchor" href="#await%e4%b8%8econtinuewith%e7%9a%84%e5%8c%ba%e5%88%ab"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;标题有些标题党，但实际上await是continuewith的替代者，是一种更先进和简洁的语法。&lt;/p&gt;</description></item><item><title>selenium ChromeDriver不匹配问题</title><link>https://finisky.github.io/chrome-driver/</link><pubDate>Fri, 08 Nov 2019 10:16:57 +0800</pubDate><guid>https://finisky.github.io/chrome-driver/</guid><description>&lt;p&gt;Crawler运行一段时间后可能会莫名其妙地停止工作，查看日志发现如下错误：&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt" id="hl-0-1"&gt;&lt;a class="lnlinks" href="#hl-0-1"&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;session not created: This version of ChromeDriver only supports Chrome version 76&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;原因是用selenium创建ChromeDriver时，ChromeDriver与ChromeBrowser的版本不匹配（这玩意儿兼容性看起来不是很好），而此问题总是发生的原因在于ChromeBrowser会自动升级，因此需要手动将ChromeDriver也升级到对应版本。&lt;/p&gt;</description></item><item><title>Selenium爬取网页实战</title><link>https://finisky.github.io/selenium/</link><pubDate>Sat, 20 Jul 2019 18:58:02 +0800</pubDate><guid>https://finisky.github.io/selenium/</guid><description>&lt;h1 id="selenium简介"&gt;Selenium简介
+&lt;a class="header-anchor" href="#selenium%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;
+&lt;a href="https://www.seleniumhq.org/" title="Selenium" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Selenium
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;是一个浏览器自动测试框架，可以通过模拟各种浏览器行为完成各种测试任务。但它能做的远不止这些，一个更实用的功能是作网页内容爬取。&lt;/p&gt;</description></item><item><title>C#异步接口的同步实现</title><link>https://finisky.github.io/task-from-result/</link><pubDate>Sun, 17 Feb 2019 21:29:12 +0800</pubDate><guid>https://finisky.github.io/task-from-result/</guid><description>&lt;p&gt;实际工程中有时需要将同步方法包装在异步方法之中。比如一个类实现了异步接口，而实际实现可能是本地计算的同步操作，也可能是需要HTTP请求的异步操作。对于前者，如果实现中没有await关键字，编译器会提示该方法缺少await运算符，将以同步方式运行。将二者统一的解决方案是使用Task.FromResult将结果包装成一个已完成的Task返回。举例：&lt;/p&gt;</description></item><item><title>C# async/await编程模型的执行逻辑解析</title><link>https://finisky.github.io/await/</link><pubDate>Thu, 31 Jan 2019 17:58:02 +0800</pubDate><guid>https://finisky.github.io/await/</guid><description>&lt;h1 id="简介"&gt;简介
+&lt;a class="header-anchor" href="#%e7%ae%80%e4%bb%8b"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;C# 5引入了async/await异步编程模型，旨在进一步简化异步编程的难度，让异步执行的代码看起来像同步代码一样简洁和容易理解。但初学者往往会将此异步编程模型与多线程编程模型混淆，以致引起一些不必要的错误如死锁或性能损失。&lt;/p&gt;</description></item></channel></rss>

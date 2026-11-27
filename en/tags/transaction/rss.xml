@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Transaction on Finisky Garden</title><link>https://finisky.github.io/en/tags/transaction/</link><description>Recent content in Transaction on Finisky Garden</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Thu, 16 Dec 2021 00:07:00 +0800</lastBuildDate><atom:link href="https://finisky.github.io/en/tags/transaction/rss.xml" rel="self" type="application/rss+xml"/><item><title>MongoDB Transaction BulkWrite Endless Retry</title><link>https://finisky.github.io/en/mongodb-endless-retry/</link><pubDate>Thu, 16 Dec 2021 00:07:00 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-endless-retry/</guid><description>&lt;p&gt;Previously we talked about 
+&lt;a href="https://finisky.github.io/en/mongodb-retry-transaction/" title="# How to Retry MongoDB Transaction" &gt;
+ # How to Retry MongoDB Transaction
+ 
+&lt;/a&gt;. However, if you use BulkWrite() and one of the operation is retryable (e.g. duplicated key error), the new transactions API will &lt;strong&gt;retry the bulk write endlessly which might lead to server CPU 100%&lt;/strong&gt;. (MongoDB Server v4.4.6-ent, MongoDB Driver v2.12.2)&lt;/p&gt;
+&lt;p&gt;To avoid such issue, we have three suggestions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Add a cancellation token to limit the max retry time&lt;/li&gt;
+&lt;li&gt;Break the transaction after max retry count&lt;/li&gt;
+&lt;li&gt;Set BulkWriteOptions { IsOrdered = true }&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first two suggestions are also applicable to transactions which don&amp;rsquo;t use BulkWrite().&lt;/p&gt;</description></item><item><title>How to Retry MongoDB Transaction</title><link>https://finisky.github.io/en/mongodb-retry-transaction/</link><pubDate>Sat, 20 Feb 2021 20:03:00 +0800</pubDate><guid>https://finisky.github.io/en/mongodb-retry-transaction/</guid><description>&lt;p&gt;MongoDB transaction is a nice feature. Although MongoDB uses optimistic concurrency control, write conflict is unavoidable. The situation becomes worse in multi-document transaction which modifies many documents in one transaction. If a write conflict happens, a MongoDBCommandException will be thrown:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Exception: Command update failed: Encountered error from mongodb.svc.cluster.local:27017 during a transaction :: caused by :: WriteConflict error: this operation conflicted with another operation. Please retry your operation or multi-document transaction..&lt;/p&gt;</description></item></channel></rss>
